@@ -683,6 +683,7 @@ export default function ScraperClient() {
             </Button>
           </CardContent>
         </Card>
+        )}
       </div>
 
       {savedJobs.length > 0 && (
