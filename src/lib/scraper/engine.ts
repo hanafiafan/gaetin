@@ -69,9 +69,9 @@ function overpassSelectors(radiusMeters: number, lat: number, lng: number, regex
   const tags = ["name", "amenity", "shop", "healthcare", "office"];
   return tags
     .flatMap((tag) => [
-      `node${around}["${tag}"~"${regex}","i"];`,
-      `way${around}["${tag}"~"${regex}","i"];`,
-      `relation${around}["${tag}"~"${regex}","i"];`,
+      `node${around}["${tag}"~"${regex}",i];`,
+      `way${around}["${tag}"~"${regex}",i];`,
+      `relation${around}["${tag}"~"${regex}",i];`,
     ])
     .join("\n");
 }
@@ -155,14 +155,14 @@ async function overpassSearch(o: GetPlacesOpts): Promise<RawPlace[]> {
     const areaName = escapeOverpassRegex(shortRegion);
     const tags = ["name", "amenity", "shop", "healthcare", "office"];
     const statements = tags.flatMap(tag => [
-      `node(area.searchArea)["${tag}"~"${regex}","i"];`,
-      `way(area.searchArea)["${tag}"~"${regex}","i"];`,
-      `relation(area.searchArea)["${tag}"~"${regex}","i"];`
+      `node(area.searchArea)["${tag}"~"${regex}",i];`,
+      `way(area.searchArea)["${tag}"~"${regex}",i];`,
+      `relation(area.searchArea)["${tag}"~"${regex}",i];`
     ]).join("\n");
     
     query = `
 [out:json][timeout:60];
-area["name"~"${areaName}","i"]->.searchArea;
+area["name"~"${areaName}",i]->.searchArea;
 (
 ${statements}
 );
