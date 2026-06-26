@@ -253,7 +253,7 @@ const footerLinks = {
 
 export default function HomePage() {
   return (
-    <main className="cg-shell min-h-screen text-foreground">
+    <main className="cg-shell min-h-screen text-white">
       {/* ── Nav ─────────────────────────────────────────────────────────── */}
       <header className="landing-header fixed left-1/2 top-4 -translate-x-1/2" style={{ width: "min(calc(100vw - 2rem), 1180px)" }}>
         <nav className="cg-nav relative flex w-full items-center justify-between overflow-hidden rounded-full px-4 py-3 md:px-5">

@@ -115,19 +115,19 @@ export default function MapClient() {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <select value={city} onChange={(e) => setCity(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+        <select value={city} onChange={(e) => setCity(e.target.value)} className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white">
           <option value="">Semua kota</option>
           {cities.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
-        <select value={category} onChange={(e) => setCategory(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white">
           <option value="">Semua kategori</option>
           {categories.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
-        <select value={stage} onChange={(e) => setStage(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+        <select value={stage} onChange={(e) => setStage(e.target.value)} className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white">
           <option value="">Semua stage</option>
           {stages.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
-        <span className="ml-auto text-sm text-muted-foreground">{points.length} titik berkoordinat</span>
+        <span className="ml-auto text-sm text-slate-400">{points.length} titik berkoordinat</span>
       </div>
       <div ref={mapEl} className="h-[480px] w-full rounded-md border" />
     </div>

@@ -14,14 +14,14 @@ export default async function ScraperPage() {
             <Sparkles className="h-3 w-3" />
             Market Research Engine
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Scraper Lead</h1>
-          <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Scraper Lead</h1>
+          <p className="mt-1 max-w-xl text-sm text-slate-400">
             {legacyOsmEnabled
               ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach."
               : "Ekstrak data bisnis langsung dari Google Maps via ekstensi Chrome, lalu simpan ke CRM dalam satu klik."}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-400 shrink-0">
+        <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
           <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
           Gunakan secara bertanggung jawab
         </div>

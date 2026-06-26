@@ -5,7 +5,7 @@ import AdminSidebar from "@/components/admin/admin-sidebar";
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await requireSuperAdmin();
   return (
-    <div className="cg-shell flex min-h-screen bg-background text-foreground">
+    <div className="cg-shell flex min-h-screen bg-[#050712] text-white">
       <AdminSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-4 z-20 mx-3 mt-4 flex min-h-16 items-center justify-between gap-4 rounded-[1.75rem] border border-white/10 bg-[#050712]/80 px-5 py-3 shadow-glow backdrop-blur-2xl sm:mx-5 lg:mx-7">

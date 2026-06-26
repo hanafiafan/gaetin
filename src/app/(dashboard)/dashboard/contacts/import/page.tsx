@@ -8,8 +8,8 @@ export default function ImportPage() {
         <Link href="/dashboard/contacts" className="text-sm text-primary hover:underline">
           ← Kembali ke Kontak
         </Link>
-        <h1 className="mt-1 text-2xl font-semibold">Impor Kontak</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="mt-1 text-2xl font-bold text-white">Impor Kontak</h1>
+        <p className="text-sm text-slate-400">
           Unggah file CSV atau Excel, cocokkan kolom, lalu impor. Nomor diduplikasi otomatis disaring.
         </p>
       </div>

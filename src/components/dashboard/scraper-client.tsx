@@ -31,9 +31,6 @@ import {
   Trash2,
   type LucideIcon,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_CENTER = { lat: -6.2088, lng: 106.8456 }; // Jakarta
@@ -470,17 +467,17 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/[0.08] bg-white/[0.02] px-4 py-3 gap-3">
                   <div>
                     <div className="font-semibold text-sm">Area pencarian manual</div>
-                    <div className="text-xs text-muted-foreground">Klik peta atau cari lokasi</div>
+                    <div className="text-xs text-slate-400">Klik peta atau cari lokasi</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <form onSubmit={handleMapSearch} className="flex items-center">
-                       <Input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 text-sm max-w-[140px]" />
-                       <Button type="submit" size="sm" className="ml-1 h-8 px-2" variant="outline">Cari</Button>
+                       <input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 max-w-[140px] rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none" />
+                       <button type="submit" className="ml-1 flex h-8 items-center rounded-lg border border-white/[0.08] px-2 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">Cari</button>
                     </form>
-                    <Button type="button" onClick={locateMe} size="sm" variant="outline" className="h-8 w-8 p-0 shrink-0" title="Lokasi Saya">
+                    <button type="button" onClick={locateMe} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-slate-300 transition hover:border-primary/30 hover:text-primary" title="Lokasi Saya">
                       <Compass className="h-4 w-4" />
-                    </Button>
-                    <Badge variant="outline" className="ml-2">{radius} km</Badge>
+                    </button>
+                    <span className="ml-2 rounded-full border border-white/[0.08] px-2 py-0.5 text-xs text-slate-400">{radius} km</span>
                   </div>
                 </div>
                 <div ref={mapEl} className="h-[440px] w-full" />
@@ -515,15 +512,15 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-sm">Scraping berjalan</div>
-                    <p className="text-xs text-muted-foreground mt-0.5">Tab Google Maps terbuka. Jangan tutup sampai selesai — data masuk otomatis.</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Tab Google Maps terbuka. Jangan tutup sampai selesai — data masuk otomatis.</p>
                     {currentJob && (
-                      <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="font-medium text-foreground">{currentJob.name ?? currentJob.keyword}</span>
+                      <div className="mt-3 flex items-center gap-3 text-xs text-slate-400">
+                        <span className="font-medium text-white">{currentJob.name ?? currentJob.keyword}</span>
                         <span className="text-primary font-semibold">{currentJob.totalFound} lead</span>
                       </div>
                     )}
                     <button
-                      className="mt-3 text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                      className="mt-3 text-xs text-slate-400 underline underline-offset-2 hover:text-white"
                       onClick={async () => {
                         if (!activeJobId) return;
                         await fetch(`/api/scraper/${activeJobId}/stop`, { method: "POST" });
@@ -542,25 +539,25 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           <div className="space-y-5 p-5">
 
             {legacyOsmEnabled && (
-              <div className="flex rounded-lg border bg-muted/30 p-1">
+              <div className="flex rounded-xl border border-white/[0.08] bg-white/[0.03] p-1">
                   <button
                     type="button"
                     onClick={() => setMode("auto")}
-                    className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "auto" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                    className={cn("flex-1 rounded-full border-2 border-transparent px-4 py-2 text-sm font-medium transition-colors", mode === "auto" ? "bg-white/[0.06] text-white shadow-sm" : "text-slate-400 hover:text-white")}
                   >
                     Otomatis Wilayah
                   </button>
                   <button
                     type="button"
                     onClick={() => setMode("manual")}
-                    className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "manual" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                    className={cn("flex-1 rounded-full border-2 border-transparent px-4 py-2 text-sm font-medium transition-colors", mode === "manual" ? "bg-white/[0.06] text-white shadow-sm" : "text-slate-400 hover:text-white")}
                   >
                     Custom Area
                   </button>
                   <button
                     type="button"
                     onClick={() => setMode("extension")}
-                    className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "extension" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                    className={cn("flex-1 rounded-full border-2 border-transparent px-4 py-2 text-sm font-medium transition-colors", mode === "extension" ? "bg-white/[0.06] text-white shadow-sm" : "text-slate-400 hover:text-white")}
                   >
                     Ekstensi Chrome
                   </button>
@@ -568,28 +565,28 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Kata kunci bisnis <span className="text-muted-foreground font-normal">(bisa lebih dari satu)</span></label>
+              <label className="text-sm font-medium text-white">Kata kunci bisnis <span className="font-normal text-slate-400">(bisa lebih dari satu)</span></label>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-2">
                   {keywords.map((kw, i) => (
-                    <Badge key={i} variant="secondary" className="px-3 py-1 text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20">
+                    <span key={i} className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
                       {kw}
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         onClick={() => setKeywords((p) => p.filter((_, idx) => idx !== i))}
-                        className="ml-2 text-primary hover:text-primary/70 focus:outline-none"
+                        className="ml-1 opacity-70 hover:opacity-100 focus:outline-none"
                       >
                         &times;
                       </button>
-                    </Badge>
+                    </span>
                   ))}
                 </div>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input 
-                      value={keywordInput} 
-                      onChange={(e) => setKeywordInput(e.target.value)} 
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                    <input
+                      value={keywordInput}
+                      onChange={(e) => setKeywordInput(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === ",") {
                           e.preventDefault();
@@ -600,13 +597,12 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                           }
                         }
                       }}
-                      placeholder="Ketik lalu tekan Enter (mis. kedai kopi)" 
-                      className="pl-9" 
+                      placeholder="Ketik lalu tekan Enter (mis. kedai kopi)"
+                      className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
                     />
                   </div>
-                  <Button 
+                  <button
                     type="button"
-                    variant="outline"
                     onClick={() => {
                       const val = keywordInput.trim();
                       if (val && !keywords.includes(val)) {
@@ -614,9 +610,10 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         setKeywordInput("");
                       }
                     }}
+                    className="flex h-10 items-center rounded-xl border border-white/[0.08] px-4 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary"
                   >
                     Tambah
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -624,55 +621,56 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               {mode === "extension" ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-xl border bg-muted/30 px-3 py-3">
+                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-3">
                       <Search className="mx-auto mb-2 h-4 w-4 text-primary" />
-                      <div className="text-xs font-semibold">Kata kunci</div>
-                      <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Jenis bisnis yang dicari</div>
+                      <div className="text-xs font-semibold text-white">Kata kunci</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-slate-400">Jenis bisnis yang dicari</div>
                     </div>
-                    <div className="rounded-xl border bg-muted/30 px-3 py-3">
+                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-3">
                       <MapPin className="mx-auto mb-2 h-4 w-4 text-primary" />
-                      <div className="text-xs font-semibold">Target wilayah</div>
-                      <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Kota atau kecamatan</div>
+                      <div className="text-xs font-semibold text-white">Target wilayah</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-slate-400">Kota atau kecamatan</div>
                     </div>
-                    <div className="rounded-xl border bg-muted/30 px-3 py-3">
+                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-3">
                       <Radar className="mx-auto mb-2 h-4 w-4 text-primary" />
-                      <div className="text-xs font-semibold">Mulai</div>
-                      <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Maps terbuka otomatis</div>
+                      <div className="text-xs font-semibold text-white">Mulai</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-slate-400">Maps terbuka otomatis</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-muted-foreground">Wilayah / Kota</label>
-                      <Input placeholder="cth: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} />
+                      <label className="text-xs font-medium text-slate-400">Wilayah / Kota</label>
+                      <input placeholder="cth: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-muted-foreground">Maks. jumlah lead</label>
-                      <Input type="number" min="1" max="1000" placeholder="100" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} />
+                      <label className="text-xs font-medium text-slate-400">Maks. jumlah lead</label>
+                      <input type="number" min="1" max="1000" placeholder="100" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none" />
                     </div>
                   </div>
                 </div>
               ) : mode === "auto" ? (
-              <div className="space-y-2 border-l-2 border-primary pl-3 py-1 relative">
+              <div className="relative space-y-2 border-l-2 border-primary py-1 pl-3">
                 <label className="text-sm font-medium text-primary">Nama Wilayah / Kota</label>
-                <Input 
-                  value={regionInput} 
+                <input
+                  value={regionInput}
                   onChange={(e) => {
                     setRegionInput(e.target.value);
                     setShowSuggestions(true);
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  placeholder="mis. Bandung, Jakarta Selatan" 
+                  placeholder="mis. Bandung, Jakarta Selatan"
+                  className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
                 />
-                <p className="text-xs text-muted-foreground">Sistem akan mencari lead di seluruh area administrasi ini.</p>
+                <p className="text-xs text-slate-400">Sistem akan mencari lead di seluruh area administrasi ini.</p>
                 {showSuggestions && regionSuggestions.length > 0 && (
-                  <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-lg border border-border bg-background/95 backdrop-blur-md shadow-xl outline-none ring-1 ring-black/5">
+                  <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-xl border border-white/[0.08] bg-[#0d1126]/95 shadow-xl backdrop-blur-md">
                     {regionSuggestions.map((s, i) => (
                       <button
                         key={i}
                         type="button"
-                        className="w-full text-left relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2.5 text-sm outline-none hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-2.5 text-left text-sm text-slate-300 outline-none transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
                         onClick={() => {
                           setRegionInput(s.display_name);
                           setShowSuggestions(false);
@@ -686,8 +684,8 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
               ) : (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Nama area (Opsional)</label>
-                <Input value={areaName} onChange={(e) => setAreaName(e.target.value)} placeholder="mis. Gym Bekasi Timur" />
+                <label className="text-sm font-medium text-white">Nama area (Opsional)</label>
+                <input value={areaName} onChange={(e) => setAreaName(e.target.value)} placeholder="mis. Gym Bekasi Timur" className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none" />
               </div>
             )}
 
@@ -710,7 +708,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 <label className="text-sm font-medium">Data yang diambil</label>
-                <span className="text-xs text-muted-foreground">{dataFields.size} / {DATA_FIELDS.length} aktif</span>
+                <span className="text-xs text-slate-400">{dataFields.size} / {DATA_FIELDS.length} aktif</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {DATA_FIELDS.map((field) => {
@@ -726,7 +724,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                         active
                           ? "border-primary/40 bg-primary/10 text-primary"
-                          : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                          : "border-white/[0.08] bg-white/[0.03] text-slate-400 hover:border-white/15 hover:text-white",
                       )}
                       aria-pressed={active}
                     >
@@ -739,19 +737,19 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             </div>
 
             {mode === "manual" && (
-              <div className="rounded-xl border bg-muted/30 p-3">
-                <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
+                <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
                   <Navigation className="h-3.5 w-3.5" />
                   Lokasi pusat
                 </div>
-                <p className="line-clamp-3 text-sm text-muted-foreground">
+                <p className="line-clamp-3 text-sm text-slate-400">
                   {label || "Klik peta atau geser pin untuk titik pusat."}
                 </p>
               </div>
             )}
 
-            <Button
-              className="h-11 w-full rounded-full font-semibold"
+            <button
+              className="flex h-11 w-full items-center justify-center rounded-full bg-primary font-semibold text-black transition hover:bg-primary/90 disabled:opacity-50"
               onClick={start}
               disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim()) || (mode === "extension" && !regionInput.trim())}
             >
@@ -766,7 +764,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   {mode === "extension" ? "Mulai & Buka Google Maps" : "Mulai Scraping"}
                 </>
               )}
-            </Button>
+            </button>
           </div>
         </div>
         )}
@@ -797,13 +795,13 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <span className={cn("max-w-[140px] truncate", currentJob?.id === j.id && "font-semibold text-primary")}>
                     {j.name ?? j.keyword}
                   </span>
-                  <span className="text-xs tabular-nums text-muted-foreground">{j.totalFound}</span>
+                  <span className="text-xs tabular-nums text-slate-400">{j.totalFound}</span>
                   {j.status === "RUNNING" && <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />}
                 </button>
                 <button
                   type="button"
                   onClick={(e) => deleteJob(e, j.id)}
-                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-slate-400 transition hover:bg-destructive/10 hover:text-destructive"
                   aria-label="Hapus area"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -829,32 +827,28 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" asChild>
-                  <a href={exportHref("csv")}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Export CSV
-                  </a>
-                </Button>
-                <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700" asChild>
-                  <a href={exportHref("xlsx")}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Export Excel
-                  </a>
-                </Button>
-                <Button size="sm" variant="outline" disabled={selected.size === 0} onClick={() => saveSelected(false)}>
-                  <Save className="mr-2 h-4 w-4" />
+                <a href={exportHref("csv")} className="flex h-8 items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </a>
+                <a href={exportHref("xlsx")} className="flex h-8 items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 text-xs font-bold text-emerald-400 transition hover:bg-emerald-500/20">
+                  <Download className="h-4 w-4" />
+                  Export Excel
+                </a>
+                <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-8 items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40">
+                  <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
-                </Button>
-                <Button size="sm" disabled={selected.size === 0} onClick={() => saveSelected(true)}>
-                  <Columns3 className="mr-2 h-4 w-4" />
+                </button>
+                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25 disabled:opacity-40">
+                  <Columns3 className="h-4 w-4" />
                   Simpan + pipeline
-                </Button>
+                </button>
               </div>
             </div>
             <div className="grid gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 md:grid-cols-[minmax(0,1fr)_150px_120px_140px]">
               <div className="relative">
                 <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                <Input value={leadQuery} onChange={(e) => setLeadQuery(e.target.value)} placeholder="Cari bisnis, kategori, atau nomor" className="pl-9" />
+                <input value={leadQuery} onChange={(e) => setLeadQuery(e.target.value)} placeholder="Cari bisnis, kategori, atau nomor" className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none" />
               </div>
               <select
                 value={savedFilter}
@@ -915,7 +909,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         {l.saved && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
                       </div>
                       <div className="text-xs text-slate-500">{l.address ?? "-"}</div>
-                      {l.category && <Badge variant="outline" className="mt-2">{l.category}</Badge>}
+                      {l.category && <span className="mt-2 inline-block rounded-full border border-white/[0.08] px-2 py-0.5 text-xs text-slate-400">{l.category}</span>}
                     </td>
                     <td className="p-3 text-slate-400">
                       {l.phone ? (

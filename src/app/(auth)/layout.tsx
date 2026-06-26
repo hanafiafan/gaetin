@@ -17,7 +17,7 @@ const stats = [
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid min-h-screen bg-background lg:grid-cols-[minmax(0,1fr)_520px]">
+    <div className="grid min-h-screen bg-[#060810] lg:grid-cols-[minmax(0,1fr)_520px]">
       {/* Left panel */}
       <section className="relative hidden overflow-hidden border-r border-white/[0.07] bg-[#060810] p-10 lg:flex lg:flex-col">
         {/* Background gradient */}
@@ -97,7 +97,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               </span>
               <span className="text-2xl font-black text-white">gaetin</span>
             </Link>
-            <p className="mt-2 text-sm text-muted-foreground">Cari leads. Gaet pelanggan. Tutup deal.</p>
+            <p className="mt-2 text-sm text-slate-400">Cari leads. Gaet pelanggan. Tutup deal.</p>
           </div>
           {children}
         </div>
