@@ -421,7 +421,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
 
   return (
     <div className="space-y-5">
-      <div className={cn("grid gap-4 items-start", legacyOsmEnabled ? "xl:grid-cols-[minmax(0,1fr)_380px]" : "max-w-xl mx-auto")}>
+      <div className={cn("grid gap-4 items-start", legacyOsmEnabled ? "xl:grid-cols-[minmax(0,1fr)_380px]" : "max-w-2xl mx-auto")}>
         {legacyOsmEnabled && (
           mode === "manual" ? (
             <Card className="overflow-hidden rounded-2xl shadow-sm">
@@ -466,22 +466,28 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
         )}
         
         {mode === "extension" && activeJobId ? (
-            <Card className="border-primary/50 shadow-[0_0_15px_rgba(37,99,235,0.1)]">
-              <CardContent className="p-6 text-center space-y-4">
-                <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin" />
-                <div>
-                  <h3 className="font-semibold text-lg text-primary">Scraping Otomatis Berjalan</h3>
-                  <p className="text-sm text-muted-foreground mt-2">Tab Google Maps telah dibuka. Ekstensi Gaetin sedang menyedot data secara otomatis. Harap jangan tutup tab tersebut hingga selesai.</p>
+            <Card className="border-primary/30 bg-primary/[0.03]">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm">Scraping berjalan</div>
+                    <p className="text-xs text-muted-foreground mt-0.5">Tab Google Maps terbuka. Jangan tutup sampai selesai — data masuk otomatis.</p>
+                    {currentJob && (
+                      <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground">{currentJob.name ?? currentJob.keyword}</span>
+                        <span className="text-primary font-semibold">{currentJob.totalFound} lead</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ) : (
             <Card className="rounded-2xl shadow-sm">
-          <CardContent className="space-y-4 p-5">
-            <div>
-              <div className="text-base font-semibold">Kontrol scraping</div>
-              <p className="mt-1 text-sm text-muted-foreground">Atur metode pencarian dan detail data.</p>
-            </div>
+          <CardContent className="space-y-5 p-5">
 
             {legacyOsmEnabled ? (
               <div className="flex rounded-lg border bg-muted/30 p-1">
@@ -507,27 +513,10 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     Ekstensi Chrome
                   </button>
               </div>
-            ) : (
-              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-center">
-                <div className="font-semibold text-primary">Mode Ekstensi Aktif</div>
-                <div className="text-xs text-muted-foreground mt-1">Metode pencarian Peta/Radius dinonaktifkan oleh Admin.</div>
-              </div>
-            )}
-
-            {mode !== "extension" && (
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-100">
-                <div className="mb-1 flex items-center gap-2 font-semibold">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Mode gratis aktif
-                </div>
-                <p className="text-xs leading-relaxed text-emerald-50/80">
-                  Menggunakan peta OpenStreetMap, reverse geocode Nominatim, dan sumber lead Overpass/OpenStreetMap tanpa API key.
-                </p>
-              </div>
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Kata kunci bisnis</label>
+              <label className="text-sm font-medium">Kata kunci bisnis <span className="text-muted-foreground font-normal">(bisa lebih dari satu)</span></label>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-2">
                   {keywords.map((kw, i) => (
@@ -581,25 +570,33 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             </div>
 
               {mode === "extension" ? (
-                <div className="space-y-4 pt-2">
-                  <div className="rounded-lg bg-primary/10 p-4 border border-primary/20">
-                    <h4 className="font-semibold text-primary mb-2 flex items-center"><CheckCircle2 className="w-4 h-4 mr-2" /> Scraping Otomatis (BETA)</h4>
-                    <p className="text-sm text-muted-foreground mb-4">Gaetin akan mengekstrak data langsung dari Google Maps tanpa API key.</p>
-                    <ol className="list-decimal pl-4 text-sm text-muted-foreground space-y-2 mb-4">
-                      <li>Masukkan Target Wilayah dan Batas Jumlah Data.</li>
-                      <li>Klik <strong>Mulai Scraping</strong> di bawah.</li>
-                      <li>Sistem akan otomatis membuka tab Google Maps, menyedot data, lalu menutup tab tersebut.</li>
-                    </ol>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Target Wilayah / Kota</label>
-                      <Input placeholder="Contoh: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-xl border bg-muted/30 px-3 py-3">
+                      <Search className="mx-auto mb-2 h-4 w-4 text-primary" />
+                      <div className="text-xs font-semibold">Kata kunci</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Jenis bisnis yang dicari</div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Batas Jumlah Lead</label>
-                      <Input type="number" min="1" max="1000" placeholder="Maksimal 1000" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} />
+                    <div className="rounded-xl border bg-muted/30 px-3 py-3">
+                      <MapPin className="mx-auto mb-2 h-4 w-4 text-primary" />
+                      <div className="text-xs font-semibold">Target wilayah</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Kota atau kecamatan</div>
+                    </div>
+                    <div className="rounded-xl border bg-muted/30 px-3 py-3">
+                      <Radar className="mx-auto mb-2 h-4 w-4 text-primary" />
+                      <div className="text-xs font-semibold">Mulai</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Maps terbuka otomatis</div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-muted-foreground">Wilayah / Kota</label>
+                      <Input placeholder="cth: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-muted-foreground">Maks. jumlah lead</label>
+                      <Input type="number" min="1" max="1000" placeholder="100" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} />
                     </div>
                   </div>
                 </div>
@@ -661,9 +658,9 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 <label className="text-sm font-medium">Data yang diambil</label>
-                <span className="text-xs text-muted-foreground">{dataFields.size} aktif</span>
+                <span className="text-xs text-muted-foreground">{dataFields.size} / {DATA_FIELDS.length} aktif</span>
               </div>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="flex flex-wrap gap-2">
                 {DATA_FIELDS.map((field) => {
                   const Icon = field.icon;
                   const active = dataFields.has(field.value);
@@ -672,24 +669,17 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                       key={field.value}
                       type="button"
                       onClick={() => toggleDataField(field.value)}
+                      title={field.description}
                       className={cn(
-                        "flex min-h-[76px] items-start gap-3 rounded-xl border p-3 text-left transition-colors",
-                        active ? "border-primary bg-primary/10 text-foreground" : "bg-muted/20 text-muted-foreground hover:bg-muted/40",
+                        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                        active
+                          ? "border-primary/40 bg-primary/10 text-primary"
+                          : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                       )}
                       aria-pressed={active}
                     >
-                      <span
-                        className={cn(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-                          active ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground",
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span>
-                        <span className="block text-sm font-semibold">{field.label}</span>
-                        <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{field.description}</span>
-                      </span>
+                      <Icon className="h-3.5 w-3.5" />
+                      {field.label}
                     </button>
                   );
                 })}
@@ -708,16 +698,20 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             )}
 
-            <Button className="h-11 w-full rounded-full" onClick={start} disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim())}>
+            <Button
+              className="h-11 w-full rounded-full font-semibold"
+              onClick={start}
+              disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim()) || (mode === "extension" && !regionInput.trim())}
+            >
               {busy ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Scraping {jobStatus ? `(${jobStatus})` : ""}
+                  {jobStatus === "RUNNING" ? "Sedang scraping..." : "Mempersiapkan..."}
                 </>
               ) : (
                 <>
                   <Radar className="mr-2 h-4 w-4" />
-                  Mulai scraping
+                  {mode === "extension" ? "Mulai & Buka Google Maps" : "Mulai Scraping"}
                 </>
               )}
             </Button>
@@ -729,11 +723,9 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       {savedJobs.length > 0 && (
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="p-4">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-sm font-semibold">Area tersimpan</h2>
-                <p className="text-xs text-muted-foreground">Buka ulang job lama untuk melihat hasil dan menyimpan kontak.</p>
-              </div>
+            <div className="mb-3 flex items-center gap-2">
+              <h2 className="text-sm font-semibold">Riwayat scraping</h2>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{savedJobs.length}</span>
             </div>
             <div className="flex flex-wrap gap-2">
             {savedJobs.map((j) => (
@@ -749,11 +741,12 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   onClick={() => openSaved(j)}
                   className="flex items-center gap-2"
                 >
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: j.color ?? "#888" }} />
-                  <span className={cn(currentJob?.id === j.id && "font-semibold text-primary")}>
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: j.color ?? "#888" }} />
+                  <span className={cn("max-w-[140px] truncate", currentJob?.id === j.id && "font-semibold text-primary")}>
                     {j.name ?? j.keyword}
                   </span>
-                  <span className="text-xs text-muted-foreground">({j.totalFound})</span>
+                  <span className="text-xs tabular-nums text-muted-foreground">{j.totalFound}</span>
+                  {j.status === "RUNNING" && <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />}
                 </button>
                 <button
                   type="button"
@@ -774,11 +767,14 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="space-y-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
+              <div className="flex items-center gap-3">
                 <h2 className="text-base font-semibold">Hasil lead</h2>
-                <p className="text-sm text-muted-foreground">
-                  {currentJob?.name ? `${currentJob.name} · ` : ""}{leads.length} hasil ditemukan
-                </p>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                  {leads.length}
+                </span>
+                {currentJob?.name && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[200px]">{currentJob.name}</span>
+                )}
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" asChild>

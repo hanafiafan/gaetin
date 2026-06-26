@@ -1,6 +1,5 @@
 import ScraperClient from "@/components/dashboard/scraper-client";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Radar, ShieldAlert, Sparkles } from "lucide-react";
+import { ShieldAlert, Sparkles } from "lucide-react";
 import { getOwnerCmsSettings } from "@/lib/owner-cms";
 
 export default async function ScraperPage() {
@@ -8,37 +7,23 @@ export default async function ScraperPage() {
   const legacyOsmEnabled = settings.featureFlags?.legacyOsmScraper ?? false;
 
   return (
-    <div className="space-y-5">
-      <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
-        <div className="grid gap-5 p-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div>
-            <Badge className="mb-3 gap-2 bg-primary/10 text-primary hover:bg-primary/10">
-              <Sparkles className="h-3.5 w-3.5" />
-              Market Research Engine
-            </Badge>
-            <h1 className="text-3xl font-semibold tracking-tight">Scraper Lead</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              {legacyOsmEnabled 
-                ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach." 
-                : "Gunakan ekstensi Chrome Gaetin untuk menyedot kontak prospek secara otomatis dari Google Maps dan menyimpannya ke CRM Anda."}
-            </p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium tracking-wide text-primary">
+            <Sparkles className="h-3 w-3" />
+            Market Research Engine
           </div>
-          <div className="grid gap-2 text-sm">
-            {legacyOsmEnabled && (
-              <div className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                Peta interaktif + radius pencarian
-              </div>
-            )}
-            <div className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2">
-              <Radar className="h-4 w-4 text-primary" />
-              Kurasi hasil sebelum masuk database
-            </div>
-            <div className="flex items-center gap-2 rounded-xl border bg-amber-500/10 px-3 py-2 text-amber-800 dark:text-amber-300">
-              <ShieldAlert className="h-4 w-4" />
-              Gunakan scraping secara bertanggung jawab
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Scraper Lead</h1>
+          <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+            {legacyOsmEnabled
+              ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach."
+              : "Ekstrak data bisnis langsung dari Google Maps via ekstensi Chrome, lalu simpan ke CRM dalam satu klik."}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-400 shrink-0">
+          <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+          Gunakan secara bertanggung jawab
         </div>
       </div>
       <ScraperClient legacyOsmEnabled={legacyOsmEnabled} />
