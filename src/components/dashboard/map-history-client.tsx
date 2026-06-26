@@ -29,7 +29,7 @@ export function MapHistoryClient({ leads }: { leads: LeadHistory[] }) {
       if (cancelled) return;
 
       if (!mapRef.current) {
-        mapRef.current = L.map(mapEl.current).setView([-2.5489, 118.0149], 5); // Center Indonesia
+        mapRef.current = L.map(mapEl.current!).setView([-2.5489, 118.0149], 5); // Center Indonesia
         L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
           attribution: '&copy; OpenStreetMap contributors & CARTO',
         }).addTo(mapRef.current);

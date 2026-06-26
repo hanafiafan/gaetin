@@ -392,7 +392,7 @@ export default function ScraperClient() {
                 <div className="flex items-center gap-2">
                   <form onSubmit={handleMapSearch} className="flex items-center">
                      <Input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 text-sm max-w-[140px]" />
-                     <Button type="submit" size="sm" variant="secondary" className="ml-1 h-8 px-2">Cari</Button>
+                     <Button type="submit" size="sm" className="ml-1 h-8 px-2" variant="outline">Cari</Button>
                   </form>
                   <Button type="button" onClick={locateMe} size="sm" variant="outline" className="h-8 w-8 p-0 shrink-0" title="Lokasi Saya">
                     <Compass className="h-4 w-4" />
