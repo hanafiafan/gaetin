@@ -407,26 +407,51 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
       const businessName = nextLink.getAttribute('aria-label')?.trim() ||
                            document.querySelector('h1')?.innerText?.trim() ||
                            'Tanpa nama';
-      const phone        = normalizePhone(extractPhone());
+      let phone = normalizePhone(extractPhone());
+
+      // #2 — phone retry: scroll deeper once and re-extract if phone is missing
+      if (!phone) {
+        G('Phone missing, retrying after deeper scroll...');
+        const scroller = getDetailScroller();
+        if (scroller) {
+          scroller.scrollTop = 900;
+          await sleep(800);
+          scroller.scrollTop = 200;
+          await sleep(300);
+        } else {
+          await sleep(800);
+        }
+        phone = normalizePhone(extractPhone());
+        G('Phone retry result:', phone || 'still empty');
+      }
+
       const website      = extractWebsite();
       const address      = extractAddress();
       const { rating, reviewCount } = extractRatingAndReviews();
       const category     = extractCategory();
       const coords       = parseCoords(window.location.href);
 
-      G(`✓ ${businessName} | phone=${phone || '-'} | addr=${(address || '-').substring(0, 35)}`);
-      chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount, ...coords });
-      report(`${phone ? '✓' : '○'} ${businessName}`);
+      // #3 — skip items with absolutely no contact data
+      if (!phone && !address && !website) {
+        G(`⊘ ${businessName} — no data, skipping`);
+        report(`⊘ ${businessName} (dilewati)`);
+      } else {
+        G(`✓ ${businessName} | phone=${phone || '-'} | addr=${(address || '-').substring(0, 35)}`);
+        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount, ...coords });
+        report(`${phone ? '✓' : '○'} ${businessName}`);
 
-      // Send batch every 5 items
-      if (chunkLeads.length >= 5) {
-        await sendToApi(jobId, [...chunkLeads], false, token);
-        totalSaved += chunkLeads.length;
-        chunkLeads = [];
+        if (chunkLeads.length >= 5) {
+          await sendToApi(jobId, [...chunkLeads], false, token);
+          totalSaved += chunkLeads.length;
+          chunkLeads = [];
+        }
       }
     } catch (e) {
       G('Parse error:', e.message);
     }
+
+    // #4 — per-item rate limit to avoid Google throttling
+    await sleep(delaySec * 1000);
   }
 
   // Send remaining leads + mark job finished
