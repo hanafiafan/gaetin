@@ -231,40 +231,54 @@ async function googleTextSearch(o: GetPlacesOpts): Promise<RawPlace[]> {
     "places.userRatingCount",
     "places.types",
     "places.location",
+    "nextPageToken",
   ].join(",");
 
-  const body: Record<string, unknown> = { textQuery: o.keyword, pageSize: 20 };
+  const baseBody: Record<string, unknown> = { textQuery: o.keyword, pageSize: 20 };
   if (o.lat != null && o.lng != null && o.radiusKm != null) {
-    body.locationBias = {
+    baseBody.locationBias = {
       circle: { center: { latitude: o.lat, longitude: o.lng }, radius: o.radiusKm * 1000 },
     };
   } else if (o.location) {
-    body.textQuery = `${o.keyword} ${o.location}`;
+    baseBody.textQuery = `${o.keyword} ${o.location}`;
   }
 
-  const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Goog-Api-Key": o.apiKey,
-      "X-Goog-FieldMask": fieldMask,
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error("GOOGLE_REQUEST_FAILED");
-  const data = (await res.json()) as { places?: GPlace[] };
-  return (data.places ?? []).map((p) => ({
-    businessName: p.displayName?.text ?? "Tanpa nama",
-    phone: p.nationalPhoneNumber,
-    address: p.formattedAddress,
-    website: p.websiteUri,
-    email: undefined, // Google tidak menyediakan email
-    rating: p.rating,
-    reviewCount: p.userRatingCount,
-    category: p.types?.[0],
-    latitude: p.location?.latitude,
-    longitude: p.location?.longitude,
-  }));
+  const results: RawPlace[] = [];
+  let pageToken: string | undefined;
+
+  do {
+    const body = pageToken ? { ...baseBody, pageToken } : baseBody;
+    const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": o.apiKey,
+        "X-Goog-FieldMask": fieldMask,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error("GOOGLE_REQUEST_FAILED");
+    const data = (await res.json()) as { places?: GPlace[]; nextPageToken?: string };
+
+    for (const p of data.places ?? []) {
+      results.push({
+        businessName: p.displayName?.text ?? "Tanpa nama",
+        phone: p.nationalPhoneNumber,
+        address: p.formattedAddress,
+        website: p.websiteUri,
+        email: undefined,
+        rating: p.rating,
+        reviewCount: p.userRatingCount,
+        category: p.types?.[0],
+        latitude: p.location?.latitude,
+        longitude: p.location?.longitude,
+      });
+    }
+
+    pageToken = data.nextPageToken;
+  } while (pageToken && results.length < o.limit);
+
+  return results.slice(0, o.limit);
 }
 
 export function getPlaces(o: GetPlacesOpts): Promise<RawPlace[]> {

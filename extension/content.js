@@ -54,25 +54,32 @@ function hideFloatUI() {
   if (floatUI) floatUI.style.display = 'none';
 }
 
-async function sendToApi(jobId, currentLeads, isFinished) {
+function parseCoords(url) {
+  const m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  return m ? { latitude: parseFloat(m[1]), longitude: parseFloat(m[2]) } : {};
+}
+
+async function sendToApi(jobId, currentLeads, isFinished, token) {
   if (currentLeads.length === 0 && !isFinished) return;
   try {
-    const url = "https://gaetin.vercel.app/api/scraper/extension";
-    const targetUrl = window.location.href.includes('localhost') ? 'http://localhost:3000/api/scraper/extension' : url;
-    
-    const res = await fetch(targetUrl, {
+    const base = window.location.href.includes('localhost')
+      ? 'http://localhost:3000'
+      : 'https://gaetin.vercel.app';
+    const res = await fetch(`${base}/api/scraper/extension`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Extension-Token': token || '',
+      },
       body: JSON.stringify({ jobId, leads: currentLeads, isFinished })
     });
-    
-    if (!res.ok) throw new Error('API menolak request');
+    if (!res.ok) throw new Error(`API error ${res.status}`);
   } catch (e) {
     console.error('Koneksi API gagal: ', e.message);
   }
 }
 
-async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
+async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
   isRunning = true;
   createFloatUI();
   
@@ -171,12 +178,13 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
         const categoryBtn = document.querySelector('button[jsaction*="pane.rating.category"]');
         const category = categoryBtn ? categoryBtn.innerText.trim() : null;
 
-        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount });
+        const coords = parseCoords(window.location.href);
+        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount, ...coords });
         reportProgress(`Disimpan: ${businessName}`);
-        
+
         // Kirim data setiap 5 lead agar realtime di dashboard
         if (chunkLeads.length >= 5) {
-          await sendToApi(jobId, [...chunkLeads], false);
+          await sendToApi(jobId, [...chunkLeads], false, token);
           totalSaved += chunkLeads.length;
           chunkLeads = [];
         }
@@ -188,7 +196,7 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
 
   // Kirim sisa data dan sinyal selesai
   reportProgress(`Menyelesaikan proses...`);
-  await sendToApi(jobId, [...chunkLeads], true);
+  await sendToApi(jobId, [...chunkLeads], true, token);
   totalSaved += chunkLeads.length;
 
   hideFloatUI();
@@ -206,7 +214,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ success: true });
 
     // Run async task
-    scrapeGoogleMaps(request.jobId, request.maxLeads || 100, request.delaySec || 2)
+    scrapeGoogleMaps(request.jobId, request.maxLeads || 100, request.delaySec || 2, request.token || '')
       .then(count => {
         isRunning = false;
         try {
@@ -236,18 +244,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const params = new URLSearchParams(window.location.search);
   const isAuto = params.get('gaetin_auto') === 'true';
   const jobId = params.get('gaetin_job_id');
+  const token = params.get('gaetin_token') || '';
   const maxLeads = parseInt(params.get('gaetin_max')) || 100;
   const delaySec = parseFloat(params.get('gaetin_delay')) || 2;
 
   if (isAuto && jobId) {
+    // Simpan ke storage agar popup bisa baca tanpa perlu paste ulang
+    chrome.storage.local.set({ gaetinSessionKey: `${jobId}:${token}`, gaetinMaxLeads: maxLeads, gaetinDelay: delaySec });
+
     let checkAttempts = 0;
     const waitForFeed = setInterval(() => {
       checkAttempts++;
       if (document.querySelector('div[role="feed"]')) {
         clearInterval(waitForFeed);
-        
+
         // Feed found, start scraping
-        scrapeGoogleMaps(jobId, maxLeads, delaySec)
+        scrapeGoogleMaps(jobId, maxLeads, delaySec, token)
           .then(count => {
             isRunning = false;
             

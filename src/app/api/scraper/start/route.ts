@@ -1,3 +1,4 @@
+import { createHmac } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
@@ -6,6 +7,7 @@ import { generateGrid } from "@/lib/geo";
 import { runScraperJob } from "@/lib/scraper/service";
 import { getWorkspacePlan, monthStart } from "@/lib/plans/limits";
 import { fail } from "@/lib/api";
+import { env } from "@/lib/env";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -70,8 +72,11 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Execution is moved to /api/scraper/[id]/execute called by client
-  // so Vercel doesn't kill the background promise.
+  // Token HMAC deterministik dari job.id + workspaceId — tidak perlu disimpan di DB.
+  // Extension mengirim token ini sebagai X-Extension-Token header ke /api/scraper/extension.
+  const extensionToken = createHmac("sha256", env.JWT_SECRET)
+    .update(`${job.id}:${job.workspaceId}`)
+    .digest("hex");
 
-  return NextResponse.json({ success: true, data: { id: job.id, status: job.status } }, { status: 202 });
+  return NextResponse.json({ success: true, data: { id: job.id, status: job.status, extensionToken } }, { status: 202 });
 }

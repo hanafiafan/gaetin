@@ -77,7 +77,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const circleRef = useRef<any>(null);
   const geoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const esRef = useRef<EventSource | null>(null);
 
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [radius, setRadius] = useState(5);
@@ -161,7 +161,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
     })();
     return () => {
       cancelled = true;
-      if (pollRef.current) clearInterval(pollRef.current);
+      if (esRef.current) { esRef.current.close(); esRef.current = null; }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
@@ -211,25 +211,24 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leadQuery, savedFilter, phoneOnly, minRating, selectedJobId]);
 
-  function poll(id: string) {
-    if (pollRef.current) clearInterval(pollRef.current);
-    pollRef.current = setInterval(async () => {
-      const r = await fetch(`/api/scraper/${id}`);
-      const j = await r.json();
-      if (j.success) {
-        setJobStatus(j.data.status);
-        
-        // Selalu muat leads agar terlihat real-time bertambah
-        loadLeads(id);
-        
-        if (["COMPLETED", "FAILED", "STOPPED"].includes(j.data.status)) {
-          if (pollRef.current) clearInterval(pollRef.current);
-          pollRef.current = null;
-          setBusy(false);
-          loadSaved();
-        }
+  function subscribe(id: string) {
+    if (esRef.current) { esRef.current.close(); esRef.current = null; }
+    const es = new EventSource(`/api/scraper/${id}/events`);
+    esRef.current = es;
+    es.onmessage = (e) => {
+      const data = JSON.parse(e.data) as { status: string; totalFound: number };
+      setJobStatus(data.status);
+      loadLeads(id);
+      if (["COMPLETED", "FAILED", "STOPPED"].includes(data.status)) {
+        es.close();
+        esRef.current = null;
+        setBusy(false);
+        loadSaved();
       }
-    }, 2000);
+    };
+    es.onerror = () => {
+      // EventSource auto-reconnects on transient errors; we close only on terminal job states
+    };
   }
 
   async function handleMapSearch(e: React.FormEvent) {
@@ -324,14 +323,19 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
     if (mode === "extension") {
       const location = regionInput || "Indonesia";
       const q = encodeURIComponent(`${combinedKeyword} di ${location}`);
-      const gmapsUrl = `https://www.google.com/maps/search/${q}?gaetin_job_id=${j.data.id}&gaetin_auto=true&gaetin_max=${maxLeads}`;
+      const gmapsUrl = `https://www.google.com/maps/search/${q}` +
+        `?gaetin_job_id=${j.data.id}` +
+        `&gaetin_token=${j.data.extensionToken ?? ""}` +
+        `&gaetin_auto=true` +
+        `&gaetin_max=${maxLeads}` +
+        `&gaetin_delay=2`;
       window.open(gmapsUrl, "_blank");
     } else {
       // Trigger background execution and let it hang so Vercel doesn't kill it
       fetch(`/api/scraper/${j.data.id}/execute`, { method: "POST" }).catch(e => console.error("Execute failed", e));
     }
-    
-    poll(j.data.id);
+
+    subscribe(j.data.id);
   }
 
   async function openSaved(job: Job) {
