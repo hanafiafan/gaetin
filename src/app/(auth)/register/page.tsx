@@ -3,11 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Search, Send, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+const trialBenefits = [
+  { icon: Zap, text: "100 kredit langsung aktif" },
+  { icon: Search, text: "Scraping lead Google Maps" },
+  { icon: Send, text: "Blast WhatsApp ke kontak" },
+];
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -44,70 +49,97 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card className="rounded-2xl shadow-xl shadow-primary/5">
-      <CardHeader className="space-y-2">
-        <CardTitle className="text-2xl">Buat workspace Gaetin</CardTitle>
-        <CardDescription>Mulai uji coba, siapkan kontak, dan gunakan kredit awal untuk mencoba fitur inti.</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-5">
+      {/* Trial callout */}
+      <div className="rounded-2xl border border-primary/25 bg-primary/10 p-4">
+        <p className="text-sm font-black text-white">Mulai gratis — 100 kredit langsung aktif</p>
+        <div className="mt-3 flex flex-col gap-2">
+          {trialBenefits.map(({ icon: Icon, text }) => (
+            <div key={text} className="flex items-center gap-2.5 text-xs text-slate-300">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20">
+                <Icon className="h-3 w-3 text-primary" />
+              </span>
+              {text}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Form */}
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
+        <div className="mb-5">
+          <h1 className="text-xl font-black text-white">Buat workspace Gaetin</h1>
+          <p className="mt-1 text-sm text-slate-400">Daftar gratis, tidak perlu kartu kredit.</p>
+        </div>
+
         <form onSubmit={onSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            <div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
               {error}
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="name">Nama</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="h-11" required />
+          <div className="space-y-1.5">
+            <Label htmlFor="name" className="text-xs font-bold text-slate-400">Nama lengkap</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Budi Santoso"
+              className="h-11 rounded-xl"
+              required
+            />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-xs font-bold text-slate-400">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="nama@email.com"
-              className="h-11"
+              className="h-11 rounded-xl"
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-xs font-bold text-slate-400">Password</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-11 pr-12"
+                className="h-11 rounded-xl pr-12"
                 required
               />
               <button
                 type="button"
                 aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                 aria-pressed={showPassword}
-                onClick={() => setShowPassword((value) => !value)}
+                onClick={() => setShowPassword((v) => !v)}
                 className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Min. 8 karakter, mengandung huruf besar, huruf kecil, dan angka.
-            </p>
+            <p className="text-xs text-slate-500">Min. 8 karakter, huruf besar, huruf kecil, dan angka.</p>
           </div>
-          <Button type="submit" className="h-11 w-full rounded-full" disabled={loading}>
-            {loading ? "Memproses..." : "Daftar"}
+          <Button
+            type="submit"
+            className="h-11 w-full rounded-full font-bold"
+            disabled={loading}
+          >
+            {loading ? "Memproses..." : "Daftar & mulai gratis"}
           </Button>
         </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
+
+        <p className="mt-4 text-center text-xs text-slate-500">
           Sudah punya akun?{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href="/login" className="font-bold text-primary hover:underline">
             Masuk
           </Link>
         </p>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

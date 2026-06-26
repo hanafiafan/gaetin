@@ -7,7 +7,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 function LoginForm() {
   const router = useRouter();
@@ -45,70 +44,70 @@ function LoginForm() {
   }
 
   return (
-    <Card className="rounded-2xl shadow-xl shadow-primary/5">
-      <CardHeader className="space-y-2">
-        <CardTitle className="text-2xl">Masuk ke Gaetin</CardTitle>
-        <CardDescription>Lanjutkan pekerjaan lead, outreach, dan CRM dari workspace Anda.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={onSubmit} className="space-y-4">
-          {error && (
-            <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
+      <div className="mb-5">
+        <h1 className="text-xl font-black text-white">Masuk ke Gaetin</h1>
+        <p className="mt-1 text-sm text-slate-400">Lanjutkan lead, outreach, dan CRM dari workspace Anda.</p>
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-4">
+        {error && (
+          <div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-xs font-bold text-slate-400">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nama@email.com"
+            className="h-11 rounded-xl"
+            required
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="text-xs font-bold text-slate-400">Password</Label>
+          <div className="relative">
             <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              className="h-11"
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="h-11 rounded-xl pr-12"
               required
             />
+            <button
+              type="button"
+              aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-11 pr-12"
-                required
-              />
-              <button
-                type="button"
-                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-                aria-pressed={showPassword}
-                onClick={() => setShowPassword((value) => !value)}
-                className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </div>
-          <Button type="submit" className="h-11 w-full rounded-full" disabled={loading}>
-            {loading ? "Memproses..." : "Masuk"}
-          </Button>
-        </form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Belum punya akun?{" "}
-          <Link href="/register" className="font-medium text-primary hover:underline">
-            Daftar
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+        </div>
+        <Button type="submit" className="h-11 w-full rounded-full font-bold" disabled={loading}>
+          {loading ? "Memproses..." : "Masuk"}
+        </Button>
+      </form>
+
+      <p className="mt-4 text-center text-xs text-slate-500">
+        Belum punya akun?{" "}
+        <Link href="/register" className="font-bold text-primary hover:underline">
+          Daftar gratis
+        </Link>
+      </p>
+    </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex h-[400px] items-center justify-center">Memuat...</div>}>
+    <Suspense fallback={<div className="flex h-[400px] items-center justify-center text-slate-400">Memuat...</div>}>
       <LoginForm />
     </Suspense>
   );

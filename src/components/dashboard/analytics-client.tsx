@@ -13,7 +13,7 @@ import {
   Line,
   Legend,
 } from "recharts";
-import { Card, CardContent } from "@/components/ui/card";
+import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
 
 interface Summary {
   funnel: { stage: string; value: number }[];
@@ -30,6 +30,14 @@ function formatIDR(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
 }
 
+const CHART_TOOLTIP_STYLE = {
+  backgroundColor: "#0f1119",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: "12px",
+  color: "#e2e8f0",
+  fontSize: "12px",
+};
+
 export default function AnalyticsClient() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [trends, setTrends] = useState<Trends | null>(null);
@@ -44,103 +52,116 @@ export default function AnalyticsClient() {
   }, []);
 
   if (!summary || !trends) {
-    return <p className="text-sm text-muted-foreground">Memuat data...</p>;
+    return (
+      <div className="flex min-h-[200px] items-center justify-center gap-3 text-slate-500">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        <span className="text-sm">Memuat analitik...</span>
+      </div>
+    );
   }
 
   const contacts = summary.funnel.find((f) => f.stage === "Kontak")?.value ?? 0;
   const leads = summary.funnel.find((f) => f.stage === "Lead mentah")?.value ?? 0;
 
+  const kpiCards = [
+    { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp, color: "text-primary", bg: "bg-primary/10" },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-blue-400", bg: "bg-blue-500/10" },
+    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target, color: "text-violet-400", bg: "bg-violet-500/10" },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* KPI cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {[
-          { label: "Revenue (closing)", value: formatIDR(summary.revenue) },
-          { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID") },
-          { label: "Total kontak", value: contacts.toLocaleString("id-ID") },
-          { label: "Lead mentah", value: leads.toLocaleString("id-ID") },
-        ].map((c) => (
-          <Card key={c.label}>
-            <CardContent className="p-5">
-              <div className="text-sm text-muted-foreground">{c.label}</div>
-              <div className="mt-1 text-2xl font-semibold">{c.value}</div>
-            </CardContent>
-          </Card>
+        {kpiCards.map((c) => (
+          <div key={c.label} className="cg-card rounded-2xl p-5">
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-xs font-semibold uppercase text-slate-500">{c.label}</p>
+              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
+                <c.icon className="h-4 w-4" />
+              </span>
+            </div>
+            <p className="mt-3 text-2xl font-black text-white">{c.value}</p>
+          </div>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardContent className="p-5">
-            <h2 className="mb-3 text-sm font-medium">Funnel konversi</h2>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={summary.funnel} layout="vertical" margin={{ left: 20 }}>
-                <XAxis type="number" allowDecimals={false} />
-                <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#2563eb" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Charts row */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <div className="cg-card rounded-2xl p-5">
+          <h2 className="mb-4 text-sm font-bold text-white">Funnel konversi</h2>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
+              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+              <Bar dataKey="value" fill="#6366f1" radius={[0, 6, 6, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-        <Card>
-          <CardContent className="p-5">
-            <h2 className="mb-3 text-sm font-medium">Sumber lead</h2>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={summary.sources}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="source" tick={{ fontSize: 12 }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="count" fill="#1e6f5c" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="cg-card rounded-2xl p-5">
+          <h2 className="mb-4 text-sm font-bold text-white">Sumber lead</h2>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={summary.sources}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="source" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+              <Bar dataKey="count" fill="#10b981" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      <Card>
-        <CardContent className="p-5">
-          <h2 className="mb-3 text-sm font-medium">Tren 30 hari</h2>
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={trends.days}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} interval={4} />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke="#2563eb" dot={false} />
-              <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke="#1e6f5c" dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      {/* Trends */}
+      <div className="cg-card rounded-2xl p-5">
+        <h2 className="mb-4 text-sm font-bold text-white">Tren 30 hari</h2>
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart data={trends.days}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} interval={4} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+            <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ stroke: "rgba(255,255,255,0.1)" }} />
+            <Legend wrapperStyle={{ fontSize: "12px", color: "#94a3b8" }} />
+            <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke="#6366f1" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "#6366f1" }} />
+            <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke="#10b981" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "#10b981" }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
-      <Card>
-        <CardContent className="p-5">
-          <h2 className="mb-3 text-sm font-medium">ROI per kampanye</h2>
-          {summary.byCampaign.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Belum ada revenue dari kampanye.</p>
-          ) : (
+      {/* ROI per campaign */}
+      <div className="cg-card rounded-2xl p-5">
+        <div className="mb-4 flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-bold text-white">ROI per kampanye</h2>
+        </div>
+        {summary.byCampaign.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-white/[0.08] p-8 text-center text-sm text-slate-500">
+            Belum ada revenue dari kampanye.
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-xl border border-white/[0.08]">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-muted-foreground">
-                  <th className="py-2">Kampanye</th>
-                  <th className="py-2 text-right">Revenue</th>
+                <tr className="border-b border-white/[0.08]">
+                  <th className="p-4 text-left text-xs font-bold uppercase text-slate-500">Kampanye</th>
+                  <th className="p-4 text-right text-xs font-bold uppercase text-slate-500">Revenue</th>
                 </tr>
               </thead>
               <tbody>
                 {summary.byCampaign.map((c, i) => (
-                  <tr key={i} className="border-b last:border-0">
-                    <td className="py-2">{c.name}</td>
-                    <td className="py-2 text-right font-medium">{formatIDR(c.revenue)}</td>
+                  <tr key={i} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+                    <td className="p-4 font-medium text-white">{c.name}</td>
+                    <td className="p-4 text-right font-black text-emerald-400">{formatIDR(c.revenue)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
