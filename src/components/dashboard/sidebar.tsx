@@ -14,21 +14,26 @@ import {
   LogOut,
   Map,
   Megaphone,
-  MessageSquare,
   MessageSquareText,
   Search,
   Send,
   Settings,
   ShieldCheck,
-  Sparkles,
   SquareKanban,
   Users,
+  Zap,
 } from "lucide-react";
+
+const PLAN_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
+const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };
 
 type SidebarProps = {
   appName?: string;
   featureFlags?: Record<string, boolean> | null;
   isSuperAdmin?: boolean;
+  credits?: number;
+  plan?: string;
+  subscriptionStatus?: string;
 };
 
 const navGroups = [
@@ -74,8 +79,12 @@ function isNavActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export default function Sidebar({ appName = "Gaetin", featureFlags, isSuperAdmin = false }: SidebarProps) {
+export default function Sidebar({ appName = "Gaetin", featureFlags, isSuperAdmin = false, credits = 0, plan = "STARTER", subscriptionStatus = "TRIAL" }: SidebarProps) {
   const pathname = usePathname();
+  const maxCredits = PLAN_CREDITS[plan] ?? 100;
+  const creditPct = Math.min(100, Math.round((credits / maxCredits) * 100));
+  const isLowCredits = credits < 50;
+  const isTrial = subscriptionStatus === "TRIAL";
 
   return (
     <aside className="sticky top-0 z-20 hidden h-screen w-[292px] shrink-0 border-r border-white/10 bg-[#050712]/88 px-4 py-4 backdrop-blur-2xl lg:flex lg:flex-col">
@@ -89,19 +98,32 @@ export default function Sidebar({ appName = "Gaetin", featureFlags, isSuperAdmin
         </span>
       </Link>
 
-      <div className="mt-4 rounded-3xl border border-primary/25 bg-primary/10 p-4">
-        <div className="flex items-center gap-3">
-          <div className="gradient-primary flex h-9 w-9 items-center justify-center rounded-2xl text-white">
-            <Sparkles className="h-5 w-5" />
+      {/* Credits card */}
+      <div className={`mt-4 rounded-3xl border p-4 ${isLowCredits ? "border-amber-500/30 bg-amber-500/10" : "border-primary/25 bg-primary/10"}`}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/20 text-amber-300" : "gradient-primary text-white"}`}>
+              <Zap className="h-3.5 w-3.5" />
+            </div>
+            <p className="text-xs font-bold text-white">Kredit tersisa</p>
           </div>
-          <div>
-            <p className="text-sm font-black text-white">Ringkasan kerja</p>
-            <p className="text-xs text-slate-400">Kontak, pesan, dan tugas</p>
-          </div>
+          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isTrial ? "bg-white/10 text-slate-400" : "bg-primary/20 text-primary"}`}>
+            {PLAN_LABEL[plan] ?? plan}
+          </span>
         </div>
-        <div className="mt-4 h-2 rounded-full bg-white/10">
-          <div className="gradient-primary h-2 w-[76%] rounded-full" />
+        <div className="mt-3 text-2xl font-black text-white">{credits.toLocaleString("id-ID")}</div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div
+            className={`h-full rounded-full transition-all ${isLowCredits ? "bg-amber-400" : "gradient-primary"}`}
+            style={{ width: `${creditPct}%` }}
+          />
         </div>
+        <Link
+          href="/dashboard/billing"
+          className="mt-3 inline-flex h-8 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-xs font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
+        >
+          {isLowCredits ? "⚠️ Beli kredit" : "Kelola tagihan"}
+        </Link>
       </div>
 
       <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1 pb-4">

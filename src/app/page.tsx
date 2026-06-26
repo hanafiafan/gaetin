@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LandingConversionPanel from "@/components/landing-conversion-panel";
+import LandingFaq from "@/components/landing-faq";
 import {
   ArrowRight,
   Check,
@@ -7,6 +8,7 @@ import {
   ClipboardCheck,
   Database,
   Gauge,
+  HelpCircle,
   LineChart,
   LockKeyhole,
   MessageSquareText,
@@ -21,6 +23,10 @@ import {
   WalletCards,
   Workflow,
   Zap,
+  Chrome,
+  Cpu,
+  DownloadCloud,
+  MapPin,
 } from "lucide-react";
 
 const navItems = [
@@ -40,6 +46,15 @@ const quickBenefits = [
   { label: "Cari calon customer", href: "#fitur", icon: Search },
   { label: "Simulasi hasil", href: "#simulasi", icon: MousePointerClick },
   { label: "Lihat alur kerja", href: "#workflow", icon: Workflow },
+];
+
+const trustFeatures = [
+  { icon: Chrome, label: "Ekstensi Chrome" },
+  { icon: MapPin, label: "Google Maps terintegrasi" },
+  { icon: Users, label: "Multi-anggota tim" },
+  { icon: Cpu, label: "WhatsApp multi-nomor" },
+  { icon: DownloadCloud, label: "Ekspor CSV" },
+  { icon: Sparkles, label: "Trial 100 kredit gratis" },
 ];
 
 const pipelineChart = {
@@ -75,7 +90,7 @@ const features = [
   {
     icon: Search,
     title: "Scraping Calon Customer",
-    description: "Kumpulkan ribuan prospek baru untuk UMKM, perusahaan, pemilik produk, atau client berdasarkan area, kategori, dan kebutuhan pasar.",
+    description: "Ekstensi Chrome terintegrasi langsung dengan Google Maps. Atur kata kunci, area, dan jumlah hasil — scraping berjalan otomatis dan data tersimpan real-time ke dashboard.",
   },
   {
     icon: MessageSquareText,
@@ -107,22 +122,22 @@ const features = [
 const workflow = [
   {
     title: "Cari prospek",
-    description: "Gunakan scraper untuk mencari calon customer berdasarkan kota, kategori bisnis, kata kunci, atau pasar yang dituju.",
+    description: "Gunakan ekstensi Chrome Gaetin untuk mencari calon customer berdasarkan kota, kategori bisnis, kata kunci, atau pasar yang dituju.",
     metric: "01",
   },
   {
     title: "Rapikan",
-    description: "Rapikan hasil scraping, segmentasikan lead, dan validasi nomor sebelum masuk ke campaign.",
+    description: "Rapikan hasil scraping, segmentasikan lead, dan validasi nomor WhatsApp sebelum masuk ke campaign.",
     metric: "02",
   },
   {
     title: "Hubungi",
-    description: "Jalankan blast, follow-up otomatis, alur CRM, dan tugas closing.",
+    description: "Jalankan blast, follow-up otomatis, alur CRM, dan tugas closing dari satu dashboard.",
     metric: "03",
   },
   {
     title: "Pantau",
-    description: "Pemilik sistem melihat penggunaan fitur, performa customer, dan laporan pembayaran.",
+    description: "Lihat performa campaign, percakapan masuk, deal berjalan, dan laporan penggunaan secara real-time.",
     metric: "04",
   },
 ];
@@ -147,23 +162,52 @@ const solutionCards = [
 
 const pricing = [
   {
-    name: "Awal",
-    price: "Rp149K",
-    description: "Untuk bisnis kecil yang mulai mencari prospek dan merapikan WhatsApp marketing.",
-    features: ["1 ruang kerja", "2.500 kontak", "Scraping dasar", "Blast dasar", "Template pesan", "Laporan standar"],
+    name: "Starter",
+    price: "Gratis",
+    priceNote: "100 kredit trial",
+    description: "Untuk mencoba semua fitur Gaetin tanpa biaya awal dan tanpa kartu kredit.",
+    features: [
+      "1 ruang kerja",
+      "100 kredit awal",
+      "20 scraper jobs/bulan",
+      "Radius scraping 5km",
+      "CRM & Inbox",
+      "Blast & Campaign",
+    ],
+    highlighted: false,
+    cta: "Coba Gratis",
   },
   {
     name: "Bisnis",
-    price: "Rp399K",
-    description: "Paket utama dengan limit jelas dan add-on token untuk pemakaian besar.",
-    features: ["5 ruang kerja", "25.000 kontak", "Scraping prospek", "Alur CRM", "Laporan lengkap", "Bantuan prioritas"],
+    price: "Rp199K",
+    priceNote: "/bulan",
+    description: "Paket utama dengan kredit melimpah dan batas lebih tinggi untuk operasional aktif.",
+    features: [
+      "2.000 kredit/bulan",
+      "250 scraper jobs/bulan",
+      "Radius scraping 15km",
+      "500 lead per job",
+      "Follow-up otomatis",
+      "Bantuan prioritas",
+    ],
     highlighted: true,
+    cta: "Pilih Paket Bisnis",
   },
   {
-    name: "Skala",
-    price: "Khusus",
-    description: "Untuk agency, reseller, atau client dengan volume dan kebutuhan khusus.",
-    features: ["Ruang kerja tanpa batas", "Kuota khusus", "Pendampingan onboarding", "Pengaturan lanjutan", "Integrasi khusus"],
+    name: "Pro",
+    price: "Rp499K",
+    priceNote: "/bulan",
+    description: "Untuk tim besar, agency, atau reseller dengan volume tinggi dan kebutuhan white-label.",
+    features: [
+      "6.000 kredit/bulan",
+      "1.000 scraper jobs/bulan",
+      "Radius scraping 20km",
+      "1.500 lead per job",
+      "White-label & branding",
+      "Support prioritas VIP",
+    ],
+    highlighted: false,
+    cta: "Pilih Paket Pro",
   },
 ];
 
@@ -172,22 +216,45 @@ const testimonials = [
     quote: "Gaetin bikin pencarian prospek dan operasional WhatsApp marketing jauh lebih rapih. Tim kami bisa lihat lead, campaign, dan follow-up dalam satu tempat.",
     name: "Nadia Putri",
     role: "Founder, Local Beauty Brand",
+    initial: "NP",
   },
   {
     quote: "Yang paling penting buat kami adalah owner dashboard-nya. Data client dan penggunaan fitur langsung kelihatan untuk ambil keputusan produk.",
     name: "Rizky Ananda",
     role: "Pemilik Sistem",
+    initial: "RA",
   },
   {
-    quote: "Desain barunya terasa seperti alat profesional, bukan dashboard asal jadi. Alur campaign sampai laporan jadi lebih enak dipakai.",
+    quote: "Alur campaign sampai laporan jadi lebih enak dipakai. Scraping 500 lead dari Google Maps selesai dalam hitungan menit, langsung siap di-blast.",
     name: "Dimas Pratama",
     role: "Koordinator Penjualan",
+    initial: "DP",
   },
 ];
+
+const footerLinks = {
+  Produk: [
+    { label: "Fitur", href: "#fitur" },
+    { label: "Alur Kerja", href: "#workflow" },
+    { label: "Simulasi", href: "#simulasi" },
+    { label: "Harga", href: "#harga" },
+  ],
+  Platform: [
+    { label: "Masuk", href: "/login" },
+    { label: "Daftar Gratis", href: "/register" },
+    { label: "Blog", href: "/blog" },
+  ],
+  Bantuan: [
+    { label: "FAQ", href: "#faq" },
+    { label: "Privasi", href: "#" },
+    { label: "Syarat Layanan", href: "#" },
+  ],
+};
 
 export default function HomePage() {
   return (
     <main className="cg-shell min-h-screen text-foreground">
+      {/* ── Nav ─────────────────────────────────────────────────────────── */}
       <header className="landing-header fixed left-1/2 top-4 -translate-x-1/2" style={{ width: "min(calc(100vw - 2rem), 1180px)" }}>
         <nav className="cg-nav relative flex w-full items-center justify-between overflow-hidden rounded-full px-4 py-3 md:px-5">
           <Link href="/" className="flex min-w-0 items-center gap-3 pr-12 sm:pr-0">
@@ -227,6 +294,7 @@ export default function HomePage() {
         </nav>
       </header>
 
+      {/* ── Hero ────────────────────────────────────────────────────────── */}
       <section className="cg-section earth-hero-section relative isolate pb-20 pt-28 md:pb-28 md:pt-32">
         <div className="earth-video-bg" aria-hidden="true">
           <video className="earth-bg-video" autoPlay muted loop playsInline preload="metadata">
@@ -243,14 +311,14 @@ export default function HomePage() {
         <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-5xl flex-col items-center text-center">
           <div className="cg-kicker">
             <Sparkles className="h-4 w-4" />
-            Scraping prospek, WhatsApp, dan CRM
+            Scraping prospek · WhatsApp · CRM
           </div>
           <h1 className="mt-7 w-full max-w-[22rem] break-words text-balance text-4xl font-black leading-[1.05] text-white sm:max-w-5xl sm:text-6xl lg:text-7xl">
             Temukan calon customer baru, hubungi, lalu
             <span className="cg-gradient-text"> kelola sampai closing.</span>
           </h1>
           <p className="mt-6 w-full max-w-[20rem] text-sm leading-7 text-slate-300 sm:max-w-2xl sm:text-lg sm:leading-8">
-            Gaetin membantu UMKM, perusahaan, pemilik produk, dan client mendapatkan ribuan prospek baru lewat scraping, merapikan data, mengirim WhatsApp, menjalankan follow-up, dan membaca hasilnya dari satu dashboard.
+            Gaetin membantu bisnis mendapatkan ribuan prospek baru lewat scraping Google Maps, merapikan data, mengirim WhatsApp, menjalankan follow-up, dan membaca hasilnya dari satu dashboard.
           </p>
           <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
             <Link
@@ -272,7 +340,6 @@ export default function HomePage() {
           <div className="mt-6 grid w-full max-w-[20rem] grid-cols-1 gap-2 sm:flex sm:max-w-none sm:flex-wrap sm:justify-center">
             {quickBenefits.map((item) => {
               const Icon = item.icon;
-
               return (
                 <Link
                   key={item.label}
@@ -287,6 +354,7 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Dashboard mock */}
         <div className="relative z-10 mx-auto mt-14 max-w-6xl">
           <div className="cg-card-strong rounded-[2rem] p-3 sm:p-4">
             <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#080a14]">
@@ -317,9 +385,7 @@ export default function HomePage() {
                   {["Ringkasan", "Scraping", "Campaign", "CRM", "Laporan"].map((item, index) => (
                     <div
                       key={item}
-                      className={`mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm ${
-                        index === 0 ? "bg-primary/20 text-white" : "text-slate-400"
-                      }`}
+                      className={`mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm ${index === 0 ? "bg-primary/20 text-white" : "text-slate-400"}`}
                     >
                       <span className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-primary" : "bg-white/20"}`} />
                       {item}
@@ -431,11 +497,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Trust features bar ──────────────────────────────────────────── */}
+      <section className="cg-section relative z-10 py-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+          {trustFeatures.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.label} className="flex items-center gap-2 text-sm font-semibold text-slate-400">
+                <Icon className="h-4 w-4 text-primary/70" />
+                {item.label}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-5 border-t border-white/[0.06]" />
+      </section>
+
+      {/* ── Quick benefits ──────────────────────────────────────────────── */}
       <section className="cg-section grid-fade-section grid-fade-start py-8">
         <div className="grid gap-4 md:grid-cols-3">
           {buyerHighlights.map((item) => {
             const Icon = item.icon;
-
             return (
               <article key={item.title} className="cg-card rounded-3xl p-6 transition hover:-translate-y-1 hover:border-primary/40">
                 <div className="flex items-start gap-4">
@@ -453,6 +535,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Features ────────────────────────────────────────────────────── */}
       <section id="fitur" className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
           <div className="cg-kicker">
@@ -470,7 +553,6 @@ export default function HomePage() {
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => {
             const Icon = feature.icon;
-
             return (
               <article key={feature.title} className="cg-card group rounded-3xl p-6 transition hover:-translate-y-1 hover:border-primary/45">
                 <div className="gradient-primary flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-glow">
@@ -484,6 +566,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Workflow ────────────────────────────────────────────────────── */}
       <section id="workflow" className="cg-section grid-fade-section py-20">
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div>
@@ -514,6 +597,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Simulation ──────────────────────────────────────────────────── */}
       <section id="simulasi" className="cg-section grid-fade-section py-20">
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <div className="cg-kicker">
@@ -530,6 +614,7 @@ export default function HomePage() {
         <LandingConversionPanel />
       </section>
 
+      {/* ── Solutions ───────────────────────────────────────────────────── */}
       <section className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
           <div className="cg-kicker">
@@ -543,7 +628,6 @@ export default function HomePage() {
         <div className="mt-12 grid gap-4 lg:grid-cols-3">
           {solutionCards.map((card) => {
             const Icon = card.icon;
-
             return (
               <article key={card.title} className="cg-card rounded-3xl p-7">
                 <Icon className="h-8 w-8 text-primary" />
@@ -555,6 +639,77 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Extension showcase ──────────────────────────────────────────── */}
+      <section className="cg-section grid-fade-section py-16">
+        <div className="cg-card-strong overflow-hidden rounded-[2rem]">
+          <div className="grid gap-8 p-8 lg:grid-cols-2 lg:items-center lg:p-10">
+            <div>
+              <div className="cg-kicker">
+                <Chrome className="h-4 w-4" />
+                Ekstensi Chrome Gaetin
+              </div>
+              <h2 className="mt-5 text-3xl font-black text-white">
+                Scraping langsung dari Google Maps, tanpa coding.
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-slate-300">
+                Install ekstensi Chrome gratis, buka Google Maps, atur kata kunci dan area — Gaetin scraping otomatis dan menyimpan lead ke dashboard kamu secara real-time.
+              </p>
+              <ul className="mt-6 space-y-2.5">
+                {[
+                  "Scraping nama, nomor, alamat, rating, jam buka",
+                  "Filter berdasarkan kategori bisnis dan kota",
+                  "Data tersimpan langsung ke database lead",
+                  "Mode auto-scroll untuk hasil lebih banyak",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-slate-300">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/register"
+                className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-5 text-sm font-bold text-white transition hover:border-primary/40 hover:bg-primary/15"
+              >
+                <DownloadCloud className="h-4 w-4" />
+                Akses ekstensi dari dashboard
+              </Link>
+            </div>
+            <div className="hidden rounded-3xl border border-white/10 bg-[#080a14]/80 p-6 lg:block">
+              <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-400">
+                <MapPin className="h-3.5 w-3.5 text-primary" />
+                <span className="flex-1 truncate">Kafe Surabaya Pusat</span>
+                <span className="text-emerald-400">Aktif</span>
+              </div>
+              <div className="mt-4 space-y-2.5">
+                {[
+                  { name: "Kopi Kina Roasters", rating: "4.8", phone: "+62 811-xxx-xxxx" },
+                  { name: "Espresso Works", rating: "4.6", phone: "+62 812-xxx-xxxx" },
+                  { name: "Warung Kopi Tugu", rating: "4.5", phone: "+62 813-xxx-xxxx" },
+                  { name: "Daily Grind Cafe", rating: "4.7", phone: "+62 815-xxx-xxxx" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between rounded-2xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
+                    <div>
+                      <p className="text-xs font-semibold text-white">{item.name}</p>
+                      <p className="mt-0.5 text-[10px] text-slate-500">{item.phone}</p>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-amber-300">
+                      <Star className="h-3 w-3 fill-current" />
+                      {item.rating}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center justify-between rounded-2xl border border-primary/25 bg-primary/10 px-3 py-2.5">
+                <span className="text-xs font-semibold text-primary">Terscraping otomatis</span>
+                <span className="text-xs font-bold text-white">4 / 500 lead</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Pricing ─────────────────────────────────────────────────────── */}
       <section id="harga" className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
           <div className="cg-kicker">
@@ -562,10 +717,10 @@ export default function HomePage() {
             Paket Harga
           </div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Paket bulanan jelas, token sebagai tambahan.
+            Mulai gratis, upgrade saat butuh lebih.
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-300">
-            Paket bulanan lebih mudah dipahami pelanggan. Token cocok sebagai tambahan untuk validasi nomor, blast volume tinggi, atau kebutuhan khusus.
+            Semua paket termasuk akses ke seluruh fitur. Perbedaan utama ada di jumlah kredit dan batas scraping per bulan. Tambah kredit kapan saja tanpa ganti paket.
           </p>
         </div>
 
@@ -578,12 +733,12 @@ export default function HomePage() {
                   <p className="mt-3 text-sm leading-6 text-slate-300">{plan.description}</p>
                 </div>
                 {plan.highlighted ? (
-                  <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">Disarankan</span>
+                  <span className="shrink-0 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">Disarankan</span>
                 ) : null}
               </div>
               <div className="mt-8 flex items-end gap-2">
                 <span className="text-4xl font-black text-white">{plan.price}</span>
-                {plan.price !== "Khusus" ? <span className="pb-1 text-sm text-slate-400">/bulan</span> : null}
+                <span className="pb-1 text-sm text-slate-400">{plan.priceNote}</span>
               </div>
               <Link
                 href="/register"
@@ -593,7 +748,7 @@ export default function HomePage() {
                     : "cg-pill text-white hover:border-white/25 hover:bg-white/10"
                 }`}
               >
-                {plan.highlighted ? "Pilih Paket Bisnis" : "Pilih Paket"}
+                {plan.cta}
               </Link>
               <div className="mt-7 space-y-3">
                 {plan.features.map((feature) => (
@@ -606,8 +761,32 @@ export default function HomePage() {
             </article>
           ))}
         </div>
+
+        <p className="mt-8 text-center text-sm text-slate-500">
+          Harga belum termasuk PPN. Diskon 20% untuk pembayaran tahunan. Kredit tambahan bisa dibeli kapan saja.
+        </p>
       </section>
 
+      {/* ── FAQ ─────────────────────────────────────────────────────────── */}
+      <section id="faq" className="cg-section grid-fade-section py-20">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="cg-kicker">
+            <HelpCircle className="h-4 w-4" />
+            Pertanyaan Umum
+          </div>
+          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
+            Semua yang perlu diketahui sebelum mulai.
+          </h2>
+          <p className="mt-5 text-base leading-7 text-slate-300">
+            Masih ada pertanyaan lain? Hubungi tim kami melalui halaman Bantuan di dalam dashboard.
+          </p>
+        </div>
+        <div className="mx-auto mt-12 max-w-3xl">
+          <LandingFaq />
+        </div>
+      </section>
+
+      {/* ── Testimonials ────────────────────────────────────────────────── */}
       <section className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
           <div className="cg-kicker">
@@ -630,11 +809,7 @@ export default function HomePage() {
               <p className="mt-6 text-sm leading-7 text-slate-300">{testimonial.quote}</p>
               <div className="mt-8 flex items-center gap-3">
                 <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-full text-sm font-black text-white">
-                  {testimonial.name
-                    .split(" ")
-                    .map((word) => word[0])
-                    .slice(0, 2)
-                    .join("")}
+                  {testimonial.initial}
                 </div>
                 <div>
                   <p className="text-sm font-bold text-white">{testimonial.name}</p>
@@ -646,6 +821,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Final CTA ───────────────────────────────────────────────────── */}
       <section className="cg-section grid-fade-section pb-24 pt-10">
         <div className="cg-card-strong rounded-[2rem] p-8 text-center sm:p-12">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-primary">
@@ -655,19 +831,80 @@ export default function HomePage() {
             Gaetin siap jadi sistem utama untuk operasional WhatsApp-mu.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-300">
-            Masuk ke dashboard untuk mengecek semua menu, mulai dari kontak, pesan, CRM, tagihan, sampai laporan.
+            Daftar gratis dan dapatkan 100 kredit trial untuk mencoba semua fitur — scraping, blast, CRM, dan validasi nomor.
           </p>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/login"
+              href="/register"
               className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]"
             >
-              Masuk dashboard
+              Daftar Gratis Sekarang
               <ArrowRight className="h-4 w-4" />
             </Link>
+            <Link
+              href="/login"
+              className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10"
+            >
+              Masuk ke dashboard
+            </Link>
           </div>
+          <p className="mt-5 text-xs text-slate-500">Tidak perlu kartu kredit · Bisa cancel kapan saja</p>
         </div>
       </section>
+
+      {/* ── Footer ──────────────────────────────────────────────────────── */}
+      <footer className="cg-section border-t border-white/[0.07] pb-10 pt-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+          {/* Brand */}
+          <div>
+            <Link href="/" className="flex items-center gap-3">
+              <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">
+                G
+              </span>
+              <span className="text-base font-bold text-white">gaetin</span>
+            </Link>
+            <p className="mt-4 max-w-xs text-sm leading-7 text-slate-400">
+              Platform scraping prospek, WhatsApp marketing, dan CRM untuk bisnis Indonesia.
+            </p>
+            <div className="mt-6 flex items-center gap-2">
+              <Link
+                href="/register"
+                className="cg-button-glow gradient-primary inline-flex h-9 items-center gap-2 rounded-full px-4 text-xs font-bold text-white transition hover:scale-[1.02]"
+              >
+                Mulai Gratis
+              </Link>
+            </div>
+          </div>
+
+          {/* Links */}
+          {Object.entries(footerLinks).map(([group, links]) => (
+            <div key={group}>
+              <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-500">{group}</p>
+              <ul className="space-y-3">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm font-medium text-slate-400 transition hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[0.07] pt-8 sm:flex-row">
+          <p className="text-xs text-slate-600">
+            &copy; {new Date().getFullYear()} Gaetin. Semua hak dilindungi.
+          </p>
+          <p className="text-xs text-slate-600">
+            Pembayaran aman via Xendit · SSL terenkripsi
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }

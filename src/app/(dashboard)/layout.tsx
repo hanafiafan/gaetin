@@ -33,11 +33,18 @@ function hexToHsl(hex: string): string | null {
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await requireSession();
-  const [branding, ownerCms] = await Promise.all([
+  const [branding, ownerCms, workspaceInfo] = await Promise.all([
     prisma.brandingSettings.findUnique({
       where: { workspaceId: session.workspace.id },
     }),
     getOwnerCmsSettings(),
+    prisma.workspace.findUnique({
+      where: { id: session.workspace.id },
+      select: {
+        credits: true,
+        subscription: { select: { plan: true, status: true, trialEndsAt: true } },
+      },
+    }),
   ]);
   const appName = branding?.appName || "Gaetin";
   const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
@@ -45,7 +52,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="cg-shell flex h-screen overflow-hidden bg-background text-foreground">
       {hsl && <style dangerouslySetInnerHTML={{ __html: `:root{--primary:${hsl};--ring:${hsl};}` }} />}
-      <Sidebar appName={appName} featureFlags={ownerCms.featureFlags} isSuperAdmin={session.isSuperAdmin} />
+      <Sidebar
+        appName={appName}
+        featureFlags={ownerCms.featureFlags}
+        isSuperAdmin={session.isSuperAdmin}
+        credits={workspaceInfo?.credits ?? 0}
+        plan={workspaceInfo?.subscription?.plan ?? "STARTER"}
+        subscriptionStatus={workspaceInfo?.subscription?.status ?? "TRIAL"}
+      />
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <FeatureGate featureFlags={ownerCms.featureFlags} />
         {session.impersonating && <ImpersonationBanner workspaceName={session.workspace.name} />}
