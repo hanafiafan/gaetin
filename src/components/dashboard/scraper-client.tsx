@@ -80,7 +80,8 @@ export default function ScraperClient() {
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [radius, setRadius] = useState(5);
   const [label, setLabel] = useState("");
-  const [keyword, setKeyword] = useState("");
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keywordInput, setKeywordInput] = useState("");
   const [areaName, setAreaName] = useState("");
   const [color, setColor] = useState("#2563eb");
   const [dataFields, setDataFields] = useState<Set<DataField>>(new Set(DEFAULT_FIELDS));
@@ -206,7 +207,8 @@ export default function ScraperClient() {
   }
 
   async function start() {
-    if (!keyword.trim()) return;
+    if (keywords.length === 0) return;
+    const combinedKeyword = keywords.join(", ");
     setBusy(true);
     setLeads([]);
     setSelected(new Set());
@@ -214,13 +216,13 @@ export default function ScraperClient() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        keyword,
+        keyword: combinedKeyword,
         mode: "map",
         centerLat: center.lat,
         centerLng: center.lng,
         radiusKm: radius,
         locationLabel: label,
-        name: areaName || `${keyword} (${radius}km)`,
+        name: areaName || `${combinedKeyword} (${radius}km)`,
         color,
         dataFields: [...dataFields],
       }),
@@ -231,8 +233,8 @@ export default function ScraperClient() {
       alert(j?.error?.message ?? "Gagal memulai");
       return;
     }
-    const jobName = areaName || `${keyword} (${radius}km)`;
-    setCurrentJob({ id: j.data.id, name: jobName, color, keyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
+    const jobName = areaName || `${combinedKeyword} (${radius}km)`;
+    setCurrentJob({ id: j.data.id, name: jobName, color, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
     poll(j.data.id);
@@ -335,9 +337,55 @@ export default function ScraperClient() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Kata kunci bisnis</label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="mis. gym, klinik, kafe" className="pl-9" />
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {keywords.map((kw, i) => (
+                    <Badge key={i} variant="secondary" className="px-3 py-1 text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20">
+                      {kw}
+                      <button 
+                        type="button" 
+                        onClick={() => setKeywords((p) => p.filter((_, idx) => idx !== i))}
+                        className="ml-2 text-primary hover:text-primary/70 focus:outline-none"
+                      >
+                        &times;
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input 
+                      value={keywordInput} 
+                      onChange={(e) => setKeywordInput(e.target.value)} 
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          const val = keywordInput.trim();
+                          if (val && !keywords.includes(val)) {
+                            setKeywords([...keywords, val]);
+                            setKeywordInput("");
+                          }
+                        }
+                      }}
+                      placeholder="Ketik lalu tekan Enter (mis. kedai kopi)" 
+                      className="pl-9" 
+                    />
+                  </div>
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      const val = keywordInput.trim();
+                      if (val && !keywords.includes(val)) {
+                        setKeywords([...keywords, val]);
+                        setKeywordInput("");
+                      }
+                    }}
+                  >
+                    Tambah
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -408,7 +456,7 @@ export default function ScraperClient() {
               </p>
             </div>
 
-            <Button className="h-11 w-full rounded-full" onClick={start} disabled={busy || !keyword.trim()}>
+            <Button className="h-11 w-full rounded-full" onClick={start} disabled={busy || keywords.length === 0}>
               {busy ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

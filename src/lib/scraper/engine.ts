@@ -39,7 +39,7 @@ function escapeOverpassRegex(value: string): string {
 
 function keywordRegex(keyword: string): string {
   const raw = keyword
-    .split(/[,\s]+/)
+    .split(",")
     .map((part) => part.trim().toLowerCase())
     .filter((part) => part.length >= 2);
   const synonyms = new Set(raw);
@@ -48,13 +48,13 @@ function keywordRegex(keyword: string): string {
     if (["gym", "fitness", "fitnes"].includes(term)) {
       ["gym", "fitness", "fitness centre", "fitness_centre", "sports centre", "sports_centre"].forEach((v) => synonyms.add(v));
     }
-    if (["cafe", "caffe", "kafe", "coffee", "kopi"].includes(term)) {
-      ["cafe", "coffee", "kopi"].forEach((v) => synonyms.add(v));
+    if (["cafe", "caffe", "kafe", "coffee", "kopi", "coffee shop"].includes(term)) {
+      ["cafe", "coffee", "kopi", "coffee shop"].forEach((v) => synonyms.add(v));
     }
     if (["klinik", "clinic", "dokter", "doctor"].includes(term)) {
       ["clinic", "doctors", "healthcare", "hospital"].forEach((v) => synonyms.add(v));
     }
-    if (["resto", "restaurant", "restoran", "makan"].includes(term)) {
+    if (["resto", "restaurant", "restoran", "makan", "rumah makan", "warung makan"].includes(term)) {
       ["restaurant", "food", "fast_food"].forEach((v) => synonyms.add(v));
     }
   }
