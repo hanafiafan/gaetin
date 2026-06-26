@@ -43,10 +43,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
 
   return (
-    <div className="cg-shell flex min-h-screen bg-background text-foreground">
+    <div className="cg-shell flex h-screen overflow-hidden bg-background text-foreground">
       {hsl && <style dangerouslySetInnerHTML={{ __html: `:root{--primary:${hsl};--ring:${hsl};}` }} />}
       <Sidebar appName={appName} featureFlags={ownerCms.featureFlags} isSuperAdmin={session.isSuperAdmin} />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <FeatureGate featureFlags={ownerCms.featureFlags} />
         {session.impersonating && <ImpersonationBanner workspaceName={session.workspace.name} />}
         <Header user={session.user} workspace={session.workspace} isSuperAdmin={session.isSuperAdmin} />
