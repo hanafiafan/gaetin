@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BadgeDollarSign, GripVertical, Plus, Trophy } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card as UiCard, CardContent } from "@/components/ui/card";
 
 interface Card {
   id: string;
@@ -40,14 +38,9 @@ export default function CrmBoard() {
     const [rc, rd] = await Promise.all([fetch("/api/crm"), fetch("/api/deals")]);
     const [jc, jd] = await Promise.all([rc.json(), rd.json()]);
     if (jc.success) setColumns(jc.data.columns);
-    if (jd.success) {
-      setRevenue(jd.data.revenue);
-      setWonCount(jd.data.wonCount);
-    }
+    if (jd.success) { setRevenue(jd.data.revenue); setWonCount(jd.data.wonCount); }
   }
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   async function onDrop(col: Column) {
     const card = dragged.current;
@@ -91,59 +84,62 @@ export default function CrmBoard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ contactId, columnId: first.id }),
     });
-    if (r.ok) {
-      setAdding(false);
-      load();
-    } else {
-      const j = await r.json();
-      alert(j?.error?.message ?? "Gagal menambah");
-    }
+    if (r.ok) { setAdding(false); load(); }
+    else { const j = await r.json(); alert(j?.error?.message ?? "Gagal menambah"); }
   }
 
   return (
     <div className="space-y-4">
-      <UiCard className="rounded-2xl shadow-sm">
-        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="cg-card rounded-2xl p-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-primary/10 p-4 text-primary">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase">
+            <div className="rounded-xl bg-primary/10 p-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
                 <BadgeDollarSign className="h-4 w-4" />
                 Revenue closing
               </div>
-              <div className="mt-1 text-2xl font-semibold">{formatIDR(revenue)}</div>
+              <p className="mt-1 text-2xl font-black text-white">{formatIDR(revenue)}</p>
             </div>
-            <div className="rounded-xl bg-green-500/10 p-4 text-green-700 dark:text-green-400">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase">
+            <div className="rounded-xl bg-emerald-500/10 p-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-emerald-400">
                 <Trophy className="h-4 w-4" />
                 Deal menang
               </div>
-              <div className="mt-1 text-2xl font-semibold">{wonCount}</div>
+              <p className="mt-1 text-2xl font-black text-white">{wonCount}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={openAdd}>
-            <Plus className="mr-2 h-4 w-4" />
+          <button
+            onClick={openAdd}
+            className="flex h-10 items-center gap-2 rounded-full border border-white/[0.08] px-4 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary"
+          >
+            <Plus className="h-4 w-4" />
             Tambah kontak ke pipeline
-          </Button>
-        </CardContent>
-      </UiCard>
+          </button>
+        </div>
+      </div>
 
       {adding && (
-        <div className="rounded-2xl border bg-card p-4 shadow-sm">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium">Pilih kontak (masuk kolom pertama)</span>
-            <Button size="sm" variant="ghost" onClick={() => setAdding(false)}>Tutup</Button>
+        <div className="cg-card rounded-2xl p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-bold text-white">Pilih kontak (masuk kolom pertama)</span>
+            <button
+              onClick={() => setAdding(false)}
+              className="text-xs font-bold text-slate-400 hover:text-white"
+            >
+              Tutup
+            </button>
           </div>
           <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">
             {contacts.map((c) => (
               <button
                 key={c.id}
                 onClick={() => addToBoard(c.id)}
-                className="rounded-full border px-3 py-1.5 text-sm hover:bg-muted"
+                className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:border-primary/30 hover:text-primary"
               >
                 {c.name ?? `+${c.phone}`}
               </button>
             ))}
-            {contacts.length === 0 && <span className="text-sm text-muted-foreground">Tidak ada kontak.</span>}
+            {contacts.length === 0 && <span className="text-sm text-slate-500">Tidak ada kontak.</span>}
           </div>
         </div>
       )}
@@ -154,34 +150,32 @@ export default function CrmBoard() {
             key={col.id}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => onDrop(col)}
-            className="flex w-72 shrink-0 flex-col rounded-2xl border bg-muted/20 shadow-sm"
+            className="flex w-72 shrink-0 flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02]"
           >
-            <div className="flex items-center gap-2 border-b bg-card p-3">
+            <div className="flex items-center gap-2 border-b border-white/[0.08] bg-white/[0.03] p-3 rounded-t-2xl">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: col.color ?? "#888" }} />
-              <span className="text-sm font-medium">{col.name}</span>
-              <span className="ml-auto text-xs text-muted-foreground">{col.cards.length}</span>
+              <span className="text-sm font-bold text-white">{col.name}</span>
+              <span className="ml-auto text-xs text-slate-500">{col.cards.length}</span>
             </div>
             <div className="flex-1 space-y-2 p-3">
               {col.cards.map((card) => (
                 <div
                   key={card.id}
                   draggable
-                  onDragStart={() => {
-                    dragged.current = card;
-                  }}
-                  className="cursor-grab rounded-xl border bg-card p-3 text-sm shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing"
+                  onDragStart={() => { dragged.current = card; }}
+                  className="cursor-grab rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-sm transition hover:border-white/15 active:cursor-grabbing"
                 >
                   <div className="flex items-start gap-2">
-                    <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                    <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" />
                     <div className="min-w-0">
-                      <div className="truncate font-medium">{card.name ?? `+${card.phone}`}</div>
-                      <div className="text-xs text-muted-foreground">+{card.phone} · skor {card.score}</div>
+                      <p className="truncate font-bold text-white">{card.name ?? `+${card.phone}`}</p>
+                      <p className="text-xs text-slate-500">+{card.phone} · skor {card.score}</p>
                     </div>
                   </div>
                 </div>
               ))}
               {col.cards.length === 0 && (
-                <div className="rounded-xl border border-dashed bg-card/60 p-4 text-center text-xs text-muted-foreground">
+                <div className="rounded-xl border border-dashed border-white/[0.06] p-4 text-center text-xs text-slate-600">
                   Drop kartu ke stage ini.
                 </div>
               )}

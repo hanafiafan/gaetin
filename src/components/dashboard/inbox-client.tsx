@@ -2,9 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Inbox, Send, UserCircle2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 interface Convo {
@@ -72,13 +69,8 @@ export default function InboxClient() {
       body: JSON.stringify({ text: reply }),
     });
     setSending(false);
-    if (r.ok) {
-      setReply("");
-      loadThread(selectedId);
-    } else {
-      const j = await r.json();
-      alert(j?.error?.message ?? "Gagal mengirim");
-    }
+    if (r.ok) { setReply(""); loadThread(selectedId); }
+    else { const j = await r.json(); alert(j?.error?.message ?? "Gagal mengirim"); }
   }
 
   async function setStatus(status: string) {
@@ -93,25 +85,26 @@ export default function InboxClient() {
   }
 
   return (
-    <div className="grid min-h-[640px] overflow-hidden rounded-2xl border bg-card shadow-sm lg:grid-cols-[340px_1fr]">
-      <div className="overflow-y-auto border-r bg-muted/20">
-        <div className="sticky top-0 z-10 border-b bg-card p-4">
-          <div className="flex items-center gap-2 font-semibold">
+    <div className="cg-card grid min-h-[640px] overflow-hidden rounded-2xl lg:grid-cols-[340px_1fr]">
+      {/* Conversation list */}
+      <div className="overflow-y-auto border-r border-white/[0.08]">
+        <div className="sticky top-0 z-10 border-b border-white/[0.08] bg-[#0d1020] p-4">
+          <div className="flex items-center gap-2 font-black text-white">
             <Inbox className="h-5 w-5 text-primary" />
             Percakapan
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">{convos.length} thread tersedia</p>
+          <p className="mt-1 text-xs text-slate-500">{convos.length} thread tersedia</p>
         </div>
         {convos.length === 0 && (
-          <p className="p-4 text-sm text-muted-foreground">Belum ada percakapan masuk.</p>
+          <p className="p-4 text-sm text-slate-500">Belum ada percakapan masuk.</p>
         )}
         {convos.map((c) => (
           <button
             key={c.id}
             onClick={() => select(c.id)}
             className={cn(
-              "flex w-full items-center justify-between gap-3 border-b p-4 text-left hover:bg-muted/50",
-              selectedId === c.id && "bg-card",
+              "flex w-full items-center justify-between gap-3 border-b border-white/[0.05] p-4 text-left transition hover:bg-white/[0.03]",
+              selectedId === c.id && "bg-primary/[0.06] border-l-2 border-l-primary"
             )}
           >
             <div className="flex min-w-0 items-center gap-3">
@@ -119,12 +112,12 @@ export default function InboxClient() {
                 <UserCircle2 className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-              <div className="truncate text-sm font-medium">{c.name ?? `+${c.phone}`}</div>
-              <div className="truncate text-xs text-muted-foreground">+{c.phone} · {c.status}</div>
+                <p className="truncate text-sm font-bold text-white">{c.name ?? `+${c.phone}`}</p>
+                <p className="truncate text-xs text-slate-500">+{c.phone} · {c.status}</p>
               </div>
             </div>
             {c.unreadCount > 0 && (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+              <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-white">
                 {c.unreadCount}
               </span>
             )}
@@ -132,27 +125,30 @@ export default function InboxClient() {
         ))}
       </div>
 
+      {/* Thread panel */}
       <div className="flex min-w-0 flex-col">
         {!thread ? (
-          <div className="flex flex-1 items-center justify-center p-8 text-center text-sm text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center p-8 text-center">
             <div>
-              <MessageEmpty />
-              <p className="mt-3">Pilih percakapan untuk melihat riwayat dan membalas.</p>
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Inbox className="h-7 w-7" />
+              </div>
+              <p className="mt-3 text-sm text-slate-400">Pilih percakapan untuk melihat riwayat dan membalas.</p>
             </div>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between border-b bg-card p-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] bg-white/[0.02] p-4">
               <div>
-                <div className="text-sm font-semibold">
+                <p className="text-sm font-bold text-white">
                   {thread.conversation.contact.name ?? `+${thread.conversation.contact.phone}`}
-                </div>
-                <div className="text-xs text-muted-foreground">+{thread.conversation.contact.phone}</div>
+                </p>
+                <p className="text-xs text-slate-500">+{thread.conversation.contact.phone}</p>
               </div>
               <select
                 value={thread.conversation.status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="h-9 rounded-md border border-input bg-background px-2 text-xs"
+                className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-xs text-white"
               >
                 <option value="OPEN">Baru</option>
                 <option value="PENDING">Ditangani</option>
@@ -160,7 +156,7 @@ export default function InboxClient() {
               </select>
             </div>
 
-            <div className="flex-1 space-y-3 overflow-y-auto bg-muted/20 p-4">
+            <div className="flex-1 space-y-3 overflow-y-auto bg-white/[0.01] p-4">
               {thread.messages.map((m) => (
                 <div
                   key={m.id}
@@ -168,39 +164,40 @@ export default function InboxClient() {
                 >
                   <div
                     className={cn(
-                      "max-w-[75%] rounded-lg px-3 py-2 text-sm",
+                      "max-w-[75%] rounded-2xl px-3 py-2 text-sm",
                       m.direction === "OUTBOUND"
-                        ? "rounded-br-sm bg-primary text-primary-foreground"
-                        : "rounded-bl-sm border bg-card",
+                        ? "rounded-br-sm bg-primary text-white"
+                        : "rounded-bl-sm border border-white/[0.08] bg-white/[0.06] text-slate-200"
                     )}
                   >
                     {m.content}
-                    <div className={cn("mt-1 text-[10px]", m.direction === "OUTBOUND" ? "text-primary-foreground/70" : "text-muted-foreground")}>
+                    <p className={cn("mt-1 text-[10px]", m.direction === "OUTBOUND" ? "text-white/60" : "text-slate-500")}>
                       {new Date(m.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
-                    </div>
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <form onSubmit={send} className="flex gap-2 border-t bg-card p-3">
-              <Input value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Ketik balasan..." className="h-11" />
-              <Button type="submit" className="h-11 rounded-full" disabled={sending || !reply.trim()}>
-                <Send className="mr-2 h-4 w-4" />
+            <form onSubmit={send} className="flex gap-2 border-t border-white/[0.08] p-3">
+              <input
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                placeholder="Ketik balasan..."
+                className="h-11 flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={sending || !reply.trim()}
+                className="flex h-11 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+              >
+                <Send className="h-4 w-4" />
                 Kirim
-              </Button>
+              </button>
             </form>
           </>
         )}
       </div>
-    </div>
-  );
-}
-
-function MessageEmpty() {
-  return (
-    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-      <Inbox className="h-7 w-7" />
     </div>
   );
 }
