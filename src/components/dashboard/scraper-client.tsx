@@ -282,7 +282,15 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(
-        mode === "auto" 
+        mode === "extension"
+          ? {
+              keyword: combinedKeyword,
+              mode: "extension",
+              name: areaName || `${combinedKeyword}${regionInput ? ` (${regionInput})` : ""}`,
+              color,
+              dataFields: [...dataFields],
+            }
+          : mode === "auto"
           ? {
               keyword: combinedKeyword,
               mode: "text",
@@ -465,7 +473,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           )
         )}
         
-        {mode === "extension" && activeJobId ? (
+        {mode === "extension" && activeJobId && jobStatus === "RUNNING" ? (
             <Card className="border-primary/30 bg-primary/[0.03]">
               <CardContent className="p-5">
                 <div className="flex items-start gap-4">
@@ -481,6 +489,17 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         <span className="text-primary font-semibold">{currentJob.totalFound} lead</span>
                       </div>
                     )}
+                    <button
+                      className="mt-3 text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                      onClick={async () => {
+                        if (!activeJobId) return;
+                        await fetch(`/api/scraper/${activeJobId}/stop`, { method: "POST" });
+                        setBusy(false);
+                        setJobStatus("STOPPED");
+                      }}
+                    >
+                      Sudah selesai? Tandai selesai
+                    </button>
                   </div>
                 </div>
               </CardContent>
