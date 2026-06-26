@@ -82,6 +82,15 @@ export async function POST(req: Request) {
           reviewCount: typeof l.reviewCount === "number" ? l.reviewCount : null,
           latitude: typeof l.latitude === "number" ? l.latitude : null,
           longitude: typeof l.longitude === "number" ? l.longitude : null,
+          mapsUrl: l.mapsUrl || null,
+          plusCode: l.plusCode || null,
+          priceRange: l.priceRange || null,
+          openingHours: l.openingHours ?? null,
+          serviceOptions: l.serviceOptions ?? null,
+          amenities: l.amenities ?? null,
+          description: l.description || null,
+          topReviews: l.topReviews ?? null,
+          photos: l.photos ?? null,
         }
       });
       added++;

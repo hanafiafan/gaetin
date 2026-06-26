@@ -65,10 +65,19 @@ export async function GET(req: NextRequest) {
     "reviewCount",
     "latitude",
     "longitude",
+    "mapsUrl",
+    "plusCode",
+    "priceRange",
+    "openingHours",
+    "serviceOptions",
+    "amenities",
+    "description",
+    "topReviews",
+    "photos",
     "saved",
     "createdAt",
   ];
-  
+
   const rawRows = leads.map((lead) => [
     lead.businessName,
     lead.phone,
@@ -81,6 +90,15 @@ export async function GET(req: NextRequest) {
     lead.reviewCount,
     lead.latitude,
     lead.longitude,
+    lead.mapsUrl,
+    lead.plusCode,
+    lead.priceRange,
+    lead.openingHours ? JSON.stringify(lead.openingHours) : null,
+    lead.serviceOptions ? JSON.stringify(lead.serviceOptions) : null,
+    lead.amenities ? JSON.stringify(lead.amenities) : null,
+    lead.description,
+    lead.topReviews ? JSON.stringify(lead.topReviews) : null,
+    lead.photos ? JSON.stringify(lead.photos) : null,
     lead.saved ? "yes" : "no",
     lead.createdAt.toISOString(),
   ]);

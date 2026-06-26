@@ -253,10 +253,19 @@ model Lead {
   category     String?
   rating       Float?
   reviewCount  Int?
-  latitude     Float?
-  longitude    Float?
-  socialLinks  Json?
-  saved        Boolean  @default(false) // kurasi: scrape banyak, simpan yang dipilih
+  latitude       Float?
+  longitude      Float?
+  socialLinks    Json?
+  mapsUrl        String?
+  plusCode       String?
+  priceRange     String?
+  openingHours   Json?
+  serviceOptions Json?
+  amenities      Json?
+  description    String?
+  topReviews     Json?
+  photos         Json?
+  saved          Boolean  @default(false) // kurasi: scrape banyak, simpan yang dipilih
   contactId    String? // jika sudah dikonversi ke Contact
   createdAt    DateTime @default(now())
 

@@ -5,22 +5,29 @@ import "leaflet/dist/leaflet.css";
 import {
   Building2,
   CheckCircle2,
+  Clock,
   Columns3,
   Compass,
   Download,
   ExternalLink,
   Filter,
   Globe2,
+  Image,
   Loader2,
+  Link2,
   Mail,
   MapPin,
+  MessageSquare,
   Navigation,
   Palette,
+  QrCode,
   Radar,
   Save,
   Search,
+  Settings2,
   Smartphone,
   Star,
+  Tag,
   Trash2,
   type LucideIcon,
 } from "lucide-react";
@@ -33,16 +40,41 @@ import { cn } from "@/lib/utils";
 const DEFAULT_CENTER = { lat: -6.2088, lng: 106.8456 }; // Jakarta
 const DEFAULT_FIELDS: DataField[] = ["phone", "address", "website", "category", "coordinates"];
 
-type DataField = "phone" | "address" | "website" | "email" | "category" | "rating" | "coordinates";
+type DataField =
+  | "phone"
+  | "address"
+  | "website"
+  | "email"
+  | "category"
+  | "rating"
+  | "coordinates"
+  | "openingHours"
+  | "priceRange"
+  | "amenities"
+  | "serviceOptions"
+  | "plusCode"
+  | "mapsUrl"
+  | "reviews"
+  | "photos"
+  | "description";
 
 const DATA_FIELDS: Array<{ value: DataField; label: string; description: string; icon: LucideIcon }> = [
   { value: "phone", label: "Nomor WhatsApp", description: "Telepon dan nomor kontak bisnis.", icon: Smartphone },
   { value: "address", label: "Alamat", description: "Alamat area atau lokasi bisnis.", icon: Building2 },
   { value: "website", label: "Website", description: "Link website resmi bila tersedia.", icon: Globe2 },
   { value: "email", label: "Email", description: "Email publik dari sumber data.", icon: Mail },
-  { value: "category", label: "Kategori", description: "Jenis usaha untuk segmentasi.", icon: Search },
+  { value: "category", label: "Kategori", description: "Jenis usaha untuk segmentasi.", icon: Tag },
   { value: "rating", label: "Rating", description: "Rating dan jumlah ulasan jika ada.", icon: Star },
   { value: "coordinates", label: "Koordinat", description: "Latitude dan longitude lead.", icon: MapPin },
+  { value: "openingHours", label: "Jam Buka", description: "Jam operasional setiap hari.", icon: Clock },
+  { value: "priceRange", label: "Rentang Harga", description: "Kisaran harga (Rp, $$, dll).", icon: Search },
+  { value: "amenities", label: "Fasilitas", description: "Fasilitas tersedia (Wi-Fi, parkir, dll).", icon: Settings2 },
+  { value: "serviceOptions", label: "Opsi Layanan", description: "Makan di tempat, delivery, takeaway, dll.", icon: Settings2 },
+  { value: "plusCode", label: "Plus Code", description: "Kode lokasi Google Plus Code.", icon: QrCode },
+  { value: "mapsUrl", label: "URL Maps", description: "Link langsung Google Maps tempat ini.", icon: Link2 },
+  { value: "reviews", label: "Ulasan", description: "5 ulasan teratas dari Google Maps.", icon: MessageSquare },
+  { value: "photos", label: "Foto", description: "URL foto bisnis dari Google Maps.", icon: Image },
+  { value: "description", label: "Deskripsi", description: "Deskripsi singkat dari profil bisnis.", icon: Search },
 ];
 
 interface Lead {
@@ -336,7 +368,8 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
         `&gaetin_token=${j.data.extensionToken ?? ""}` +
         `&gaetin_auto=true` +
         `&gaetin_max=${maxLeads}` +
-        `&gaetin_delay=2`;
+        `&gaetin_delay=2` +
+        `&gaetin_fields=${[...dataFields].join(",")}`;
       window.open(gmapsUrl, "_blank");
     } else {
       // Trigger background execution and let it hang so Vercel doesn't kill it

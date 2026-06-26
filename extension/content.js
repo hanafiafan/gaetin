@@ -270,19 +270,198 @@ function extractCategory() {
   return null;
 }
 
+function extractMapsUrl() {
+  return window.location.href.split('?')[0] || null;
+}
+
+function extractPlusCode() {
+  for (const el of document.querySelectorAll('[data-item-id]')) {
+    const id = el.getAttribute('data-item-id') || '';
+    if (id === 'oloc' || id.startsWith('plus_code')) {
+      const lbl = el.getAttribute('aria-label') || el.textContent?.trim() || '';
+      const m = lbl.match(/([A-Z0-9]{4,}\+[A-Z0-9]{2,})/);
+      if (m) return m[1];
+    }
+  }
+  for (const el of document.querySelectorAll('[aria-label]')) {
+    const lbl = el.getAttribute('aria-label') || '';
+    const m = lbl.match(/([A-Z0-9]{4,}\+[A-Z0-9]{2,})/);
+    if (m) return m[1];
+  }
+  for (const t of panelTextNodes()) {
+    const m = t.match(/^([A-Z0-9]{4,8}\+[A-Z0-9]{2,4})$/);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function extractPriceRange() {
+  for (const el of document.querySelectorAll('[aria-label]')) {
+    const lbl = el.getAttribute('aria-label') || '';
+    if (/harga|price range/i.test(lbl)) {
+      const m = lbl.match(/(?:Harga|Price range)[:\s]+(.+)/i);
+      if (m) return m[1].trim();
+    }
+    // Dollar/rupiah signs pattern
+    if (/^(Rp|[\$€£]{1,4}|Murah|Sedang|Mahal)/i.test(lbl.trim()) && lbl.length < 40) return lbl.trim();
+  }
+  for (const btn of document.querySelectorAll('button')) {
+    const t = (btn.textContent || '').trim();
+    if (/^[\$€£]{1,4}$/.test(t) || /^Rp\s*[\d·]+/.test(t)) return t;
+  }
+  return null;
+}
+
+function extractOpeningHours() {
+  // Look for the hours table button/section
+  const hoursBtn = document.querySelector('[data-item-id="oh"] table') ||
+    document.querySelector('table[aria-label*="jam"]') ||
+    document.querySelector('table[aria-label*="hour"]') ||
+    document.querySelector('table[aria-label*="buka"]');
+  if (hoursBtn) {
+    const rows = hoursBtn.querySelectorAll('tr');
+    const hours = {};
+    for (const row of rows) {
+      const cells = row.querySelectorAll('td, th');
+      if (cells.length >= 2) {
+        const day = cells[0].textContent?.trim();
+        const time = cells[1].textContent?.trim();
+        if (day && time) hours[day] = time;
+      }
+    }
+    if (Object.keys(hours).length > 0) return hours;
+  }
+  // Fallback: find expandable hours section
+  for (const el of document.querySelectorAll('[jsaction*="openhours"], [jsaction*="hours"]')) {
+    const rows = el.querySelectorAll('tr');
+    const hours = {};
+    for (const row of rows) {
+      const cells = row.querySelectorAll('td');
+      if (cells.length >= 2) {
+        const day = cells[0].textContent?.trim();
+        const time = cells[1].textContent?.trim();
+        if (day && time && day.length < 15) hours[day] = time;
+      }
+    }
+    if (Object.keys(hours).length > 0) return hours;
+  }
+  return null;
+}
+
+function extractServiceOptions() {
+  const options = [];
+  // Common service option selectors in Google Maps
+  for (const el of document.querySelectorAll('[aria-label]')) {
+    const lbl = el.getAttribute('aria-label') || '';
+    if (/^(Makan di tempat|Dine.?in|Takeout|Bawa pulang|Delivery|Pengiriman|Pesan antar|Tanpa kontak|Pesan meja|No.contact delivery|Reservasi|Pemesanan|Drive.?through|Kunjungi|In.store|Online care|Online appointment)/i.test(lbl.trim())) {
+      if (!options.includes(lbl.trim())) options.push(lbl.trim());
+    }
+  }
+  // Also look in text nodes around the service section
+  const panel = document.querySelector('[role="main"]') || document.body;
+  for (const el of panel.querySelectorAll('span, li, div')) {
+    const t = (el.textContent || '').trim();
+    if (t.length < 60 && /^(Makan di tempat|Dine.?in|Takeout|Bawa pulang|Delivery|Pengiriman|No.contact|Drive.?through)/i.test(t)) {
+      if (!options.includes(t)) options.push(t);
+    }
+  }
+  return options.length > 0 ? options : null;
+}
+
+function extractAmenities() {
+  const amenities = [];
+  const keywords = /Wi.?Fi|Parkir|Parking|Tempat Duduk|Seating|Aksesibilitas|Accessible|Toilet|Kamar Mandi|Restroom|AC|Rooftop|Outdoor|Indoor|Smoking|Non-smoking|Halal|Kasir|Credit Card|Kartu Kredit|QRIS|GoPay|OVO|Dana|ShopeePay/i;
+  for (const el of document.querySelectorAll('[aria-label]')) {
+    const lbl = el.getAttribute('aria-label') || '';
+    if (keywords.test(lbl) && lbl.length < 80 && !amenities.includes(lbl.trim())) {
+      amenities.push(lbl.trim());
+    }
+  }
+  return amenities.length > 0 ? amenities : null;
+}
+
+function extractDescription() {
+  // Look for editorial summary / description
+  for (const el of document.querySelectorAll('[data-attrid*="description"], [jsaction*="description"]')) {
+    const t = el.textContent?.trim();
+    if (t && t.length > 20 && t.length < 2000) return t;
+  }
+  // Aria-label description patterns
+  for (const el of document.querySelectorAll('[aria-label]')) {
+    const lbl = el.getAttribute('aria-label') || '';
+    if (/^(Deskripsi|Description|Tentang|About):\s*/i.test(lbl)) {
+      return lbl.replace(/^(Deskripsi|Description|Tentang|About):\s*/i, '').trim();
+    }
+  }
+  return null;
+}
+
+function extractTopReviews() {
+  const reviews = [];
+  // Review cards in Google Maps detail panel
+  for (const el of document.querySelectorAll('[data-review-id], [jsaction*="review"]')) {
+    const text = el.querySelector('[data-expandable-section] span, .MyEned span, span[jsan]')?.textContent?.trim();
+    const author = el.querySelector('[class*="author"], [class*="name"]')?.textContent?.trim() ||
+      el.querySelector('button[aria-label]')?.getAttribute('aria-label') || '';
+    const ratingEl = el.querySelector('[aria-label*="bintang"], [aria-label*="star"]');
+    const rating = ratingEl ? parseFloat((ratingEl.getAttribute('aria-label') || '').replace(/[^\d.]/g, '')) : null;
+    if (text && text.length > 5) {
+      reviews.push({ author: author || null, rating: rating || null, text });
+      if (reviews.length >= 5) break;
+    }
+  }
+  return reviews.length > 0 ? reviews : null;
+}
+
+function extractPhotos() {
+  const urls = [];
+  const seen = new Set();
+  for (const img of document.querySelectorAll('img[src*="googleusercontent"], img[src*="lh3.google"]')) {
+    const src = img.src;
+    if (!src || seen.has(src)) continue;
+    // Skip icons/avatars (small images)
+    if (img.naturalWidth && img.naturalWidth < 100) continue;
+    seen.add(src);
+    // Convert to full-size URL by removing size constraints
+    const fullUrl = src.replace(/=s\d+-[^&]+/, '=s1600').replace(/=w\d+-h\d+/, '=s1600');
+    urls.push(fullUrl);
+    if (urls.length >= 5) break;
+  }
+  return urls.length > 0 ? urls : null;
+}
+
 // ── Extractor bundle ──────────────────────────────────────────────────────────
 
-function extractCurrentPlace(ariaLabel) {
+function extractCurrentPlace(ariaLabel, dataFields) {
+  const fields = dataFields ? new Set(dataFields) : null;
+  const want = (f) => !fields || fields.has(f);
+
   const rawLabel = (ariaLabel || '').replace(/[··]\s*(Link yang dikunjungi|Baru dikunjungi|Recently visited)/gi, '').trim();
   const businessName = rawLabel || document.querySelector('h1')?.innerText?.trim() || 'Tanpa nama';
-  const phone = normalizePhone(extractPhone());
-  const website = extractWebsite();
-  const address = extractAddress();
-  const { rating, reviewCount } = extractRatingAndReviews();
-  const category = extractCategory();
-  const coords = parseCoords(window.location.href);
+
+  const phone = want('phone') ? normalizePhone(extractPhone()) : null;
+  const website = want('website') ? extractWebsite() : null;
+  const address = want('address') ? extractAddress() : null;
+  const { rating, reviewCount } = want('rating') ? extractRatingAndReviews() : { rating: null, reviewCount: null };
+  const category = want('category') ? extractCategory() : null;
+  const coords = want('coordinates') ? parseCoords(window.location.href) : {};
+  const mapsUrl = want('mapsUrl') ? extractMapsUrl() : null;
+  const plusCode = want('plusCode') ? extractPlusCode() : null;
+  const priceRange = want('priceRange') ? extractPriceRange() : null;
+  const openingHours = want('openingHours') ? extractOpeningHours() : null;
+  const serviceOptions = want('serviceOptions') ? extractServiceOptions() : null;
+  const amenities = want('amenities') ? extractAmenities() : null;
+  const description = want('description') ? extractDescription() : null;
+  const topReviews = want('reviews') ? extractTopReviews() : null;
+  const photos = want('photos') ? extractPhotos() : null;
+
   G(`✓ ${businessName} | phone=${phone || '-'} | addr=${(address || '-').substring(0, 35)}`);
-  return { businessName, phone, website, address, category, rating, reviewCount, ...coords };
+  return {
+    businessName, phone, website, address, category, rating, reviewCount,
+    ...coords,
+    mapsUrl, plusCode, priceRange, openingHours, serviceOptions,
+    amenities, description, topReviews, photos,
+  };
 }
 
 // ── API ───────────────────────────────────────────────────────────────────────
@@ -465,7 +644,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   const data = await storageGet(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk', 'gaetinCurrentLabel']);
   if (!data.gaetinJob || data.gaetinPhase !== 'scraping') return;
 
-  const { jobId, token, maxLeads, delaySec } = data.gaetinJob;
+  const { jobId, token, maxLeads, delaySec, dataFields } = data.gaetinJob;
   const queue = data.gaetinQueue || [];
   const saved = data.gaetinSaved || 0;
   const chunk = data.gaetinChunk || [];
@@ -479,7 +658,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   await waitForContent(6000);
 
   // Extract data
-  const lead = extractCurrentPlace(ariaLabel);
+  const lead = extractCurrentPlace(ariaLabel, dataFields);
   const newChunk = [...chunk];
   if (lead.phone || lead.address || lead.website) {
     newChunk.push(lead);
@@ -536,11 +715,12 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   const token    = params.get('gaetin_token') || '';
   const maxLeads = parseInt(params.get('gaetin_max')) || 100;
   const delaySec = parseFloat(params.get('gaetin_delay')) || 2;
+  const dataFields = params.get('gaetin_fields') ? params.get('gaetin_fields').split(',').filter(Boolean) : null;
 
   if (!jobId) return;
   G('Auto-start phase 1: collecting URLs. jobId:', jobId);
 
-  await storageSet({ gaetinJob: { jobId, token, maxLeads, delaySec }, gaetinPhase: 'collecting', gaetinSaved: 0, gaetinChunk: [], gaetinQueue: [] });
+  await storageSet({ gaetinJob: { jobId, token, maxLeads, delaySec, dataFields }, gaetinPhase: 'collecting', gaetinSaved: 0, gaetinChunk: [], gaetinQueue: [] });
 
   createFloatUI();
   floatUI.style.display = 'block';
