@@ -2,10 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, XCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 interface Contact {
@@ -21,9 +17,9 @@ interface Contact {
 }
 
 const WA_BADGE: Record<Contact["waStatus"], string> = {
-  ACTIVE: "border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400",
-  INACTIVE: "border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400",
-  UNKNOWN: "border-border bg-muted text-muted-foreground",
+  ACTIVE: "bg-emerald-500/15 text-emerald-400",
+  INACTIVE: "bg-red-500/15 text-red-400",
+  UNKNOWN: "bg-slate-500/15 text-slate-400",
 };
 const WA_LABEL: Record<Contact["waStatus"], string> = {
   ACTIVE: "Aktif WA",
@@ -32,9 +28,9 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
 };
 
 function scoreClass(score: number): string {
-  if (score >= 75) return "bg-green-500/10 text-green-700 dark:text-green-400";
-  if (score >= 55) return "bg-amber-500/10 text-amber-700 dark:text-amber-400";
-  return "bg-muted text-muted-foreground";
+  if (score >= 75) return "bg-emerald-500/15 text-emerald-400";
+  if (score >= 55) return "bg-amber-500/15 text-amber-400";
+  return "bg-slate-500/15 text-slate-400";
 }
 
 export default function ContactsTable() {
@@ -57,10 +53,7 @@ export default function ContactsTable() {
     if (waStatus) params.set("waStatus", waStatus);
     const res = await fetch(`/api/contacts?${params.toString()}`);
     const json = await res.json();
-    if (json.success) {
-      setItems(json.data.items);
-      setTotal(json.data.total);
-    }
+    if (json.success) { setItems(json.data.items); setTotal(json.data.total); }
     setSelected(new Set());
     setLoading(false);
   }, [page, query, waStatus]);
@@ -70,23 +63,16 @@ export default function ContactsTable() {
     return () => clearTimeout(t);
   }, [load]);
 
-  const summary = useMemo(() => {
-    const active = items.filter((item) => item.waStatus === "ACTIVE").length;
-    const unknown = items.filter((item) => item.waStatus === "UNKNOWN").length;
-    return { active, unknown };
-  }, [items]);
+  const summary = useMemo(() => ({
+    active: items.filter((i) => i.waStatus === "ACTIVE").length,
+    unknown: items.filter((i) => i.waStatus === "UNKNOWN").length,
+  }), [items]);
 
   function toggle(id: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+    setSelected((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
   }
-
   function toggleAll() {
-    setSelected((prev) => (prev.size === items.length ? new Set() : new Set(items.map((item) => item.id))));
+    setSelected((prev) => (prev.size === items.length ? new Set() : new Set(items.map((i) => i.id))));
   }
 
   async function addContact(e: React.FormEvent) {
@@ -99,14 +85,8 @@ export default function ContactsTable() {
       body: JSON.stringify({ name, phone }),
     });
     const json = await res.json();
-    if (!res.ok) {
-      setFormError(json?.error?.message ?? "Gagal menambah kontak");
-      return;
-    }
-    setName("");
-    setPhone("");
-    setPage(1);
-    load();
+    if (!res.ok) { setFormError(json?.error?.message ?? "Gagal menambah kontak"); return; }
+    setName(""); setPhone(""); setPage(1); load();
   }
 
   async function bulkDelete() {
@@ -135,71 +115,77 @@ export default function ContactsTable() {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <Card className="rounded-xl shadow-sm">
-          <CardContent className="p-4">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl bg-muted/40 p-4">
-                <div className="text-xs font-medium text-muted-foreground">Total database</div>
-                <div className="mt-1 text-2xl font-semibold">{total.toLocaleString("id-ID")}</div>
-              </div>
-              <div className="rounded-xl bg-green-500/10 p-4 text-green-700 dark:text-green-400">
-                <div className="text-xs font-medium">Aktif di halaman ini</div>
-                <div className="mt-1 text-2xl font-semibold">{summary.active}</div>
-              </div>
-              <div className="rounded-xl bg-amber-500/10 p-4 text-amber-700 dark:text-amber-400">
-                <div className="text-xs font-medium">Belum dicek</div>
-                <div className="mt-1 text-2xl font-semibold">{summary.unknown}</div>
-              </div>
+        {/* Stats */}
+        <div className="cg-card rounded-2xl p-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-white/[0.04] p-4">
+              <p className="text-xs font-bold uppercase text-slate-500">Total database</p>
+              <p className="mt-1 text-2xl font-black text-white">{total.toLocaleString("id-ID")}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="rounded-xl bg-emerald-500/10 p-4">
+              <p className="text-xs font-bold uppercase text-emerald-400">Aktif di halaman ini</p>
+              <p className="mt-1 text-2xl font-black text-white">{summary.active}</p>
+            </div>
+            <div className="rounded-xl bg-amber-500/10 p-4">
+              <p className="text-xs font-bold uppercase text-amber-400">Belum dicek</p>
+              <p className="mt-1 text-2xl font-black text-white">{summary.unknown}</p>
+            </div>
+          </div>
+        </div>
 
-        <Card className="rounded-xl shadow-sm">
-          <CardContent className="p-4">
-            <form onSubmit={addContact} className="space-y-3">
-              <div>
-                <div className="text-sm font-semibold">Tambah cepat</div>
-                <p className="text-xs text-muted-foreground">Masukkan prospek manual tanpa keluar dari halaman.</p>
-              </div>
-              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama (opsional)" />
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxxxxxxxxx" />
-              </div>
-              {formError && <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
-              <Button type="submit" className="w-full rounded-full">
-                <Plus className="mr-2 h-4 w-4" />
-                Tambah kontak
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Quick add */}
+        <div className="cg-card rounded-2xl p-4">
+          <form onSubmit={addContact} className="space-y-3">
+            <div>
+              <p className="font-bold text-white">Tambah cepat</p>
+              <p className="text-xs text-slate-400">Masukkan prospek manual tanpa keluar dari halaman.</p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Nama (opsional)"
+                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+              />
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="08xxxxxxxxxx"
+                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+              />
+            </div>
+            {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
+            <button
+              type="submit"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25"
+            >
+              <Plus className="h-4 w-4" />
+              Tambah kontak
+            </button>
+          </form>
+        </div>
       </div>
 
-      <Card className="rounded-xl shadow-sm">
-        <CardContent className="space-y-4 p-4">
+      <div className="cg-card rounded-2xl">
+        <div className="space-y-3 p-4">
+          {/* Search + filter */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <input
                 value={query}
-                onChange={(e) => {
-                  setPage(1);
-                  setQuery(e.target.value);
-                }}
+                onChange={(e) => { setPage(1); setQuery(e.target.value); }}
                 placeholder="Cari nama, nomor, email, atau label..."
-                className="pl-9"
+                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
               />
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex h-10 items-center gap-2 rounded-md border bg-background px-3 text-sm">
-                <Filter className="h-4 w-4 text-muted-foreground" />
+              <div className="flex h-10 items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm">
+                <Filter className="h-4 w-4 text-slate-500" />
                 <select
                   value={waStatus}
-                  onChange={(e) => {
-                    setPage(1);
-                    setWaStatus(e.target.value);
-                  }}
-                  className="bg-transparent outline-none"
+                  onChange={(e) => { setPage(1); setWaStatus(e.target.value); }}
+                  className="bg-transparent text-sm text-white outline-none"
                 >
                   <option value="">Semua status WA</option>
                   <option value="ACTIVE">Aktif WA</option>
@@ -208,116 +194,130 @@ export default function ContactsTable() {
                 </select>
               </div>
               {loading && (
-                <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="inline-flex items-center gap-2 text-sm text-slate-500">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   Memuat
                 </span>
               )}
             </div>
           </div>
 
+          {/* Bulk actions */}
           {selected.size > 0 && (
-            <div className="flex flex-col gap-3 rounded-xl border bg-primary/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-sm font-semibold text-primary">{selected.size} kontak dipilih</span>
+            <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/[0.06] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-sm font-bold text-primary">{selected.size} kontak dipilih</span>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={bulkTag}>
-                  <Tag className="mr-2 h-4 w-4" />
-                  Label
-                </Button>
-                <Button size="sm" variant="destructive" onClick={bulkDelete}>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Hapus
-                </Button>
+                <button
+                  onClick={bulkTag}
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary"
+                >
+                  <Tag className="h-3.5 w-3.5" /> Label
+                </button>
+                <button
+                  onClick={bulkDelete}
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-red-500/20 bg-red-500/10 px-3 text-xs font-bold text-red-400 transition hover:bg-red-500/20"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Hapus
+                </button>
               </div>
             </div>
           )}
+        </div>
 
-          <div className="overflow-hidden rounded-xl border">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[860px] text-sm">
-                <thead className="bg-muted/40">
-                  <tr className="border-b text-left text-xs uppercase text-muted-foreground">
-                    <th className="w-12 p-3">
-                      <input
-                        type="checkbox"
-                        checked={items.length > 0 && selected.size === items.length}
-                        onChange={toggleAll}
-                        aria-label="Pilih semua"
-                      />
-                    </th>
-                    <th className="p-3">Kontak</th>
-                    <th className="p-3">Telepon</th>
-                    <th className="p-3">Lokasi</th>
-                    <th className="p-3">Kategori</th>
-                    <th className="p-3 text-center">Skor</th>
-                    <th className="p-3">Status WA</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-card">
-                  {items.map((contact) => (
-                    <tr key={contact.id} className="border-b last:border-0 hover:bg-muted/30">
-                      <td className="p-3">
-                        <input
-                          type="checkbox"
-                          checked={selected.has(contact.id)}
-                          onChange={() => toggle(contact.id)}
-                          aria-label={`Pilih ${contact.name ?? contact.phone}`}
-                        />
-                      </td>
-                      <td className="p-3">
-                        <div className="font-semibold">{contact.name ?? "Tanpa nama"}</div>
-                        <div className="text-xs text-muted-foreground">{contact.email ?? contact.label ?? "Belum ada detail tambahan"}</div>
-                      </td>
-                      <td className="p-3 font-medium text-muted-foreground">+{contact.phone}</td>
-                      <td className="p-3 text-muted-foreground">{contact.city ?? "-"}</td>
-                      <td className="p-3">
-                        {contact.category ? <Badge variant="outline">{contact.category}</Badge> : <span className="text-muted-foreground">-</span>}
-                      </td>
-                      <td className="p-3 text-center">
-                        <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", scoreClass(contact.score))}>
-                          {contact.score}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold", WA_BADGE[contact.waStatus])}>
-                          {contact.waStatus === "ACTIVE" ? <CheckCircle2 className="h-3.5 w-3.5" /> : contact.waStatus === "INACTIVE" ? <XCircle className="h-3.5 w-3.5" /> : null}
-                          {WA_LABEL[contact.waStatus]}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  {items.length === 0 && !loading && (
-                    <tr>
-                      <td colSpan={7} className="p-10 text-center">
-                        <div className="mx-auto max-w-sm">
-                          <div className="text-base font-semibold">Belum ada kontak yang cocok</div>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            Tambahkan manual, impor CSV/Excel, atau ambil lead dari Scraper.
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[860px] text-sm">
+            <thead>
+              <tr className="border-y border-white/[0.08] bg-white/[0.03]">
+                <th className="w-12 p-3">
+                  <input
+                    type="checkbox"
+                    checked={items.length > 0 && selected.size === items.length}
+                    onChange={toggleAll}
+                    aria-label="Pilih semua"
+                    className="h-4 w-4 cursor-pointer accent-primary"
+                  />
+                </th>
+                {["Kontak", "Telepon", "Lokasi", "Kategori", "Skor", "Status WA"].map((h) => (
+                  <th key={h} className={cn("p-3 text-xs font-bold uppercase text-slate-500", h === "Skor" && "text-center")}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((contact) => (
+                <tr key={contact.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+                  <td className="p-3">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(contact.id)}
+                      onChange={() => toggle(contact.id)}
+                      aria-label={`Pilih ${contact.name ?? contact.phone}`}
+                      className="h-4 w-4 cursor-pointer accent-primary"
+                    />
+                  </td>
+                  <td className="p-3">
+                    <p className="font-bold text-white">{contact.name ?? "Tanpa nama"}</p>
+                    <p className="text-xs text-slate-500">{contact.email ?? contact.label ?? "Belum ada detail tambahan"}</p>
+                  </td>
+                  <td className="p-3 font-medium text-slate-300">+{contact.phone}</td>
+                  <td className="p-3 text-slate-400">{contact.city ?? "-"}</td>
+                  <td className="p-3">
+                    {contact.category ? (
+                      <span className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-xs font-medium text-slate-300">{contact.category}</span>
+                    ) : (
+                      <span className="text-slate-500">-</span>
+                    )}
+                  </td>
+                  <td className="p-3 text-center">
+                    <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", scoreClass(contact.score))}>
+                      {contact.score}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold", WA_BADGE[contact.waStatus])}>
+                      {contact.waStatus === "ACTIVE" ? <CheckCircle2 className="h-3.5 w-3.5" /> : contact.waStatus === "INACTIVE" ? <XCircle className="h-3.5 w-3.5" /> : null}
+                      {WA_LABEL[contact.waStatus]}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              {items.length === 0 && !loading && (
+                <tr>
+                  <td colSpan={7} className="p-10 text-center">
+                    <p className="font-bold text-white">Belum ada kontak yang cocok</p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Tambahkan manual, impor CSV/Excel, atau ambil lead dari Scraper.
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-sm text-muted-foreground">
-              Halaman {page} dari {totalPages}
-            </span>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-                Sebelumnya
-              </Button>
-              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-                Berikutnya
-              </Button>
-            </div>
+        {/* Pagination */}
+        <div className="flex flex-col gap-3 border-t border-white/[0.08] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm text-slate-500">
+            Halaman {page} dari {totalPages} · {total.toLocaleString("id-ID")} total kontak
+          </span>
+          <div className="flex gap-2">
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="h-8 rounded-full border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+            >
+              Sebelumnya
+            </button>
+            <button
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="h-8 rounded-full border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+            >
+              Berikutnya
+            </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

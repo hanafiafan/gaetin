@@ -33,7 +33,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -466,9 +465,9 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       <div className={cn("grid gap-4 items-start", legacyOsmEnabled ? "xl:grid-cols-[minmax(0,1fr)_380px]" : "max-w-2xl mx-auto")}>
         {legacyOsmEnabled && (
           mode === "manual" ? (
-            <Card className="overflow-hidden rounded-2xl shadow-sm">
-              <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between border-b bg-card px-4 py-3 gap-3">
+            <div className="cg-card overflow-hidden rounded-2xl">
+              <div className="p-0">
+                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/[0.08] bg-white/[0.02] px-4 py-3 gap-3">
                   <div>
                     <div className="font-semibold text-sm">Area pencarian manual</div>
                     <div className="text-xs text-muted-foreground">Klik peta atau cari lokasi</div>
@@ -485,31 +484,31 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   </div>
                 </div>
                 <div ref={mapEl} className="h-[440px] w-full" />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : mode === "auto" ? (
-            <Card className="rounded-2xl shadow-sm flex items-center justify-center bg-muted/10 h-full min-h-[440px]">
-              <CardContent className="text-center p-6 max-w-md">
+            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-2xl">
+              <div className="p-6 max-w-md text-center">
                 <Radar className="h-12 w-12 mx-auto text-primary/40 mb-4" />
-                <h3 className="text-lg font-semibold">Otomatis Wilayah</h3>
-                <p className="text-sm text-muted-foreground mt-2">
+                <h3 className="text-lg font-bold text-white">Otomatis Wilayah</h3>
+                <p className="text-sm text-slate-400 mt-2">
                   Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
-            <Card className="rounded-2xl shadow-sm flex items-center justify-center bg-muted/10 h-full min-h-[440px]">
-              <CardContent className="text-center p-6 max-w-md">
-                <h3 className="text-lg font-semibold">Mode Ekstensi</h3>
-                <p className="text-sm text-muted-foreground mt-2">Pencarian dilakukan otomatis di tab Google Maps yang dibuka oleh sistem.</p>
-              </CardContent>
-            </Card>
+            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-2xl">
+              <div className="p-6 max-w-md text-center">
+                <h3 className="text-lg font-bold text-white">Mode Ekstensi</h3>
+                <p className="text-sm text-slate-400 mt-2">Pencarian dilakukan otomatis di tab Google Maps yang dibuka oleh sistem.</p>
+              </div>
+            </div>
           )
         )}
         
         {mode === "extension" && activeJobId && jobStatus === "RUNNING" ? (
-            <Card className="border-primary/30 bg-primary/[0.03]">
-              <CardContent className="p-5">
+            <div className="cg-card rounded-2xl border-primary/30 bg-primary/[0.03]">
+              <div className="p-5">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <Loader2 className="h-5 w-5 text-primary animate-spin" />
@@ -536,11 +535,11 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     </button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
-            <Card className="rounded-2xl shadow-sm">
-          <CardContent className="space-y-5 p-5">
+            <div className="cg-card rounded-2xl">
+          <div className="space-y-5 p-5">
 
             {legacyOsmEnabled && (
               <div className="flex rounded-lg border bg-muted/30 p-1">
@@ -768,25 +767,25 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 </>
               )}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
         )}
       </div>
 
       {savedJobs.length > 0 && (
-        <Card className="rounded-2xl shadow-sm">
-          <CardContent className="p-4">
+        <div className="cg-card rounded-2xl">
+          <div className="p-4">
             <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-sm font-semibold">Riwayat scraping</h2>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{savedJobs.length}</span>
+              <h2 className="text-sm font-bold text-white">Riwayat scraping</h2>
+              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary">{savedJobs.length}</span>
             </div>
             <div className="flex flex-wrap gap-2">
             {savedJobs.map((j) => (
               <div
                 key={j.id}
                 className={cn(
-                  "flex items-center gap-1 rounded-full border bg-background pr-1 pl-3 py-1 text-sm transition-colors hover:bg-muted",
-                  currentJob?.id === j.id && "border-primary bg-primary/5",
+                  "flex items-center gap-1 rounded-full border border-white/[0.08] bg-white/[0.03] pr-1 pl-3 py-1 text-sm transition hover:border-white/15",
+                  currentJob?.id === j.id && "border-primary/30 bg-primary/[0.06]",
                 )}
               >
                 <button
@@ -812,21 +811,21 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {selectedJobId && (
-        <Card className="rounded-2xl shadow-sm">
-          <CardContent className="space-y-4 p-4">
+        <div className="cg-card rounded-2xl">
+          <div className="space-y-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <h2 className="text-base font-semibold">Hasil lead</h2>
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                <h2 className="text-base font-bold text-white">Hasil lead</h2>
+                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold tabular-nums text-primary">
                   {leads.length}
                 </span>
                 {currentJob?.name && (
-                  <span className="text-xs text-muted-foreground truncate max-w-[200px]">{currentJob.name}</span>
+                  <span className="text-xs text-slate-400 truncate max-w-[200px]">{currentJob.name}</span>
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
@@ -852,15 +851,15 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 </Button>
               </div>
             </div>
-            <div className="grid gap-2 rounded-xl border bg-muted/20 p-3 md:grid-cols-[minmax(0,1fr)_150px_120px_140px]">
+            <div className="grid gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 md:grid-cols-[minmax(0,1fr)_150px_120px_140px]">
               <div className="relative">
-                <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                 <Input value={leadQuery} onChange={(e) => setLeadQuery(e.target.value)} placeholder="Cari bisnis, kategori, atau nomor" className="pl-9" />
               </div>
               <select
                 value={savedFilter}
                 onChange={(e) => setSavedFilter(e.target.value as "all" | "saved" | "unsaved")}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className="h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white"
                 aria-label="Filter status simpan"
               >
                 <option value="all">Semua status</option>
@@ -870,7 +869,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               <select
                 value={minRating}
                 onChange={(e) => setMinRating(e.target.value)}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className="h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white"
                 aria-label="Filter rating"
               >
                 <option value="0">Semua rating</option>
@@ -878,47 +877,47 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 <option value="4">Rating 4+</option>
                 <option value="4.5">Rating 4.5+</option>
               </select>
-              <label className="flex h-10 items-center gap-2 rounded-md border border-input bg-background px-3 text-sm">
-                <input type="checkbox" checked={phoneOnly} onChange={(e) => setPhoneOnly(e.target.checked)} />
+              <label className="flex h-10 items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-slate-300">
+                <input type="checkbox" checked={phoneOnly} onChange={(e) => setPhoneOnly(e.target.checked)} className="accent-primary" />
                 Ada nomor
               </label>
             </div>
-            <div className="overflow-hidden rounded-xl border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.08]">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[920px] text-sm">
-                  <thead className="bg-muted/40">
-                    <tr className="border-b text-left text-xs uppercase text-muted-foreground">
+                  <thead>
+                    <tr className="border-b border-white/[0.08] bg-white/[0.03] text-left text-xs uppercase">
                   <th className="w-10 p-3">
-                    <input type="checkbox" checked={leads.length > 0 && selected.size === leads.length} onChange={toggleAll} aria-label="Pilih semua" />
+                    <input type="checkbox" checked={leads.length > 0 && selected.size === leads.length} onChange={toggleAll} aria-label="Pilih semua" className="accent-primary" />
                   </th>
-                  <th className="p-3">Bisnis</th>
-                  <th className="p-3">No. WA</th>
-                  <th className="hidden p-3 md:table-cell">Rating</th>
-                  <th className="p-3 text-right">Aksi</th>
+                  <th className="p-3 font-bold text-slate-500">Bisnis</th>
+                  <th className="p-3 font-bold text-slate-500">No. WA</th>
+                  <th className="hidden p-3 md:table-cell font-bold text-slate-500">Rating</th>
+                  <th className="p-3 text-right font-bold text-slate-500">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="bg-card">
+              <tbody>
                 {leads.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-sm text-muted-foreground">
+                    <td colSpan={5} className="p-8 text-center text-sm text-slate-500">
                       Belum ada hasil untuk filter ini.
                     </td>
                   </tr>
                 )}
                 {leads.map((l) => (
-                  <tr key={l.id} className="border-b last:border-0 align-top hover:bg-muted/30">
+                  <tr key={l.id} className="border-b border-white/[0.05] last:border-0 align-top hover:bg-white/[0.02]">
                     <td className="p-3">
-                      <input type="checkbox" checked={selected.has(l.id)} onChange={() => toggle(l.id)} disabled={l.saved} aria-label={`Pilih ${l.businessName}`} />
+                      <input type="checkbox" checked={selected.has(l.id)} onChange={() => toggle(l.id)} disabled={l.saved} aria-label={`Pilih ${l.businessName}`} className="accent-primary" />
                     </td>
                     <td className="p-3">
-                      <div className="flex items-center gap-2 font-semibold">
+                      <div className="flex items-center gap-2 font-bold text-white">
                         {l.businessName}
-                        {l.saved && <CheckCircle2 className="h-4 w-4 text-green-600" />}
+                        {l.saved && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
                       </div>
-                      <div className="text-xs text-muted-foreground">{l.address ?? "-"}</div>
+                      <div className="text-xs text-slate-500">{l.address ?? "-"}</div>
                       {l.category && <Badge variant="outline" className="mt-2">{l.category}</Badge>}
                     </td>
-                    <td className="p-3 text-muted-foreground">
+                    <td className="p-3 text-slate-400">
                       {l.phone ? (
                         <span className="inline-flex items-center gap-1">
                           <Smartphone className="h-4 w-4" />
@@ -926,21 +925,21 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         </span>
                       ) : "-"}
                     </td>
-                    <td className="hidden p-3 md:table-cell">
+                    <td className="hidden p-3 md:table-cell text-slate-400">
                       {l.rating ?? "-"}{l.reviewCount ? ` (${l.reviewCount})` : ""}
                     </td>
                     <td className="p-3">
                       <div className="flex justify-end gap-1">
                         {l.phone && (
-                          <a href={`https://wa.me/${l.phone}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-600 hover:bg-green-500/20">Chat</a>
+                          <a href={`https://wa.me/${l.phone}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400 hover:bg-emerald-500/20">Chat</a>
                         )}
                         {l.website && (
-                          <a href={l.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:bg-muted">
+                          <a href={l.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-white/[0.08] px-2 py-1 text-xs text-slate-300 hover:border-white/20">
                             <Globe2 className="h-3.5 w-3.5" />
                             Web
                           </a>
                         )}
-                        <a href={mapsLink(l)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:bg-muted">
+                        <a href={mapsLink(l)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-white/[0.08] px-2 py-1 text-xs text-slate-300 hover:border-white/20">
                           <ExternalLink className="h-3.5 w-3.5" />
                           Maps
                         </a>
@@ -952,8 +951,8 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             </table>
               </div>
           </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );
