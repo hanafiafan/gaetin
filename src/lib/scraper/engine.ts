@@ -150,7 +150,9 @@ async function overpassSearch(o: GetPlacesOpts): Promise<RawPlace[]> {
   let query = "";
 
   if (o.region) {
-    const areaName = escapeOverpassRegex(o.region);
+    // OSM "name" tag rarely contains the full comma-separated address, usually just the city name.
+    const shortRegion = o.region.split(",")[0].trim();
+    const areaName = escapeOverpassRegex(shortRegion);
     const tags = ["name", "amenity", "shop", "healthcare", "office"];
     const statements = tags.flatMap(tag => [
       `node(area.searchArea)["${tag}"~"${regex}","i"];`,
