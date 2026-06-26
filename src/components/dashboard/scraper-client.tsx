@@ -533,12 +533,12 @@ export default function ScraperClient() {
                 />
                 <p className="text-xs text-muted-foreground">Sistem akan mencari lead di seluruh area administrasi ini.</p>
                 {showSuggestions && regionSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 z-10 mt-1 max-h-60 overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
+                  <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-lg border border-border bg-background/95 backdrop-blur-md shadow-xl outline-none ring-1 ring-black/5">
                     {regionSuggestions.map((s, i) => (
                       <button
                         key={i}
                         type="button"
-                        className="w-full text-left relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        className="w-full text-left relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2.5 text-sm outline-none hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                         onClick={() => {
                           setRegionInput(s.display_name);
                           setShowSuggestions(false);
