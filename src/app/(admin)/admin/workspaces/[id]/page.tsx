@@ -6,9 +6,6 @@ import {
   ArrowLeft, BarChart3, CreditCard, Database, Loader2,
   MessageCircle, Phone, Radar, RefreshCw, Shield, Users,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -25,22 +22,23 @@ interface WorkspaceDetail {
   creditLedger: { id: string; amount: number; reason: string; balanceAfter: number; createdAt: string }[];
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  ACTIVE: "bg-green-500/15 text-green-600",
-  TRIAL: "bg-amber-500/15 text-amber-600",
-  EXPIRED: "bg-red-500/15 text-red-600",
-  BLOCKED: "bg-red-600/15 text-red-700",
-  CANCELLED: "bg-muted text-muted-foreground",
-  COMPLETED: "bg-green-500/15 text-green-600",
-  RUNNING: "bg-blue-500/15 text-blue-600",
-  FAILED: "bg-red-500/15 text-red-600",
-  STOPPED: "bg-muted text-muted-foreground",
-  SENT: "bg-green-500/15 text-green-600",
-  DRAFT: "bg-muted text-muted-foreground",
-  SENDING: "bg-blue-500/15 text-blue-600",
+const STATUS_BADGE: Record<string, string> = {
+  ACTIVE: "bg-emerald-500/15 text-emerald-400",
+  TRIAL: "bg-amber-500/15 text-amber-400",
+  EXPIRED: "bg-red-500/15 text-red-400",
+  BLOCKED: "bg-red-600/15 text-red-400",
+  CANCELLED: "bg-white/[0.06] text-slate-400",
+  COMPLETED: "bg-emerald-500/15 text-emerald-400",
+  RUNNING: "bg-blue-500/15 text-blue-400",
+  FAILED: "bg-red-500/15 text-red-400",
+  STOPPED: "bg-white/[0.06] text-slate-400",
+  SENT: "bg-emerald-500/15 text-emerald-400",
+  DRAFT: "bg-white/[0.06] text-slate-400",
+  SENDING: "bg-blue-500/15 text-blue-400",
 };
 
 const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };
+const SELECT_CLASS = "h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white";
 
 export default function WorkspaceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -56,7 +54,6 @@ export default function WorkspaceDetailPage() {
     if (j.success) setData(j.data);
     setLoading(false);
   }
-
   useEffect(() => { load(); }, [id]);
 
   async function act(body: Record<string, unknown>) {
@@ -80,14 +77,15 @@ export default function WorkspaceDetailPage() {
   }
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    <div className="flex h-64 items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-slate-500" />
+    </div>
   );
-  if (!data) return <div className="text-muted-foreground">Workspace tidak ditemukan.</div>;
+  if (!data) return <div className="text-slate-400">Workspace tidak ditemukan.</div>;
 
   const { workspace, stats, scraperJobs, blasts, creditLedger } = data;
   const sub = workspace.subscription;
-  const owner = workspace.memberships.find(m => m.role === "OWNER")?.user;
-  const creditBalance = creditLedger.reduce((s, l) => s + l.amount, workspace.credits);
+  const owner = workspace.memberships.find((m) => m.role === "OWNER")?.user;
 
   const TABS = [
     { key: "overview", label: "Overview", icon: BarChart3 },
@@ -98,38 +96,36 @@ export default function WorkspaceDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/workspaces")}>
-          <ArrowLeft className="mr-1.5 h-4 w-4" />Kembali
-        </Button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={() => router.push("/admin/workspaces")} className="flex h-9 items-center gap-1.5 rounded-xl border border-white/[0.08] px-3 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">
+          <ArrowLeft className="h-4 w-4" /> Kembali
+        </button>
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold">{workspace.name}</h1>
-          <p className="text-sm text-muted-foreground">/{workspace.slug} · {owner?.email}</p>
+          <h1 className="text-2xl font-bold text-white">{workspace.name}</h1>
+          <p className="text-sm text-slate-400">/{workspace.slug} · {owner?.email}</p>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          <Button size="sm" variant="outline" onClick={load}><RefreshCw className="mr-1.5 h-4 w-4" />Refresh</Button>
-          <Button size="sm" variant="outline" onClick={addCredits}><CreditCard className="mr-1.5 h-4 w-4" />Kredit</Button>
-          <select
-            value={sub?.plan ?? "STARTER"}
-            onChange={e => act({ action: "setPlan", plan: e.target.value })}
-            className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-          >
+        <div className="flex flex-wrap gap-2">
+          <button onClick={load} className="flex h-9 items-center gap-1.5 rounded-xl border border-white/[0.08] px-3 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">
+            <RefreshCw className="h-4 w-4" /> Refresh
+          </button>
+          <button onClick={addCredits} className="flex h-9 items-center gap-1.5 rounded-xl border border-white/[0.08] px-3 text-sm font-bold text-slate-300 transition hover:border-white/15">
+            <CreditCard className="h-4 w-4" /> Kredit
+          </button>
+          <select value={sub?.plan ?? "STARTER"} onChange={(e) => act({ action: "setPlan", plan: e.target.value })} className={SELECT_CLASS}>
             <option value="STARTER">Starter</option>
             <option value="GROWTH">Bisnis</option>
             <option value="PRO">Pro</option>
           </select>
-          <select
-            value={sub?.status ?? "TRIAL"}
-            onChange={e => act({ action: "setStatus", status: e.target.value })}
-            className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-          >
+          <select value={sub?.status ?? "TRIAL"} onChange={(e) => act({ action: "setStatus", status: e.target.value })} className={SELECT_CLASS}>
             <option value="TRIAL">Trial</option>
             <option value="ACTIVE">Aktif</option>
             <option value="EXPIRED">Kedaluwarsa</option>
             <option value="BLOCKED">Suspend</option>
             <option value="CANCELLED">Batal</option>
           </select>
-          <Button size="sm" onClick={impersonate}><Shield className="mr-1.5 h-4 w-4" />Masuk sebagai user</Button>
+          <button onClick={impersonate} className="flex h-9 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-primary transition hover:bg-primary/25">
+            <Shield className="h-4 w-4" /> Masuk sebagai user
+          </button>
         </div>
       </div>
 
@@ -140,60 +136,58 @@ export default function WorkspaceDetailPage() {
           { label: "Kontak", value: stats.contacts.toLocaleString("id-ID"), icon: Users },
           { label: "Kredit saldo", value: workspace.credits.toLocaleString("id-ID"), icon: CreditCard },
           { label: "Paket", value: PLAN_LABEL[sub?.plan ?? "STARTER"] ?? sub?.plan, icon: BarChart3 },
-        ].map(c => (
-          <Card key={c.label}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">{c.label}</div>
-                <c.icon className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div className="mt-1 text-2xl font-semibold">{c.value}</div>
-            </CardContent>
-          </Card>
+        ].map((c) => (
+          <div key={c.label} className="cg-card rounded-2xl p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-slate-400">{c.label}</div>
+              <c.icon className="h-4 w-4 text-primary" />
+            </div>
+            <div className="mt-1 text-2xl font-bold text-white">{c.value}</div>
+          </div>
         ))}
       </div>
 
       {/* Subscription info */}
-      <Card>
-        <CardContent className="p-4 flex flex-wrap gap-4 items-center">
+      <div className="cg-card flex flex-wrap items-center gap-6 rounded-2xl p-4">
+        <div>
+          <div className="mb-1 text-xs text-slate-500">Status langganan</div>
+          <span className={cn("rounded-full px-3 py-1 text-xs font-bold", STATUS_BADGE[sub?.status ?? "TRIAL"] ?? STATUS_BADGE.TRIAL)}>
+            {sub?.status ?? "TRIAL"}
+          </span>
+        </div>
+        <div>
+          <div className="mb-1 text-xs text-slate-500">Paket</div>
+          <span className="rounded-full border border-white/[0.08] px-3 py-1 text-xs font-bold text-slate-300">
+            {PLAN_LABEL[sub?.plan ?? "STARTER"] ?? sub?.plan}
+          </span>
+        </div>
+        {sub?.trialEndsAt && (
           <div>
-            <div className="text-xs text-muted-foreground mb-1">Status langganan</div>
-            <span className={cn("rounded-full px-3 py-1 text-xs font-semibold", STATUS_COLOR[sub?.status ?? "TRIAL"] ?? STATUS_COLOR.TRIAL)}>
-              {sub?.status ?? "TRIAL"}
-            </span>
+            <div className="mb-1 text-xs text-slate-500">Trial berakhir</div>
+            <div className="text-sm text-white">{new Date(sub.trialEndsAt).toLocaleDateString("id-ID")}</div>
           </div>
+        )}
+        {sub?.currentPeriodEnd && (
           <div>
-            <div className="text-xs text-muted-foreground mb-1">Paket</div>
-            <Badge variant="outline">{PLAN_LABEL[sub?.plan ?? "STARTER"] ?? sub?.plan}</Badge>
+            <div className="mb-1 text-xs text-slate-500">Periode berakhir</div>
+            <div className="text-sm text-white">{new Date(sub.currentPeriodEnd).toLocaleDateString("id-ID")}</div>
           </div>
-          {sub?.trialEndsAt && (
-            <div>
-              <div className="text-xs text-muted-foreground mb-1">Trial berakhir</div>
-              <div className="text-sm">{new Date(sub.trialEndsAt).toLocaleDateString("id-ID")}</div>
-            </div>
-          )}
-          {sub?.currentPeriodEnd && (
-            <div>
-              <div className="text-xs text-muted-foreground mb-1">Periode berakhir</div>
-              <div className="text-sm">{new Date(sub.currentPeriodEnd).toLocaleDateString("id-ID")}</div>
-            </div>
-          )}
-          <div>
-            <div className="text-xs text-muted-foreground mb-1">Owner</div>
-            <div className="text-sm">{owner?.name} · {owner?.email}</div>
-          </div>
-        </CardContent>
-      </Card>
+        )}
+        <div>
+          <div className="mb-1 text-xs text-slate-500">Owner</div>
+          <div className="text-sm text-white">{owner?.name} · {owner?.email}</div>
+        </div>
+      </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b">
-        {TABS.map(t => (
+      <div className="flex gap-1 border-b border-white/[0.08]">
+        {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={cn(
-              "flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors",
-              tab === t.key ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+              "flex items-center gap-1.5 border-b-2 px-4 py-2 text-sm font-bold transition-colors",
+              tab === t.key ? "border-primary text-primary" : "border-transparent text-slate-400 hover:text-white"
             )}
           >
             <t.icon className="h-4 w-4" />{t.label}
@@ -201,123 +195,122 @@ export default function WorkspaceDetailPage() {
         ))}
       </div>
 
-      {/* Tab content */}
       {tab === "overview" && (
         <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader><CardTitle className="text-sm">Anggota tim</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {workspace.memberships.map(m => (
-                  <div key={m.user.id} className="flex items-center justify-between text-sm">
-                    <div>
-                      <div className="font-medium">{m.user.name}</div>
-                      <div className="text-xs text-muted-foreground">{m.user.email}</div>
-                    </div>
-                    <Badge variant="outline">{m.role}</Badge>
+          <div className="cg-card rounded-2xl p-5">
+            <h3 className="mb-3 text-sm font-bold text-white">Anggota tim</h3>
+            <div className="space-y-2">
+              {workspace.memberships.map((m) => (
+                <div key={m.user.id} className="flex items-center justify-between text-sm">
+                  <div>
+                    <div className="font-bold text-white">{m.user.name}</div>
+                    <div className="text-xs text-slate-500">{m.user.email}</div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle className="text-sm">Scraping terbaru</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {scraperJobs.slice(0, 5).map(j => (
-                  <div key={j.id} className="flex items-center justify-between text-sm">
-                    <div className="flex-1 min-w-0">
-                      <div className="truncate font-medium">{j.name ?? j.keyword}</div>
-                      <div className="text-xs text-muted-foreground">{j.totalFound} lead</div>
-                    </div>
-                    <span className={cn("ml-2 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap", STATUS_COLOR[j.status] ?? STATUS_COLOR.STOPPED)}>{j.status}</span>
+                  <span className="rounded-full border border-white/[0.08] px-3 py-1 text-xs text-slate-300">{m.role}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="cg-card rounded-2xl p-5">
+            <h3 className="mb-3 text-sm font-bold text-white">Scraping terbaru</h3>
+            <div className="space-y-2">
+              {scraperJobs.slice(0, 5).map((j) => (
+                <div key={j.id} className="flex items-center justify-between text-sm">
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-bold text-white">{j.name ?? j.keyword}</div>
+                    <div className="text-xs text-slate-500">{j.totalFound} lead</div>
                   </div>
-                ))}
-                {scraperJobs.length === 0 && <div className="text-sm text-muted-foreground">Belum ada scraping.</div>}
-              </div>
-            </CardContent>
-          </Card>
+                  <span className={cn("ml-2 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-bold", STATUS_BADGE[j.status] ?? STATUS_BADGE.STOPPED)}>{j.status}</span>
+                </div>
+              ))}
+              {scraperJobs.length === 0 && <div className="text-sm text-slate-500">Belum ada scraping.</div>}
+            </div>
+          </div>
         </div>
       )}
 
       {tab === "scraper" && (
-        <div className="overflow-hidden rounded-xl border">
+        <div className="overflow-hidden rounded-xl border border-white/[0.08]">
           <table className="w-full text-sm">
-            <thead className="bg-muted/40">
-              <tr className="border-b text-left text-xs uppercase text-muted-foreground">
+            <thead className="border-b border-white/[0.08] bg-white/[0.03]">
+              <tr className="text-left text-xs uppercase text-slate-500">
                 <th className="p-3">Job</th>
                 <th className="p-3 text-center">Lead</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Waktu</th>
               </tr>
             </thead>
-            <tbody className="bg-card">
-              {scraperJobs.map(j => (
-                <tr key={j.id} className="border-b last:border-0">
+            <tbody>
+              {scraperJobs.map((j) => (
+                <tr key={j.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
                   <td className="p-3">
-                    <div className="font-medium">{j.name ?? j.keyword}</div>
-                    <div className="text-xs text-muted-foreground">{j.keyword}</div>
+                    <div className="font-bold text-white">{j.name ?? j.keyword}</div>
+                    <div className="text-xs text-slate-500">{j.keyword}</div>
                   </td>
-                  <td className="p-3 text-center font-semibold">{j.totalFound}</td>
-                  <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", STATUS_COLOR[j.status] ?? STATUS_COLOR.STOPPED)}>{j.status}</span></td>
-                  <td className="p-3 text-xs text-muted-foreground">{new Date(j.createdAt).toLocaleDateString("id-ID")}</td>
+                  <td className="p-3 text-center font-bold text-white">{j.totalFound}</td>
+                  <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", STATUS_BADGE[j.status] ?? STATUS_BADGE.STOPPED)}>{j.status}</span></td>
+                  <td className="p-3 text-xs text-slate-500">{new Date(j.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               ))}
-              {scraperJobs.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Belum ada scraping.</td></tr>}
+              {scraperJobs.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-slate-500">Belum ada scraping.</td></tr>}
             </tbody>
           </table>
         </div>
       )}
 
       {tab === "blasts" && (
-        <div className="overflow-hidden rounded-xl border">
+        <div className="overflow-hidden rounded-xl border border-white/[0.08]">
           <table className="w-full text-sm">
-            <thead className="bg-muted/40">
-              <tr className="border-b text-left text-xs uppercase text-muted-foreground">
+            <thead className="border-b border-white/[0.08] bg-white/[0.03]">
+              <tr className="text-left text-xs uppercase text-slate-500">
                 <th className="p-3">Blast</th>
                 <th className="p-3 text-center">Penerima</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Waktu</th>
               </tr>
             </thead>
-            <tbody className="bg-card">
-              {blasts.map(b => (
-                <tr key={b.id} className="border-b last:border-0">
-                  <td className="p-3 font-medium">{b.name ?? "(tanpa nama)"}</td>
-                  <td className="p-3 text-center"><span className="inline-flex items-center gap-1"><Phone className="h-3.5 w-3.5" />{b.totalRecipients}</span></td>
-                  <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", STATUS_COLOR[b.status] ?? STATUS_COLOR.DRAFT)}>{b.status}</span></td>
-                  <td className="p-3 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleDateString("id-ID")}</td>
+            <tbody>
+              {blasts.map((b) => (
+                <tr key={b.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+                  <td className="p-3 font-bold text-white">{b.name ?? "(tanpa nama)"}</td>
+                  <td className="p-3 text-center">
+                    <span className="inline-flex items-center gap-1 text-slate-300"><Phone className="h-3.5 w-3.5" />{b.totalRecipients}</span>
+                  </td>
+                  <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", STATUS_BADGE[b.status] ?? STATUS_BADGE.DRAFT)}>{b.status}</span></td>
+                  <td className="p-3 text-xs text-slate-500">{new Date(b.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               ))}
-              {blasts.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Belum ada blast.</td></tr>}
+              {blasts.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-slate-500">Belum ada blast.</td></tr>}
             </tbody>
           </table>
         </div>
       )}
 
       {tab === "credits" && (
-        <div className="overflow-hidden rounded-xl border">
+        <div className="overflow-hidden rounded-xl border border-white/[0.08]">
           <table className="w-full text-sm">
-            <thead className="bg-muted/40">
-              <tr className="border-b text-left text-xs uppercase text-muted-foreground">
+            <thead className="border-b border-white/[0.08] bg-white/[0.03]">
+              <tr className="text-left text-xs uppercase text-slate-500">
                 <th className="p-3">Jenis</th>
                 <th className="p-3 text-right">Saldo Akhir</th>
                 <th className="p-3 text-right">Jumlah</th>
                 <th className="p-3">Waktu</th>
               </tr>
             </thead>
-            <tbody className="bg-card">
-              {creditLedger.map(l => (
-                <tr key={l.id} className="border-b last:border-0">
-                  <td className="p-3"><Badge variant="outline" className="text-xs">{l.reason}</Badge></td>
-                  <td className="p-3 text-right tabular-nums text-muted-foreground">{l.balanceAfter.toLocaleString("id-ID")}</td>
-                  <td className={cn("p-3 text-right font-semibold tabular-nums", l.amount >= 0 ? "text-green-600" : "text-red-600")}>
+            <tbody>
+              {creditLedger.map((l) => (
+                <tr key={l.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+                  <td className="p-3">
+                    <span className="rounded-full border border-white/[0.08] px-2 py-0.5 text-xs text-slate-300">{l.reason}</span>
+                  </td>
+                  <td className="p-3 text-right tabular-nums text-slate-400">{l.balanceAfter.toLocaleString("id-ID")}</td>
+                  <td className={cn("p-3 text-right font-bold tabular-nums", l.amount >= 0 ? "text-emerald-400" : "text-red-400")}>
                     {l.amount >= 0 ? "+" : ""}{l.amount.toLocaleString("id-ID")}
                   </td>
-                  <td className="p-3 text-xs text-muted-foreground">{new Date(l.createdAt).toLocaleDateString("id-ID")}</td>
+                  <td className="p-3 text-xs text-slate-500">{new Date(l.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               ))}
-              {creditLedger.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Belum ada riwayat kredit.</td></tr>}
+              {creditLedger.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-slate-500">Belum ada riwayat kredit.</td></tr>}
             </tbody>
           </table>
         </div>

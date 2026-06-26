@@ -1,7 +1,5 @@
 import AdminLandingEditor from "@/components/admin/admin-landing-editor";
 import OwnerCmsControl from "@/components/admin/owner-cms-control";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   BarChart3,
   Database,
@@ -80,10 +78,10 @@ export default function AdminCmsPage() {
       <div className="cg-card-strong overflow-hidden rounded-[2rem]">
         <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
-            <Badge className="mb-4 gap-1 border border-primary/25 bg-primary/15 text-primary hover:bg-primary/15">
+            <span className="mb-4 inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
               Owner CMS
-            </Badge>
+            </span>
             <h1 className="max-w-3xl text-3xl font-black text-white sm:text-4xl">
               Pusat pengaturan Gaetin untuk konten, fitur, pelanggan, dan keputusan produk.
             </h1>
@@ -112,41 +110,33 @@ export default function AdminCmsPage() {
         {modules.map((m) => {
           const Icon = m.icon;
           return (
-            <Card key={m.title} className="cg-card rounded-3xl transition-all hover:-translate-y-0.5 hover:border-primary/40">
-              <CardHeader className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-glow">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <Badge variant="outline">{m.status}</Badge>
+            <div key={m.title} className="cg-card rounded-3xl p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-glow">
+                  <Icon className="h-5 w-5" />
                 </div>
-                <CardTitle className="text-base text-white">{m.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm leading-6 text-slate-300">{m.desc}</p>
-              </CardContent>
-            </Card>
+                <span className="rounded-full border border-white/[0.08] px-2.5 py-1 text-xs text-slate-400">{m.status}</span>
+              </div>
+              <p className="mb-1 text-base font-bold text-white">{m.title}</p>
+              <p className="text-sm leading-6 text-slate-300">{m.desc}</p>
+            </div>
           );
         })}
       </div>
 
       <OwnerCmsControl />
 
-      <Card className="cg-card rounded-3xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base text-white">
-            <Megaphone className="h-5 w-5 text-primary" />
-            Editor Landing Saat Ini
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="mb-5 max-w-2xl text-sm text-slate-300">
-            Ini adalah modul CMS yang sudah aktif. Berikutnya akan dipecah menjadi form visual,
-            media picker, preview, versi draft/published, dan audit perubahan.
-          </p>
-          <AdminLandingEditor />
-        </CardContent>
-      </Card>
+      <div className="cg-card rounded-3xl p-6">
+        <div className="mb-4 flex items-center gap-2 text-base font-bold text-white">
+          <Megaphone className="h-5 w-5 text-primary" />
+          Editor Landing Saat Ini
+        </div>
+        <p className="mb-5 max-w-2xl text-sm text-slate-300">
+          Ini adalah modul CMS yang sudah aktif. Berikutnya akan dipecah menjadi form visual,
+          media picker, preview, versi draft/published, dan audit perubahan.
+        </p>
+        <AdminLandingEditor />
+      </div>
     </div>
   );
 }
