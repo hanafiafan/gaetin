@@ -162,7 +162,7 @@ async function overpassSearch(o: GetPlacesOpts): Promise<RawPlace[]> {
     
     query = `
 [out:json][timeout:60];
-area["name"~"${areaName}",i]->.searchArea;
+area["name"="${areaName}"]->.searchArea;
 (
 ${statements}
 );
