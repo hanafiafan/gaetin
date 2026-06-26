@@ -84,6 +84,8 @@ export default function ScraperClient() {
   const [label, setLabel] = useState("");
   const [mode, setMode] = useState<"auto" | "manual">("manual");
   const [regionInput, setRegionInput] = useState("");
+  const [regionSuggestions, setRegionSuggestions] = useState<{display_name: string}[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [mapSearch, setMapSearch] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState("");
@@ -168,7 +170,22 @@ export default function ScraperClient() {
 
   useEffect(() => {
     if (circleRef.current) circleRef.current.setRadius(radius * 1000);
-  }, [radius]);
+  }, [activeJobId, currentJob]);
+
+  useEffect(() => {
+    if (mode === "auto" && regionInput.trim().length > 2 && showSuggestions) {
+      const delayFn = setTimeout(async () => {
+        try {
+          const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(regionInput)}&limit=5`);
+          const j = await r.json();
+          setRegionSuggestions(j || []);
+        } catch {}
+      }, 500);
+      return () => clearTimeout(delayFn);
+    } else if (regionInput.trim().length <= 2) {
+      setRegionSuggestions([]);
+    }
+  }, [regionInput, mode, showSuggestions]);
 
   useEffect(() => {
     if (circleRef.current) {
@@ -265,7 +282,7 @@ export default function ScraperClient() {
         mode === "auto" 
           ? {
               keyword: combinedKeyword,
-              mode: "map",
+              mode: "text",
               location: regionInput,
               name: areaName || `${combinedKeyword} (${regionInput})`,
               color,
@@ -502,10 +519,36 @@ export default function ScraperClient() {
             </div>
 
             {mode === "auto" ? (
-              <div className="space-y-2 border-l-2 border-primary pl-3 py-1">
+              <div className="space-y-2 border-l-2 border-primary pl-3 py-1 relative">
                 <label className="text-sm font-medium text-primary">Nama Wilayah / Kota</label>
-                <Input value={regionInput} onChange={(e) => setRegionInput(e.target.value)} placeholder="mis. Bandung, Jakarta Selatan" />
+                <Input 
+                  value={regionInput} 
+                  onChange={(e) => {
+                    setRegionInput(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  placeholder="mis. Bandung, Jakarta Selatan" 
+                />
                 <p className="text-xs text-muted-foreground">Sistem akan mencari lead di seluruh area administrasi ini.</p>
+                {showSuggestions && regionSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 z-10 mt-1 max-h-60 overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
+                    {regionSuggestions.map((s, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className="w-full text-left relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        onClick={() => {
+                          setRegionInput(s.display_name);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {s.display_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-2">
