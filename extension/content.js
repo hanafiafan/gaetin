@@ -59,6 +59,140 @@ function parseCoords(url) {
   return m ? { latitude: parseFloat(m[1]), longitude: parseFloat(m[2]) } : {};
 }
 
+// Wait for the detail panel to finish loading.
+// Detects [data-item-id] elements which only appear when content is rendered.
+// Falls back to fixed timeout if detection fails.
+async function waitForPanelData(maxMs) {
+  const prevTitle = document.querySelector('h1')?.textContent?.trim() || '';
+  await sleep(500); // minimum: let click register and navigation start
+  const start = Date.now();
+  while (Date.now() - start < maxMs - 500) {
+    const curTitle = document.querySelector('h1')?.textContent?.trim() || '';
+    const hasData = document.querySelector('[data-item-id]') !== null;
+    // Panel is ready when title changed (new place loaded) and data items appeared
+    if (hasData && curTitle !== prevTitle) {
+      await sleep(200); // brief stabilization
+      return;
+    }
+    // Fallback: panel has data even if title didn't change (e.g. same-named place)
+    if (hasData && Date.now() - start > maxMs * 0.6) {
+      await sleep(200);
+      return;
+    }
+    await sleep(150);
+  }
+  // Timeout: proceed with whatever is in the DOM
+}
+
+// Extract phone — tries three strategies in order of reliability
+function extractPhone() {
+  // 1. data-item-id="phone:tel:+628xxx" — most reliable, set by Maps itself
+  const el = document.querySelector('[data-item-id^="phone:tel:"]');
+  if (el) return el.getAttribute('data-item-id').replace('phone:tel:', '').trim();
+
+  // 2. Clickable tel: hyperlink
+  const link = document.querySelector('a[href^="tel:"]');
+  if (link) return decodeURIComponent(link.href.replace('tel:', '')).trim();
+
+  // 3. aria-label scan: "Telepon: 0811-xxx" or "Phone: +62xxx"
+  for (const node of document.querySelectorAll('[aria-label]')) {
+    const lbl = node.getAttribute('aria-label') || '';
+    const m = lbl.match(/^(?:Telepon|Phone|Nomor telepon|Call(?:\s+number)?):\s*(.+)/i);
+    if (m) return m[1].trim();
+    // Bare phone number as aria-label (Indonesian format)
+    if (/^(\+62|0)[\d\s\-\.]{8,}$/.test(lbl.trim())) return lbl.trim();
+  }
+  return null;
+}
+
+// Normalize phone to digits-only local format (0xxx) for CRM consistency
+function normalizePhone(raw) {
+  if (!raw) return null;
+  let d = raw.replace(/[\s\-\.\(\)]/g, '');
+  if (d.startsWith('+62')) d = '0' + d.slice(3);
+  else if (/^62\d{9,}/.test(d)) d = '0' + d.slice(2);
+  return d.length >= 9 ? d : null;
+}
+
+// Extract website — tries authority link first, then aria-label, then external links
+function extractWebsite() {
+  // 1. data-item-id="authority" — official website link button
+  const auth = document.querySelector('[data-item-id="authority"]');
+  if (auth) return auth.getAttribute('href') || auth.textContent.trim() || null;
+
+  // 2. aria-label: "Website: https://..." or "Situs web: ..."
+  for (const node of document.querySelectorAll('[aria-label]')) {
+    const lbl = node.getAttribute('aria-label') || '';
+    const m = lbl.match(/^(?:Website|Situs\s*web|Web):\s*(.+)/i);
+    if (m) return m[1].trim();
+  }
+
+  // 3. External links in the panel (exclude all Google domains)
+  const panel = document.querySelector('[role="main"]') || document.body;
+  for (const a of panel.querySelectorAll('a[href^="http"]')) {
+    const h = a.href;
+    if (!h.includes('google.') && !h.includes('goo.gl') && !h.includes('googleapis.') && !h.includes('maps.app')) {
+      return h;
+    }
+  }
+  return null;
+}
+
+// Extract address — data-item-id="address" first, then aria-label scan
+function extractAddress() {
+  const el = document.querySelector('[data-item-id="address"]');
+  if (el) {
+    const lbl = el.getAttribute('aria-label') || '';
+    const cleaned = lbl.replace(/^(?:Alamat|Address):\s*/i, '').trim();
+    if (cleaned) return cleaned;
+    // Fallback to textContent (normalize whitespace)
+    const txt = el.textContent.replace(/\s+/g, ' ').trim();
+    if (txt) return txt;
+  }
+
+  for (const node of document.querySelectorAll('[aria-label]')) {
+    const lbl = node.getAttribute('aria-label') || '';
+    const m = lbl.match(/^(?:Alamat|Address):\s*(.+)/i);
+    if (m) return m[1].trim();
+  }
+  return null;
+}
+
+// Extract rating and review count from aria-label
+function extractRatingAndReviews() {
+  const span = document.querySelector('span[aria-label*="stars"]') ||
+               document.querySelector('span[aria-label*="bintang"]');
+  if (!span) return { rating: null, reviewCount: null };
+
+  const lbl = span.getAttribute('aria-label') || '';
+  // "4,9 bintang" or "4.9 stars"
+  const rm = lbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
+  const rating = rm ? parseFloat(rm[1].replace(',', '.')) : null;
+
+  // Review count: look for "(3.089)" or "3,089 reviews" in surrounding text
+  const container = span.closest('[data-value]') || span.parentElement?.parentElement;
+  const txt = container?.textContent || span.parentElement?.textContent || '';
+  const cm = txt.match(/\(([\d.,]+)\)/) || txt.match(/([\d.,]+)\s+(?:ulasan|reviews?)/i);
+  const reviewCount = cm ? parseInt(cm[1].replace(/[.,]/g, ''), 10) : null;
+
+  return { rating, reviewCount };
+}
+
+// Extract business category from Maps category button
+function extractCategory() {
+  const btn = document.querySelector('button[jsaction*="pane.rating.category"]');
+  if (btn) return btn.textContent.trim() || null;
+  // Fallback: span with data-value that looks like a category (no digits)
+  const spans = document.querySelectorAll('span[jsan]');
+  for (const s of spans) {
+    const t = s.textContent.trim();
+    if (t && t.length < 50 && !/\d/.test(t) && !/^(Rp|Rating|Buka|Tutup)/i.test(t)) {
+      return t;
+    }
+  }
+  return null;
+}
+
 async function sendToApi(jobId, currentLeads, isFinished, token) {
   if (currentLeads.length === 0 && !isFinished) return;
   try {
@@ -82,18 +216,19 @@ async function sendToApi(jobId, currentLeads, isFinished, token) {
 async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
   isRunning = true;
   createFloatUI();
-  
+
   let totalSaved = 0;
   let chunkLeads = [];
   const processedUrls = new Set();
-  
-  let feed = document.querySelector('div[role="feed"]');
-  if (!feed) {
-    throw new Error('Tidak menemukan daftar hasil pencarian. Harap cari sesuatu dulu di Maps.');
-  }
+
+  const feed = document.querySelector('div[role="feed"]');
+  if (!feed) throw new Error('Tidak menemukan daftar hasil pencarian. Harap cari sesuatu dulu di Maps.');
+
+  // delaySec is the user-controlled wait per item; minimum 1.5s regardless
+  const waitPerItem = Math.max(1500, delaySec * 1000);
 
   let noNewItemsCount = 0;
-  
+
   const reportProgress = (statusMsg) => {
     updateFloatUI(totalSaved + chunkLeads.length, maxLeads, statusMsg);
     try {
@@ -116,19 +251,19 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
       reportProgress("Menggulir halaman ke bawah...");
       feed.scrollTo(0, feed.scrollHeight);
       await sleep(2500);
-      
+
       const textLower = feed.innerText.toLowerCase();
-      const endText = textLower.includes("you've reached the end of the list") || 
-                      textLower.includes("mencapai akhir daftar") || 
-                      textLower.includes("sudah berada di dasar") ||
-                      textLower.includes("sudah berada di akhir") ||
-                      textLower.includes("no more results");
-      
-      if (endText) {
+      if (
+        textLower.includes("you've reached the end of the list") ||
+        textLower.includes("mencapai akhir daftar") ||
+        textLower.includes("sudah berada di dasar") ||
+        textLower.includes("sudah berada di akhir") ||
+        textLower.includes("no more results")
+      ) {
         reportProgress("Mencapai akhir daftar.");
         break;
       }
-      
+
       noNewItemsCount++;
       continue;
     }
@@ -139,50 +274,31 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
       if (!isRunning || (totalSaved + chunkLeads.length) >= maxLeads) break;
       processedUrls.add(link.href);
 
-      reportProgress(`Mengekstrak data ke-${totalSaved + chunkLeads.length + 1}...`);
-      
-      link.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      await sleep(300);
+      reportProgress(`Mengekstrak ke-${totalSaved + chunkLeads.length + 1}...`);
 
+      link.scrollIntoView({ block: 'center' });
+      await sleep(200);
       link.click();
-      await sleep(delaySec * 1000); 
+
+      // Dynamic wait: returns as soon as panel data is ready, capped at waitPerItem
+      await waitForPanelData(waitPerItem);
 
       try {
-        const businessName = link.getAttribute('aria-label') || document.querySelector('h1')?.innerText?.trim() || 'Tanpa nama';
+        const businessName =
+          link.getAttribute('aria-label')?.trim() ||
+          document.querySelector('h1')?.innerText?.trim() ||
+          'Tanpa nama';
 
-        const buttons = Array.from(document.querySelectorAll('button[aria-label]'));
-        let phone = null, website = null, address = null;
-
-        for (const btn of buttons) {
-          const label = btn.getAttribute('aria-label') || '';
-          if (label.startsWith('Phone: ') || label.startsWith('Telepon: ')) {
-            phone = label.replace('Phone: ', '').replace('Telepon: ', '').trim();
-          }
-          if (label.startsWith('Website: ') || label.startsWith('Situs web: ')) {
-            website = label.replace('Website: ', '').replace('Situs web: ', '').trim();
-          }
-          if (label.startsWith('Address: ') || label.startsWith('Alamat: ')) {
-            address = label.replace('Address: ', '').replace('Alamat: ', '').trim();
-          }
-        }
-
-        const ratingSpan = document.querySelector('span[aria-label*="stars"]') || document.querySelector('span[aria-label*="bintang"]');
-        let rating = null, reviewCount = null;
-        if (ratingSpan && ratingSpan.innerText) {
-          rating = parseFloat(ratingSpan.innerText.replace(',', '.'));
-          const parentText = ratingSpan.parentElement ? ratingSpan.parentElement.innerText : '';
-          const match = parentText.match(/\(([\d,\.]+)\)/);
-          if (match) reviewCount = parseInt(match[1].replace(/[\.,]/g, ''), 10);
-        }
-
-        const categoryBtn = document.querySelector('button[jsaction*="pane.rating.category"]');
-        const category = categoryBtn ? categoryBtn.innerText.trim() : null;
-
+        const phone = normalizePhone(extractPhone());
+        const website = extractWebsite();
+        const address = extractAddress();
+        const { rating, reviewCount } = extractRatingAndReviews();
+        const category = extractCategory();
         const coords = parseCoords(window.location.href);
-        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount, ...coords });
-        reportProgress(`Disimpan: ${businessName}`);
 
-        // Kirim data setiap 5 lead agar realtime di dashboard
+        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount, ...coords });
+        reportProgress(`OK: ${businessName}`);
+
         if (chunkLeads.length >= 5) {
           await sendToApi(jobId, [...chunkLeads], false, token);
           totalSaved += chunkLeads.length;
@@ -194,8 +310,7 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
     }
   }
 
-  // Kirim sisa data dan sinyal selesai
-  reportProgress(`Menyelesaikan proses...`);
+  reportProgress('Menyelesaikan proses...');
   await sendToApi(jobId, [...chunkLeads], true, token);
   totalSaved += chunkLeads.length;
 
@@ -209,27 +324,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: false, error: 'Proses scraping sedang berjalan!' });
       return true;
     }
-    
-    // Send immediate acknowledgment
     sendResponse({ success: true });
 
-    // Run async task
     scrapeGoogleMaps(request.jobId, request.maxLeads || 100, request.delaySec || 2, request.token || '')
       .then(count => {
         isRunning = false;
-        try {
-          chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: true, message: `Sukses menyimpan ${count} leads ke Gaetin CRM!` });
-        } catch(e) {}
+        try { chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: true, message: `Sukses menyimpan ${count} leads ke Gaetin CRM!` }); } catch(e) {}
       })
       .catch(err => {
         isRunning = false;
         hideFloatUI();
-        try {
-          chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: false, message: `Error: ${err.message}` });
-        } catch(e) {}
+        try { chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: false, message: `Error: ${err.message}` }); } catch(e) {}
       });
-      
-    return true; 
+
+    return true;
   }
 
   if (request.action === 'STOP_SCRAPE') {
@@ -249,7 +357,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const delaySec = parseFloat(params.get('gaetin_delay')) || 2;
 
   if (isAuto && jobId) {
-    // Simpan ke storage agar popup bisa baca tanpa perlu paste ulang
     chrome.storage.local.set({ gaetinSessionKey: `${jobId}:${token}`, gaetinMaxLeads: maxLeads, gaetinDelay: delaySec });
 
     let checkAttempts = 0;
@@ -258,19 +365,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (document.querySelector('div[role="feed"]')) {
         clearInterval(waitForFeed);
 
-        // Feed found, start scraping
         scrapeGoogleMaps(jobId, maxLeads, delaySec, token)
           .then(count => {
             isRunning = false;
-            
-            // Show countdown
             createFloatUI();
             if (floatUI) floatUI.style.display = 'block';
             let secondsLeft = 5;
             const statusEl = document.getElementById('gf-status');
             const leadsEl = document.getElementById('gf-leads');
             if (leadsEl) leadsEl.textContent = `${count} tersimpan`;
-            
+
             const countdownInterval = setInterval(() => {
               if (statusEl) {
                 statusEl.textContent = `Sukses! Menutup tab dalam ${secondsLeft} detik...`;
@@ -279,10 +383,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               secondsLeft--;
               if (secondsLeft < 0) {
                 clearInterval(countdownInterval);
-                window.close(); // Close the tab automatically
+                window.close();
               }
             }, 1000);
-
           })
           .catch(err => {
             isRunning = false;
@@ -295,7 +398,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
           });
       } else if (checkAttempts > 30) {
-        clearInterval(waitForFeed); // Stop checking after 30 seconds
+        clearInterval(waitForFeed);
       }
     }, 1000);
   }
