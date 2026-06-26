@@ -54,11 +54,30 @@ function hideFloatUI() {
   if (floatUI) floatUI.style.display = 'none';
 }
 
+async function sendToApi(jobId, currentLeads, isFinished) {
+  if (currentLeads.length === 0 && !isFinished) return;
+  try {
+    const url = "https://gaetin.vercel.app/api/scraper/extension";
+    const targetUrl = window.location.href.includes('localhost') ? 'http://localhost:3000/api/scraper/extension' : url;
+    
+    const res = await fetch(targetUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobId, leads: currentLeads, isFinished })
+    });
+    
+    if (!res.ok) throw new Error('API menolak request');
+  } catch (e) {
+    console.error('Koneksi API gagal: ', e.message);
+  }
+}
+
 async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
   isRunning = true;
   createFloatUI();
   
-  const leads = [];
+  let totalSaved = 0;
+  let chunkLeads = [];
   const processedUrls = new Set();
   
   let feed = document.querySelector('div[role="feed"]');
@@ -69,11 +88,11 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
   let noNewItemsCount = 0;
   
   const reportProgress = (statusMsg) => {
-    updateFloatUI(leads.length, maxLeads, statusMsg);
+    updateFloatUI(totalSaved + chunkLeads.length, maxLeads, statusMsg);
     try {
       chrome.runtime.sendMessage({
         type: 'SCRAPE_PROGRESS',
-        current: leads.length,
+        current: totalSaved + chunkLeads.length,
         max: maxLeads,
         status: statusMsg
       });
@@ -82,7 +101,7 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
 
   reportProgress("Memindai daftar bisnis...");
 
-  while (isRunning && leads.length < maxLeads && noNewItemsCount < 3) {
+  while (isRunning && (totalSaved + chunkLeads.length) < maxLeads && noNewItemsCount < 3) {
     const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
     const newLinks = links.filter(a => !processedUrls.has(a.href));
 
@@ -91,8 +110,17 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
       feed.scrollTo(0, feed.scrollHeight);
       await sleep(2500);
       
-      const endText = feed.innerText.includes("You've reached the end of the list") || feed.innerText.includes("Anda telah mencapai akhir daftar");
-      if (endText) break;
+      const textLower = feed.innerText.toLowerCase();
+      const endText = textLower.includes("you've reached the end of the list") || 
+                      textLower.includes("mencapai akhir daftar") || 
+                      textLower.includes("sudah berada di dasar") ||
+                      textLower.includes("sudah berada di akhir") ||
+                      textLower.includes("no more results");
+      
+      if (endText) {
+        reportProgress("Mencapai akhir daftar.");
+        break;
+      }
       
       noNewItemsCount++;
       continue;
@@ -101,17 +129,16 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
     noNewItemsCount = 0;
 
     for (const link of newLinks) {
-      if (!isRunning || leads.length >= maxLeads) break;
+      if (!isRunning || (totalSaved + chunkLeads.length) >= maxLeads) break;
       processedUrls.add(link.href);
 
-      reportProgress(`Mengekstrak data ke-${leads.length + 1}...`);
+      reportProgress(`Mengekstrak data ke-${totalSaved + chunkLeads.length + 1}...`);
       
-      // Auto-scroll
       link.scrollIntoView({ behavior: 'smooth', block: 'center' });
       await sleep(300);
 
       link.click();
-      await sleep(delaySec * 1000); // Tunggu panel detail terbuka sesuai delay user
+      await sleep(delaySec * 1000); 
 
       try {
         const h1 = document.querySelector('h1');
@@ -145,34 +172,28 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
         const categoryBtn = document.querySelector('button[jsaction*="pane.rating.category"]');
         const category = categoryBtn ? categoryBtn.innerText.trim() : null;
 
-        leads.push({ businessName, phone, website, address, category, rating, reviewCount });
-        reportProgress(`Tersimpan: ${businessName}`);
+        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount });
+        reportProgress(`Disimpan: ${businessName}`);
+        
+        // Kirim data setiap 5 lead agar realtime di dashboard
+        if (chunkLeads.length >= 5) {
+          await sendToApi(jobId, [...chunkLeads], false);
+          totalSaved += chunkLeads.length;
+          chunkLeads = [];
+        }
       } catch (e) {
         console.error('Error parsing place', e);
       }
     }
   }
 
-  if (leads.length > 0) {
-    reportProgress(`Mengirim ${leads.length} data ke Gaetin API...`);
-    try {
-      const url = "https://gaetin.vercel.app/api/scraper/extension";
-      const targetUrl = window.location.href.includes('localhost') ? 'http://localhost:3000/api/scraper/extension' : url;
-      
-      const res = await fetch(targetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jobId, leads })
-      });
-      
-      if (!res.ok) throw new Error('API menolak request');
-    } catch (e) {
-      throw new Error('Koneksi API gagal: ' + e.message);
-    }
-  }
+  // Kirim sisa data dan sinyal selesai
+  reportProgress(`Menyelesaikan proses...`);
+  await sendToApi(jobId, [...chunkLeads], true);
+  totalSaved += chunkLeads.length;
 
   hideFloatUI();
-  return leads.length;
+  return totalSaved;
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

@@ -218,11 +218,14 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
       const j = await r.json();
       if (j.success) {
         setJobStatus(j.data.status);
+        
+        // Selalu muat leads agar terlihat real-time bertambah
+        loadLeads(id);
+        
         if (["COMPLETED", "FAILED", "STOPPED"].includes(j.data.status)) {
           if (pollRef.current) clearInterval(pollRef.current);
           pollRef.current = null;
           setBusy(false);
-          loadLeads(id);
           loadSaved();
         }
       }

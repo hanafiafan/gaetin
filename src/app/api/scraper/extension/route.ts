@@ -17,7 +17,7 @@ export async function OPTIONS() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { jobId, leads } = body;
+    const { jobId, leads, isFinished } = body;
 
     if (!jobId || !Array.isArray(leads)) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400, headers: { "Access-Control-Allow-Origin": "*" } });
@@ -73,13 +73,18 @@ export async function POST(req: Request) {
     }
 
     // Update job total found
+    const updateData: any = {
+      totalFound: { increment: added },
+      duplicates: { increment: duplicates },
+    };
+    
+    if (isFinished) {
+      updateData.status = "COMPLETED";
+    }
+
     await prisma.scraperJob.update({
       where: { id: job.id },
-      data: {
-        totalFound: { increment: added },
-        duplicates: { increment: duplicates },
-        status: "COMPLETED"
-      }
+      data: updateData
     });
 
     return NextResponse.json({ success: true, added }, { headers: { "Access-Control-Allow-Origin": "*" } });
