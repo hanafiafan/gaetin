@@ -312,7 +312,11 @@ export default function ScraperClient() {
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
     
-    if (mode !== "extension") {
+    if (mode === "extension") {
+      const q = encodeURIComponent(`${combinedKeyword} di ${regionInput || areaName || "Indonesia"}`);
+      const gmapsUrl = `https://www.google.com/maps/search/${q}?gaetin_job_id=${j.data.id}&gaetin_auto=true`;
+      window.open(gmapsUrl, "_blank");
+    } else {
       // Trigger background execution and let it hang so Vercel doesn't kill it
       fetch(`/api/scraper/${j.data.id}/execute`, { method: "POST" }).catch(e => console.error("Execute failed", e));
     }
@@ -440,15 +444,12 @@ export default function ScraperClient() {
         
         {mode === "extension" && activeJobId ? (
             <Card className="border-primary/50 shadow-[0_0_15px_rgba(37,99,235,0.1)]">
-              <CardContent className="p-4 space-y-4">
-                <div className="text-center">
-                  <div className="mb-2 text-sm text-muted-foreground">Job ID untuk Ekstensi Anda:</div>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 bg-secondary p-3 rounded-md text-primary font-mono text-center select-all">{activeJobId}</code>
-                    <Button variant="outline" onClick={() => navigator.clipboard.writeText(activeJobId)}>Copy</Button>
-                  </div>
+              <CardContent className="p-6 text-center space-y-4">
+                <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin" />
+                <div>
+                  <h3 className="font-semibold text-lg text-primary">Scraping Otomatis Berjalan</h3>
+                  <p className="text-sm text-muted-foreground mt-2">Tab Google Maps telah dibuka. Ekstensi Gaetin sedang menyedot data secara otomatis. Harap jangan tutup tab tersebut hingga selesai.</p>
                 </div>
-                <div className="text-xs text-center text-muted-foreground">Silakan paste kode ini di ekstensi Chrome untuk memulai pengiriman data ke sesi ini.</div>
               </CardContent>
             </Card>
           ) : (

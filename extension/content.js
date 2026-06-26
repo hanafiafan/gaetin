@@ -210,3 +210,59 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 });
+
+// AUTO-START LOGIC
+(function checkAutoStart() {
+  const params = new URLSearchParams(window.location.search);
+  const isAuto = params.get('gaetin_auto') === 'true';
+  const jobId = params.get('gaetin_job_id');
+  const maxLeads = parseInt(params.get('gaetin_max')) || 100;
+  const delaySec = parseFloat(params.get('gaetin_delay')) || 2;
+
+  if (isAuto && jobId) {
+    let checkAttempts = 0;
+    const waitForFeed = setInterval(() => {
+      checkAttempts++;
+      if (document.querySelector('div[role="feed"]')) {
+        clearInterval(waitForFeed);
+        
+        // Feed found, start scraping
+        scrapeGoogleMaps(jobId, maxLeads, delaySec)
+          .then(count => {
+            isRunning = false;
+            
+            // Show countdown
+            createFloatUI();
+            let secondsLeft = 5;
+            const statusEl = document.getElementById('gf-status');
+            const leadsEl = document.getElementById('gf-leads');
+            if (leadsEl) leadsEl.textContent = `${count} tersimpan`;
+            
+            const countdownInterval = setInterval(() => {
+              if (statusEl) {
+                statusEl.textContent = `Sukses! Menutup tab dalam ${secondsLeft} detik...`;
+                statusEl.style.color = '#10b981';
+              }
+              secondsLeft--;
+              if (secondsLeft < 0) {
+                clearInterval(countdownInterval);
+                window.close(); // Close the tab automatically
+              }
+            }, 1000);
+
+          })
+          .catch(err => {
+            isRunning = false;
+            createFloatUI();
+            const statusEl = document.getElementById('gf-status');
+            if (statusEl) {
+              statusEl.textContent = `Error: ${err.message}`;
+              statusEl.style.color = '#ef4444';
+            }
+          });
+      } else if (checkAttempts > 30) {
+        clearInterval(waitForFeed); // Stop checking after 30 seconds
+      }
+    }, 1000);
+  }
+})();
