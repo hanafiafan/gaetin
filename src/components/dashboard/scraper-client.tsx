@@ -265,7 +265,7 @@ export default function ScraperClient() {
   function toggleAll() {
     setSelected((p) => (p.size === leads.length ? new Set() : new Set(leads.map((l) => l.id))));
   }
-  function exportHref() {
+  function exportHref(format = "csv") {
     const params = new URLSearchParams({ pageSize: "5000" });
     if (selectedJobId) params.set("scraperJobId", selectedJobId);
     if (leadQuery.trim()) params.set("query", leadQuery.trim());
@@ -273,6 +273,7 @@ export default function ScraperClient() {
     if (savedFilter === "unsaved") params.set("saved", "false");
     if (phoneOnly) params.set("hasPhone", "true");
     if (Number(minRating) > 0) params.set("minRating", minRating);
+    params.set("format", format);
     return `/api/leads/export?${params.toString()}`;
   }
 
@@ -465,9 +466,15 @@ export default function ScraperClient() {
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" asChild>
-                  <a href={exportHref()}>
+                  <a href={exportHref("csv")}>
                     <Download className="mr-2 h-4 w-4" />
                     Export CSV
+                  </a>
+                </Button>
+                <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700" asChild>
+                  <a href={exportHref("xlsx")}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Export Excel
                   </a>
                 </Button>
                 <Button size="sm" variant="outline" disabled={selected.size === 0} onClick={() => saveSelected(false)}>

@@ -43,6 +43,8 @@ export async function GET(req: NextRequest) {
     take: 5_000,
   });
 
+  const format = sp.get("format") || "csv";
+
   const header = [
     "businessName",
     "phone",
@@ -58,23 +60,40 @@ export async function GET(req: NextRequest) {
     "saved",
     "createdAt",
   ];
-  const rows = leads.map((lead) =>
-    [
-      lead.businessName,
-      lead.phone,
-      lead.email,
-      lead.website,
-      lead.address,
-      lead.city,
-      lead.category,
-      lead.rating,
-      lead.reviewCount,
-      lead.latitude,
-      lead.longitude,
-      lead.saved ? "yes" : "no",
-      lead.createdAt.toISOString(),
-    ].map(csvCell).join(","),
-  );
+  
+  const rawRows = leads.map((lead) => [
+    lead.businessName,
+    lead.phone,
+    lead.email,
+    lead.website,
+    lead.address,
+    lead.city,
+    lead.category,
+    lead.rating,
+    lead.reviewCount,
+    lead.latitude,
+    lead.longitude,
+    lead.saved ? "yes" : "no",
+    lead.createdAt.toISOString(),
+  ]);
+
+  if (format === "xlsx") {
+    const xlsx = await import("xlsx");
+    const ws = xlsx.utils.aoa_to_sheet([header, ...rawRows]);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, "Leads");
+    const buffer = xlsx.write(wb, { type: "buffer", bookType: "xlsx" });
+
+    return new NextResponse(buffer, {
+      headers: {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": `attachment; filename="gaetin-leads-${new Date().toISOString().slice(0, 10)}.xlsx"`,
+        "Cache-Control": "no-store",
+      },
+    });
+  }
+
+  const rows = rawRows.map((r) => r.map(csvCell).join(","));
   const csv = [header.join(","), ...rows].join("\n");
 
   return new NextResponse(csv, {
