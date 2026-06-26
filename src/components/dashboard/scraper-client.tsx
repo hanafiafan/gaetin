@@ -395,6 +395,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
   function exportHref(format = "csv") {
     const params = new URLSearchParams({ pageSize: "5000" });
     if (selectedJobId) params.set("scraperJobId", selectedJobId);
+    if (currentJob?.name) params.set("jobName", currentJob.name);
     if (leadQuery.trim()) params.set("query", leadQuery.trim());
     if (savedFilter === "saved") params.set("saved", "true");
     if (savedFilter === "unsaved") params.set("saved", "false");

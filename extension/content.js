@@ -266,40 +266,88 @@ function extractAddress() {
 }
 
 function extractRatingAndReviews() {
-  // Scope to detail panel only — avoid reading feed list ratings
-  const panel = document.querySelector('[role="main"]');
-  const scope = panel || document;
-  const span = scope.querySelector('span[aria-label*="stars"]') ||
-               scope.querySelector('span[aria-label*="bintang"]');
-  if (!span) return { rating: null, reviewCount: null };
+  // Use the rating BUTTON in the detail panel — it has jsaction="pane.rating.*"
+  // Feed list items do NOT have this button, so this is detail-panel-specific.
+  const ratingBtn = document.querySelector('button[jsaction*="pane.rating"]');
+  if (ratingBtn) {
+    const lbl = ratingBtn.getAttribute('aria-label') || '';
+    // aria-label examples: "4,9 bintang 3.095 ulasan" or "4.9 stars"
+    const rm = lbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
+    const cm = lbl.match(/\(([\d.,]+)\)/) || lbl.match(/([\d.,]+)\s*(?:ulasan|reviews?)/i);
+    if (rm) {
+      const rating = parseFloat(rm[1].replace(',', '.'));
+      const reviewCount = cm ? parseInt(cm[1].replace(/[.,]/g, ''), 10) : null;
+      G('rating via pane.rating button:', rating, reviewCount);
+      return { rating, reviewCount };
+    }
+    // Fallback: child spans of the button
+    for (const span of ratingBtn.querySelectorAll('span[aria-label]')) {
+      const slbl = span.getAttribute('aria-label') || '';
+      const srm = slbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
+      if (srm) {
+        const rating = parseFloat(srm[1].replace(',', '.'));
+        const reviewSpan = ratingBtn.querySelector('span[aria-label*="ulasan"]') ||
+                           ratingBtn.querySelector('span[aria-label*="review"]');
+        const reviewCount = reviewSpan
+          ? parseInt((reviewSpan.getAttribute('aria-label') || '').replace(/\D/g, ''), 10)
+          : null;
+        G('rating via button child span:', rating, reviewCount);
+        return { rating, reviewCount };
+      }
+    }
+  }
 
-  const lbl = span.getAttribute('aria-label') || '';
-  const rm = lbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
-  const rating = rm ? parseFloat(rm[1].replace(',', '.')) : null;
+  // Fallback: walk up from h1 and find the first bintang/stars span
+  const h1 = document.querySelector('h1');
+  let el = h1?.parentElement;
+  for (let i = 0; i < 8 && el && el !== document.body; i++) {
+    const span = el.querySelector('span[aria-label*="bintang"]') ||
+                 el.querySelector('span[aria-label*="stars"]');
+    if (span) {
+      const lbl = span.getAttribute('aria-label') || '';
+      const rm = lbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
+      if (rm) {
+        const rating = parseFloat(rm[1].replace(',', '.'));
+        const reviewSpan = el.querySelector('span[aria-label*="ulasan"]') ||
+                           el.querySelector('span[aria-label*="review"]');
+        const reviewCount = reviewSpan
+          ? parseInt((reviewSpan.getAttribute('aria-label') || '').replace(/\D/g, ''), 10)
+          : null;
+        G('rating via h1-walk:', rating, reviewCount);
+        return { rating, reviewCount };
+      }
+    }
+    el = el.parentElement;
+  }
 
-  const container = span.closest('[data-value]') || span.parentElement?.parentElement;
-  const txt = container?.textContent || span.parentElement?.textContent || '';
-  const cm = txt.match(/\(([\d.,]+)\)/) || txt.match(/([\d.,]+)\s+(?:ulasan|reviews?)/i);
-  const reviewCount = cm ? parseInt(cm[1].replace(/[.,]/g, ''), 10) : null;
-
-  G('rating:', rating, 'reviews:', reviewCount);
-  return { rating, reviewCount };
+  G('rating: NOT FOUND');
+  return { rating: null, reviewCount: null };
 }
 
 function extractCategory() {
-  const btn = document.querySelector('button[jsaction*="pane.rating.category"]');
-  if (btn?.textContent?.trim()) return btn.textContent.trim();
+  // Known jsaction selectors for the category chip in the detail panel
+  for (const sel of [
+    'button[jsaction*="pane.heroHeader.category"]',
+    'button[jsaction*="pane.rating.category"]',
+    'button[jsaction*="pane.widgetHeader.category"]',
+  ]) {
+    const t = document.querySelector(sel)?.textContent?.trim();
+    if (t && !/Harga|Rp|\$|€|£|\d/i.test(t)) return t;
+  }
 
-  // Fallback: button near rating area
-  const panel = document.querySelector('[role="main"]');
-  if (panel) {
-    for (const btn of panel.querySelectorAll('button')) {
+  // Fallback: find the first non-price, non-action button near h1
+  const h1 = document.querySelector('h1');
+  let el = h1?.parentElement;
+  for (let i = 0; i < 5 && el && el !== document.body; i++) {
+    for (const btn of el.querySelectorAll('button, a[href*="category"]')) {
       const t = btn.textContent?.trim();
-      if (t && t.length > 2 && t.length < 40 && !/\d/.test(t) &&
-          !/(Rute|Simpan|Bagikan|Ulasan|Foto|Lihat|Klik|Tambah|Menu|Buka|Tutup)/i.test(t)) {
-        return t;
-      }
+      if (!t || t.length < 3 || t.length > 60) continue;
+      if (/Harga|Rp|\$|€|£|Rute|Simpan|Bagikan|Ulasan|Foto|Lihat|Tambah|Menu|Buka|Tutup|Pesan|Kirim|Reserv|Mulai|Arah|Cari|\d/i.test(t)) continue;
+      if (/[↑→↓↔↕▲▼]/.test(t)) continue; // arrow chars
+      G('category via h1-walk:', t);
+      return t;
     }
+    el = el.parentElement;
   }
   return null;
 }
@@ -404,9 +452,12 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
 
     // 6. Extract all data
     try {
-      const businessName = nextLink.getAttribute('aria-label')?.trim() ||
-                           document.querySelector('h1')?.innerText?.trim() ||
-                           'Tanpa nama';
+      const rawLabel = nextLink.getAttribute('aria-label') || '';
+      const businessName = rawLabel
+        .replace(/[··]\s*(Link yang dikunjungi|Baru dikunjungi|Recently visited)/gi, '')
+        .trim() ||
+        document.querySelector('h1')?.innerText?.trim() ||
+        'Tanpa nama';
       let phone = normalizePhone(extractPhone());
 
       // #2 — phone retry: scroll deeper once and re-extract if phone is missing

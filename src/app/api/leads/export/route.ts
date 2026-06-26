@@ -44,6 +44,14 @@ export async function GET(req: NextRequest) {
   });
 
   const format = sp.get("format") || "csv";
+  const jobName = sp.get("jobName")?.trim() ?? "";
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
+  const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, "-");
+  const safeName = jobName
+    ? jobName.replace(/[^a-zA-Z0-9\s\-_]/g, "").trim().replace(/\s+/g, "-").slice(0, 60)
+    : "gaetin-leads";
+  const fileBase = `${safeName}_${dateStr}_${timeStr}`;
 
   const header = [
     "businessName",
@@ -87,7 +95,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(buffer, {
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename="gaetin-leads-${new Date().toISOString().slice(0, 10)}.xlsx"`,
+        "Content-Disposition": `attachment; filename="${fileBase}.xlsx"`,
         "Cache-Control": "no-store",
       },
     });
@@ -99,7 +107,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="gaetin-leads-${new Date().toISOString().slice(0, 10)}.csv"`,
+      "Content-Disposition": `attachment; filename="${fileBase}.csv"`,
       "Cache-Control": "no-store",
     },
   });
