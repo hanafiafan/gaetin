@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Building2,
+  Contact2,
+  Database,
   LayoutDashboard,
   Megaphone,
   Newspaper,
@@ -20,6 +22,8 @@ const NAV = [
   { href: "/admin", label: "Ringkasan", icon: LayoutDashboard },
   { href: "/admin/workspaces", label: "Workspace", icon: Building2 },
   { href: "/admin/users", label: "Pengguna", icon: Users },
+  { href: "/admin/leads", label: "Data Scraping", icon: Database },
+  { href: "/admin/contacts", label: "Kontak & Nomor", icon: Contact2 },
   { href: "/admin/transactions", label: "Transaksi", icon: Receipt },
   { href: "/admin/cms", label: "CMS Owner", icon: Settings2 },
   { href: "/admin/blog", label: "Blog", icon: Newspaper },

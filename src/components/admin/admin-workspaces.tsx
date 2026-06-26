@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 interface Ws {
@@ -14,6 +15,7 @@ interface Ws {
 }
 
 export default function AdminWorkspaces() {
+  const router = useRouter();
   const [rows, setRows] = useState<Ws[]>([]);
 
   async function load() {
@@ -61,7 +63,7 @@ export default function AdminWorkspaces() {
         <tbody>
           {rows.map((w) => (
             <tr key={w.id} className="border-b last:border-0">
-              <td className="p-3 font-medium">{w.name}<div className="text-xs text-muted-foreground">{w.contacts} kontak</div></td>
+              <td className="p-3 font-medium cursor-pointer hover:text-primary" onClick={() => router.push(`/admin/workspaces/${w.id}`)}>{w.name}<div className="text-xs text-muted-foreground">{w.contacts} kontak</div></td>
               <td className="p-3 text-muted-foreground">{w.owner}</td>
               <td className="p-3">
                 <select
