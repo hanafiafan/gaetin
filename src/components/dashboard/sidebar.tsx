@@ -11,7 +11,6 @@ import {
   Headphones,
   Inbox,
   LayoutDashboard,
-  LogOut,
   Map,
   MessageSquare,
   MessageSquareText,
