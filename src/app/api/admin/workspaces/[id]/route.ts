@@ -32,7 +32,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       where: { workspaceId: params.id },
       orderBy: { createdAt: "desc" },
       take: 10,
-      select: { id: true, name: true, status: true, recipientCount: true, createdAt: true },
+      select: { id: true, name: true, status: true, totalRecipients: true, createdAt: true },
     }),
     prisma.creditLedger.findMany({
       where: { workspaceId: params.id },

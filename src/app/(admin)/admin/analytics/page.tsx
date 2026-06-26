@@ -48,7 +48,7 @@ interface AnalyticsData {
   recentActivity: {
     recentLeads: { businessName: string; category: string | null; phone: string | null; createdAt: string; workspace: { name: string } }[];
     recentContacts: { name: string | null; phone: string; waStatus: string; createdAt: string; workspace: { name: string } }[];
-    recentBlasts: { name: string | null; status: string; recipientCount: number; createdAt: string; workspace: { name: string } }[];
+    recentBlasts: { name: string | null; status: string; totalRecipients: number; createdAt: string; workspace: { name: string } }[];
   };
   credits: { totalIssued: number; totalUsed: number };
   weeklyActivity: { activeWsThisWeek: number; newLeadsThisWeek: number; newContactsThisWeek: number };
@@ -520,7 +520,7 @@ export default function AdminAnalyticsPage() {
                       <tr key={i} className="border-b last:border-0">
                         <td className="py-2 font-medium">{b.name ?? "(tanpa nama)"}</td>
                         <td className="py-2 text-muted-foreground">{b.workspace.name}</td>
-                        <td className="py-2 text-center tabular-nums">{fmt(b.recipientCount)}</td>
+                        <td className="py-2 text-center tabular-nums">{fmt(b.totalRecipients)}</td>
                         <td className="py-2">
                           <span className="rounded-full px-2 py-0.5 text-xs font-medium" style={{ background: `${STATUS_COLOR[b.status] ?? "#6b7280"}20`, color: STATUS_COLOR[b.status] ?? "#6b7280" }}>
                             {b.status}

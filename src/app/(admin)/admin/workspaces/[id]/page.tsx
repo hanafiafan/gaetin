@@ -21,7 +21,7 @@ interface WorkspaceDetail {
   };
   stats: { leads: number; contacts: number };
   scraperJobs: { id: string; keyword: string; name: string | null; status: string; totalFound: number; createdAt: string }[];
-  blasts: { id: string; name: string | null; status: string; recipientCount: number; createdAt: string }[];
+  blasts: { id: string; name: string | null; status: string; totalRecipients: number; createdAt: string }[];
   creditLedger: { id: string; amount: number; kind: string; note: string | null; createdAt: string }[];
 }
 
@@ -284,7 +284,7 @@ export default function WorkspaceDetailPage() {
               {blasts.map(b => (
                 <tr key={b.id} className="border-b last:border-0">
                   <td className="p-3 font-medium">{b.name ?? "(tanpa nama)"}</td>
-                  <td className="p-3 text-center"><span className="inline-flex items-center gap-1"><Phone className="h-3.5 w-3.5" />{b.recipientCount}</span></td>
+                  <td className="p-3 text-center"><span className="inline-flex items-center gap-1"><Phone className="h-3.5 w-3.5" />{b.totalRecipients}</span></td>
                   <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", STATUS_COLOR[b.status] ?? STATUS_COLOR.DRAFT)}>{b.status}</span></td>
                   <td className="p-3 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>

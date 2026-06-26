@@ -126,7 +126,7 @@ export async function GET() {
     // Recent activity
     prisma.lead.findMany({ orderBy: { createdAt: "desc" }, take: 8, select: { businessName: true, category: true, phone: true, createdAt: true, workspace: { select: { name: true } } } }),
     prisma.contact.findMany({ orderBy: { createdAt: "desc" }, take: 8, select: { name: true, phone: true, waStatus: true, createdAt: true, workspace: { select: { name: true } } } }),
-    prisma.blast.findMany({ orderBy: { createdAt: "desc" }, take: 5, select: { name: true, status: true, recipientCount: true, createdAt: true, workspace: { select: { name: true } } } }),
+    prisma.blast.findMany({ orderBy: { createdAt: "desc" }, take: 5, select: { name: true, status: true, totalRecipients: true, createdAt: true, workspace: { select: { name: true } } } }),
     // Credits totals
     prisma.creditLedger.aggregate({ _sum: { amount: true }, where: { amount: { gt: 0 } } }),
     prisma.creditLedger.aggregate({ _sum: { amount: true }, where: { amount: { lt: 0 } } }),
