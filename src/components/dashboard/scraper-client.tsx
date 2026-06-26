@@ -68,7 +68,7 @@ interface Job {
   createdAt: string;
 }
 
-export default function ScraperClient() {
+export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmEnabled?: boolean }) {
   const mapEl = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
@@ -82,7 +82,7 @@ export default function ScraperClient() {
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [radius, setRadius] = useState(5);
   const [label, setLabel] = useState("");
-  const [mode, setMode] = useState<"auto" | "manual" | "extension">("manual");
+  const [mode, setMode] = useState<"auto" | "manual" | "extension">(legacyOsmEnabled ? "auto" : "extension");
   const [regionInput, setRegionInput] = useState("");
   const [regionSuggestions, setRegionSuggestions] = useState<{display_name: string}[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
