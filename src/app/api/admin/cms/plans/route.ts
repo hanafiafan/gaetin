@@ -4,6 +4,8 @@ import { getSuperAdminSession } from "@/lib/auth/session";
 import { getEffectivePlans, setPlansOverride } from "@/lib/plans-store";
 import { fail } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);

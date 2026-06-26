@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db/prisma";
 import { PLANS, type PlanId } from "@/config/plans";
 import { Card, CardContent } from "@/components/ui/card";
 
+export const dynamic = "force-dynamic";
+
 function idr(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
 }
