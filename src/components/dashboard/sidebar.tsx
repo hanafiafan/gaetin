@@ -21,6 +21,7 @@ import {
   Sparkles,
   SquareKanban,
   Users,
+  LogOut,
 } from "lucide-react";
 
 type SidebarProps = {
@@ -102,7 +103,7 @@ export default function Sidebar({ appName = "Gaetin", featureFlags, isSuperAdmin
         </div>
       </div>
 
-      <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1">
+      <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1 pb-4">
         {navGroups.map((group) => {
           const items = group.items.filter((item) => !item.flag || featureFlags?.[item.flag] !== false);
 
@@ -145,8 +146,22 @@ export default function Sidebar({ appName = "Gaetin", featureFlags, isSuperAdmin
         })}
       </nav>
 
+      <div className="mt-2 shrink-0 border-t border-white/10 pt-4">
+        <form action="/api/auth/logout" method="POST">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-slate-400 transition hover:bg-white/[0.06] hover:text-red-400"
+          >
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.05] text-slate-400 transition group-hover:text-red-400">
+              <LogOut className="h-4 w-4" />
+            </span>
+            <span>Keluar (Logout)</span>
+          </button>
+        </form>
+      </div>
+
       {isSuperAdmin ? (
-        <div className="mt-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+        <div className="mt-4 shrink-0 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
           <p className="text-sm font-black text-white">Owner CMS</p>
           <p className="mt-2 text-xs leading-5 text-slate-400">
             Kelola fitur, aset, media, field pelanggan, dan laporan dari halaman admin.
