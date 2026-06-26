@@ -23,7 +23,6 @@ import {
   Sparkles,
   SquareKanban,
   Users,
-  LogOut,
 } from "lucide-react";
 
 type SidebarProps = {
