@@ -489,7 +489,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <Card className="rounded-2xl shadow-sm">
           <CardContent className="space-y-5 p-5">
 
-            {legacyOsmEnabled ? (
+            {legacyOsmEnabled && (
               <div className="flex rounded-lg border bg-muted/30 p-1">
                   <button
                     type="button"

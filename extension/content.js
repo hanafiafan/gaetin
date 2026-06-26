@@ -265,6 +265,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             
             // Show countdown
             createFloatUI();
+            if (floatUI) floatUI.style.display = 'block';
             let secondsLeft = 5;
             const statusEl = document.getElementById('gf-status');
             const leadsEl = document.getElementById('gf-leads');
@@ -286,6 +287,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           .catch(err => {
             isRunning = false;
             createFloatUI();
+            if (floatUI) floatUI.style.display = 'block';
             const statusEl = document.getElementById('gf-status');
             if (statusEl) {
               statusEl.textContent = `Error: ${err.message}`;
