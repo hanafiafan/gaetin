@@ -141,8 +141,7 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
       await sleep(delaySec * 1000); 
 
       try {
-        const h1 = document.querySelector('h1');
-        const businessName = h1 ? h1.innerText.trim() : 'Tanpa nama';
+        const businessName = link.getAttribute('aria-label') || document.querySelector('h1')?.innerText?.trim() || 'Tanpa nama';
 
         const buttons = Array.from(document.querySelectorAll('button[aria-label]'));
         let phone = null, website = null, address = null;

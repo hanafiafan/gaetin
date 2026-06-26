@@ -43,10 +43,9 @@ export async function POST(req: Request) {
       const existing = await prisma.lead.findFirst({
         where: {
           scraperJobId: job.id,
-          OR: [
-            { phone: phone ? phone : undefined },
-            { businessName: l.businessName }
-          ]
+          OR: phone 
+            ? [{ phone }, { businessName: l.businessName }] 
+            : [{ businessName: l.businessName }]
         }
       });
 
