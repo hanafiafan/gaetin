@@ -19,6 +19,7 @@ export const DEFAULT_OWNER_CMS: OwnerCmsSettings = {
     whiteLabel: false,
     aiAssistant: false,
     betaMapAnalysis: true,
+    legacyOsmScraper: false,
   },
   mediaAssets: {
     logo: "",

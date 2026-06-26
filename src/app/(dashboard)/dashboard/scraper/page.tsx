@@ -1,8 +1,12 @@
 import ScraperClient from "@/components/dashboard/scraper-client";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Radar, ShieldAlert, Sparkles } from "lucide-react";
+import { getOwnerCmsSettings } from "@/lib/owner-cms";
 
-export default function ScraperPage() {
+export default async function ScraperPage() {
+  const settings = await getOwnerCmsSettings();
+  const legacyOsmEnabled = settings.featureFlags?.legacyOsmScraper ?? false;
+
   return (
     <div className="space-y-5">
       <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
@@ -14,15 +18,18 @@ export default function ScraperPage() {
             </Badge>
             <h1 className="text-3xl font-semibold tracking-tight">Scraper Lead</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih
-              menjadi kontak siap outreach.
+              {legacyOsmEnabled 
+                ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach." 
+                : "Gunakan ekstensi Chrome Gaetin untuk menyedot kontak prospek secara otomatis dari Google Maps dan menyimpannya ke CRM Anda."}
             </p>
           </div>
           <div className="grid gap-2 text-sm">
-            <div className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2">
-              <MapPin className="h-4 w-4 text-primary" />
-              Peta interaktif + radius pencarian
-            </div>
+            {legacyOsmEnabled && (
+              <div className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                Peta interaktif + radius pencarian
+              </div>
+            )}
             <div className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2">
               <Radar className="h-4 w-4 text-primary" />
               Kurasi hasil sebelum masuk database
@@ -34,7 +41,7 @@ export default function ScraperPage() {
           </div>
         </div>
       </div>
-      <ScraperClient />
+      <ScraperClient legacyOsmEnabled={legacyOsmEnabled} />
     </div>
   );
 }

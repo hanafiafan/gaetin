@@ -401,45 +401,54 @@ export default function ScraperClient() {
 
   function mapsLink(l: Lead) {
     if (l.latitude != null && l.longitude != null)
-      return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longitude}`;
+return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longitude}`;
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.businessName + " " + (l.address ?? ""))}`;
   }
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-        {mode === "manual" ? (
-          <Card className="overflow-hidden rounded-2xl shadow-sm">
-            <CardContent className="p-0">
-              <div className="flex flex-col md:flex-row md:items-center justify-between border-b bg-card px-4 py-3 gap-3">
-                <div>
-                  <div className="text-sm font-semibold">Area pencarian manual</div>
-                  <div className="text-xs text-muted-foreground">Klik peta atau cari lokasi</div>
+      <div className={cn("grid gap-4 items-start", legacyOsmEnabled ? "xl:grid-cols-[minmax(0,1fr)_380px]" : "max-w-xl mx-auto")}>
+        {legacyOsmEnabled && (
+          mode === "manual" ? (
+            <Card className="overflow-hidden rounded-2xl shadow-sm">
+              <CardContent className="p-0">
+                <div className="flex flex-col md:flex-row md:items-center justify-between border-b bg-card px-4 py-3 gap-3">
+                  <div>
+                    <div className="font-semibold text-sm">Area pencarian manual</div>
+                    <div className="text-xs text-muted-foreground">Klik peta atau cari lokasi</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <form onSubmit={handleMapSearch} className="flex items-center">
+                       <Input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 text-sm max-w-[140px]" />
+                       <Button type="submit" size="sm" className="ml-1 h-8 px-2" variant="outline">Cari</Button>
+                    </form>
+                    <Button type="button" onClick={locateMe} size="sm" variant="outline" className="h-8 w-8 p-0 shrink-0" title="Lokasi Saya">
+                      <Compass className="h-4 w-4" />
+                    </Button>
+                    <Badge variant="outline" className="ml-2">{radius} km</Badge>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <form onSubmit={handleMapSearch} className="flex items-center">
-                     <Input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 text-sm max-w-[140px]" />
-                     <Button type="submit" size="sm" className="ml-1 h-8 px-2" variant="outline">Cari</Button>
-                  </form>
-                  <Button type="button" onClick={locateMe} size="sm" variant="outline" className="h-8 w-8 p-0 shrink-0" title="Lokasi Saya">
-                    <Compass className="h-4 w-4" />
-                  </Button>
-                  <Badge variant="outline" className="ml-2">{radius} km</Badge>
-                </div>
-              </div>
-              <div ref={mapEl} className="h-[440px] w-full" />
-            </CardContent>
-          </Card>
-        ) : (
-          <Card className="rounded-2xl shadow-sm flex items-center justify-center bg-muted/10 h-full min-h-[440px]">
-            <CardContent className="text-center p-6 max-w-md">
-              <Radar className="h-12 w-12 mx-auto text-primary/40 mb-4" />
-              <h3 className="text-lg font-semibold">Otomatis Wilayah</h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
-              </p>
-            </CardContent>
-          </Card>
+                <div ref={mapEl} className="h-[440px] w-full" />
+              </CardContent>
+            </Card>
+          ) : mode === "auto" ? (
+            <Card className="rounded-2xl shadow-sm flex items-center justify-center bg-muted/10 h-full min-h-[440px]">
+              <CardContent className="text-center p-6 max-w-md">
+                <Radar className="h-12 w-12 mx-auto text-primary/40 mb-4" />
+                <h3 className="text-lg font-semibold">Otomatis Wilayah</h3>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="rounded-2xl shadow-sm flex items-center justify-center bg-muted/10 h-full min-h-[440px]">
+              <CardContent className="text-center p-6 max-w-md">
+                <h3 className="text-lg font-semibold">Mode Ekstensi</h3>
+                <p className="text-sm text-muted-foreground mt-2">Pencarian dilakukan otomatis di tab Google Maps yang dibuka oleh sistem.</p>
+              </CardContent>
+            </Card>
+          )
         )}
         
         {mode === "extension" && activeJobId ? (
@@ -460,29 +469,36 @@ export default function ScraperClient() {
               <p className="mt-1 text-sm text-muted-foreground">Atur metode pencarian dan detail data.</p>
             </div>
 
-            <div className="flex rounded-lg border bg-muted/30 p-1">
-                <button
-                  type="button"
-                  onClick={() => setMode("auto")}
-                  className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "auto" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                >
-                  Otomatis Wilayah
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("manual")}
-                  className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "manual" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                >
-                  Custom Area
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("extension")}
-                  className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "extension" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                >
-                  Ekstensi Chrome
-                </button>
-            </div>
+            {legacyOsmEnabled ? (
+              <div className="flex rounded-lg border bg-muted/30 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setMode("auto")}
+                    className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "auto" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                  >
+                    Otomatis Wilayah
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("manual")}
+                    className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "manual" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                  >
+                    Custom Area
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("extension")}
+                    className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "extension" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                  >
+                    Ekstensi Chrome
+                  </button>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-center">
+                <div className="font-semibold text-primary">Mode Ekstensi Aktif</div>
+                <div className="text-xs text-muted-foreground mt-1">Metode pencarian Peta/Radius dinonaktifkan oleh Admin.</div>
+              </div>
+            )}
 
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-100">
               <div className="mb-1 flex items-center gap-2 font-semibold">
