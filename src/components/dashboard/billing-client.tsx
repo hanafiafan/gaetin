@@ -259,7 +259,7 @@ export default function BillingClient() {
                 <ul className="mt-5 flex-1 space-y-2.5">
                   {features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-slate-300">
-                      <span className={cn("mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full", featured ? "bg-primary/20" : "bg-white/10")}>
+                      <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full", featured ? "bg-primary/20" : "bg-white/10")}>
                         <Check className={cn("h-2.5 w-2.5", featured ? "text-primary" : "text-slate-400")} />
                       </span>
                       {f}
