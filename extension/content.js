@@ -1,16 +1,12 @@
-let isRunning = false;
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const G = (...a) => console.log('%c[Gaetin]', 'color:#10b981;font-weight:bold', ...a);
-G('content.js v3 loaded ✓', new Date().toLocaleTimeString());
+G('content.js v4 loaded ✓', new Date().toLocaleTimeString());
 
 // ── Float UI ──────────────────────────────────────────────────────────────────
 
 let floatUI = null;
 function createFloatUI() {
-  if (document.getElementById('gaetin-float-ui')) {
-    floatUI = document.getElementById('gaetin-float-ui');
-    return;
-  }
+  if (document.getElementById('gaetin-float-ui')) { floatUI = document.getElementById('gaetin-float-ui'); return; }
   floatUI = document.createElement('div');
   floatUI.id = 'gaetin-float-ui';
   floatUI.style.cssText = `
@@ -29,18 +25,23 @@ function createFloatUI() {
       </div>
     </div>
     <div style="width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:8px;">
-      <div id="gf-progress-fill" style="height:100%;background:#10b981;width:0%;transition:width 0.3s;"></div>
+      <div id="gf-fill" style="height:100%;background:#10b981;width:0%;transition:width 0.3s;"></div>
     </div>
     <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;margin-bottom:16px;font-variant-numeric:tabular-nums;">
       <span id="gf-leads">0 tersimpan</span>
-      <span id="gf-target">Target: 100</span>
+      <span id="gf-target">Target: -</span>
     </div>
-    <button id="gf-stop-btn" style="width:100%;padding:10px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);border-radius:6px;font-weight:600;cursor:pointer;font-size:12px;">Batalkan & Simpan</button>
+    <button id="gf-stop" style="width:100%;padding:10px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);border-radius:6px;font-weight:600;cursor:pointer;font-size:12px;">Batalkan</button>
   `;
   document.body.appendChild(floatUI);
-  document.getElementById('gf-stop-btn').addEventListener('click', () => {
-    isRunning = false;
-    setFloatStatus('Dibatalkan, menyimpan data...', '#ef4444');
+  document.getElementById('gf-stop').addEventListener('click', async () => {
+    const d = await storageGet(['gaetinJob', 'gaetinChunk']);
+    if (d.gaetinJob) {
+      setFloatStatus('Membatalkan...', '#ef4444');
+      await sendToApi(d.gaetinJob.jobId, d.gaetinChunk || [], true, d.gaetinJob.token);
+    }
+    await chrome.storage.local.remove(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk']);
+    window.close();
   });
 }
 function setFloatStatus(msg, color = '#10b981') {
@@ -54,13 +55,24 @@ function updateFloatUI(current, max, status) {
   floatUI.style.display = 'block';
   const leadsEl = document.getElementById('gf-leads');
   const targetEl = document.getElementById('gf-target');
-  const fillEl = document.getElementById('gf-progress-fill');
+  const fillEl = document.getElementById('gf-fill');
   if (leadsEl) leadsEl.textContent = `${current} tersimpan`;
   if (targetEl) targetEl.textContent = `Target: ${max}`;
   if (fillEl) fillEl.style.width = `${Math.min(100, (current / max) * 100)}%`;
   if (status) setFloatStatus(status);
 }
-function hideFloatUI() { if (floatUI) floatUI.style.display = 'none'; }
+
+// ── Storage helpers ───────────────────────────────────────────────────────────
+
+function storageGet(keys) {
+  return new Promise(resolve => chrome.storage.local.get(keys, resolve));
+}
+function storageSet(obj) {
+  return new Promise(resolve => chrome.storage.local.set(obj, resolve));
+}
+function storageRemove(keys) {
+  return new Promise(resolve => chrome.storage.local.remove(keys, resolve));
+}
 
 // ── Coords ────────────────────────────────────────────────────────────────────
 
@@ -69,37 +81,7 @@ function parseCoords(url) {
   return m ? { latitude: parseFloat(m[1]), longitude: parseFloat(m[2]) } : {};
 }
 
-// ── Navigation helpers ────────────────────────────────────────────────────────
-
-// Go back to the search list view. Returns true if successful.
-async function ensureListView() {
-  if (!window.location.href.includes('/maps/place/')) return true;
-  G('history.back() → list view');
-  history.back();
-  const end = Date.now() + 2000;
-  while (Date.now() < end) {
-    if (!window.location.href.includes('/maps/place/')) {
-      await sleep(400); // let DOM re-render
-      return true;
-    }
-    await sleep(100);
-  }
-  G('back() timeout — still on place URL');
-  return false;
-}
-
-// Wait for the feed element to be present and contain links
-async function waitForFeed(maxMs = 5000) {
-  const end = Date.now() + maxMs;
-  while (Date.now() < end) {
-    const feed = document.querySelector('div[role="feed"]');
-    if (feed && feed.querySelectorAll('a[href*="/maps/place/"]').length > 0) return feed;
-    await sleep(200);
-  }
-  return null;
-}
-
-// ── Detail panel wait ─────────────────────────────────────────────────────────
+// ── Detail panel helpers ──────────────────────────────────────────────────────
 
 function hasContactData() {
   return !!(
@@ -120,60 +102,39 @@ function getDetailScroller() {
         el.scrollHeight > el.clientHeight + 30) return el;
     el = el.parentElement;
   }
-  for (const sel of ['[role="main"]', '[role="region"]']) {
-    const found = document.querySelector(sel);
-    if (found && found.scrollHeight > found.clientHeight + 30) return found;
-  }
-  return null;
+  return document.querySelector('[role="main"]') || null;
 }
 
-async function waitForDetailPanel(maxMs, placeUrl) {
-  const start = Date.now();
-  await sleep(200);
-
-  // Phase 1: wait for URL to change to this place
-  G('P1: waiting for URL change...');
-  while (Date.now() - start < 4000) {
-    if (window.location.href.includes('/maps/place/') &&
-        (!placeUrl || window.location.href.startsWith(placeUrl.substring(0, 60)))) break;
-    await sleep(100);
-  }
-  G('P1 URL:', window.location.href.substring(35, 75));
-
-  // Phase 2: wait for h1
-  const h1End = Date.now() + 2500;
-  while (Date.now() < h1End) {
+async function waitForContent(maxMs = 5000) {
+  const end = Date.now() + maxMs;
+  // Phase 1: wait for h1
+  while (Date.now() < end) {
     if (document.querySelector('h1')?.textContent?.trim()) break;
-    await sleep(100);
+    await sleep(150);
   }
-  G('P2 h1:', document.querySelector('h1')?.textContent?.trim() || '(none)');
+  G('h1:', document.querySelector('h1')?.textContent?.trim() || '(none)');
 
-  // Phase 3: scroll detail panel to trigger lazy rendering of phone/address
+  // Phase 2: scroll to trigger lazy content
   const scroller = getDetailScroller();
-  if (scroller) {
-    G('P3: scroll', scroller.tagName, 'scrollH=', scroller.scrollHeight);
-    scroller.scrollTop = 600;
-    await sleep(400);
-    scroller.scrollTop = 0;
-  } else {
-    await sleep(600);
+  if (scroller) { scroller.scrollTop = 800; await sleep(600); scroller.scrollTop = 0; await sleep(200); }
+  else await sleep(800);
+
+  // Phase 3: poll for contact data
+  const p3end = Date.now() + Math.min(3000, end - Date.now());
+  while (Date.now() < p3end) {
+    if (hasContactData()) { G('contact data found'); await sleep(100); return; }
+    await sleep(150);
   }
 
-  // Phase 4: poll for contact data or timeout
-  const p4end = Date.now() + Math.max(500, start + maxMs - Date.now());
-  while (Date.now() < p4end) {
-    if (hasContactData()) { G('P4: contact data found'); await sleep(100); return; }
-    await sleep(120);
-  }
-  G('P4: timeout — proceeding with text scan');
+  // Retry scroll once more
+  if (scroller) { scroller.scrollTop = 1200; await sleep(500); scroller.scrollTop = 400; await sleep(300); }
+  G('waitForContent done (timeout)');
 }
 
-// ── Text-node scanner ─────────────────────────────────────────────────────────
+// ── Text scan ─────────────────────────────────────────────────────────────────
 
 function panelTextNodes() {
-  const panel = document.querySelector('[role="main"]') ||
-                document.querySelector('h1')?.closest('div[class]') ||
-                document.body;
+  const panel = document.querySelector('[role="main"]') || document.querySelector('h1')?.closest('div[class]') || document.body;
   const results = [];
   const walker = document.createTreeWalker(panel, NodeFilter.SHOW_TEXT, null);
   while (walker.nextNode()) {
@@ -201,13 +162,10 @@ function extractPhone() {
 
   for (const t of panelTextNodes()) {
     if (/^(?:\+?62|0)[2-9][\d\-\s]{7,12}$/.test(t) && t.replace(/\D/g, '').length >= 9) {
-      G('phone via text scan', t);
-      return t;
+      G('phone via text scan', t); return t;
     }
   }
-
-  G('phone: NOT FOUND');
-  return null;
+  G('phone: NOT FOUND'); return null;
 }
 
 function normalizePhone(raw) {
@@ -221,13 +179,10 @@ function normalizePhone(raw) {
 function extractWebsite() {
   const auth = document.querySelector('[data-item-id="authority"]');
   if (auth) return auth.getAttribute('href') || auth.textContent.trim() || null;
-
   for (const el of document.querySelectorAll('[aria-label]')) {
-    const lbl = el.getAttribute('aria-label') || '';
-    const m = lbl.match(/^(?:Website|Situs\s*web|Web):\s*(.+)/i);
+    const m = (el.getAttribute('aria-label') || '').match(/^(?:Website|Situs\s*web|Web):\s*(.+)/i);
     if (m) return m[1].trim();
   }
-
   const panel = document.querySelector('[role="main"]') || document.body;
   for (const a of panel.querySelectorAll('a[href^="http"]')) {
     const h = a.href;
@@ -244,112 +199,90 @@ function extractAddress() {
     const txt = el.textContent.replace(/\s+/g, ' ').trim();
     if (txt) return txt;
   }
-
   for (const el of document.querySelectorAll('[aria-label]')) {
-    const lbl = el.getAttribute('aria-label') || '';
-    const m = lbl.match(/^(?:Alamat|Address):\s*(.+)/i);
+    const m = (el.getAttribute('aria-label') || '').match(/^(?:Alamat|Address):\s*(.+)/i);
     if (m) { G('address via aria-label'); return m[1].trim(); }
   }
-
-  // Text-node scan — word-bounded patterns to avoid false positives
   for (const t of panelTextNodes()) {
     if (
       t.length > 20 && t.length < 250 &&
-      /(?:Jl\.\s|(?<![a-z])Jalan\s|Gg\.\s|RT\s*\d|RW\s*\d|Kec\.\s|Kecamatan\s|Kel\.\s|Kelurahan\s|Dusun\s|Desa\s|Kabupaten\s|Perumahan\s|Komplek\s)/i.test(t) &&
-      !/^(?:Buka|Tutup|Rating|Rp|Harga|Sebagian|Konfirmasi)/i.test(t) &&
+      /(?:Jl\.\s|(?<![a-z])Jalan\s|Gg\.\s|RT\s*\d|RW\s*\d|Kec\.\s|Kecamatan\s|Kel\.\s|Dusun\s|Desa\s|Kabupaten\s|Perumahan\s|Komplek\s)/i.test(t) &&
+      !/^(?:Buka|Tutup|Rating|Rp|Sebagian|Konfirmasi)/i.test(t) &&
       !/perjalanan|penelusuran|gmail\.com|google\.com/i.test(t)
     ) { G('address via text scan', t.substring(0, 50)); return t; }
   }
-
-  G('address: NOT FOUND');
-  return null;
+  G('address: NOT FOUND'); return null;
 }
 
 function extractRatingAndReviews() {
-  // Use the rating BUTTON in the detail panel — it has jsaction="pane.rating.*"
-  // Feed list items do NOT have this button, so this is detail-panel-specific.
   const ratingBtn = document.querySelector('button[jsaction*="pane.rating"]');
   if (ratingBtn) {
     const lbl = ratingBtn.getAttribute('aria-label') || '';
-    // aria-label examples: "4,9 bintang 3.095 ulasan" or "4.9 stars"
     const rm = lbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
     const cm = lbl.match(/\(([\d.,]+)\)/) || lbl.match(/([\d.,]+)\s*(?:ulasan|reviews?)/i);
     if (rm) {
-      const rating = parseFloat(rm[1].replace(',', '.'));
-      const reviewCount = cm ? parseInt(cm[1].replace(/[.,]/g, ''), 10) : null;
-      G('rating via pane.rating button:', rating, reviewCount);
-      return { rating, reviewCount };
+      return { rating: parseFloat(rm[1].replace(',', '.')), reviewCount: cm ? parseInt(cm[1].replace(/[.,]/g, ''), 10) : null };
     }
-    // Fallback: child spans of the button
     for (const span of ratingBtn.querySelectorAll('span[aria-label]')) {
       const slbl = span.getAttribute('aria-label') || '';
       const srm = slbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
       if (srm) {
-        const rating = parseFloat(srm[1].replace(',', '.'));
-        const reviewSpan = ratingBtn.querySelector('span[aria-label*="ulasan"]') ||
-                           ratingBtn.querySelector('span[aria-label*="review"]');
-        const reviewCount = reviewSpan
-          ? parseInt((reviewSpan.getAttribute('aria-label') || '').replace(/\D/g, ''), 10)
-          : null;
-        G('rating via button child span:', rating, reviewCount);
-        return { rating, reviewCount };
+        const reviewSpan = ratingBtn.querySelector('span[aria-label*="ulasan"]') || ratingBtn.querySelector('span[aria-label*="review"]');
+        const reviewCount = reviewSpan ? parseInt((reviewSpan.getAttribute('aria-label') || '').replace(/\D/g, ''), 10) : null;
+        return { rating: parseFloat(srm[1].replace(',', '.')), reviewCount };
       }
     }
   }
-
-  // Fallback: walk up from h1 and find the first bintang/stars span
   const h1 = document.querySelector('h1');
   let el = h1?.parentElement;
   for (let i = 0; i < 8 && el && el !== document.body; i++) {
-    const span = el.querySelector('span[aria-label*="bintang"]') ||
-                 el.querySelector('span[aria-label*="stars"]');
+    const span = el.querySelector('span[aria-label*="bintang"]') || el.querySelector('span[aria-label*="stars"]');
     if (span) {
-      const lbl = span.getAttribute('aria-label') || '';
-      const rm = lbl.match(/([\d,\.]+)\s*(?:bintang|stars)/i);
+      const rm = (span.getAttribute('aria-label') || '').match(/([\d,\.]+)\s*(?:bintang|stars)/i);
       if (rm) {
-        const rating = parseFloat(rm[1].replace(',', '.'));
-        const reviewSpan = el.querySelector('span[aria-label*="ulasan"]') ||
-                           el.querySelector('span[aria-label*="review"]');
-        const reviewCount = reviewSpan
-          ? parseInt((reviewSpan.getAttribute('aria-label') || '').replace(/\D/g, ''), 10)
-          : null;
-        G('rating via h1-walk:', rating, reviewCount);
-        return { rating, reviewCount };
+        const reviewSpan = el.querySelector('span[aria-label*="ulasan"]') || el.querySelector('span[aria-label*="review"]');
+        const reviewCount = reviewSpan ? parseInt((reviewSpan.getAttribute('aria-label') || '').replace(/\D/g, ''), 10) : null;
+        return { rating: parseFloat(rm[1].replace(',', '.')), reviewCount };
       }
     }
     el = el.parentElement;
   }
-
-  G('rating: NOT FOUND');
   return { rating: null, reviewCount: null };
 }
 
 function extractCategory() {
-  // Known jsaction selectors for the category chip in the detail panel
-  for (const sel of [
-    'button[jsaction*="pane.heroHeader.category"]',
-    'button[jsaction*="pane.rating.category"]',
-    'button[jsaction*="pane.widgetHeader.category"]',
-  ]) {
+  for (const sel of ['button[jsaction*="pane.heroHeader.category"]', 'button[jsaction*="pane.rating.category"]', 'button[jsaction*="pane.widgetHeader.category"]']) {
     const t = document.querySelector(sel)?.textContent?.trim();
     if (t && !/Harga|Rp|\$|€|£|\d/i.test(t)) return t;
   }
-
-  // Fallback: find the first non-price, non-action button near h1
   const h1 = document.querySelector('h1');
   let el = h1?.parentElement;
   for (let i = 0; i < 5 && el && el !== document.body; i++) {
     for (const btn of el.querySelectorAll('button, a[href*="category"]')) {
       const t = btn.textContent?.trim();
       if (!t || t.length < 3 || t.length > 60) continue;
-      if (/Harga|Rp|\$|€|£|Rute|Simpan|Bagikan|Ulasan|Foto|Lihat|Tambah|Menu|Buka|Tutup|Pesan|Kirim|Reserv|Mulai|Arah|Cari|\d/i.test(t)) continue;
-      if (/[↑→↓↔↕▲▼]/.test(t)) continue; // arrow chars
-      G('category via h1-walk:', t);
+      if (/Harga|Rp|\$|€|Rute|Simpan|Bagikan|Ulasan|Foto|Lihat|Tambah|Menu|Buka|Tutup|Pesan|Kirim|Mulai|Cari|\d/i.test(t)) continue;
+      if (/[↑→↓↔▲▼]/.test(t)) continue;
       return t;
     }
     el = el.parentElement;
   }
   return null;
+}
+
+// ── Extractor bundle ──────────────────────────────────────────────────────────
+
+function extractCurrentPlace(ariaLabel) {
+  const rawLabel = (ariaLabel || '').replace(/[··]\s*(Link yang dikunjungi|Baru dikunjungi|Recently visited)/gi, '').trim();
+  const businessName = rawLabel || document.querySelector('h1')?.innerText?.trim() || 'Tanpa nama';
+  const phone = normalizePhone(extractPhone());
+  const website = extractWebsite();
+  const address = extractAddress();
+  const { rating, reviewCount } = extractRatingAndReviews();
+  const category = extractCategory();
+  const coords = parseCoords(window.location.href);
+  G(`✓ ${businessName} | phone=${phone || '-'} | addr=${(address || '-').substring(0, 35)}`);
+  return { businessName, phone, website, address, category, rating, reviewCount, ...coords };
 }
 
 // ── API ───────────────────────────────────────────────────────────────────────
@@ -363,29 +296,57 @@ async function sendToApi(jobId, leads, isFinished, token) {
       headers: { 'Content-Type': 'application/json', 'X-Extension-Token': token || '' },
       body: JSON.stringify({ jobId, leads, isFinished }),
     });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => '');
-      G(`API ERROR ${res.status}:`, txt);
-      return;
-    }
-    const json = await res.json();
-    G('API OK:', json.added, 'added');
-  } catch (e) {
-    G('sendToApi FAILED:', e.message);
-  }
+    if (!res.ok) { G(`API ERROR ${res.status}:`, await res.text().catch(() => '')); return; }
+    G('API OK:', (await res.json()).added, 'added');
+  } catch (e) { G('sendToApi FAILED:', e.message); }
 }
 
-// ── Main scraper ──────────────────────────────────────────────────────────────
+// ── Feed URL collector (used by auto-start) ───────────────────────────────────
+
+async function collectFeedUrls(maxCount) {
+  // Wait up to 10s for feed to appear
+  let feed = null;
+  for (let i = 0; i < 20; i++) {
+    feed = document.querySelector('div[role="feed"]');
+    if (feed && feed.querySelectorAll('a[href*="/maps/place/"]').length > 0) break;
+    await sleep(500);
+  }
+  if (!feed) { G('Feed not found'); return []; }
+
+  const urls = new Set();
+  let stuckRounds = 0;
+
+  while (urls.size < maxCount && stuckRounds < 3) {
+    const prev = urls.size;
+    for (const a of feed.querySelectorAll('a[href*="/maps/place/"]')) {
+      if (a.href) urls.add(a.href);
+    }
+    G(`Collected ${urls.size} URLs so far`);
+    if (urls.size >= maxCount) break;
+    if (urls.size === prev) { stuckRounds++; } else { stuckRounds = 0; }
+
+    const txt = (feed.innerText || '').toLowerCase();
+    if (txt.includes("you've reached the end") || txt.includes('mencapai akhir') || txt.includes('no more results')) break;
+
+    feed.scrollTo(0, feed.scrollHeight);
+    await sleep(2000);
+  }
+
+  return [...urls].slice(0, maxCount);
+}
+
+// ── Popup-triggered scraper (SPA click mode) ──────────────────────────────────
+
+let isRunning = false;
 
 async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
   isRunning = true;
   createFloatUI();
-  if (floatUI) floatUI.style.display = 'block';
+  floatUI.style.display = 'block';
 
   let totalSaved = 0;
   let chunkLeads = [];
   const processedUrls = new Set();
-  const maxWaitPerItem = Math.max(2500, delaySec * 1000);
   let noNewCount = 0;
 
   const report = (msg) => {
@@ -393,44 +354,33 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
     try { chrome.runtime.sendMessage({ type: 'SCRAPE_PROGRESS', current: totalSaved + chunkLeads.length, max: maxLeads, status: msg }); } catch (_) {}
   };
 
-  // ── ONE ITEM PER LOOP ITERATION ──────────────────────────────────────────
-  // Each iteration: ensure list view → re-query feed → click fresh link → extract
-  // This avoids stale DOM references (root cause of same-data-for-all bug).
-
   while (isRunning && (totalSaved + chunkLeads.length) < maxLeads && noNewCount < 4) {
-
-    // 1. Return to list view if we're on a detail panel
-    const onDetail = window.location.href.includes('/maps/place/');
-    if (onDetail) {
+    // Ensure list view
+    if (window.location.href.includes('/maps/place/')) {
       report('Kembali ke daftar...');
-      await ensureListView();
-    }
-
-    // 2. Get the feed — fresh reference every iteration
-    const feed = await waitForFeed(3000);
-    if (!feed) {
-      G('Feed not found after wait');
-      noNewCount++;
+      history.back();
+      const end = Date.now() + 2000;
+      while (Date.now() < end) { if (!window.location.href.includes('/maps/place/')) break; await sleep(100); }
       await sleep(500);
-      continue;
     }
 
-    // 3. Find next unprocessed link — fresh query every iteration
+    // Re-query feed each iteration
+    let feed = null;
+    for (let i = 0; i < 6; i++) {
+      feed = document.querySelector('div[role="feed"]');
+      if (feed && feed.querySelectorAll('a[href*="/maps/place/"]').length > 0) break;
+      await sleep(500);
+    }
+    if (!feed) { noNewCount++; continue; }
+
     const allLinks = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
     const nextLink = allLinks.find(a => a.href && !processedUrls.has(a.href));
 
     if (!nextLink) {
-      // Scroll to load more results
-      report('Menggulir untuk memuat lebih...');
       feed.scrollTo(0, feed.scrollHeight);
       await sleep(2500);
       const txt = (feed.innerText || '').toLowerCase();
-      if (txt.includes("you've reached the end") || txt.includes('mencapai akhir') ||
-          txt.includes('sudah berada') || txt.includes('no more results')) {
-        G('End of list');
-        report('Akhir daftar');
-        break;
-      }
+      if (txt.includes("you've reached the end") || txt.includes('mencapai akhir') || txt.includes('no more results')) break;
       noNewCount++;
       continue;
     }
@@ -438,85 +388,56 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
     noNewCount = 0;
     processedUrls.add(nextLink.href);
     const idx = totalSaved + chunkLeads.length + 1;
-    const linkLabel = nextLink.getAttribute('aria-label') || `item #${idx}`;
-    report(`Membuka ${linkLabel}...`);
-    G(`#${idx} clicking: ${linkLabel}`);
+    report(`Membuka #${idx}...`);
+    G(`#${idx} clicking: ${nextLink.getAttribute('aria-label') || 'item'}`);
 
-    // 4. Click to open detail panel
     nextLink.scrollIntoView({ block: 'center' });
-    await sleep(200);
+    await sleep(300);
     nextLink.click();
 
-    // 5. Wait for detail panel to fully load
-    await waitForDetailPanel(maxWaitPerItem, nextLink.href);
+    // Wait for URL to change to this place
+    const clickEnd = Date.now() + 4000;
+    const expectedPrefix = nextLink.href.substring(0, 55);
+    while (Date.now() < clickEnd) {
+      if (window.location.href.startsWith(expectedPrefix)) break;
+      await sleep(100);
+    }
 
-    // 6. Extract all data
+    if (!window.location.href.startsWith(expectedPrefix)) {
+      G('Click did not navigate, skipping');
+      continue;
+    }
+
+    await waitForContent(4000);
+
     try {
-      const rawLabel = nextLink.getAttribute('aria-label') || '';
-      const businessName = rawLabel
-        .replace(/[··]\s*(Link yang dikunjungi|Baru dikunjungi|Recently visited)/gi, '')
-        .trim() ||
-        document.querySelector('h1')?.innerText?.trim() ||
-        'Tanpa nama';
-      let phone = normalizePhone(extractPhone());
-
-      // #2 — phone retry: scroll deeper once and re-extract if phone is missing
-      if (!phone) {
-        G('Phone missing, retrying after deeper scroll...');
-        const scroller = getDetailScroller();
-        if (scroller) {
-          scroller.scrollTop = 900;
-          await sleep(800);
-          scroller.scrollTop = 200;
-          await sleep(300);
-        } else {
-          await sleep(800);
-        }
-        phone = normalizePhone(extractPhone());
-        G('Phone retry result:', phone || 'still empty');
-      }
-
-      const website      = extractWebsite();
-      const address      = extractAddress();
-      const { rating, reviewCount } = extractRatingAndReviews();
-      const category     = extractCategory();
-      const coords       = parseCoords(window.location.href);
-
-      // #3 — skip items with absolutely no contact data
-      if (!phone && !address && !website) {
-        G(`⊘ ${businessName} — no data, skipping`);
-        report(`⊘ ${businessName} (dilewati)`);
+      const lead = extractCurrentPlace(nextLink.getAttribute('aria-label') || '');
+      if (!lead.phone && !lead.address && !lead.website) {
+        report(`⊘ ${lead.businessName} (dilewati)`);
       } else {
-        G(`✓ ${businessName} | phone=${phone || '-'} | addr=${(address || '-').substring(0, 35)}`);
-        chunkLeads.push({ businessName, phone, website, address, category, rating, reviewCount, ...coords });
-        report(`${phone ? '✓' : '○'} ${businessName}`);
-
+        chunkLeads.push(lead);
+        report(`${lead.phone ? '✓' : '○'} ${lead.businessName}`);
         if (chunkLeads.length >= 5) {
           await sendToApi(jobId, [...chunkLeads], false, token);
           totalSaved += chunkLeads.length;
           chunkLeads = [];
         }
       }
-    } catch (e) {
-      G('Parse error:', e.message);
-    }
+    } catch (e) { G('Extract error:', e.message); }
 
-    // #4 — per-item rate limit to avoid Google throttling
     await sleep(delaySec * 1000);
   }
 
-  // Send remaining leads + mark job finished
   report('Menyelesaikan...');
   await sendToApi(jobId, [...chunkLeads], true, token);
   totalSaved += chunkLeads.length;
-
-  hideFloatUI();
-  G(`Done! Total: ${totalSaved} leads`);
+  floatUI.style.display = 'none';
+  G(`Popup mode done: ${totalSaved} leads`);
   try { chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: true, message: `Selesai: ${totalSaved} lead tersimpan.` }); } catch (_) {}
   return totalSaved;
 }
 
-// ── Message listener (popup-triggered) ───────────────────────────────────────
+// ── Message listener (popup mode) ────────────────────────────────────────────
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === 'START_SCRAPE') {
@@ -525,7 +446,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     scrapeGoogleMaps(request.jobId, request.maxLeads || 100, request.delaySec || 2, request.token || '')
       .then(() => { isRunning = false; })
       .catch(err => {
-        isRunning = false; hideFloatUI();
+        isRunning = false;
         try { chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: false, message: `Error: ${err.message}` }); } catch (_) {}
       });
     return true;
@@ -533,58 +454,113 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === 'STOP_SCRAPE') { isRunning = false; sendResponse({ success: true }); return true; }
 });
 
-// ── Auto-start (dashboard-triggered) ─────────────────────────────────────────
+// ── AUTO MODE: Phase 2 — process one place per page load ─────────────────────
+// Each time Maps loads a /maps/place/ URL, this runs, extracts data,
+// saves to storage, then navigates to the next URL in the queue.
+// This eliminates SPA click issues by using full page reloads.
 
-(function checkAutoStart() {
-  const params   = new URLSearchParams(window.location.search);
-  const isAuto   = params.get('gaetin_auto') === 'true';
+(async function processScrapeQueue() {
+  if (!window.location.href.includes('/maps/place/')) return;
+
+  const data = await storageGet(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk', 'gaetinCurrentLabel']);
+  if (!data.gaetinJob || data.gaetinPhase !== 'scraping') return;
+
+  const { jobId, token, maxLeads, delaySec } = data.gaetinJob;
+  const queue = data.gaetinQueue || [];
+  const saved = data.gaetinSaved || 0;
+  const chunk = data.gaetinChunk || [];
+  const ariaLabel = data.gaetinCurrentLabel || '';
+
+  createFloatUI();
+  floatUI.style.display = 'block';
+  updateFloatUI(saved + chunk.length, maxLeads, `Mengekstrak #${saved + chunk.length + 1}...`);
+
+  // Wait for the detail panel to fully load
+  await waitForContent(6000);
+
+  // Extract data
+  const lead = extractCurrentPlace(ariaLabel);
+  const newChunk = [...chunk];
+  if (lead.phone || lead.address || lead.website) {
+    newChunk.push(lead);
+    updateFloatUI(saved + newChunk.length, maxLeads, `${lead.phone ? '✓' : '○'} ${lead.businessName}`);
+  } else {
+    updateFloatUI(saved + newChunk.length, maxLeads, `⊘ ${lead.businessName} (dilewati)`);
+  }
+
+  // Send batch every 5 items
+  let newSaved = saved;
+  let finalChunk = newChunk;
+  if (newChunk.length >= 5) {
+    await sendToApi(jobId, newChunk, false, token);
+    newSaved += newChunk.length;
+    finalChunk = [];
+  }
+
+  const totalDone = newSaved + finalChunk.length;
+
+  // Navigate to next place OR finish
+  if (queue.length > 0 && totalDone < maxLeads) {
+    const [nextUrl, ...restQueue] = queue;
+    // Store next item's aria-label (it's in the URL as the place name)
+    const labelFromUrl = decodeURIComponent((nextUrl.match(/\/maps\/place\/([^/@]+)/) || [])[1] || '').replace(/\+/g, ' ');
+
+    await storageSet({ gaetinQueue: restQueue, gaetinSaved: newSaved, gaetinChunk: finalChunk, gaetinCurrentLabel: labelFromUrl });
+    await sleep(Math.max(1500, delaySec * 1000));
+    window.location.href = nextUrl;
+  } else {
+    // Done — send remaining + mark finished
+    setFloatStatus(`Menyelesaikan...`);
+    await sendToApi(jobId, finalChunk, true, token);
+    await storageRemove(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk', 'gaetinCurrentLabel']);
+
+    const total = newSaved + finalChunk.length;
+    setFloatStatus(`Selesai! ${total} lead tersimpan. Menutup...`, '#10b981');
+    updateFloatUI(total, maxLeads, `Selesai! ${total} lead. Menutup...`);
+
+    let sec = 4;
+    const cd = setInterval(() => {
+      setFloatStatus(`Selesai! Menutup dalam ${sec} detik...`, '#10b981');
+      if (--sec < 0) { clearInterval(cd); window.close(); }
+    }, 1000);
+  }
+})();
+
+// ── AUTO MODE: Phase 1 — collect URLs then start queue ───────────────────────
+
+(async function checkAutoStart() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('gaetin_auto') !== 'true') return;
+
   const jobId    = params.get('gaetin_job_id');
   const token    = params.get('gaetin_token') || '';
   const maxLeads = parseInt(params.get('gaetin_max')) || 100;
   const delaySec = parseFloat(params.get('gaetin_delay')) || 2;
 
-  if (!isAuto || !jobId) return;
+  if (!jobId) return;
+  G('Auto-start phase 1: collecting URLs. jobId:', jobId);
 
-  G('Auto-start detected, jobId:', jobId);
-  chrome.storage.local.set({ gaetinSessionKey: `${jobId}:${token}`, gaetinMaxLeads: maxLeads, gaetinDelay: delaySec });
+  await storageSet({ gaetinJob: { jobId, token, maxLeads, delaySec }, gaetinPhase: 'collecting', gaetinSaved: 0, gaetinChunk: [], gaetinQueue: [] });
 
   createFloatUI();
-  if (floatUI) floatUI.style.display = 'block';
-  setFloatStatus('Menunggu hasil pencarian...', '#94a3b8');
+  floatUI.style.display = 'block';
+  setFloatStatus('Mengumpulkan daftar bisnis...', '#94a3b8');
 
-  // Wait up to 15s for the feed to appear (Google Maps search takes time)
-  let attempts = 0;
-  const waitForFeedInterval = setInterval(async () => {
-    attempts++;
-    const feed = document.querySelector('div[role="feed"]');
-    if (feed && feed.querySelectorAll('a[href*="/maps/place/"]').length > 0) {
-      clearInterval(waitForFeedInterval);
-      G('Feed ready, starting auto-scrape');
-      setFloatStatus('Memulai ekstraksi...', '#10b981');
+  const urls = await collectFeedUrls(maxLeads);
+  G('Collected', urls.length, 'place URLs');
 
-      try {
-        const count = await scrapeGoogleMaps(jobId, maxLeads, delaySec, token);
-        isRunning = false;
+  if (urls.length === 0) {
+    setFloatStatus('Tidak ada hasil ditemukan', '#ef4444');
+    return;
+  }
 
-        // Show completion and auto-close after 4 seconds
-        createFloatUI();
-        if (floatUI) floatUI.style.display = 'block';
-        setFloatStatus(`Selesai! ${count} lead. Menutup...`, '#10b981');
-        updateFloatUI(count, maxLeads, `Selesai! ${count} lead. Menutup...`);
+  setFloatStatus(`${urls.length} bisnis ditemukan. Memulai...`, '#10b981');
+  updateFloatUI(0, maxLeads, `${urls.length} bisnis ditemukan`);
 
-        let sec = 4;
-        const countdown = setInterval(() => {
-          setFloatStatus(`Selesai! Menutup dalam ${sec} detik...`, '#10b981');
-          if (--sec < 0) { clearInterval(countdown); window.close(); }
-        }, 1000);
-      } catch (err) {
-        G('Auto-scrape error:', err.message);
-        setFloatStatus(`Error: ${err.message}`, '#ef4444');
-      }
-    } else if (attempts > 15) {
-      clearInterval(waitForFeedInterval);
-      G('Timeout: feed not found after 15s');
-      setFloatStatus('Timeout: hasil pencarian tidak muncul', '#ef4444');
-    }
-  }, 1000);
+  const [firstUrl, ...restQueue] = urls;
+  const labelFromUrl = decodeURIComponent((firstUrl.match(/\/maps\/place\/([^/@]+)/) || [])[1] || '').replace(/\+/g, ' ');
+
+  await storageSet({ gaetinPhase: 'scraping', gaetinQueue: restQueue, gaetinCurrentLabel: labelFromUrl });
+  await sleep(800);
+  window.location.href = firstUrl;
 })();
