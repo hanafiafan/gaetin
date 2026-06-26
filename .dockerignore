@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env*.local
+wa-sessions
+docs
+*.md
+coverage
+Dockerfile
+docker-compose.yml
+.github

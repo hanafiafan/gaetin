@@ -1,0 +1,625 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 230 38% 5%;
+    --foreground: 220 28% 96%;
+    --card: 228 30% 9%;
+    --card-foreground: 220 28% 96%;
+    --popover: 228 30% 8%;
+    --popover-foreground: 220 28% 96%;
+    --primary: 151 78% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 229 24% 14%;
+    --secondary-foreground: 220 24% 92%;
+    --muted: 230 21% 16%;
+    --muted-foreground: 226 14% 69%;
+    --accent: 82 90% 61%;
+    --accent-foreground: 225 34% 8%;
+    --destructive: 0 84% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 228 22% 19%;
+    --input: 229 23% 17%;
+    --ring: 151 78% 47%;
+    --radius: 0.95rem;
+    --chart-1: 151 78% 47%;
+    --chart-2: 82 90% 61%;
+    --chart-3: 190 94% 58%;
+    --chart-4: 42 96% 62%;
+    --chart-5: 154 70% 52%;
+    --gradient-from: 151 78% 47%;
+    --gradient-via: 124 70% 52%;
+    --gradient-to: 82 90% 61%;
+  }
+
+  .dark {
+    --background: 230 38% 5%;
+    --foreground: 220 28% 96%;
+    --card: 228 30% 9%;
+    --card-foreground: 220 28% 96%;
+    --popover: 228 30% 8%;
+    --popover-foreground: 220 28% 96%;
+    --primary: 151 78% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 229 24% 14%;
+    --secondary-foreground: 220 24% 92%;
+    --muted: 230 21% 16%;
+    --muted-foreground: 226 14% 69%;
+    --accent: 82 90% 61%;
+    --accent-foreground: 225 34% 8%;
+    --destructive: 0 84% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 228 22% 19%;
+    --input: 229 23% 17%;
+    --ring: 151 78% 47%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: hsl(var(--background));
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+    background:
+      radial-gradient(circle at 50% 0%, hsl(151 78% 47% / 0.24), transparent 34rem),
+      radial-gradient(circle at 100% 18%, hsl(82 90% 61% / 0.12), transparent 32rem),
+      linear-gradient(180deg, hsl(230 38% 5%) 0%, hsl(230 40% 3%) 44%, hsl(230 38% 5%) 100%);
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.35);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer utilities {
+  .tracking-tight,
+  .tracking-tighter,
+  .tracking-wide,
+  .tracking-wider,
+  .tracking-widest {
+    letter-spacing: 0 !important;
+  }
+
+  .cg-shell {
+    position: relative;
+    overflow: hidden;
+    max-width: 100vw;
+    background:
+      radial-gradient(circle at 50% -10%, hsl(151 78% 47% / 0.3), transparent 32rem),
+      radial-gradient(circle at 8% 28%, hsl(82 90% 61% / 0.1), transparent 28rem),
+      radial-gradient(circle at 94% 22%, hsl(190 94% 58% / 0.1), transparent 30rem),
+      linear-gradient(180deg, hsl(230 38% 5%) 0%, hsl(230 40% 3%) 48%, hsl(230 38% 5%) 100%);
+  }
+
+  .cg-shell::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, hsl(230 38% 5% / 0.62), transparent 22rem);
+  }
+
+  .cg-section {
+    position: relative;
+    z-index: 1;
+    margin-inline: auto;
+    width: min(calc(100vw - 2rem), 1180px);
+  }
+
+  .landing-header {
+    z-index: 80;
+  }
+
+  .cg-nav {
+    border: 1px solid hsl(151 78% 47% / 0.22);
+    background:
+      linear-gradient(180deg, hsl(230 34% 7% / 0.96), hsl(230 35% 5% / 0.88)),
+      hsl(230 35% 5% / 0.9);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.1),
+      0 18px 80px hsl(230 50% 2% / 0.62),
+      0 0 46px hsl(151 78% 47% / 0.14);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  .cg-card {
+    border: 1px solid hsl(0 0% 100% / 0.12);
+    background:
+      linear-gradient(180deg, hsl(0 0% 100% / 0.075), hsl(0 0% 100% / 0.025)),
+      hsl(228 30% 9% / 0.78);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.08),
+      0 28px 90px hsl(230 50% 3% / 0.45);
+    backdrop-filter: blur(18px);
+  }
+
+  .cg-card-strong {
+    border: 1px solid hsl(151 78% 47% / 0.34);
+    background:
+      linear-gradient(135deg, hsl(151 78% 47% / 0.22), hsl(82 90% 61% / 0.08) 46%, hsl(0 0% 100% / 0.035)),
+      hsl(228 30% 9% / 0.9);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.11),
+      0 34px 110px hsl(151 78% 47% / 0.24);
+    backdrop-filter: blur(20px);
+  }
+
+  .cg-pill {
+    border: 1px solid hsl(0 0% 100% / 0.12);
+    background: hsl(0 0% 100% / 0.055);
+    color: hsl(var(--foreground));
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08);
+    backdrop-filter: blur(16px);
+  }
+
+  .cg-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid hsl(151 78% 47% / 0.32);
+    border-radius: 999px;
+    background: hsl(151 78% 47% / 0.12);
+    color: hsl(145 85% 82%);
+    padding: 0.45rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    box-shadow: 0 12px 42px hsl(151 78% 47% / 0.18);
+  }
+
+  .cg-gradient-text,
+  .text-gradient {
+    background: linear-gradient(92deg, hsl(0 0% 100%) 0%, hsl(145 85% 78%) 42%, hsl(82 90% 68%) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--gradient-from)), hsl(var(--gradient-via)) 48%, hsl(var(--gradient-to)));
+  }
+
+  .gradient-card,
+  .gradient-card-dark {
+    background:
+      linear-gradient(145deg, hsl(151 78% 47% / 0.16), hsl(82 90% 61% / 0.06)),
+      hsl(var(--card));
+  }
+
+  .glass,
+  .glass-dark {
+    border: 1px solid hsl(0 0% 100% / 0.12);
+    background: hsl(228 30% 9% / 0.72);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08);
+    backdrop-filter: blur(18px);
+  }
+
+  .cg-button-glow {
+    box-shadow:
+      0 14px 44px hsl(151 78% 47% / 0.34),
+      inset 0 1px 0 hsl(0 0% 100% / 0.22);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 18px 60px hsl(151 78% 47% / 0.22);
+  }
+
+  .shadow-glow-lg {
+    box-shadow: 0 36px 130px hsl(151 78% 47% / 0.3);
+  }
+
+  .cg-scanline {
+    background-image: linear-gradient(90deg, transparent, hsl(151 78% 47% / 0.5), transparent);
+  }
+
+  .earth-hero-section {
+    z-index: 1;
+    overflow: visible;
+  }
+
+  .earth-hero-section::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    bottom: -3.5rem;
+    z-index: 0;
+    width: 100vw;
+    height: 11rem;
+    transform: translateX(-50%);
+    background:
+      linear-gradient(180deg, transparent 0%, hsl(230 40% 3% / 0.82) 52%, hsl(230 38% 5%) 100%),
+      linear-gradient(hsl(151 78% 66% / 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(151 78% 66% / 0.055) 1px, transparent 1px);
+    background-size:
+      auto,
+      72px 72px,
+      72px 72px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 78%, transparent 100%);
+  }
+
+  .grid-fade-section {
+    isolation: isolate;
+  }
+
+  .grid-fade-section::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: -1rem;
+    z-index: -1;
+    width: 100vw;
+    height: calc(100% + 2rem);
+    transform: translateX(-50%);
+    background:
+      linear-gradient(180deg, hsl(230 38% 5% / 0.18), hsl(230 40% 3% / 0.16) 52%, hsl(230 38% 5% / 0.12)),
+      linear-gradient(hsl(151 78% 66% / 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(151 78% 66% / 0.07) 1px, transparent 1px);
+    background-size:
+      auto,
+      76px 76px,
+      76px 76px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    opacity: 0.64;
+  }
+
+  .grid-fade-start::before {
+    top: 0;
+    height: calc(100% + 1rem);
+    opacity: 0.72;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
+
+  .earth-video-bg {
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: -6rem;
+    right: auto;
+    bottom: auto;
+    z-index: 0;
+    width: 100vw;
+    height: clamp(820px, 112vh, 1050px);
+    transform: translateX(-50%);
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .earth-video-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(circle at 68% 36%, hsl(151 78% 47% / 0.2), transparent 24rem),
+      linear-gradient(90deg, hsl(230 40% 3% / 0.96) 0%, hsl(230 40% 3% / 0.62) 40%, hsl(230 40% 3% / 0.22) 100%),
+      linear-gradient(180deg, hsl(230 40% 3% / 0.16), hsl(230 40% 3% / 0.42) 58%, hsl(230 40% 3% / 0.96) 86%, hsl(230 38% 5%) 100%);
+  }
+
+  .earth-video-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background-image:
+      radial-gradient(circle, hsl(0 0% 100% / 0.55) 0 1px, transparent 1.4px),
+      radial-gradient(circle, hsl(151 78% 80% / 0.25) 0 1px, transparent 1.8px);
+    background-position:
+      0 0,
+      28px 42px;
+    background-size:
+      160px 160px,
+      220px 220px;
+    opacity: 0.34;
+    animation: star-drift 28s linear infinite;
+  }
+
+  .earth-bg-video {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 64% 42%;
+    filter: saturate(1.12) contrast(1.1) brightness(0.72);
+    opacity: 0.74;
+  }
+
+  .earth-planet {
+    position: absolute;
+    right: clamp(-12rem, -10vw, -4rem);
+    top: clamp(4rem, 11vw, 8rem);
+    width: clamp(320px, 48vw, 680px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 32% 30%, hsl(190 94% 78% / 0.92), transparent 0.55rem),
+      radial-gradient(circle at 34% 31%, hsl(151 78% 54% / 0.45), transparent 4.8rem),
+      radial-gradient(circle at 38% 34%, hsl(190 92% 42%) 0 12%, hsl(205 88% 24%) 36%, hsl(220 78% 12%) 64%, hsl(230 55% 5%) 100%);
+    box-shadow:
+      inset -58px -42px 90px hsl(230 55% 3% / 0.92),
+      inset 34px 26px 60px hsl(151 78% 64% / 0.26),
+      0 0 78px hsl(151 78% 47% / 0.28),
+      0 0 180px hsl(151 78% 47% / 0.16);
+    opacity: 0.92;
+    transform: translateZ(0);
+    animation: earth-float 12s ease-in-out infinite;
+  }
+
+  .earth-planet::before {
+    content: "";
+    position: absolute;
+    inset: -2%;
+    border-radius: inherit;
+    background-image:
+      radial-gradient(ellipse at 18% 32%, hsl(121 45% 33% / 0.75) 0 7%, transparent 8%),
+      radial-gradient(ellipse at 36% 24%, hsl(118 42% 38% / 0.72) 0 10%, transparent 11%),
+      radial-gradient(ellipse at 46% 48%, hsl(124 40% 31% / 0.76) 0 12%, transparent 13%),
+      radial-gradient(ellipse at 62% 31%, hsl(132 40% 36% / 0.66) 0 8%, transparent 9%),
+      radial-gradient(ellipse at 76% 55%, hsl(119 36% 34% / 0.7) 0 11%, transparent 12%),
+      radial-gradient(ellipse at 58% 74%, hsl(115 38% 31% / 0.64) 0 8%, transparent 9%),
+      repeating-linear-gradient(96deg, hsl(0 0% 100% / 0.1) 0 1px, transparent 1px 12px);
+    background-size:
+      65% 48%,
+      58% 42%,
+      62% 52%,
+      66% 46%,
+      55% 44%,
+      62% 48%,
+      120px 120px;
+    background-position:
+      0 12%,
+      22% 18%,
+      48% 36%,
+      72% 22%,
+      95% 54%,
+      38% 88%,
+      0 0;
+    mix-blend-mode: screen;
+    opacity: 0.86;
+    animation: earth-surface 26s linear infinite;
+  }
+
+  .earth-planet::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 30% 26%, hsl(0 0% 100% / 0.34), transparent 18%),
+      radial-gradient(circle at 58% 54%, transparent 0 46%, hsl(230 50% 2% / 0.34) 68%),
+      linear-gradient(105deg, transparent 32%, hsl(0 0% 100% / 0.16) 45%, transparent 58%);
+    animation: earth-clouds 16s linear infinite;
+  }
+
+  .earth-orbit {
+    position: absolute;
+    z-index: 4;
+    right: clamp(-14rem, -12vw, -5rem);
+    top: clamp(3rem, 9vw, 6rem);
+    width: clamp(390px, 56vw, 820px);
+    aspect-ratio: 1;
+    border: 1px solid hsl(151 78% 70% / 0.22);
+    border-radius: 999px;
+    transform: rotateX(68deg) rotateZ(-18deg);
+    box-shadow: 0 0 48px hsl(151 78% 47% / 0.12);
+    animation: orbit-spin 18s linear infinite;
+  }
+
+  .earth-orbit:nth-child(2) {
+    width: clamp(460px, 64vw, 940px);
+    opacity: 0.54;
+    animation-duration: 28s;
+    animation-direction: reverse;
+  }
+
+  .earth-pin {
+    position: absolute;
+    z-index: 5;
+    width: 0.58rem;
+    height: 0.58rem;
+    border-radius: 999px;
+    background: hsl(82 90% 61%);
+    box-shadow:
+      0 0 0 6px hsl(82 90% 61% / 0.1),
+      0 0 24px hsl(82 90% 61% / 0.7);
+    animation: earth-pulse 2.8s ease-in-out infinite;
+  }
+
+  .earth-pin.pin-a {
+    right: clamp(16rem, 25vw, 30rem);
+    top: clamp(13rem, 23vw, 23rem);
+  }
+
+  .earth-pin.pin-b {
+    right: clamp(6rem, 14vw, 18rem);
+    top: clamp(18rem, 31vw, 31rem);
+    animation-delay: 0.7s;
+  }
+
+  .earth-pin.pin-c {
+    right: clamp(20rem, 34vw, 39rem);
+    top: clamp(24rem, 37vw, 38rem);
+    animation-delay: 1.4s;
+  }
+
+  @media (max-width: 640px) {
+    .landing-header {
+      width: calc(100vw - 2rem) !important;
+      max-width: calc(100vw - 2rem);
+    }
+
+    .landing-header .cg-nav {
+      position: relative;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .landing-header .cg-nav > a:first-child {
+      min-width: 0;
+      padding-right: 3.25rem;
+    }
+
+    .landing-header .cg-nav > div:last-child {
+      position: absolute;
+      right: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .earth-signal-line {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    top: 52%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(151 78% 47% / 0.68), transparent);
+    animation: scan-move 4.6s ease-in-out infinite;
+  }
+
+  .interactive-chip {
+    border: 1px solid hsl(0 0% 100% / 0.12);
+    background: hsl(0 0% 100% / 0.055);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08);
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease;
+  }
+
+  .interactive-chip:hover {
+    border-color: hsl(151 78% 47% / 0.42);
+    background: hsl(151 78% 47% / 0.11);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes earth-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-1.2rem, 0.8rem, 0) scale(1.02);
+  }
+}
+
+@keyframes earth-surface {
+  from {
+    background-position:
+      0 12%,
+      22% 18%,
+      48% 36%,
+      72% 22%,
+      95% 54%,
+      38% 88%,
+      0 0;
+  }
+  to {
+    background-position:
+      -110% 12%,
+      -88% 18%,
+      -62% 36%,
+      -38% 22%,
+      -15% 54%,
+      -72% 88%,
+      -240px 0;
+  }
+}
+
+@keyframes earth-clouds {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-spin {
+  from {
+    transform: rotateX(68deg) rotateZ(-18deg);
+  }
+  to {
+    transform: rotateX(68deg) rotateZ(342deg);
+  }
+}
+
+@keyframes earth-pulse {
+  0%,
+  100% {
+    transform: scale(0.84);
+    opacity: 0.62;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes scan-move {
+  0%,
+  100% {
+    transform: translateY(-8rem);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(8rem);
+    opacity: 1;
+  }
+}
+
+@keyframes star-drift {
+  from {
+    background-position:
+      0 0,
+      28px 42px;
+  }
+  to {
+    background-position:
+      320px 160px,
+      -190px 262px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earth-bg-video {
+    display: none;
+  }
+
+  .earth-video-bg *,
+  .earth-video-bg::after,
+  .earth-planet,
+  .earth-planet::before,
+  .earth-planet::after,
+  .earth-orbit,
+  .earth-pin,
+  .earth-signal-line {
+    animation: none !important;
+  }
+}

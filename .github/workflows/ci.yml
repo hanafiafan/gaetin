@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Nilai dummy agar prisma generate & build (yang memvalidasi env) lolos.
+      DATABASE_URL: "postgresql://user:pass@localhost:5432/db?schema=public"
+      JWT_SECRET: "ci-placeholder-secret-please-override-0123456789"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build

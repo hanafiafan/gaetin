@@ -1,0 +1,7 @@
+# SSL otomatis (Let's Encrypt) bila DOMAIN / ADMIN_DOMAIN adalah domain nyata.
+# Set DOMAIN untuk publik dan ADMIN_DOMAIN untuk dashboard CMS owner.
+# Contoh: DOMAIN=gaetin.com, ADMIN_DOMAIN=admin.gaetin.com
+{$DOMAIN:localhost}, {$ADMIN_DOMAIN:admin.localhost} {
+	reverse_proxy app:3000
+	encode gzip
+}

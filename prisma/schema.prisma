@@ -1,0 +1,818 @@
+// ============================================================================
+// Gaetin — Prisma Schema
+// Multi-tenant (Workspace) SaaS: Google Maps scraper, lead management, CRM,
+// WhatsApp blast/campaign, inbox/customer-service, follow-up, billing.
+//
+// Catatan tenancy: hampir semua entitas dimiliki oleh Workspace, bukan User.
+// User terhubung ke Workspace lewat Membership (mendukung tim/agency).
+// Field `createdById` disimpan sebagai scalar (tanpa relasi) untuk audit ringan.
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTH & USER ====================
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String
+  name           String
+  isSuperAdmin   Boolean   @default(false)
+  failedAttempts Int       @default(0)
+  lockedUntil    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  memberships Membership[]
+  preferences UserPreferences?
+}
+
+model UserPreferences {
+  id       String @id @default(cuid())
+  userId   String @unique
+  theme    Theme  @default(LIGHT)
+  timezone String @default("Asia/Jakarta")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model InvalidatedToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+enum Theme {
+  LIGHT
+  DARK
+}
+
+// ==================== WORKSPACE & TEAM ====================
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Pilihan sumber data scraping per workspace + BYOK key Google.
+  scraperProvider  String  @default("OSM_SCRAPER") // OSM_SCRAPER | GOOGLE_PLACES
+  googleMapsApiKey String?
+  credits          Int     @default(0) // saldo kredit
+
+  memberships       Membership[]
+  messagingAccounts MessagingAccount[]
+  contacts          Contact[]
+  leads             Lead[]
+  scraperJobs       ScraperJob[]
+  segments          Segment[]
+  blasts            Blast[]
+  campaigns         Campaign[]
+  pipelines         Pipeline[]
+  deals             Deal[]
+  conversations     Conversation[]
+  followUpRules     FollowUpRule[]
+  tasks             Task[]
+  doNotContacts     DoNotContact[]
+  tickets           SupportTicket[]
+  branding          BrandingSettings?
+  subscription      Subscription?
+  transactions      Transaction[]
+}
+
+model Membership {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        Role     @default(AGENT)
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  AGENT
+}
+
+// ==================== WHATSAPP / MESSAGING ====================
+// Mendukung banyak nomor per workspace + abstraksi provider.
+
+model MessagingAccount {
+  id            String           @id @default(cuid())
+  workspaceId   String
+  label         String // nama untuk membedakan nomor (mis. "CS 1", "Sales")
+  provider      MessagingProvider @default(BAILEYS)
+  phoneNumber   String?
+  status        ConnectionStatus @default(DISCONNECTED)
+  sessionData   Json? // data sesi Baileys / kredensial gateway
+  dailyLimit    Int              @default(100) // anti-ban: batas kirim per hari
+  sentToday     Int              @default(0)
+  sentTodayResetAt DateTime?     @default(now()) // reset counter harian nomor pengirim
+  warmupDay     Int              @default(0)
+  lastConnected DateTime?
+  createdById   String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+
+  @@index([workspaceId, status])
+}
+
+enum MessagingProvider {
+  BAILEYS
+  GATEWAY
+  CLOUD_API
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  CONNECTING
+  RECONNECTING
+}
+
+// ==================== CONTACTS ====================
+
+model Contact {
+  id            String    @id @default(cuid())
+  workspaceId   String
+  name          String?
+  phone         String // disimpan ter-normalisasi (E.164 tanpa +, mis. 6281...)
+  label         String?
+  waStatus      WAStatus  @default(UNKNOWN)
+  source        LeadSource @default(MANUAL)
+  // data tambahan (untuk map view & enrichment)
+  email         String?
+  website       String?
+  address       String?
+  city          String?
+  category      String?
+  latitude      Float?
+  longitude     Float?
+  // CRM
+  crmStage      String? // nama stage saat ini (denormalisasi untuk filter cepat)
+  score         Int       @default(0) // lead score
+  lastContacted DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tasks             Task[]
+  pipelineCards     PipelineCard[]
+  followUpSchedules FollowUpSchedule[]
+  blastMessages     BlastMessage[]
+  campaignMessages  CampaignMessage[]
+  conversations     Conversation[]
+  deals             Deal[]
+  leads             Lead[]
+
+  @@unique([workspaceId, phone])
+  @@index([workspaceId, waStatus])
+  @@index([workspaceId, label])
+  @@index([workspaceId, city])
+  @@index([workspaceId, category])
+}
+
+enum WAStatus {
+  ACTIVE
+  INACTIVE
+  UNKNOWN
+}
+
+enum LeadSource {
+  SCRAPER
+  IMPORT
+  MANUAL
+  INBOUND
+}
+
+// ==================== SCRAPER & LEADS ====================
+
+model ScraperJob {
+  id          String        @id @default(cuid())
+  workspaceId String
+  keyword     String
+  location    String? // label hasil reverse-geocode (mis. "Bekasi Timur, Jawa Barat")
+  name        String? // nama area scraping kustom (mis. "Gym Bekasi Timur")
+  color       String? // warna penanda area (hex)
+  // Lokasi berbasis peta: titik pusat + radius yang dipilih pengguna di map picker.
+  centerLat   Float?
+  centerLng   Float?
+  radiusKm    Float? // radius pencarian dalam kilometer
+  gridPoints  Int           @default(1) // jumlah titik grid untuk cakupan radius
+  dataFields  Json? // field data yang diminta user: phone, address, website, email, category, coordinates
+  status      ScraperStatus @default(RUNNING)
+  totalFound  Int           @default(0)
+  duplicates  Int           @default(0)
+  createdById String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  leads     Lead[]
+
+  @@index([workspaceId])
+}
+
+enum ScraperStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  STOPPED
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  scraperJobId String?
+  businessName String
+  phone        String?
+  email        String?
+  website      String?
+  address      String?
+  city         String?
+  category     String?
+  rating       Float?
+  reviewCount  Int?
+  latitude     Float?
+  longitude    Float?
+  socialLinks  Json?
+  saved        Boolean  @default(false) // kurasi: scrape banyak, simpan yang dipilih
+  contactId    String? // jika sudah dikonversi ke Contact
+  createdAt    DateTime @default(now())
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  scraperJob ScraperJob? @relation(fields: [scraperJobId], references: [id], onDelete: SetNull)
+  contact    Contact?    @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId])
+  @@index([scraperJobId])
+  @@index([category])
+  @@index([rating])
+}
+
+// ==================== SEGMENT (saved filter) ====================
+
+model Segment {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  filter      Json // kriteria filter tersimpan (city, category, rating, waStatus, dst)
+  createdById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+// ==================== BLAST ====================
+
+model Blast {
+  id              String      @id @default(cuid())
+  workspaceId     String
+  name            String
+  messageText     String?
+  messageMedia    Json?
+  variables       Json?
+  status          BlastStatus @default(DRAFT)
+  totalRecipients Int         @default(0)
+  sentCount       Int         @default(0)
+  failedCount     Int         @default(0)
+  createdById     String?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  workspace Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages  BlastMessage[]
+
+  @@index([workspaceId, status])
+}
+
+model BlastMessage {
+  id          String        @id @default(cuid())
+  blastId     String
+  contactId   String
+  status      MessageStatus @default(PENDING)
+  errorReason String?
+  sentAt      DateTime?
+  createdAt   DateTime      @default(now())
+
+  blast   Blast   @relation(fields: [blastId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([blastId, status])
+}
+
+enum BlastStatus {
+  DRAFT
+  RUNNING
+  COMPLETED
+  STOPPED
+  FAILED
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+// ==================== CAMPAIGNS ====================
+
+model Campaign {
+  id              String         @id @default(cuid())
+  workspaceId     String
+  name            String
+  description     String?
+  messageTemplate String
+  messageMedia    Json?
+  accountId       String?
+  status          CampaignStatus @default(DRAFT)
+  scheduledAt     DateTime?
+  totalRecipients Int            @default(0)
+  sentCount       Int            @default(0)
+  failedCount     Int            @default(0)
+  lastPosition    Int            @default(0)
+  createdById     String?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  workspace Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages  CampaignMessage[]
+  deals     Deal[]
+
+  @@index([workspaceId, status])
+  @@index([scheduledAt])
+}
+
+model CampaignMessage {
+  id          String        @id @default(cuid())
+  campaignId  String
+  contactId   String
+  status      MessageStatus @default(PENDING)
+  deliveredAt DateTime?
+  readAt      DateTime?
+  repliedAt   DateTime?
+  errorReason String?
+  sentAt      DateTime?
+  createdAt   DateTime      @default(now())
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact  Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, status])
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+// ==================== CRM PIPELINE ====================
+
+model Pipeline {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  columns   PipelineColumn[]
+}
+
+model PipelineColumn {
+  id         String   @id @default(cuid())
+  pipelineId String
+  name       String
+  color      String? // konsisten dengan warna marker map view
+  order      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  pipeline Pipeline       @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  cards    PipelineCard[]
+
+  @@index([pipelineId, order])
+}
+
+model PipelineCard {
+  id        String   @id @default(cuid())
+  columnId  String
+  contactId String
+  order     Int
+  movedAt   DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  column  PipelineColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  contact Contact        @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([columnId, order])
+}
+
+// ==================== DEAL / REVENUE (ROI tracking) ====================
+
+model Deal {
+  id          String     @id @default(cuid())
+  workspaceId String
+  contactId   String
+  campaignId  String?
+  title       String
+  value       Decimal    @default(0) @db.Decimal(15, 2)
+  status      DealStatus @default(OPEN)
+  closedAt    DateTime?
+  createdById String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  campaign  Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status])
+  @@index([campaignId])
+}
+
+enum DealStatus {
+  OPEN
+  WON
+  LOST
+}
+
+// ==================== INBOX / CUSTOMER SERVICE ====================
+
+model Conversation {
+  id                 String             @id @default(cuid())
+  workspaceId        String
+  contactId          String
+  messagingAccountId String?
+  status             ConversationStatus @default(OPEN)
+  assignedToId       String? // scalar: id User agen yang ditugaskan
+  lastMessageAt      DateTime           @default(now())
+  unreadCount        Int                @default(0)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact          Contact           @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  messagingAccount MessagingAccount? @relation(fields: [messagingAccountId], references: [id], onDelete: SetNull)
+  messages         InboxMessage[]
+
+  @@unique([workspaceId, contactId, messagingAccountId])
+  @@index([workspaceId, status])
+  @@index([assignedToId])
+}
+
+model InboxMessage {
+  id             String        @id @default(cuid())
+  conversationId String
+  direction      Direction
+  content        String?
+  mediaUrl       String?
+  waMessageId    String?
+  status         MessageStatus @default(SENT)
+  isInternalNote Boolean       @default(false)
+  authorId       String? // scalar: id User jika dikirim agen
+  createdAt      DateTime      @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+enum ConversationStatus {
+  OPEN
+  PENDING
+  RESOLVED
+}
+
+enum Direction {
+  INBOUND
+  OUTBOUND
+}
+
+// ==================== FOLLOW-UP & SCHEDULING ====================
+
+model FollowUpRule {
+  id              String      @id @default(cuid())
+  workspaceId     String
+  name            String
+  triggerType     TriggerType
+  triggerValue    Json
+  messageTemplate String
+  stepOrder       Int         @default(1)
+  maxSteps        Int         @default(1)
+  isActive        Boolean     @default(true)
+  createdById     String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  workspace Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  schedules FollowUpSchedule[]
+
+  @@index([workspaceId, isActive])
+}
+
+model FollowUpSchedule {
+  id          String         @id @default(cuid())
+  ruleId      String
+  contactId   String
+  scheduledAt DateTime
+  status      FollowUpStatus @default(SCHEDULED)
+  retryCount  Int            @default(0)
+  errorReason String?
+  sentAt      DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  rule    FollowUpRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  contact Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([status, scheduledAt])
+  @@index([contactId, status])
+}
+
+enum TriggerType {
+  NO_REPLY_DAYS
+  STAGE_CHANGE
+  SPECIFIC_DATE
+}
+
+enum FollowUpStatus {
+  SCHEDULED
+  SENT
+  FAILED
+  CANCELLED
+  STOPPED_REPLIED
+}
+
+// ==================== TASKS ====================
+
+model Task {
+  id          String     @id @default(cuid())
+  workspaceId String
+  contactId   String
+  title       String
+  description String?
+  dueDate     DateTime
+  priority    Priority   @default(MEDIUM)
+  status      TaskStatus @default(PENDING)
+  assignedToId String?
+  completedAt DateTime?
+  createdById String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, dueDate])
+  @@index([contactId])
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+  OVERDUE
+}
+
+// ==================== DO-NOT-CONTACT (compliance/opt-out) ====================
+
+model DoNotContact {
+  id          String   @id @default(cuid())
+  workspaceId String
+  phone       String
+  reason      String? // OPT_OUT, MANUAL, BOUNCE, dll
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, phone])
+  @@index([workspaceId])
+}
+
+// ==================== BRANDING ====================
+
+model BrandingSettings {
+  id             String   @id @default(cuid())
+  workspaceId    String   @unique
+  appName        String   @default("Gaetin")
+  logoUrl        String?
+  faviconUrl     String?
+  primaryColor   String   @default("#2563eb")
+  secondaryColor String   @default("#7c3aed")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+// ==================== SUPPORT ====================
+
+model SupportTicket {
+  id          String       @id @default(cuid())
+  workspaceId String
+  ticketNo    String       @unique
+  subject     String
+  message     String
+  status      TicketStatus @default(OPEN)
+  createdById String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+// ==================== SUBSCRIPTION & BILLING ====================
+
+model Subscription {
+  id                       String             @id @default(cuid())
+  workspaceId              String             @unique
+  plan                     PlanId             @default(GROWTH)
+  billingCycle             BillingCycle       @default(MONTHLY)
+  status                   SubscriptionStatus @default(TRIAL)
+  startedAt                DateTime           @default(now())
+  currentPeriodEnd         DateTime?
+  trialEndsAt              DateTime?
+  scheduledDowngradePlanId PlanId?
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id           String            @id @default(cuid())
+  workspaceId  String
+  orderId      String            @unique // SUB-... atau TOPUP-...
+  kind         String            @default("SUBSCRIPTION") // SUBSCRIPTION | TOPUP
+  plan         PlanId?
+  billingCycle BillingCycle?
+  credits      Int               @default(0) // jumlah kredit (untuk top-up)
+  grossAmount  Decimal           @db.Decimal(15, 2)
+  status       TransactionStatus @default(PENDING)
+  snapToken    String? // referensi Xendit invoice id
+  invoiceUrl   String?
+  paidAt       DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+}
+
+model WebhookEvent {
+  id             String   @id @default(cuid())
+  source         String   @default("midtrans")
+  orderId        String?
+  signatureValid Boolean  @default(false)
+  payload        Json
+  processed      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  @@index([orderId])
+}
+
+enum PlanId {
+  STARTER
+  GROWTH
+  PRO
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  TRIAL_EXPIRED
+  ACTIVE
+  EXPIRED
+  BLOCKED
+  CANCELLED
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  EXPIRED
+  CHALLENGE
+}
+
+// ==================== MESSAGE TEMPLATE ====================
+
+model MessageTemplate {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  body        String
+  createdById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([workspaceId])
+}
+
+// ==================== CREDIT LEDGER ====================
+
+model CreditLedger {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  amount       Int // + top-up/alokasi, - pemakaian
+  reason       String // SAVE_LEAD | VALIDATE | TOPUP | PLAN_ALLOCATION | TRIAL
+  balanceAfter Int
+  createdAt    DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+}
+
+// ==================== AUDIT LOG ====================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String? // pelaku
+  action      String // mis. MEMBER_ADDED, ROLE_CHANGED, MEMBER_REMOVED
+  target      String? // ringkasan objek (mis. email anggota)
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+}
+
+// ==================== CMS (platform) ====================
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique // mis. "landing"
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String?
+  content     String
+  status      String    @default("DRAFT") // DRAFT | PUBLISHED
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  message   String
+  type      String   @default("INFO") // INFO | WARNING | PROMO
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
