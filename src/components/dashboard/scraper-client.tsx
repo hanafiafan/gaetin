@@ -90,6 +90,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState("");
   const [areaName, setAreaName] = useState("");
+  const [maxLeads, setMaxLeads] = useState("100");
   const [color, setColor] = useState("#2563eb");
   const [dataFields, setDataFields] = useState<Set<DataField>>(new Set(DEFAULT_FIELDS));
   const [jobStatus, setJobStatus] = useState<string | null>(null);
@@ -307,14 +308,20 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
       alert(j?.error?.message ?? "Gagal memulai");
       return;
     }
-    const jobName = areaName || (mode === "auto" ? `${combinedKeyword} (${regionInput})` : `${combinedKeyword} (${radius}km)`);
+    let jobName = areaName;
+    if (!jobName) {
+      if (mode === "extension") jobName = `${combinedKeyword} (${regionInput || "Indonesia"})`;
+      else if (mode === "auto") jobName = `${combinedKeyword} (${regionInput})`;
+      else jobName = `${combinedKeyword} (${radius}km)`;
+    }
     setCurrentJob({ id: j.data.id, name: jobName, color, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
     
     if (mode === "extension") {
-      const q = encodeURIComponent(`${combinedKeyword} di ${regionInput || areaName || "Indonesia"}`);
-      const gmapsUrl = `https://www.google.com/maps/search/${q}?gaetin_job_id=${j.data.id}&gaetin_auto=true`;
+      const location = regionInput || "Indonesia";
+      const q = encodeURIComponent(`${combinedKeyword} di ${location}`);
+      const gmapsUrl = `https://www.google.com/maps/search/${q}?gaetin_job_id=${j.data.id}&gaetin_auto=true&gaetin_max=${maxLeads}`;
       window.open(gmapsUrl, "_blank");
     } else {
       // Trigger background execution and let it hang so Vercel doesn't kill it
@@ -500,15 +507,17 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             )}
 
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-100">
-              <div className="mb-1 flex items-center gap-2 font-semibold">
-                <CheckCircle2 className="h-4 w-4" />
-                Mode gratis aktif
+            {mode !== "extension" && (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-100">
+                <div className="mb-1 flex items-center gap-2 font-semibold">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Mode gratis aktif
+                </div>
+                <p className="text-xs leading-relaxed text-emerald-50/80">
+                  Menggunakan peta OpenStreetMap, reverse geocode Nominatim, dan sumber lead Overpass/OpenStreetMap tanpa API key.
+                </p>
               </div>
-              <p className="text-xs leading-relaxed text-emerald-50/80">
-                Menggunakan peta OpenStreetMap, reverse geocode Nominatim, dan sumber lead Overpass/OpenStreetMap tanpa API key.
-              </p>
-            </div>
+            )}
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Kata kunci bisnis</label>
@@ -567,17 +576,24 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               {mode === "extension" ? (
                 <div className="space-y-4 pt-2">
                   <div className="rounded-lg bg-primary/10 p-4 border border-primary/20">
-                    <h4 className="font-semibold text-primary mb-2 flex items-center"><CheckCircle2 className="w-4 h-4 mr-2" /> Google Maps Extractor (BETA)</h4>
-                    <p className="text-sm text-muted-foreground mb-4">Gunakan Ekstensi Chrome Gaetin untuk mengekstrak data langsung dari Google Maps tanpa batas API.</p>
+                    <h4 className="font-semibold text-primary mb-2 flex items-center"><CheckCircle2 className="w-4 h-4 mr-2" /> Scraping Otomatis (BETA)</h4>
+                    <p className="text-sm text-muted-foreground mb-4">Gaetin akan mengekstrak data langsung dari Google Maps tanpa API key.</p>
                     <ol className="list-decimal pl-4 text-sm text-muted-foreground space-y-2 mb-4">
-                      <li>Buka Google Maps dan cari target Anda.</li>
-                      <li>Buka Ekstensi Gaetin di pojok kanan atas browser.</li>
-                      <li>Klik <strong>Mulai Scraping</strong> di menu panel kiri.</li>
+                      <li>Masukkan Target Wilayah dan Batas Jumlah Data.</li>
+                      <li>Klik <strong>Mulai Scraping</strong> di bawah.</li>
+                      <li>Sistem akan otomatis membuka tab Google Maps, menyedot data, lalu menutup tab tersebut.</li>
                     </ol>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Simpan Sebagai (Nama Job)</label>
-                    <Input placeholder="Contoh: Toko Kopi Jakarta" value={areaName} onChange={(e) => setAreaName(e.target.value)} />
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Target Wilayah / Kota</label>
+                      <Input placeholder="Contoh: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Batas Jumlah Lead</label>
+                      <Input type="number" min="1" max="1000" placeholder="Maksimal 1000" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} />
+                    </div>
                   </div>
                 </div>
               ) : mode === "auto" ? (
