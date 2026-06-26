@@ -306,7 +306,7 @@ export default function BillingClient() {
             { id: "credit_10000", credits: 10000, price: 800000 },
           ]).map((pack, i) => {
             const ppc = Math.round(pack.price / pack.credits);
-            const cheapest = i === data?.topupPacks.length - 1;
+            const cheapest = i === (data?.topupPacks?.length ?? 3) - 1;
             return (
               <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-emerald-500/30 bg-emerald-500/5" : "border-white/[0.08] bg-white/[0.03] hover:border-white/20")}>
                 {cheapest && (
