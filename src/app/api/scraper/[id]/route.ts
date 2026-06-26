@@ -15,3 +15,24 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 
   return NextResponse.json({ success: true, data: job });
 }
+
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const session = await getSession();
+  if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+
+  const job = await prisma.scraperJob.findUnique({
+    where: { id: params.id, workspaceId: session.workspace.id },
+  });
+  if (!job) return fail("NOT_FOUND", "Job tidak ditemukan", 404);
+
+  // Delete all leads associated with this job first
+  await prisma.lead.deleteMany({
+    where: { scraperJobId: job.id, workspaceId: session.workspace.id },
+  });
+
+  await prisma.scraperJob.delete({
+    where: { id: job.id },
+  });
+
+  return NextResponse.json({ success: true });
+}

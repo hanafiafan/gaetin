@@ -38,12 +38,15 @@ export async function runScraperJob(jobId: string): Promise<void> {
   const fields = requestedFields(job.dataFields);
 
   const hasCenter = job.centerLat != null && job.centerLng != null && job.radiusKm != null;
+  const hasRegion = !hasCenter && job.location != null;
   // Google menangani radius dalam satu panggilan; OSM scraper memakai grid.
-  const points: ({ lat: number; lng: number } | null)[] = !hasCenter
+  const points: ({ lat: number; lng: number } | null)[] = hasRegion 
     ? [null]
-    : provider === "GOOGLE_PLACES"
-      ? [{ lat: job.centerLat as number, lng: job.centerLng as number }]
-      : generateGrid(job.centerLat as number, job.centerLng as number, job.radiusKm as number);
+    : (!hasCenter
+      ? [null]
+      : provider === "GOOGLE_PLACES"
+        ? [{ lat: job.centerLat as number, lng: job.centerLng as number }]
+        : generateGrid(job.centerLat as number, job.centerLng as number, job.radiusKm as number));
   const zoom = job.radiusKm ? zoomForRadius(job.radiusKm) : 13;
 
   const seen = new Set<string>();
@@ -57,27 +60,38 @@ export async function runScraperJob(jobId: string): Promise<void> {
       if (totalFound >= maxResults) break;
 
       let places: RawPlace[] = [];
-      try {
-        places = await getPlaces({
-          provider,
-          apiKey,
-          keyword: job.keyword,
-          lat: p?.lat,
-          lng: p?.lng,
-          radiusKm: job.radiusKm ?? undefined,
-          zoom,
-          location: job.location ?? undefined,
-          limit: perPointLimit,
-        });
-      } catch {
-        if (firstPoint) {
-          await prisma.scraperJob.update({ where: { id: jobId }, data: { status: "FAILED" } });
-          return;
+      let retryCount = 0;
+      
+      while (retryCount < 3) {
+        try {
+          places = await getPlaces({
+            provider,
+            apiKey,
+            keyword: job.keyword,
+            lat: p?.lat,
+            lng: p?.lng,
+            radiusKm: job.radiusKm ?? undefined,
+            region: hasRegion ? (job.location ?? undefined) : undefined,
+            zoom,
+            location: job.location ?? undefined,
+            limit: perPointLimit,
+          });
+          break; // Success
+        } catch {
+          retryCount++;
+          if (retryCount >= 3) {
+            if (firstPoint && !hasRegion) {
+              await prisma.scraperJob.update({ where: { id: jobId }, data: { status: "FAILED" } });
+              return;
+            }
+          } else {
+            await new Promise((r) => setTimeout(r, 2000));
+          }
         }
-        continue;
-      } finally {
-        firstPoint = false;
       }
+      
+      if (retryCount >= 3 && (!firstPoint || hasRegion)) continue;
+      firstPoint = false;
 
       for (const pl of places) {
         if (totalFound >= maxResults) break;

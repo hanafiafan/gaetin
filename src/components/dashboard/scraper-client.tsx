@@ -6,6 +6,7 @@ import {
   Building2,
   CheckCircle2,
   Columns3,
+  Compass,
   Download,
   ExternalLink,
   Filter,
@@ -20,6 +21,7 @@ import {
   Search,
   Smartphone,
   Star,
+  Trash2,
   type LucideIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -80,6 +82,9 @@ export default function ScraperClient() {
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [radius, setRadius] = useState(5);
   const [label, setLabel] = useState("");
+  const [mode, setMode] = useState<"auto" | "manual">("manual");
+  const [regionInput, setRegionInput] = useState("");
+  const [mapSearch, setMapSearch] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState("");
   const [areaName, setAreaName] = useState("");
@@ -206,6 +211,47 @@ export default function ScraperClient() {
     }, 2000);
   }
 
+  async function handleMapSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (!mapSearch.trim()) return;
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearch)}`);
+      const j = await r.json();
+      if (j && j.length > 0) {
+        const lat = parseFloat(j[0].lat);
+        const lon = parseFloat(j[0].lon);
+        if (mapRef.current) {
+          mapRef.current.flyTo([lat, lon], 13);
+        }
+        setCenter({ lat, lng: lon });
+        markerRef.current?.setLatLng([lat, lon]);
+        circleRef.current?.setLatLng([lat, lon]);
+        setLabel(j[0].display_name);
+      }
+    } catch {}
+  }
+
+  function locateMe() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          if (mapRef.current) {
+            mapRef.current.flyTo([lat, lon], 14);
+          }
+          setCenter({ lat, lng: lon });
+          markerRef.current?.setLatLng([lat, lon]);
+          circleRef.current?.setLatLng([lat, lon]);
+          geocode(lat, lon);
+        },
+        () => alert("Gagal mendapatkan lokasi. Pastikan izin lokasi aktif."),
+      );
+    } else {
+      alert("Browser Anda tidak mendukung geolokasi.");
+    }
+  }
+
   async function start() {
     if (keywords.length === 0) return;
     const combinedKeyword = keywords.join(", ");
@@ -215,17 +261,28 @@ export default function ScraperClient() {
     const r = await fetch("/api/scraper/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        keyword: combinedKeyword,
-        mode: "map",
-        centerLat: center.lat,
-        centerLng: center.lng,
-        radiusKm: radius,
-        locationLabel: label,
-        name: areaName || `${combinedKeyword} (${radius}km)`,
-        color,
-        dataFields: [...dataFields],
-      }),
+      body: JSON.stringify(
+        mode === "auto" 
+          ? {
+              keyword: combinedKeyword,
+              mode: "map",
+              location: regionInput,
+              name: areaName || `${combinedKeyword} (${regionInput})`,
+              color,
+              dataFields: [...dataFields],
+            }
+          : {
+              keyword: combinedKeyword,
+              mode: "map",
+              centerLat: center.lat,
+              centerLng: center.lng,
+              radiusKm: radius,
+              locationLabel: label,
+              name: areaName || `${combinedKeyword} (${radius}km)`,
+              color,
+              dataFields: [...dataFields],
+            }
+      ),
     });
     const j = await r.json();
     if (!r.ok) {
@@ -233,7 +290,7 @@ export default function ScraperClient() {
       alert(j?.error?.message ?? "Gagal memulai");
       return;
     }
-    const jobName = areaName || `${combinedKeyword} (${radius}km)`;
+    const jobName = areaName || (mode === "auto" ? `${combinedKeyword} (${regionInput})` : `${combinedKeyword} (${radius}km)`);
     setCurrentJob({ id: j.data.id, name: jobName, color, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
@@ -255,6 +312,25 @@ export default function ScraperClient() {
       else n.add(id);
       return n;
     });
+  }
+
+  async function deleteJob(e: React.MouseEvent, id: string) {
+    e.stopPropagation();
+    if (!confirm("Hapus area ini dan semua kontak yang belum disimpan?")) return;
+    setBusy(true);
+    const r = await fetch(`/api/scraper/${id}`, { method: "DELETE" });
+    setBusy(false);
+    if (r.ok) {
+      if (currentJob?.id === id) {
+        setCurrentJob(null);
+        setActiveJobId(null);
+        setLeads([]);
+      }
+      loadSaved();
+    } else {
+      const j = await r.json();
+      alert(j?.error?.message ?? "Gagal menghapus");
+    }
   }
   function toggleDataField(field: DataField) {
     setDataFields((prev) => {
@@ -305,24 +381,60 @@ export default function ScraperClient() {
   return (
     <div className="space-y-5">
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <Card className="overflow-hidden rounded-2xl shadow-sm">
-          <CardContent className="p-0">
-            <div className="flex items-center justify-between border-b bg-card px-4 py-3">
-              <div>
-                <div className="text-sm font-semibold">Area pencarian</div>
-                <div className="text-xs text-muted-foreground">Klik peta atau geser pin untuk titik pusat</div>
+        {mode === "manual" ? (
+          <Card className="overflow-hidden rounded-2xl shadow-sm">
+            <CardContent className="p-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between border-b bg-card px-4 py-3 gap-3">
+                <div>
+                  <div className="text-sm font-semibold">Area pencarian manual</div>
+                  <div className="text-xs text-muted-foreground">Klik peta atau cari lokasi</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <form onSubmit={handleMapSearch} className="flex items-center">
+                     <Input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 text-sm max-w-[140px]" />
+                     <Button type="submit" size="sm" variant="secondary" className="ml-1 h-8 px-2">Cari</Button>
+                  </form>
+                  <Button type="button" onClick={locateMe} size="sm" variant="outline" className="h-8 w-8 p-0 shrink-0" title="Lokasi Saya">
+                    <Compass className="h-4 w-4" />
+                  </Button>
+                  <Badge variant="outline" className="ml-2">{radius} km</Badge>
+                </div>
               </div>
-              <Badge variant="outline">{radius} km</Badge>
-            </div>
-            <div ref={mapEl} className="h-[440px] w-full" />
-          </CardContent>
-        </Card>
+              <div ref={mapEl} className="h-[440px] w-full" />
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="rounded-2xl shadow-sm flex items-center justify-center bg-muted/10 h-full min-h-[440px]">
+            <CardContent className="text-center p-6 max-w-md">
+              <Radar className="h-12 w-12 mx-auto text-primary/40 mb-4" />
+              <h3 className="text-lg font-semibold">Otomatis Wilayah</h3>
+              <p className="text-sm text-muted-foreground mt-2">
+                Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="space-y-4 p-5">
             <div>
               <div className="text-base font-semibold">Kontrol scraping</div>
-              <p className="mt-1 text-sm text-muted-foreground">Atur keyword, radius, nama area, data yang diambil, dan warna segmentasi.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Atur metode pencarian dan detail data.</p>
+            </div>
+
+            <div className="flex rounded-lg border bg-muted/30 p-1">
+              <button 
+                className={cn("flex-1 rounded-md py-1.5 text-sm font-medium transition", mode === "auto" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                onClick={() => setMode("auto")}
+              >
+                Otomatis Wilayah
+              </button>
+              <button 
+                className={cn("flex-1 rounded-md py-1.5 text-sm font-medium transition", mode === "manual" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                onClick={() => setMode("manual")}
+              >
+                Custom Area
+              </button>
             </div>
 
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-100">
@@ -389,24 +501,34 @@ export default function ScraperClient() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Nama area</label>
-              <Input value={areaName} onChange={(e) => setAreaName(e.target.value)} placeholder="mis. Gym Bekasi Timur" />
-            </div>
+            {mode === "auto" ? (
+              <div className="space-y-2 border-l-2 border-primary pl-3 py-1">
+                <label className="text-sm font-medium text-primary">Nama Wilayah / Kota</label>
+                <Input value={regionInput} onChange={(e) => setRegionInput(e.target.value)} placeholder="mis. Bandung, Jakarta Selatan" />
+                <p className="text-xs text-muted-foreground">Sistem akan mencari lead di seluruh area administrasi ini.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nama area (Opsional)</label>
+                <Input value={areaName} onChange={(e) => setAreaName(e.target.value)} placeholder="mis. Gym Bekasi Timur" />
+              </div>
+            )}
 
-            <div className="grid gap-3 sm:grid-cols-[1fr_72px]">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Radius pencarian: {radius} km</label>
-                <input type="range" min={1} max={20} step={1} value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="w-full accent-primary" />
+            {mode === "manual" && (
+              <div className="grid gap-3 sm:grid-cols-[1fr_72px]">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Radius pencarian: {radius} km</label>
+                  <input type="range" min={1} max={20} step={1} value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="w-full accent-primary" />
+                </div>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-1 text-sm font-medium">
+                    <Palette className="h-4 w-4" />
+                    Warna
+                  </label>
+                  <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-10 w-full rounded-md border" aria-label="Warna area" />
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="flex items-center gap-1 text-sm font-medium">
-                  <Palette className="h-4 w-4" />
-                  Warna
-                </label>
-                <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-10 w-full rounded-md border" aria-label="Warna area" />
-              </div>
-            </div>
+            )}
 
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
@@ -446,17 +568,19 @@ export default function ScraperClient() {
               </div>
             </div>
 
-            <div className="rounded-xl border bg-muted/30 p-3">
-              <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
-                <Navigation className="h-3.5 w-3.5" />
-                Lokasi pusat
+            {mode === "manual" && (
+              <div className="rounded-xl border bg-muted/30 p-3">
+                <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
+                  <Navigation className="h-3.5 w-3.5" />
+                  Lokasi pusat
+                </div>
+                <p className="line-clamp-3 text-sm text-muted-foreground">
+                  {label || "Klik peta atau geser pin untuk titik pusat."}
+                </p>
               </div>
-              <p className="line-clamp-3 text-sm text-muted-foreground">
-                {label || "Klik peta atau geser pin untuk titik pusat."}
-              </p>
-            </div>
+            )}
 
-            <Button className="h-11 w-full rounded-full" onClick={start} disabled={busy || keywords.length === 0}>
+            <Button className="h-11 w-full rounded-full" onClick={start} disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim())}>
               {busy ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -484,18 +608,33 @@ export default function ScraperClient() {
             </div>
             <div className="flex flex-wrap gap-2">
             {savedJobs.map((j) => (
-              <button
+              <div
                 key={j.id}
-                onClick={() => openSaved(j)}
                 className={cn(
-                  "flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors hover:bg-muted",
-                  currentJob?.id === j.id && "border-primary bg-primary/10 text-primary",
+                  "flex items-center gap-1 rounded-full border bg-background pr-1 pl-3 py-1 text-sm transition-colors hover:bg-muted",
+                  currentJob?.id === j.id && "border-primary bg-primary/5",
                 )}
               >
-                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: j.color ?? "#888" }} />
-                {j.name ?? j.keyword}
-                <span className="text-xs text-muted-foreground">({j.totalFound})</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => openSaved(j)}
+                  className="flex items-center gap-2"
+                >
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: j.color ?? "#888" }} />
+                  <span className={cn(currentJob?.id === j.id && "font-semibold text-primary")}>
+                    {j.name ?? j.keyword}
+                  </span>
+                  <span className="text-xs text-muted-foreground">({j.totalFound})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => deleteJob(e, j.id)}
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Hapus area"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             ))}
             </div>
           </CardContent>

@@ -37,6 +37,7 @@ const navGroups = [
       { label: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
       { label: "Kontak", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
       { label: "Scraper", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
+      { label: "Maps", href: "/dashboard/map", icon: MapIcon, flag: "map" },
     ],
   },
   {

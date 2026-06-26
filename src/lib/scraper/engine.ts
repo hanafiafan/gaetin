@@ -26,6 +26,7 @@ export interface GetPlacesOpts {
   lat?: number;
   lng?: number;
   radiusKm?: number;
+  region?: string;
   zoom?: number;
   location?: string;
   limit: number;
@@ -65,7 +66,7 @@ function keywordRegex(keyword: string): string {
 
 function overpassSelectors(radiusMeters: number, lat: number, lng: number, regex: string): string {
   const around = `(around:${radiusMeters},${lat},${lng})`;
-  const tags = ["name", "brand", "operator", "amenity", "shop", "leisure", "tourism", "healthcare", "office", "craft", "sport", "cuisine"];
+  const tags = ["name", "amenity", "shop", "healthcare", "office"];
   return tags
     .flatMap((tag) => [
       `node${around}["${tag}"~"${regex}","i"];`,
@@ -143,17 +144,38 @@ async function osmScrape(o: GetPlacesOpts): Promise<RawPlace[]> {
 }
 
 async function overpassSearch(o: GetPlacesOpts): Promise<RawPlace[]> {
-  if (o.lat == null || o.lng == null || o.radiusKm == null) return [];
+  if (!o.region && (o.lat == null || o.lng == null || o.radiusKm == null)) return [];
 
-  const radiusMeters = Math.min(Math.max(Math.round(o.radiusKm * 1000), 250), 20_000);
   const regex = keywordRegex(o.keyword);
-  const query = `
-[out:json][timeout:25];
+  let query = "";
+
+  if (o.region) {
+    const areaName = escapeOverpassRegex(o.region);
+    const tags = ["name", "amenity", "shop", "healthcare", "office"];
+    const statements = tags.flatMap(tag => [
+      `node(area.searchArea)["${tag}"~"${regex}","i"];`,
+      `way(area.searchArea)["${tag}"~"${regex}","i"];`,
+      `relation(area.searchArea)["${tag}"~"${regex}","i"];`
+    ]).join("\n");
+    
+    query = `
+[out:json][timeout:60];
+area["name"~"${areaName}","i"]->.searchArea;
 (
-${overpassSelectors(radiusMeters, o.lat, o.lng, regex)}
+${statements}
+);
+out center ${Math.min(Math.max(o.limit, 1), 300)};
+`;
+  } else {
+    const radiusMeters = Math.min(Math.max(Math.round(o.radiusKm! * 1000), 250), 20_000);
+    query = `
+[out:json][timeout:60];
+(
+${overpassSelectors(radiusMeters, o.lat!, o.lng!, regex)}
 );
 out center ${Math.min(Math.max(o.limit, 1), 120)};
 `;
+  }
 
   const res = await fetch(env.OVERPASS_API_URL, {
     method: "POST",
