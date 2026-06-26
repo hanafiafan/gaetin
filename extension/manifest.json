@@ -9,14 +9,26 @@
     "https://gaetin.vercel.app/*",
     "http://localhost:3000/*"
   ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "icon48.png"
   },
   "content_scripts": [
     {
       "matches": ["https://www.google.com/maps/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icon48.png"],
+      "matches": ["https://www.google.com/*"]
     }
   ]
 }

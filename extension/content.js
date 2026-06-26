@@ -1,30 +1,96 @@
-// content.js
+let isRunning = false;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function scrapeGoogleMaps(jobId) {
+let floatUI = null;
+function createFloatUI() {
+  if (document.getElementById('gaetin-float-ui')) return;
+  floatUI = document.createElement('div');
+  floatUI.id = 'gaetin-float-ui';
+  floatUI.style.cssText = `
+    position: fixed; top: 24px; right: 24px; z-index: 999999;
+    background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
+    border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px;
+    padding: 16px; width: 280px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+    color: white; font-family: -apple-system, system-ui, sans-serif; display: none;
+    transition: opacity 0.3s ease;
+  `;
+  floatUI.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+      <img src="${chrome.runtime.getURL('icon48.png')}" style="width: 36px; height: 36px; border-radius: 8px;" alt="G">
+      <div style="flex: 1; overflow: hidden;">
+        <div style="font-weight: 600; font-size: 14px; margin-bottom: 2px;">Gaetin Extractor</div>
+        <div style="font-size: 11px; color: #10b981; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="gf-status">Menjalankan...</div>
+      </div>
+    </div>
+    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+      <div id="gf-progress-fill" style="height: 100%; background: #10b981; width: 0%; transition: width 0.3s ease;"></div>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-bottom: 16px; font-variant-numeric: tabular-nums;">
+      <span id="gf-leads">0 tersimpan</span>
+      <span id="gf-target">Target: 100</span>
+    </div>
+    <button id="gf-stop-btn" style="width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 12px;">Batalkan & Simpan</button>
+  `;
+  document.body.appendChild(floatUI);
+
+  document.getElementById('gf-stop-btn').addEventListener('click', () => {
+    isRunning = false;
+    document.getElementById('gf-status').textContent = "Dibatalkan user. Mengirim sisa data...";
+    document.getElementById('gf-status').style.color = "#ef4444";
+  });
+}
+
+function updateFloatUI(current, max, status) {
+  if (!floatUI) return;
+  floatUI.style.display = 'block';
+  document.getElementById('gf-leads').textContent = `${current} tersimpan`;
+  document.getElementById('gf-target').textContent = `Target: ${max}`;
+  const pct = Math.min(100, (current / max) * 100);
+  document.getElementById('gf-progress-fill').style.width = `${pct}%`;
+  if (status) document.getElementById('gf-status').textContent = status;
+}
+
+function hideFloatUI() {
+  if (floatUI) floatUI.style.display = 'none';
+}
+
+async function scrapeGoogleMaps(jobId, maxLeads, delaySec) {
+  isRunning = true;
+  createFloatUI();
+  
   const leads = [];
   const processedUrls = new Set();
   
-  // Find the scrollable feed container
   let feed = document.querySelector('div[role="feed"]');
   if (!feed) {
-    throw new Error('Tidak menemukan daftar hasil pencarian. Harap lakukan pencarian dulu di Google Maps.');
+    throw new Error('Tidak menemukan daftar hasil pencarian. Harap cari sesuatu dulu di Maps.');
   }
 
   let noNewItemsCount = 0;
-  const maxLeads = 100; // Limit for this MVP to avoid crashing the browser
+  
+  const reportProgress = (statusMsg) => {
+    updateFloatUI(leads.length, maxLeads, statusMsg);
+    try {
+      chrome.runtime.sendMessage({
+        type: 'SCRAPE_PROGRESS',
+        current: leads.length,
+        max: maxLeads,
+        status: statusMsg
+      });
+    } catch(e) {}
+  };
 
-  while (leads.length < maxLeads && noNewItemsCount < 3) {
-    // Get all place links currently in the DOM
+  reportProgress("Memindai daftar bisnis...");
+
+  while (isRunning && leads.length < maxLeads && noNewItemsCount < 3) {
     const links = Array.from(feed.querySelectorAll('a[href*="/maps/place/"]'));
     const newLinks = links.filter(a => !processedUrls.has(a.href));
 
     if (newLinks.length === 0) {
-      // Try to scroll down to load more
+      reportProgress("Menggulir halaman ke bawah...");
       feed.scrollTo(0, feed.scrollHeight);
-      await sleep(2000); // Wait for network
+      await sleep(2500);
       
-      // Check if "You've reached the end of the list" is visible
       const endText = feed.innerText.includes("You've reached the end of the list") || feed.innerText.includes("Anda telah mencapai akhir daftar");
       if (endText) break;
       
@@ -35,25 +101,24 @@ async function scrapeGoogleMaps(jobId) {
     noNewItemsCount = 0;
 
     for (const link of newLinks) {
-      if (leads.length >= maxLeads) break;
+      if (!isRunning || leads.length >= maxLeads) break;
       processedUrls.add(link.href);
 
-      // Click the item to open details pane
+      reportProgress(`Mengekstrak data ke-${leads.length + 1}...`);
+      
+      // Auto-scroll
+      link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      await sleep(300);
+
       link.click();
-      await sleep(2000); // Wait for detail pane to render
+      await sleep(delaySec * 1000); // Tunggu panel detail terbuka sesuai delay user
 
       try {
-        // Extract Data from Detail Pane
-        // Name is usually an h1
         const h1 = document.querySelector('h1');
         const businessName = h1 ? h1.innerText.trim() : 'Tanpa nama';
 
-        // Get all button labels, which contain phone, address, website
         const buttons = Array.from(document.querySelectorAll('button[aria-label]'));
-        
-        let phone = null;
-        let website = null;
-        let address = null;
+        let phone = null, website = null, address = null;
 
         for (const btn of buttons) {
           const label = btn.getAttribute('aria-label') || '';
@@ -68,13 +133,10 @@ async function scrapeGoogleMaps(jobId) {
           }
         }
 
-        // Get Rating (Optional)
         const ratingSpan = document.querySelector('span[aria-label*="stars"]') || document.querySelector('span[aria-label*="bintang"]');
-        let rating = null;
-        let reviewCount = null;
+        let rating = null, reviewCount = null;
         if (ratingSpan && ratingSpan.innerText) {
           rating = parseFloat(ratingSpan.innerText.replace(',', '.'));
-          // Siblings often contain review count like "(123)"
           const parentText = ratingSpan.parentElement ? ratingSpan.parentElement.innerText : '';
           const match = parentText.match(/\(([\d,\.]+)\)/);
           if (match) reviewCount = parseInt(match[1].replace(/[\.,]/g, ''), 10);
@@ -83,27 +145,18 @@ async function scrapeGoogleMaps(jobId) {
         const categoryBtn = document.querySelector('button[jsaction*="pane.rating.category"]');
         const category = categoryBtn ? categoryBtn.innerText.trim() : null;
 
-        leads.push({
-          businessName,
-          phone,
-          website,
-          address,
-          category,
-          rating,
-          reviewCount
-        });
-
+        leads.push({ businessName, phone, website, address, category, rating, reviewCount });
+        reportProgress(`Tersimpan: ${businessName}`);
       } catch (e) {
         console.error('Error parsing place', e);
       }
     }
   }
 
-  // Push to Gaetin API
   if (leads.length > 0) {
+    reportProgress(`Mengirim ${leads.length} data ke Gaetin API...`);
     try {
       const url = "https://gaetin.vercel.app/api/scraper/extension";
-      // Fallback to localhost if running on localhost for testing (the user will use vercel or localhost)
       const targetUrl = window.location.href.includes('localhost') ? 'http://localhost:3000/api/scraper/extension' : url;
       
       const res = await fetch(targetUrl, {
@@ -112,27 +165,48 @@ async function scrapeGoogleMaps(jobId) {
         body: JSON.stringify({ jobId, leads })
       });
       
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(txt || 'Gagal mengirim data ke server Gaetin');
-      }
+      if (!res.ok) throw new Error('API menolak request');
     } catch (e) {
-      throw new Error('Gagal koneksi ke server Gaetin: ' + e.message);
+      throw new Error('Koneksi API gagal: ' + e.message);
     }
   }
 
+  hideFloatUI();
   return leads.length;
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'START_SCRAPE') {
-    scrapeGoogleMaps(request.jobId)
+    if (isRunning) {
+      sendResponse({ success: false, error: 'Proses scraping sedang berjalan!' });
+      return true;
+    }
+    
+    // Send immediate acknowledgment
+    sendResponse({ success: true });
+
+    // Run async task
+    scrapeGoogleMaps(request.jobId, request.maxLeads || 100, request.delaySec || 2)
       .then(count => {
-        sendResponse({ success: true, count });
+        isRunning = false;
+        try {
+          chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: true, message: `Sukses menyimpan ${count} leads ke Gaetin CRM!` });
+        } catch(e) {}
       })
       .catch(err => {
-        sendResponse({ success: false, error: err.message });
+        isRunning = false;
+        hideFloatUI();
+        try {
+          chrome.runtime.sendMessage({ type: 'SCRAPE_COMPLETE', success: false, message: `Error: ${err.message}` });
+        } catch(e) {}
       });
-    return true; // Keep message channel open for async response
+      
+    return true; 
+  }
+
+  if (request.action === 'STOP_SCRAPE') {
+    isRunning = false;
+    sendResponse({ success: true });
+    return true;
   }
 });
