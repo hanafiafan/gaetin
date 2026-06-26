@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Gaetin Scraper</title>
+  <style>
+    body { font-family: -apple-system, system-ui, sans-serif; width: 320px; padding: 16px; margin: 0; background: #0f172a; color: #f8fafc; }
+    h2 { margin-top: 0; font-size: 16px; color: #10b981; }
+    label { font-size: 12px; margin-bottom: 4px; display: block; color: #94a3b8; }
+    input { width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 12px; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 4px; outline: none; }
+    input:focus { border-color: #10b981; }
+    button { width: 100%; padding: 10px; background: #10b981; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #059669; }
+    button:disabled { background: #475569; cursor: not-allowed; }
+    .status { margin-top: 12px; font-size: 12px; text-align: center; color: #94a3b8; }
+    .success { color: #10b981; }
+    .error { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <h2>Gaetin Maps Scraper</h2>
+  <label>Gaetin Job ID</label>
+  <input type="text" id="jobId" placeholder="Paste Job ID dari Dashboard" />
+  
+  <button id="startBtn">Mulai Scraping</button>
+  
+  <div class="status" id="statusMsg">Pastikan Anda sudah berada di halaman Google Maps dan hasil pencarian telah muncul.</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

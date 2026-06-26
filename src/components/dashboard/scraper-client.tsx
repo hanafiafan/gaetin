@@ -82,7 +82,7 @@ export default function ScraperClient() {
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [radius, setRadius] = useState(5);
   const [label, setLabel] = useState("");
-  const [mode, setMode] = useState<"auto" | "manual">("manual");
+  const [mode, setMode] = useState<"auto" | "manual" | "extension">("manual");
   const [regionInput, setRegionInput] = useState("");
   const [regionSuggestions, setRegionSuggestions] = useState<{display_name: string}[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -312,8 +312,11 @@ export default function ScraperClient() {
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
     
-    // Trigger background execution and let it hang so Vercel doesn't kill it
-    fetch(`/api/scraper/${j.data.id}/execute`, { method: "POST" }).catch(e => console.error("Execute failed", e));
+    if (mode !== "extension") {
+      // Trigger background execution and let it hang so Vercel doesn't kill it
+      fetch(`/api/scraper/${j.data.id}/execute`, { method: "POST" }).catch(e => console.error("Execute failed", e));
+    }
+    
     poll(j.data.id);
   }
 
@@ -434,8 +437,22 @@ export default function ScraperClient() {
             </CardContent>
           </Card>
         )}
-
-        <Card className="rounded-2xl shadow-sm">
+        
+        {mode === "extension" && activeJobId ? (
+            <Card className="border-primary/50 shadow-[0_0_15px_rgba(37,99,235,0.1)]">
+              <CardContent className="p-4 space-y-4">
+                <div className="text-center">
+                  <div className="mb-2 text-sm text-muted-foreground">Job ID untuk Ekstensi Anda:</div>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 bg-secondary p-3 rounded-md text-primary font-mono text-center select-all">{activeJobId}</code>
+                    <Button variant="outline" onClick={() => navigator.clipboard.writeText(activeJobId)}>Copy</Button>
+                  </div>
+                </div>
+                <div className="text-xs text-center text-muted-foreground">Silakan paste kode ini di ekstensi Chrome untuk memulai pengiriman data ke sesi ini.</div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="rounded-2xl shadow-sm">
           <CardContent className="space-y-4 p-5">
             <div>
               <div className="text-base font-semibold">Kontrol scraping</div>
@@ -443,18 +460,27 @@ export default function ScraperClient() {
             </div>
 
             <div className="flex rounded-lg border bg-muted/30 p-1">
-              <button 
-                className={cn("flex-1 rounded-md py-1.5 text-sm font-medium transition", mode === "auto" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                onClick={() => setMode("auto")}
-              >
-                Otomatis Wilayah
-              </button>
-              <button 
-                className={cn("flex-1 rounded-md py-1.5 text-sm font-medium transition", mode === "manual" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                onClick={() => setMode("manual")}
-              >
-                Custom Area
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("auto")}
+                  className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "auto" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                >
+                  Otomatis Wilayah
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("manual")}
+                  className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "manual" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                >
+                  Custom Area
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("extension")}
+                  className={cn("px-4 py-2 flex-1 text-sm rounded-full transition-colors font-medium border-2 border-transparent", mode === "extension" ? "bg-popover text-popover-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                >
+                  Ekstensi Chrome
+                </button>
             </div>
 
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-100">
@@ -521,7 +547,23 @@ export default function ScraperClient() {
               </div>
             </div>
 
-            {mode === "auto" ? (
+              {mode === "extension" ? (
+                <div className="space-y-4 pt-2">
+                  <div className="rounded-lg bg-primary/10 p-4 border border-primary/20">
+                    <h4 className="font-semibold text-primary mb-2 flex items-center"><CheckCircle2 className="w-4 h-4 mr-2" /> Google Maps Extractor (BETA)</h4>
+                    <p className="text-sm text-muted-foreground mb-4">Gunakan Ekstensi Chrome Gaetin untuk mengekstrak data langsung dari Google Maps tanpa batas API.</p>
+                    <ol className="list-decimal pl-4 text-sm text-muted-foreground space-y-2 mb-4">
+                      <li>Buka Google Maps dan cari target Anda.</li>
+                      <li>Buka Ekstensi Gaetin di pojok kanan atas browser.</li>
+                      <li>Klik <strong>Mulai Scraping</strong> di menu panel kiri.</li>
+                    </ol>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Simpan Sebagai (Nama Job)</label>
+                    <Input placeholder="Contoh: Toko Kopi Jakarta" value={areaName} onChange={(e) => setAreaName(e.target.value)} />
+                  </div>
+                </div>
+              ) : mode === "auto" ? (
               <div className="space-y-2 border-l-2 border-primary pl-3 py-1 relative">
                 <label className="text-sm font-medium text-primary">Nama Wilayah / Kota</label>
                 <Input 
@@ -553,7 +595,7 @@ export default function ScraperClient() {
                   </div>
                 )}
               </div>
-            ) : (
+              ) : (
               <div className="space-y-2">
                 <label className="text-sm font-medium">Nama area (Opsional)</label>
                 <Input value={areaName} onChange={(e) => setAreaName(e.target.value)} placeholder="mis. Gym Bekasi Timur" />
