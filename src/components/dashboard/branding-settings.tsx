@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 export default function BrandingSettings() {
   const [isPro, setIsPro] = useState<boolean | null>(null);
   const [appName, setAppName] = useState("Gaetin");
-  const [primaryColor, setPrimaryColor] = useState("#2563eb");
+  const [primaryColor, setPrimaryColor] = useState("#10b981");
   const [logoUrl, setLogoUrl] = useState("");
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);

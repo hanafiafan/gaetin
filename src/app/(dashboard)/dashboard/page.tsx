@@ -95,22 +95,24 @@ export default async function DashboardPage({
   const doneSteps = onboarding.filter((step) => step.done).length;
 
   return (
-    <div className="space-y-5">
-      <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
-        <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div>
-            <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/10">Ringkasan Workspace</Badge>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Halo, {session.user.name.split(" ")[0]}. Mari gaet peluang berikutnya.
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Pantau lead, kontak, percakapan, dan revenue dari satu ruang kerja operasional.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
+    <div className="space-y-6">
+      <div className="overflow-hidden rounded-3xl border bg-card/60 shadow-sm backdrop-blur-xl">
+        <div className="grid gap-6 p-6 lg:grid-cols-[2fr_1fr]">
+          <div className="flex flex-col justify-center">
+            <div>
+              <Badge className="mb-4 bg-primary/15 text-primary hover:bg-primary/20">Ringkasan Workspace</Badge>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                Halo, {session.user.name.split(" ")[0]}. Mari gaet peluang berikutnya.
+              </h1>
+              <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
+                Pantau lead, kontak, percakapan, dan revenue dari satu ruang kerja operasional.
+              </p>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
               {quickActions.map((action) => {
                 const Icon = action.icon;
                 return (
-                  <Button key={action.href} asChild variant={action.label === "Cari lead" ? "default" : "outline"} size="sm">
+                  <Button key={action.href} asChild variant={action.label === "Cari lead" ? "default" : "outline"} className="rounded-xl">
                     <Link href={action.href}>
                       <Icon className="mr-2 h-4 w-4" />
                       {action.label}
@@ -120,37 +122,37 @@ export default async function DashboardPage({
               })}
             </div>
           </div>
-          <div className="rounded-xl border bg-muted/30 p-4">
+          <div className="rounded-2xl border bg-background/50 p-5 shadow-inner">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-semibold">Progress pengaturan</div>
-                <div className="text-xs text-muted-foreground">{doneSteps} dari {onboarding.length} langkah selesai</div>
+                <div className="text-sm font-bold text-foreground">Progress pengaturan</div>
+                <div className="mt-1 text-xs text-muted-foreground">{doneSteps} dari {onboarding.length} langkah selesai</div>
               </div>
               {trialDaysLeft !== null && (
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                <span className="rounded-xl bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
                   Trial {trialDaysLeft} hari
                 </span>
               )}
             </div>
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-background">
-              <div className="h-full rounded-full bg-primary" style={{ width: `${(doneSteps / onboarding.length) * 100}%` }} />
+            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${(doneSteps / onboarding.length) * 100}%` }} />
             </div>
-            <div className="mt-4 space-y-2">
+            <div className="mt-5 space-y-2.5">
               {onboarding.map((step) => (
                 <Link
                   key={step.label}
                   href={step.href}
-                  className="flex items-center justify-between rounded-lg bg-background px-3 py-2 text-sm transition-colors hover:bg-muted"
+                  className="group flex items-center justify-between rounded-xl bg-card px-3 py-2.5 text-sm font-medium transition hover:bg-muted"
                 >
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-2.5">
                     {step.done ? (
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
                     ) : (
                       <Clock3 className="h-4 w-4 text-muted-foreground" />
                     )}
                     {step.label}
                   </span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
                 </Link>
               ))}
             </div>
@@ -159,75 +161,78 @@ export default async function DashboardPage({
       </div>
 
       {searchParams?.feature === "disabled" && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm font-medium text-amber-800 dark:text-amber-300">
           Fitur tersebut sedang dinonaktifkan oleh pemilik sistem melalui Owner CMS.
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
-          <Card key={c.label} className="rounded-xl shadow-sm">
-            <CardContent className="p-5">
+          <Card key={c.label} className="rounded-2xl border shadow-sm transition hover:shadow-md">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm text-muted-foreground">{c.label}</div>
-                  <div className="mt-1 text-2xl font-semibold tracking-tight">{c.value}</div>
+                  <div className="text-sm font-medium text-muted-foreground">{c.label}</div>
+                  <div className="mt-2 text-3xl font-bold tracking-tight text-foreground">{c.value}</div>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <c.icon className="h-5 w-5" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <c.icon className="h-6 w-6" />
                 </div>
               </div>
-              <div className="mt-3 text-xs text-muted-foreground">{c.detail}</div>
+              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary/50"></span>
+                {c.detail}
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <Card className="rounded-xl shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between gap-3">
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <Card className="rounded-3xl border shadow-sm">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold">Alur kerja hari ini</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Prioritas yang biasanya menggerakkan alur penjualan.</p>
+                <h2 className="text-xl font-bold text-foreground">Alur kerja hari ini</h2>
+                <p className="mt-1 text-sm font-medium text-muted-foreground">Prioritas yang biasanya menggerakkan alur penjualan.</p>
               </div>
-              <Button asChild size="sm" variant="outline">
+              <Button asChild variant="outline" className="rounded-xl">
                 <Link href="/dashboard/tasks">
                   <Plus className="mr-2 h-4 w-4" />
-                  Tugas
+                  Buat Tugas
                 </Link>
               </Button>
             </div>
-            <div className="mt-5 grid gap-3 md:grid-cols-3">
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
                 { label: "Kurasi lead", value: leads, href: "/dashboard/scraper" },
                 { label: "Balas inbox", value: openConversations, href: "/dashboard/inbox" },
                 { label: "Tugas aktif", value: tasks, href: "/dashboard/tasks" },
               ].map((item) => (
-                <Link key={item.label} href={item.href} className="rounded-xl border bg-muted/30 p-4 transition-colors hover:bg-muted">
-                  <div className="text-2xl font-semibold">{item.value.toLocaleString("id-ID")}</div>
-                  <div className="mt-1 text-sm text-muted-foreground">{item.label}</div>
+                <Link key={item.label} href={item.href} className="group flex flex-col rounded-2xl border bg-background/50 p-5 transition hover:bg-muted">
+                  <div className="text-3xl font-bold text-foreground transition group-hover:text-primary">{item.value.toLocaleString("id-ID")}</div>
+                  <div className="mt-2 text-sm font-medium text-muted-foreground">{item.label}</div>
                 </Link>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl shadow-sm">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold">Kondisi workspace</h2>
-            <div className="mt-4 space-y-3">
-              <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2 text-sm">
-                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Nomor WA terhubung</span>
-                <strong>{accounts}</strong>
+        <Card className="rounded-3xl border shadow-sm">
+          <CardContent className="p-6 sm:p-8">
+            <h2 className="text-xl font-bold text-foreground">Kondisi workspace</h2>
+            <div className="mt-6 space-y-3">
+              <div className="flex items-center justify-between rounded-xl border bg-background/50 px-4 py-3.5 text-sm transition hover:bg-muted">
+                <span className="flex items-center gap-3 font-medium"><ShieldCheck className="h-5 w-5 text-primary" /> Nomor WA terhubung</span>
+                <strong className="text-lg">{accounts}</strong>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2 text-sm">
-                <span>Blast dibuat</span>
-                <strong>{blasts}</strong>
+              <div className="flex items-center justify-between rounded-xl border bg-background/50 px-4 py-3.5 text-sm transition hover:bg-muted">
+                <span className="flex items-center gap-3 font-medium"><Send className="h-5 w-5 text-primary" /> Blast dibuat</span>
+                <strong className="text-lg">{blasts}</strong>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2 text-sm">
-                <span>Campaign dibuat</span>
-                <strong>{campaigns}</strong>
+              <div className="flex items-center justify-between rounded-xl border bg-background/50 px-4 py-3.5 text-sm transition hover:bg-muted">
+                <span className="flex items-center gap-3 font-medium"><Target className="h-5 w-5 text-primary" /> Campaign dibuat</span>
+                <strong className="text-lg">{campaigns}</strong>
               </div>
             </div>
           </CardContent>

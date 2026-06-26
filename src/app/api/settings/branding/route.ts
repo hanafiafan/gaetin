@@ -15,7 +15,7 @@ export async function GET() {
     data: {
       appName: b?.appName ?? "Gaetin",
       logoUrl: b?.logoUrl ?? null,
-      primaryColor: b?.primaryColor ?? "#2563eb",
+      primaryColor: b?.primaryColor ?? "#10b981",
       secondaryColor: b?.secondaryColor ?? "#7c3aed",
     },
   });
@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest) {
       workspaceId: session.workspace.id,
       appName: d.appName ?? "Gaetin",
       logoUrl: d.logoUrl || null,
-      primaryColor: d.primaryColor ?? "#2563eb",
+      primaryColor: d.primaryColor ?? "#10b981",
       secondaryColor: d.secondaryColor ?? "#7c3aed",
     },
   });
