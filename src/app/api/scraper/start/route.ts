@@ -70,8 +70,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Jalankan di latar belakang (di produksi: enqueue ke BullMQ worker).
-  void runScraperJob(job.id).catch(() => undefined);
+  // Execution is moved to /api/scraper/[id]/execute called by client
+  // so Vercel doesn't kill the background promise.
 
   return NextResponse.json({ success: true, data: { id: job.id, status: job.status } }, { status: 202 });
 }

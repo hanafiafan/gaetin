@@ -311,6 +311,9 @@ export default function ScraperClient() {
     setCurrentJob({ id: j.data.id, name: jobName, color, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
+    
+    // Trigger background execution and let it hang so Vercel doesn't kill it
+    fetch(`/api/scraper/${j.data.id}/execute`, { method: "POST" }).catch(e => console.error("Execute failed", e));
     poll(j.data.id);
   }
 
