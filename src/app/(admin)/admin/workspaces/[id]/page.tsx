@@ -22,7 +22,7 @@ interface WorkspaceDetail {
   stats: { leads: number; contacts: number };
   scraperJobs: { id: string; keyword: string; name: string | null; status: string; totalFound: number; createdAt: string }[];
   blasts: { id: string; name: string | null; status: string; totalRecipients: number; createdAt: string }[];
-  creditLedger: { id: string; amount: number; kind: string; note: string | null; createdAt: string }[];
+  creditLedger: { id: string; amount: number; reason: string; balanceAfter: number; createdAt: string }[];
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -300,8 +300,8 @@ export default function WorkspaceDetailPage() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40">
               <tr className="border-b text-left text-xs uppercase text-muted-foreground">
-                <th className="p-3">Keterangan</th>
                 <th className="p-3">Jenis</th>
+                <th className="p-3 text-right">Saldo Akhir</th>
                 <th className="p-3 text-right">Jumlah</th>
                 <th className="p-3">Waktu</th>
               </tr>
@@ -309,8 +309,8 @@ export default function WorkspaceDetailPage() {
             <tbody className="bg-card">
               {creditLedger.map(l => (
                 <tr key={l.id} className="border-b last:border-0">
-                  <td className="p-3 text-muted-foreground">{l.note ?? "-"}</td>
-                  <td className="p-3"><Badge variant="outline" className="text-xs">{l.kind}</Badge></td>
+                  <td className="p-3"><Badge variant="outline" className="text-xs">{l.reason}</Badge></td>
+                  <td className="p-3 text-right tabular-nums text-muted-foreground">{l.balanceAfter.toLocaleString("id-ID")}</td>
                   <td className={cn("p-3 text-right font-semibold tabular-nums", l.amount >= 0 ? "text-green-600" : "text-red-600")}>
                     {l.amount >= 0 ? "+" : ""}{l.amount.toLocaleString("id-ID")}
                   </td>

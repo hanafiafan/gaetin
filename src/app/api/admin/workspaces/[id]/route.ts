@@ -38,7 +38,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       where: { workspaceId: params.id },
       orderBy: { createdAt: "desc" },
       take: 30,
-      select: { id: true, amount: true, kind: true, note: true, createdAt: true },
+      select: { id: true, amount: true, reason: true, balanceAfter: true, createdAt: true },
     }),
   ]);
 
