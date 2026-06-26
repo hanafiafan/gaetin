@@ -76,17 +76,25 @@ export default function AdminWorkspaces() {
                   <option value="PRO">Pro</option>
                 </select>
               </td>
-              <td className="p-3 text-center">{w.status}</td>
+              <td className="p-3">
+                <select
+                  value={w.status}
+                  onChange={(e) => act(w.id, { action: "setStatus", status: e.target.value })}
+                  className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+                >
+                  <option value="TRIAL">Trial</option>
+                  <option value="ACTIVE">Aktif</option>
+                  <option value="EXPIRED">Kedaluwarsa</option>
+                  <option value="BLOCKED">Suspend</option>
+                  <option value="CANCELLED">Batal</option>
+                </select>
+              </td>
               <td className="p-3 text-right">{w.credits.toLocaleString("id-ID")}</td>
               <td className="p-3">
                 <div className="flex justify-end gap-1">
+                  <Button size="sm" variant="outline" onClick={() => router.push(`/admin/workspaces/${w.id}`)}>Detail</Button>
                   <Button size="sm" variant="outline" onClick={() => impersonate(w.id)}>Masuk</Button>
                   <Button size="sm" variant="outline" onClick={() => addCredits(w.id)}>Kredit</Button>
-                  {w.status === "BLOCKED" ? (
-                    <Button size="sm" onClick={() => act(w.id, { action: "setStatus", status: "ACTIVE" })}>Aktifkan</Button>
-                  ) : (
-                    <Button size="sm" variant="destructive" onClick={() => act(w.id, { action: "setStatus", status: "BLOCKED" })}>Suspend</Button>
-                  )}
                 </div>
               </td>
             </tr>

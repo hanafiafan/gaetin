@@ -8,6 +8,7 @@ import {
   Contact2,
   Database,
   LayoutDashboard,
+  LineChart,
   Megaphone,
   Newspaper,
   Receipt,
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Ringkasan", icon: LayoutDashboard },
+  { href: "/admin/analytics", label: "Analitik", icon: LineChart },
   { href: "/admin/workspaces", label: "Workspace", icon: Building2 },
   { href: "/admin/users", label: "Pengguna", icon: Users },
   { href: "/admin/leads", label: "Data Scraping", icon: Database },
