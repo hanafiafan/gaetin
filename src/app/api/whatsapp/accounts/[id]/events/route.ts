@@ -46,7 +46,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       let prevQr = "";
       let done = false;
       const startedAt = Date.now();
-      const MAX_WAIT_MS = 60_000; // 60 detik — cukup untuk QR muncul
+      const MAX_WAIT_MS = 120_000; // 120 detik — cukup untuk QR muncul + user scan + auth WhatsApp
 
       req.signal.addEventListener("abort", () => { done = true; });
 

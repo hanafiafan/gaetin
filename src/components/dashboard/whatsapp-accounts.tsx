@@ -42,7 +42,15 @@ export default function WhatsAppAccounts() {
   async function load() {
     const r = await fetch("/api/whatsapp/accounts");
     const j = await r.json();
-    if (j.success) setAccounts(j.data);
+    if (j.success) {
+      setAccounts(j.data);
+      // Kalau akun yang sedang di-connect sudah CONNECTED, bersihkan QR state
+      setQr((prev) => {
+        if (!prev) return null;
+        const updated = (j.data as Account[]).find((a) => a.id === prev.id);
+        return updated?.status === "connected" ? null : prev;
+      });
+    }
   }
 
   useEffect(() => {
@@ -92,15 +100,23 @@ export default function WhatsAppAccounts() {
           }
         } else if (data.type === "error") {
           stopStream();
-          setQr({ id, img: null, status: "error", error: data.message ?? "Gagal mendapatkan QR." });
+          // Cek dulu apakah sebenarnya sudah connected (auth berhasil tapi SSE keburu timeout)
+          load().then(() => {
+            setQr((prev) => {
+              if (!prev) return null;
+              return { ...prev, status: "error", error: data.message ?? "Gagal mendapatkan QR." };
+            });
+          });
         }
       } catch { /* ignore malformed */ }
     };
 
-    // Jika SSE terputus (timeout Vercel / network), tampilkan pesan retry
+    // Jika SSE terputus, reload akun dulu — mungkin koneksi sudah berhasil
     es.onerror = () => {
       stopStream();
-      setQr((prev) => prev ? { ...prev, status: "error", error: "Koneksi terputus. Coba lagi." } : null);
+      load().then(() => {
+        setQr((prev) => prev?.status === "connecting" ? { ...prev, status: "error", error: "Koneksi terputus. Coba lagi." } : null);
+      });
     };
   }
 
