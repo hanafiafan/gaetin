@@ -45,13 +45,24 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
       let prevQr = "";
       let done = false;
+      const startedAt = Date.now();
+      const MAX_WAIT_MS = 60_000; // 60 detik — cukup untuk QR muncul
 
       req.signal.addEventListener("abort", () => { done = true; });
 
       // Poll gateway setiap 1.5 detik sampai QR muncul atau connected
       while (!done) {
+        // Timeout: kalau 60 detik belum dapat QR, stop dan suruh client coba lagi
+        if (Date.now() - startedAt > MAX_WAIT_MS) {
+          console.error(`[events] Timeout 60s — no QR received for account ${account.id}`);
+          send({ type: "error", message: "QR timeout, silakan coba lagi" });
+          done = true;
+          break;
+        }
+
         try {
           const state = await gwGetQr(account.id);
+          console.log(`[events] poll status=${state.status} hasQr=${!!state.qr}`);
 
           if (state.qr && state.qr !== prevQr) {
             prevQr = state.qr;
@@ -71,7 +82,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
               .catch(() => undefined);
             send({ type: "status", status: "connected" });
             done = true;
-          } else if (state.status === "disconnected" && prevQr) {
+          } else if (state.status === "disconnected") {
+            // Disconnected tanpa QR = gateway gagal start, atau session sudah invalid
             send({ type: "status", status: "disconnected" });
             done = true;
           }

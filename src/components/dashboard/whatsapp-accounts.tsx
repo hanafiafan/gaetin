@@ -36,7 +36,7 @@ export default function WhatsAppAccounts() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [label, setLabel] = useState("");
   const [loading, setLoading] = useState(false);
-  const [qr, setQr] = useState<{ id: string; img: string | null; status: string } | null>(null);
+  const [qr, setQr] = useState<{ id: string; img: string | null; status: string; error?: string } | null>(null);
   const esRef = useRef<EventSource | null>(null);
 
   async function load() {
@@ -78,20 +78,30 @@ export default function WhatsAppAccounts() {
 
     es.onmessage = (e) => {
       try {
-        const data = JSON.parse(e.data) as { type: string; qr?: string; status?: string };
+        const data = JSON.parse(e.data) as { type: string; qr?: string; status?: string; message?: string };
         if (data.type === "qr" && data.qr) {
           setQr({ id, img: data.qr, status: "connecting" });
         } else if (data.type === "status") {
-          if (data.status === "connected" || data.status === "disconnected") {
+          if (data.status === "connected") {
             stopStream();
             setQr(null);
             load();
+          } else if (data.status === "disconnected") {
+            stopStream();
+            setQr({ id, img: null, status: "error", error: "Koneksi gagal. Coba lagi." });
           }
+        } else if (data.type === "error") {
+          stopStream();
+          setQr({ id, img: null, status: "error", error: data.message ?? "Gagal mendapatkan QR." });
         }
       } catch { /* ignore malformed */ }
     };
 
-    es.onerror = () => stopStream();
+    // Jika SSE terputus (timeout Vercel / network), tampilkan pesan retry
+    es.onerror = () => {
+      stopStream();
+      setQr((prev) => prev ? { ...prev, status: "error", error: "Koneksi terputus. Coba lagi." } : null);
+    };
   }
 
   async function disconnect(id: string) {
@@ -159,6 +169,16 @@ export default function WhatsAppAccounts() {
                 {qr.img ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={qr.img} alt="QR WhatsApp" width={220} height={220} className="rounded-lg" />
+                ) : qr.status === "error" ? (
+                  <div className="flex flex-col items-center gap-3 py-4">
+                    <p className="text-sm text-red-400">{qr.error ?? "Gagal mendapatkan QR."}</p>
+                    <button
+                      onClick={() => connect(a.id)}
+                      className="rounded-full bg-primary/20 px-4 py-1.5 text-xs font-bold text-primary hover:bg-primary/30"
+                    >
+                      Coba lagi
+                    </button>
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center gap-2 py-4">
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
