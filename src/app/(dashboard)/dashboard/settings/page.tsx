@@ -1,7 +1,7 @@
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
-import ScraperSettings from "@/components/dashboard/scraper-settings";
-import BrandingSettings from "@/components/dashboard/branding-settings";
-import { Map, Palette, Settings, Sparkles, Smartphone } from "lucide-react";
+import WorkspaceProfileSettings from "@/components/dashboard/workspace-profile-settings";
+import AccountSettings from "@/components/dashboard/account-settings";
+import { Building2, Settings, Smartphone, Sparkles, UserCircle } from "lucide-react";
 
 export default function SettingsPage() {
   return (
@@ -14,7 +14,7 @@ export default function SettingsPage() {
             </span>
             <h1 className="text-3xl font-bold tracking-tight text-white">Pengaturan</h1>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-400">
-              Konfigurasi koneksi WhatsApp, sumber data scraping, dan white-label branding workspace.
+              Konfigurasi koneksi WhatsApp, profil workspace, dan pengaturan akun Anda.
             </p>
           </div>
           <div className="grid gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 text-sm">
@@ -22,16 +22,17 @@ export default function SettingsPage() {
               <Smartphone className="h-5 w-5 text-primary" /> Akun WhatsApp
             </div>
             <div className="flex items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-4 py-3 font-medium text-slate-300 transition hover:bg-white/[0.04]">
-              <Settings className="h-5 w-5 text-primary" /> Provider scraping
+              <Building2 className="h-5 w-5 text-primary" /> Profil workspace
             </div>
             <div className="flex items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-4 py-3 font-medium text-slate-300 transition hover:bg-white/[0.04]">
-              <Palette className="h-5 w-5 text-primary" /> White-label branding
+              <UserCircle className="h-5 w-5 text-primary" /> Akun & keamanan
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid gap-6">
+        {/* WhatsApp */}
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-white">
@@ -46,31 +47,33 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Workspace profile */}
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-white">
-              <Settings className="h-6 w-6 text-primary" /> Sumber data scraping
+              <Building2 className="h-6 w-6 text-primary" /> Profil Workspace
             </h2>
             <p className="mt-2 text-sm text-slate-400">
-              OSM + scraper (gratis) atau Google Places API resmi (berbayar, pakai API key sendiri).
+              Nama dan informasi workspace Anda.
             </p>
           </div>
           <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
-            <ScraperSettings />
+            <WorkspaceProfileSettings />
           </div>
         </div>
 
+        {/* Account & security */}
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-white">
-              <Palette className="h-6 w-6 text-primary" /> White-label branding
+              <UserCircle className="h-6 w-6 text-primary" /> Akun & Keamanan
             </h2>
             <p className="mt-2 text-sm text-slate-400">
-              Ganti nama aplikasi, warna, dan logo (khusus paket Pro).
+              Perbarui nama, zona waktu, dan password akun Anda.
             </p>
           </div>
           <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
-            <BrandingSettings />
+            <AccountSettings />
           </div>
         </div>
       </div>
