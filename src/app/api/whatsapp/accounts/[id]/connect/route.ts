@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { startConnection, getState } from "@/lib/whatsapp/manager";
+import { startConnection } from "@/lib/whatsapp/manager";
 import { fail } from "@/lib/api";
 
 export async function POST(_req: Request, { params }: { params: { id: string } }) {
@@ -18,7 +18,5 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     .catch(() => undefined);
 
   await startConnection(account.id);
-  const state = getState(account.id);
-
-  return NextResponse.json({ success: true, data: { status: state.status, qr: state.qr ?? null } });
+  return NextResponse.json({ success: true, data: { status: "connecting" } });
 }

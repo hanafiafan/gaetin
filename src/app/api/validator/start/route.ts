@@ -3,7 +3,6 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { getState } from "@/lib/whatsapp/manager";
 import { runValidation } from "@/lib/validator/service";
 import { fail } from "@/lib/api";
 
@@ -32,7 +31,11 @@ export async function POST(req: NextRequest) {
     select: { id: true },
   });
   if (!account) return fail("NOT_FOUND", "Akun WhatsApp tidak ditemukan", 404);
-  if (getState(account.id).status !== "connected") {
+  const dbAccount = await prisma.messagingAccount.findUnique({
+    where: { id: account.id },
+    select: { status: true },
+  });
+  if (dbAccount?.status !== "CONNECTED") {
     return fail("WA_NOT_CONNECTED", "Nomor WhatsApp belum terhubung", 400);
   }
 

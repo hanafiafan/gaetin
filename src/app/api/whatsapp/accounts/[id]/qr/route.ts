@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { getState } from "@/lib/whatsapp/manager";
+import { gwGetQr } from "@/lib/whatsapp/gateway-client";
 import { fail } from "@/lib/api";
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
@@ -14,6 +14,6 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   });
   if (!account) return fail("NOT_FOUND", "Akun WhatsApp tidak ditemukan", 404);
 
-  const state = getState(account.id);
-  return NextResponse.json({ success: true, data: { status: state.status, qr: state.qr ?? null } });
+  const state = await gwGetQr(account.id);
+  return NextResponse.json({ success: true, data: { status: state.status, qr: state.qr } });
 }

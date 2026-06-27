@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { CreateAccountSchema } from "@/lib/validators/whatsapp";
-import { getState } from "@/lib/whatsapp/manager";
 import { fail } from "@/lib/api";
+
+const STATUS_MAP: Record<string, string> = {
+  CONNECTED: "connected",
+  CONNECTING: "connecting",
+  RECONNECTING: "connecting",
+  DISCONNECTED: "disconnected",
+};
 
 export async function GET() {
   const session = await getSession();
@@ -14,17 +20,14 @@ export async function GET() {
     orderBy: { createdAt: "asc" },
   });
 
-  const data = rows.map((a) => {
-    const live = getState(a.id);
-    return {
-      id: a.id,
-      label: a.label,
-      phoneNumber: a.phoneNumber,
-      status: live.status, // status real-time dari manager
-      dailyLimit: a.dailyLimit,
-      sentToday: a.sentToday,
-    };
-  });
+  const data = rows.map((a) => ({
+    id: a.id,
+    label: a.label,
+    phoneNumber: a.phoneNumber,
+    status: STATUS_MAP[a.status] ?? "disconnected",
+    dailyLimit: a.dailyLimit,
+    sentToday: a.sentToday,
+  }));
 
   return NextResponse.json({ success: true, data });
 }

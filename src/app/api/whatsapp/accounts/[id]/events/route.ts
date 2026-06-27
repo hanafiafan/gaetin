@@ -1,9 +1,20 @@
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { startConnection, getState, addAccountListener } from "@/lib/whatsapp/manager";
+import { gwConnect, gwGetQr } from "@/lib/whatsapp/gateway-client";
 import { fail } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
+
+const SSE_HEADERS = {
+  "Content-Type": "text/event-stream",
+  "Cache-Control": "no-cache, no-transform",
+  Connection: "keep-alive",
+  "X-Accel-Buffering": "no",
+};
+
+function sleep(ms: number) {
+  return new Promise<void>((r) => setTimeout(r, ms));
+}
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const session = await getSession();
@@ -15,51 +26,61 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   });
   if (!account) return fail("NOT_FOUND", "Akun WhatsApp tidak ditemukan", 404);
 
-  // Kick off connection (idempotent — safe to call even if already connecting)
-  startConnection(account.id).catch(() => undefined);
+  // Mulai koneksi di gateway (idempoten)
+  await gwConnect(account.id).catch(() => undefined);
 
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
-    start(controller) {
+    async start(controller) {
       function send(data: object) {
         try {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
-        } catch {
-          // stream already closed
-        }
+        } catch { /* stream closed */ }
       }
 
-      // Immediately push current state if QR already exists (e.g. reconnect to existing session)
-      const current = getState(account.id);
-      if (current.qr) send({ type: "qr", qr: current.qr });
-      if (current.status === "connected") {
-        send({ type: "status", status: "connected" });
-        controller.close();
-        return;
+      let prevQr = "";
+      let done = false;
+
+      req.signal.addEventListener("abort", () => { done = true; });
+
+      // Poll gateway setiap 1.5 detik sampai QR muncul atau connected
+      while (!done) {
+        try {
+          const state = await gwGetQr(account.id);
+
+          if (state.qr && state.qr !== prevQr) {
+            prevQr = state.qr;
+            send({ type: "qr", qr: state.qr });
+          }
+
+          if (state.status === "connected") {
+            // Update DB dan informasikan client
+            await prisma.messagingAccount
+              .update({
+                where: { id: account.id },
+                data: {
+                  status: "CONNECTED",
+                  phoneNumber: state.phone ?? undefined,
+                  lastConnected: new Date(),
+                },
+              })
+              .catch(() => undefined);
+            send({ type: "status", status: "connected" });
+            done = true;
+          } else if (state.status === "disconnected" && prevQr) {
+            // QR sudah pernah dikirim tapi koneksi gagal
+            send({ type: "status", status: "disconnected" });
+            done = true;
+          }
+        } catch { /* gateway tidak bisa dihubungi, coba lagi */ }
+
+        if (!done) await sleep(1500);
       }
 
-      const unsubscribe = addAccountListener(account.id, (ev) => {
-        send(ev);
-        if (ev.type === "status" && (ev.status === "connected" || ev.status === "disconnected")) {
-          unsubscribe();
-          try { controller.close(); } catch { /* already closed */ }
-        }
-      });
-
-      req.signal.addEventListener("abort", () => {
-        unsubscribe();
-        try { controller.close(); } catch { /* already closed */ }
-      });
+      try { controller.close(); } catch { /* already closed */ }
     },
   });
 
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      "Connection": "keep-alive",
-      "X-Accel-Buffering": "no",
-    },
-  });
+  return new Response(stream, { headers: SSE_HEADERS });
 }

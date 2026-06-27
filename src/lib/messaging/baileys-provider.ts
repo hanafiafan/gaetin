@@ -5,15 +5,14 @@ import type {
   SendResult,
 } from "@/lib/messaging/provider";
 import * as wa from "@/lib/whatsapp/manager";
+import { prisma } from "@/lib/db/prisma";
 
-/** Implementasi provider berbasis Baileys (self-host, gratis). */
 export class BaileysProvider implements IMessagingProvider {
   readonly kind = "baileys" as const;
 
   async connect(accountId: string): Promise<ConnectResult> {
     await wa.startConnection(accountId);
-    const state = wa.getState(accountId);
-    return { sessionId: accountId, qrCode: state.qr, status: state.status };
+    return { sessionId: accountId, qrCode: undefined, status: "connecting" };
   }
 
   async disconnect(accountId: string): Promise<void> {
@@ -21,7 +20,13 @@ export class BaileysProvider implements IMessagingProvider {
   }
 
   async getStatus(accountId: string): Promise<ConnectResult["status"]> {
-    return wa.getState(accountId).status;
+    const row = await prisma.messagingAccount.findUnique({
+      where: { id: accountId },
+      select: { status: true },
+    });
+    if (row?.status === "CONNECTED") return "connected";
+    if (row?.status === "CONNECTING" || row?.status === "RECONNECTING") return "connecting";
+    return "disconnected";
   }
 
   async sendMessage(
@@ -41,7 +46,5 @@ export class BaileysProvider implements IMessagingProvider {
     return wa.isRegistered(accountId, toPhone);
   }
 
-  onIncomingMessage(): void {
-    // TODO (modul Inbox): wire sock.ev.on("messages.upsert") -> simpan ke Conversation/InboxMessage.
-  }
+  onIncomingMessage(): void { /* handled via webhook from gateway */ }
 }
