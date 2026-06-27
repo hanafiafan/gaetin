@@ -6,6 +6,7 @@ import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
 import FeatureGate from "@/components/dashboard/feature-gate";
 import { getOwnerCmsSettings } from "@/lib/owner-cms";
+import { PLANS, type PlanId } from "@/config/plans";
 
 // Konversi hex (#RRGGBB) ke string HSL "H S% L%" untuk override CSS var Tailwind.
 function hexToHsl(hex: string): string | null {
@@ -48,6 +49,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   ]);
   const appName = branding?.appName || "Gaetin";
   const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
+  const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
+  const planFeatures = PLANS[planId]?.features ?? PLANS.STARTER.features;
 
   return (
     <div className="cg-shell flex h-screen overflow-hidden bg-[#060810] text-white">
@@ -59,6 +62,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         credits={workspaceInfo?.credits ?? 0}
         plan={workspaceInfo?.subscription?.plan ?? "STARTER"}
         subscriptionStatus={workspaceInfo?.subscription?.status ?? "TRIAL"}
+        planFeatures={planFeatures}
       />
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <FeatureGate featureFlags={ownerCms.featureFlags} />
