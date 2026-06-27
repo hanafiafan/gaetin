@@ -98,6 +98,7 @@ async function startConnection(accountId) {
     const { connection, lastDisconnect, qr } = update;
 
     if (qr) {
+      console.log(`[${accountId}] QR generated`);
       entry.qr = await QRCode.toDataURL(qr);
     }
 
@@ -112,8 +113,9 @@ async function startConnection(accountId) {
 
     if (connection === "close") {
       const code = lastDisconnect?.error?.output?.statusCode;
+      const msg = lastDisconnect?.error?.message ?? "";
       const loggedOut = code === DisconnectReason.loggedOut;
-      console.log(`[${accountId}] Disconnected — code: ${code} loggedOut: ${loggedOut}`);
+      console.log(`[${accountId}] Disconnected — code: ${code} msg: ${msg} loggedOut: ${loggedOut}`);
 
       entry.sock = null;
 
