@@ -37,7 +37,7 @@ export default function WhatsAppAccounts() {
   const [label, setLabel] = useState("");
   const [loading, setLoading] = useState(false);
   const [qr, setQr] = useState<{ id: string; img: string | null; status: string } | null>(null);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const esRef = useRef<EventSource | null>(null);
 
   async function load() {
     const r = await fetch("/api/whatsapp/accounts");
@@ -47,13 +47,12 @@ export default function WhatsAppAccounts() {
 
   useEffect(() => {
     load();
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
+    return () => esRef.current?.close();
   }, []);
 
-  function stopPoll() {
-    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+  function stopStream() {
+    esRef.current?.close();
+    esRef.current = null;
   }
 
   async function add(e: React.FormEvent) {
@@ -70,23 +69,35 @@ export default function WhatsAppAccounts() {
     load();
   }
 
-  async function connect(id: string) {
+  function connect(id: string) {
+    stopStream();
     setQr({ id, img: null, status: "connecting" });
-    await fetch(`/api/whatsapp/accounts/${id}/connect`, { method: "POST" });
-    stopPoll();
-    pollRef.current = setInterval(async () => {
-      const r = await fetch(`/api/whatsapp/accounts/${id}/qr`);
-      const j = await r.json();
-      if (j.success) {
-        setQr({ id, img: j.data.qr, status: j.data.status });
-        if (j.data.status === "connected") { stopPoll(); setQr(null); load(); }
-      }
-    }, 2500);
+
+    const es = new EventSource(`/api/whatsapp/accounts/${id}/events`);
+    esRef.current = es;
+
+    es.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data) as { type: string; qr?: string; status?: string };
+        if (data.type === "qr" && data.qr) {
+          setQr({ id, img: data.qr, status: "connecting" });
+        } else if (data.type === "status") {
+          if (data.status === "connected" || data.status === "disconnected") {
+            stopStream();
+            setQr(null);
+            load();
+          }
+        }
+      } catch { /* ignore malformed */ }
+    };
+
+    es.onerror = () => stopStream();
   }
 
   async function disconnect(id: string) {
+    stopStream();
+    if (qr?.id === id) setQr(null);
     await fetch(`/api/whatsapp/accounts/${id}/disconnect`, { method: "POST" });
-    if (qr?.id === id) { stopPoll(); setQr(null); }
     load();
   }
 
@@ -134,7 +145,8 @@ export default function WhatsAppAccounts() {
                 ) : (
                   <button
                     onClick={() => connect(a.id)}
-                    className="h-8 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25"
+                    disabled={qr?.id === a.id}
+                    className="h-8 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25 disabled:opacity-60"
                   >
                     Hubungkan
                   </button>
@@ -143,14 +155,17 @@ export default function WhatsAppAccounts() {
             </div>
 
             {qr?.id === a.id && (
-              <div className="mt-4 flex flex-col items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] p-4">
+              <div className="mt-4 flex flex-col items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.04] p-4">
                 {qr.img ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={qr.img} alt="QR WhatsApp" width={220} height={220} className="rounded-lg" />
                 ) : (
-                  <p className="text-sm text-slate-400">Menyiapkan QR code...</p>
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+                    <p className="text-sm text-slate-400">Menyiapkan QR code...</p>
+                  </div>
                 )}
-                <p className="text-xs text-slate-500 text-center">
+                <p className="text-center text-xs text-slate-500">
                   Buka WhatsApp → Perangkat tertaut → Tautkan perangkat, lalu pindai QR ini.
                 </p>
               </div>

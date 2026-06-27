@@ -12,6 +12,12 @@ import { handleIncomingMessage } from "@/lib/inbox/service";
 
 export type AccountStatus = "connecting" | "connected" | "disconnected";
 
+export type WAEvent =
+  | { type: "qr"; qr: string }
+  | { type: "status"; status: AccountStatus };
+
+type WAListener = (ev: WAEvent) => void;
+
 interface Entry {
   sock?: WASocket;
   qr?: string; // data URL
@@ -20,16 +26,34 @@ interface Entry {
 }
 
 // Singleton lintas hot-reload (dev) — koneksi socket harus bertahan antar request.
-// Catatan: butuh satu instance Node yang berjalan terus (bukan serverless).
-const g = globalThis as unknown as { __waManager?: Map<string, Entry> };
+const g = globalThis as unknown as {
+  __waManager?: Map<string, Entry>;
+  __waListeners?: Map<string, Set<WAListener>>;
+};
 const accounts: Map<string, Entry> = g.__waManager ?? new Map();
 if (!g.__waManager) g.__waManager = accounts;
+const listeners: Map<string, Set<WAListener>> = g.__waListeners ?? new Map();
+if (!g.__waListeners) g.__waListeners = listeners;
 
 const MAX_RECONNECT = 3;
 const RECONNECT_DELAY_MS = 10_000;
 
 function sessionDir(accountId: string): string {
   return path.join(env.WA_SESSION_DIR, accountId);
+}
+
+function notify(accountId: string, ev: WAEvent) {
+  listeners.get(accountId)?.forEach((fn) => { try { fn(ev); } catch { /* ignore */ } });
+}
+
+/** Subscribe to QR / status events for an account. Returns unsubscribe fn. */
+export function addAccountListener(accountId: string, fn: WAListener): () => void {
+  if (!listeners.has(accountId)) listeners.set(accountId, new Set());
+  listeners.get(accountId)!.add(fn);
+  return () => {
+    listeners.get(accountId)?.delete(fn);
+    if (listeners.get(accountId)?.size === 0) listeners.delete(accountId);
+  };
 }
 
 /** Mulai/sambungkan akun. Idempoten bila sudah connecting/connected. */
@@ -46,13 +70,12 @@ export async function startConnection(accountId: string): Promise<void> {
 
   sock.ev.on("creds.update", saveCreds);
 
-  // Pesan masuk -> inbox/CS (Req: inbox dua arah, opt-out, stop follow-up).
   sock.ev.on("messages.upsert", async (upsert) => {
     if (upsert.type !== "notify") return;
     for (const msg of upsert.messages) {
       if (msg.key.fromMe) continue;
       const jid = msg.key.remoteJid ?? "";
-      if (!jid.endsWith("@s.whatsapp.net")) continue; // abaikan grup & status
+      if (!jid.endsWith("@s.whatsapp.net")) continue;
       const phone = jid.split("@")[0];
       const text = msg.message?.conversation ?? msg.message?.extendedTextMessage?.text ?? "";
       await handleIncomingMessage(accountId, phone, text, msg.key.id ?? undefined).catch(
@@ -66,12 +89,14 @@ export async function startConnection(accountId: string): Promise<void> {
 
     if (qr) {
       entry.qr = await QRCode.toDataURL(qr);
+      notify(accountId, { type: "qr", qr: entry.qr });
     }
 
     if (connection === "open") {
       entry.status = "connected";
       entry.qr = undefined;
       entry.reconnects = 0;
+      notify(accountId, { type: "status", status: "connected" });
       const phone = sock.user?.id?.split(":")[0];
       await prisma.messagingAccount
         .update({
@@ -89,12 +114,14 @@ export async function startConnection(accountId: string): Promise<void> {
       if (!loggedOut && entry.reconnects < MAX_RECONNECT) {
         entry.reconnects += 1;
         entry.status = "connecting";
+        notify(accountId, { type: "status", status: "connecting" });
         setTimeout(() => {
           startConnection(accountId).catch(() => undefined);
         }, RECONNECT_DELAY_MS);
       } else {
         entry.status = "disconnected";
         entry.sock = undefined;
+        notify(accountId, { type: "status", status: "disconnected" });
         await prisma.messagingAccount
           .update({ where: { id: accountId }, data: { status: "DISCONNECTED" } })
           .catch(() => undefined);
