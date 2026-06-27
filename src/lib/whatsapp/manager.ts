@@ -39,7 +39,9 @@ const MAX_RECONNECT = 3;
 const RECONNECT_DELAY_MS = 10_000;
 
 function sessionDir(accountId: string): string {
-  return path.join(env.WA_SESSION_DIR, accountId);
+  // Vercel filesystem is read-only — only /tmp is writable at runtime.
+  const base = process.env.VERCEL ? "/tmp/wa-sessions" : env.WA_SESSION_DIR;
+  return path.join(base, accountId);
 }
 
 function notify(accountId: string, ev: WAEvent) {
