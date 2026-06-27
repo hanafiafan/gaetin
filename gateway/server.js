@@ -4,6 +4,7 @@ const {
   useMultiFileAuthState,
   DisconnectReason,
   fetchLatestBaileysVersion,
+  Browsers,
 } = require("@whiskeysockets/baileys");
 const QRCode = require("qrcode");
 const pino = require("pino");
@@ -85,7 +86,7 @@ async function startConnection(accountId) {
     auth: state,
     printQRInTerminal: false,
     logger,
-    browser: ["Gaetin", "Chrome", "120.0.0.0"],
+    browser: Browsers.ubuntu("Chrome"),
     connectTimeoutMs: 30_000,
     keepAliveIntervalMs: 25_000,
   });
