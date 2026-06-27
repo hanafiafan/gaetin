@@ -5,8 +5,10 @@ import {
   BarChart3,
   Building2,
   CheckCircle2,
+  Chrome,
   Clock3,
   Contact,
+  Map,
   MessageSquare,
   Plus,
   Send,
@@ -79,15 +81,50 @@ export default async function DashboardPage({
   ];
 
   const onboarding = [
+    { label: "Setup ekstensi Chrome", done: leads > 0, href: "/dashboard/setup" },
     { label: "Hubungkan WhatsApp", done: accounts > 0, href: "/dashboard/settings" },
     { label: "Tambah kontak pertama", done: contacts > 0, href: "/dashboard/contacts" },
     { label: "Jalankan blast/campaign", done: blasts + campaigns > 0, href: "/dashboard/blast" },
-    { label: "Pantau percakapan masuk", done: openConversations > 0, href: "/dashboard/inbox" },
   ];
+
+  const isExtensionSetupDone = leads > 0;
   const doneSteps = onboarding.filter((s) => s.done).length;
 
   return (
     <div className="space-y-5">
+      {/* Setup guide banner — show until user has scraped at least once */}
+      {!isExtensionSetupDone && (
+        <div className="overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/10 to-primary/5">
+          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+                <Chrome className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-bold text-white">Setup ekstensi Chrome dulu</p>
+                <p className="mt-0.5 text-sm text-slate-400">
+                  Install ekstensi, aktifkan fitur Google Maps, dan izinkan popup — butuh 10 menit saja.
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-500">
+                  <span className="flex items-center gap-1"><Chrome className="h-3 w-3" /> Install ekstensi</span>
+                  <span>·</span>
+                  <span className="flex items-center gap-1"><Map className="h-3 w-3" /> Aktifkan checkbox Maps</span>
+                  <span>·</span>
+                  <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3" /> Izin browser</span>
+                </div>
+              </div>
+            </div>
+            <Link
+              href="/dashboard/setup"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-white transition hover:bg-primary/90"
+            >
+              Mulai Setup
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      )}
+
       {isLowCredits && (
         <div className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-3.5">
           <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />

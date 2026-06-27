@@ -27,12 +27,16 @@ import {
   Cpu,
   DownloadCloud,
   MapPin,
+  X,
+  Map,
+  Shield,
+  Phone,
 } from "lucide-react";
 
 const navItems = [
   { label: "Fitur", href: "#fitur" },
+  { label: "Cara Kerja", href: "#setup" },
   { label: "Simulasi", href: "#simulasi" },
-  { label: "Alur Kerja", href: "#workflow" },
   { label: "Harga", href: "#harga" },
 ];
 
@@ -42,19 +46,13 @@ const heroStats = [
   { label: "Pesan follow-up", value: "32K" },
 ];
 
-const quickBenefits = [
-  { label: "Cari calon customer", href: "#fitur", icon: Search },
-  { label: "Simulasi hasil", href: "#simulasi", icon: MousePointerClick },
-  { label: "Lihat alur kerja", href: "#workflow", icon: Workflow },
-];
-
 const trustFeatures = [
-  { icon: Chrome, label: "Ekstensi Chrome" },
+  { icon: Chrome, label: "Ekstensi Chrome gratis" },
   { icon: MapPin, label: "Google Maps terintegrasi" },
   { icon: Users, label: "Multi-anggota tim" },
   { icon: Cpu, label: "WhatsApp multi-nomor" },
-  { icon: DownloadCloud, label: "Ekspor CSV" },
-  { icon: Sparkles, label: "Trial 100 kredit gratis" },
+  { icon: DownloadCloud, label: "Ekspor CSV & Excel" },
+  { icon: Sparkles, label: "100 kredit trial gratis" },
 ];
 
 const pipelineChart = {
@@ -68,174 +66,172 @@ const pipelineChart = {
   ],
 };
 
-const buyerHighlights = [
-  {
-    icon: Search,
-    title: "Ribuan prospek baru",
-    description: "Cari calon customer dari kota, kategori, atau kata kunci yang relevan dengan produk client.",
-  },
-  {
-    icon: Users,
-    title: "Data siap dihubungi",
-    description: "Lead hasil scraping, import, dan percakapan tersusun rapi sebelum masuk ke campaign.",
-  },
-  {
-    icon: Target,
-    title: "Follow-up sampai closing",
-    description: "Tim bisa melihat balasan, status prospek, deal berjalan, dan hasil campaign tanpa rekap manual.",
-  },
-];
-
 const features = [
   {
     icon: Search,
     title: "Scraping Calon Customer",
-    description: "Ekstensi Chrome terintegrasi langsung dengan Google Maps. Atur kata kunci, area, dan jumlah hasil — scraping berjalan otomatis dan data tersimpan real-time ke dashboard.",
+    description: "Ekstensi Chrome terintegrasi langsung dengan Google Maps. Atur kata kunci, area, dan jumlah hasil — data tersimpan real-time ke dashboard.",
+    badge: null,
   },
   {
     icon: MessageSquareText,
     title: "Pusat Pesan WhatsApp",
-    description: "Inbox, blast, follow-up, template, dan validasi kontak dibuat satu alur agar tim tidak perlu berpindah menu.",
+    description: "Inbox, blast, follow-up, template, dan validasi kontak tersusun dalam satu alur agar tim tidak perlu berpindah menu.",
+    badge: "Bisnis+",
   },
   {
     icon: ClipboardCheck,
-    title: "CRM dan Tindak Lanjut",
-    description: "Pantau prospek yang harus dihubungi, jadwal balasan, status deal, dan tugas tim agar tidak ada peluang yang terlewat.",
+    title: "CRM & Tindak Lanjut",
+    description: "Pantau prospek, jadwal balasan, status deal, dan tugas tim agar tidak ada peluang yang terlewat.",
+    badge: "Bisnis+",
   },
   {
     icon: Database,
-    title: "Database Prospek dan Pelanggan",
-    description: "Kontak hasil scraping, lead masuk, status deal, percakapan, paket, dan aktivitas pelanggan tersimpan rapi.",
+    title: "Database Prospek",
+    description: "Kontak, lead, deal, percakapan, dan aktivitas tersimpan rapi dan bisa difilter kapan saja.",
+    badge: "Bisnis+",
   },
   {
     icon: LineChart,
     title: "Laporan Operasional",
-    description: "Pantau performa broadcast, konversi CRM, tagihan, percakapan, dan aktivitas workspace secara real-time.",
+    description: "Pantau performa broadcast, konversi CRM, tagihan, dan aktivitas workspace secara real-time.",
+    badge: "Bisnis+",
   },
   {
     icon: ShieldCheck,
     title: "Kontrol Profesional",
     description: "Peran pengguna, batas pemakaian, tagihan, audit, dan konfigurasi workspace disiapkan untuk operasional yang rapi.",
+    badge: "Bisnis+",
   },
 ];
 
-const workflow = [
+const setupSteps = [
   {
-    title: "Cari prospek",
-    description: "Gunakan ekstensi Chrome Gaetin untuk mencari calon customer berdasarkan kota, kategori bisnis, kata kunci, atau pasar yang dituju.",
-    metric: "01",
+    icon: Chrome,
+    step: "01",
+    title: "Install Ekstensi",
+    description: "Download ekstensi Gaetin untuk Chrome. Install dalam 30 detik, tidak perlu coding.",
+    color: "text-blue-400",
+    bg: "bg-blue-500/10 border-blue-500/20",
   },
   {
-    title: "Rapikan",
-    description: "Rapikan hasil scraping, segmentasikan lead, dan validasi nomor WhatsApp sebelum masuk ke campaign.",
-    metric: "02",
+    icon: Map,
+    step: "02",
+    title: "Aktifkan Fitur Maps",
+    description: "Buka Google Maps, centang \"Perbarui hasil saat peta digeser\" — satu langkah krusial.",
+    color: "text-amber-400",
+    bg: "bg-amber-500/10 border-amber-500/20",
+    highlight: true,
   },
   {
-    title: "Hubungi",
-    description: "Jalankan blast, follow-up otomatis, alur CRM, dan tugas closing dari satu dashboard.",
-    metric: "03",
+    icon: Shield,
+    step: "03",
+    title: "Izinkan Popup & Lokasi",
+    description: "Aktifkan izin popup dan lokasi di Chrome untuk maps.google.com.",
+    color: "text-violet-400",
+    bg: "bg-violet-500/10 border-violet-500/20",
   },
   {
-    title: "Pantau",
-    description: "Lihat performa campaign, percakapan masuk, deal berjalan, dan laporan penggunaan secara real-time.",
-    metric: "04",
-  },
-];
-
-const solutionCards = [
-  {
-    icon: Gauge,
-    title: "Dashboard prospek dan campaign",
-    description: "Tampilan operasional padat untuk melihat hasil scraping, database kontak, campaign, dan follow-up harian.",
-  },
-  {
-    icon: LockKeyhole,
-    title: "Akses pengguna aman",
-    description: "Pengaturan peran, workspace, dan batas akses dibuat jelas agar tim bekerja sesuai tanggung jawabnya.",
-  },
-  {
-    icon: PlugZap,
-    title: "Siap integrasi",
-    description: "Struktur fitur dibuat siap untuk gateway pembayaran, CRM eksternal, webhook, dan pengiriman pesan.",
+    icon: Zap,
+    step: "04",
+    title: "Mulai Scraping",
+    description: "Buat job scraping, buka Google Maps, dan lead langsung masuk ke dashboard secara real-time.",
+    color: "text-primary",
+    bg: "bg-primary/10 border-primary/20",
   },
 ];
 
-const pricing = [
+const pricingPlans = [
   {
-    name: "Starter",
+    name: "Trial Gratis",
     price: "Gratis",
-    priceNote: "100 kredit trial",
-    description: "Untuk mencoba semua fitur Gaetin tanpa biaya awal dan tanpa kartu kredit.",
-    features: [
-      "1 ruang kerja",
-      "100 kredit awal",
-      "20 scraper jobs/bulan",
-      "Radius scraping 5km",
-      "CRM & Inbox",
-      "Blast & Campaign",
-    ],
+    priceNote: "selamanya",
+    description: "Coba scraping Google Maps dan ekspor hasilnya. Tidak perlu kartu kredit.",
+    badge: null,
     highlighted: false,
-    cta: "Coba Gratis",
+    cta: "Mulai Trial Gratis",
+    ctaHref: "/register",
+    features: [
+      { label: "100 kredit awal", included: true },
+      { label: "Scraping Google Maps", included: true },
+      { label: "Ekspor CSV & Excel", included: true },
+      { label: "20 scraper jobs/bulan", included: true },
+      { label: "WhatsApp Integration", included: false },
+      { label: "CRM & Follow-up", included: false },
+      { label: "Blast & Campaign", included: false },
+      { label: "Inbox & Percakapan", included: false },
+    ],
   },
   {
     name: "Bisnis",
     price: "Rp199K",
     priceNote: "/bulan",
-    description: "Paket utama dengan kredit melimpah dan batas lebih tinggi untuk operasional aktif.",
-    features: [
-      "2.000 kredit/bulan",
-      "250 scraper jobs/bulan",
-      "Radius scraping 15km",
-      "500 lead per job",
-      "Follow-up otomatis",
-      "Bantuan prioritas",
-    ],
+    description: "Fitur lengkap untuk operasional WhatsApp marketing dan CRM aktif.",
+    badge: "Paling Populer",
     highlighted: true,
     cta: "Pilih Paket Bisnis",
+    ctaHref: "/register",
+    features: [
+      { label: "2.000 kredit/bulan", included: true },
+      { label: "Scraping Google Maps", included: true },
+      { label: "Ekspor CSV & Excel", included: true },
+      { label: "WhatsApp multi-nomor", included: true },
+      { label: "CRM & Follow-up otomatis", included: true },
+      { label: "Blast & Campaign", included: true },
+      { label: "Inbox & Percakapan", included: true },
+      { label: "Validasi Nomor WA", included: true },
+    ],
   },
   {
     name: "Pro",
     price: "Rp499K",
     priceNote: "/bulan",
     description: "Untuk tim besar, agency, atau reseller dengan volume tinggi dan kebutuhan white-label.",
-    features: [
-      "6.000 kredit/bulan",
-      "1.000 scraper jobs/bulan",
-      "Radius scraping 20km",
-      "1.500 lead per job",
-      "White-label & branding",
-      "Support prioritas VIP",
-    ],
+    badge: null,
     highlighted: false,
     cta: "Pilih Paket Pro",
+    ctaHref: "/register",
+    features: [
+      { label: "6.000 kredit/bulan", included: true },
+      { label: "Radius scraping 20km", included: true },
+      { label: "1.500 lead per job", included: true },
+      { label: "Semua fitur Bisnis", included: true },
+      { label: "White-label & Branding", included: true },
+      { label: "Support Prioritas VIP", included: true },
+      { label: "1.000 scraper jobs/bulan", included: true },
+      { label: "Akses API (segera hadir)", included: true },
+    ],
   },
 ];
 
 const testimonials = [
   {
-    quote: "Gaetin bikin pencarian prospek dan operasional WhatsApp marketing jauh lebih rapih. Tim kami bisa lihat lead, campaign, dan follow-up dalam satu tempat.",
+    quote: "Dalam 10 menit setup, saya sudah bisa scraping 200+ lead kafe di Jakarta. Datanya langsung masuk dashboard dan siap di-blast lewat WhatsApp.",
     name: "Nadia Putri",
     role: "Founder, Local Beauty Brand",
     initial: "NP",
+    stars: 5,
   },
   {
-    quote: "Yang paling penting buat kami adalah owner dashboard-nya. Data client dan penggunaan fitur langsung kelihatan untuk ambil keputusan produk.",
+    quote: "Yang paling saya suka adalah alurnya: scrape → validasi → blast dalam satu sistem. Tidak perlu pindah-pindah tools lagi.",
     name: "Rizky Ananda",
-    role: "Pemilik Sistem",
+    role: "Sales Manager",
     initial: "RA",
+    stars: 5,
   },
   {
-    quote: "Alur campaign sampai laporan jadi lebih enak dipakai. Scraping 500 lead dari Google Maps selesai dalam hitungan menit, langsung siap di-blast.",
+    quote: "500 lead dari Google Maps selesai scraping dalam 15 menit. Langsung tersusun di CRM dan siap di-assign ke tim sales.",
     name: "Dimas Pratama",
     role: "Koordinator Penjualan",
     initial: "DP",
+    stars: 5,
   },
 ];
 
 const footerLinks = {
   Produk: [
     { label: "Fitur", href: "#fitur" },
-    { label: "Alur Kerja", href: "#workflow" },
+    { label: "Cara Kerja", href: "#setup" },
     { label: "Simulasi", href: "#simulasi" },
     { label: "Harga", href: "#harga" },
   ],
@@ -258,35 +254,21 @@ export default function HomePage() {
       <header className="landing-header fixed left-1/2 top-4 -translate-x-1/2" style={{ width: "min(calc(100vw - 2rem), 1180px)" }}>
         <nav className="cg-nav relative flex w-full items-center justify-between overflow-hidden rounded-full px-4 py-3 md:px-5">
           <Link href="/" className="flex min-w-0 items-center gap-3 pr-12 sm:pr-0">
-            <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">
-              G
-            </span>
+            <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">G</span>
             <span className="text-base font-bold text-white">gaetin</span>
           </Link>
 
           <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
-              >
+              <Link key={item.href} href={item.href} className="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white">
                 {item.label}
               </Link>
             ))}
           </div>
 
           <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:static sm:translate-y-0">
-            <Link
-              href="/login"
-              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-white/90 transition hover:text-white sm:inline-flex"
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/register"
-              className="cg-button-glow gradient-primary inline-flex h-10 w-10 items-center justify-center gap-2 rounded-full text-sm font-bold text-white transition hover:scale-[1.02] sm:w-auto sm:px-4"
-            >
+            <Link href="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-white/90 transition hover:text-white sm:inline-flex">Masuk</Link>
+            <Link href="/register" className="cg-button-glow gradient-primary inline-flex h-10 w-10 items-center justify-center gap-2 rounded-full text-sm font-bold text-white transition hover:scale-[1.02] sm:w-auto sm:px-4">
               <span className="hidden sm:inline">Mulai</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -311,46 +293,30 @@ export default function HomePage() {
         <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-5xl flex-col items-center text-center">
           <div className="cg-kicker">
             <Sparkles className="h-4 w-4" />
-            Scraping prospek · WhatsApp · CRM
+            Google Maps Scraper · WhatsApp · CRM
           </div>
           <h1 className="mt-7 w-full max-w-[22rem] break-words text-balance text-4xl font-black leading-[1.05] text-white sm:max-w-5xl sm:text-6xl lg:text-7xl">
-            Temukan calon customer baru, hubungi, lalu
-            <span className="cg-gradient-text"> kelola sampai closing.</span>
+            Ribuan prospek dari Google Maps,
+            <span className="cg-gradient-text"> siap dihubungi via WhatsApp.</span>
           </h1>
           <p className="mt-6 w-full max-w-[20rem] text-sm leading-7 text-slate-300 sm:max-w-2xl sm:text-lg sm:leading-8">
-            Gaetin membantu bisnis mendapatkan ribuan prospek baru lewat scraping Google Maps, merapikan data, mengirim WhatsApp, menjalankan follow-up, dan membaca hasilnya dari satu dashboard.
+            Gaetin mengekstrak data bisnis dari Google Maps lewat ekstensi Chrome, merapikan kontak, mengirim WhatsApp, dan mengelola follow-up dari satu dashboard.
           </p>
-          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
-            <Link
-              href="/register"
-              className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]"
-            >
-              Cari prospek sekarang
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="#simulasi"
-              className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10"
-            >
-              Hitung potensi hasil
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+
+          {/* Trial callout */}
+          <div className="mt-5 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-semibold text-primary">
+            ✓ Trial gratis · 100 kredit · Scraping langsung bisa dipakai · Tidak perlu kartu kredit
           </div>
 
-          <div className="mt-6 grid w-full max-w-[20rem] grid-cols-1 gap-2 sm:flex sm:max-w-none sm:flex-wrap sm:justify-center">
-            {quickBenefits.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="interactive-chip inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold text-slate-200"
-                >
-                  <Icon className="h-4 w-4 text-primary" />
-                  {item.label}
-                </Link>
-              );
-            })}
+          <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
+            <Link href="/register" className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]">
+              Coba Scraping Gratis
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+            <Link href="#setup" className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10">
+              Lihat cara kerja
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
 
@@ -365,11 +331,11 @@ export default function HomePage() {
                   <span className="h-3 w-3 rounded-full bg-emerald-400" />
                 </div>
                 <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold text-slate-300 sm:block">
-                  Scraping Lead / Campaign
+                  Scraping Lead · Google Maps
                 </div>
                 <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
                   <span className="h-2 w-2 rounded-full bg-emerald-300" />
-                  Aktif
+                  Aktif · 247 lead ditemukan
                 </div>
               </div>
 
@@ -383,10 +349,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   {["Ringkasan", "Scraping", "Campaign", "CRM", "Laporan"].map((item, index) => (
-                    <div
-                      key={item}
-                      className={`mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm ${index === 0 ? "bg-primary/20 text-white" : "text-slate-400"}`}
-                    >
+                    <div key={item} className={`mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm ${index === 0 ? "bg-primary/20 text-white" : "text-slate-400"}`}>
                       <span className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-primary" : "bg-white/20"}`} />
                       {item}
                     </div>
@@ -407,16 +370,14 @@ export default function HomePage() {
                     <div className="mb-5 flex items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-semibold text-white">Pipeline Prospek</p>
-                        <p className="mt-1 text-xs text-slate-400">Lead hasil scraping, segmentasi, dan follow-up</p>
+                        <p className="mt-1 text-xs text-slate-400">Scrape → Validasi → Follow-up → Closing</p>
                       </div>
-                      <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
-                        +31.8%
-                      </div>
+                      <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">+31.8%</div>
                     </div>
                     <div className="relative h-48 overflow-hidden rounded-3xl border border-white/10 bg-[#070a12] p-3">
                       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:48px_48px] opacity-45" />
                       <div className="absolute inset-x-4 bottom-5 top-4 rounded-[1.25rem] bg-gradient-to-t from-primary/10 to-transparent blur-xl" />
-                      <svg className="relative z-10 h-full w-full overflow-visible" viewBox="0 0 320 170" role="img" aria-label="Grafik pertumbuhan pipeline prospek">
+                      <svg className="relative z-10 h-full w-full overflow-visible" viewBox="0 0 320 170" role="img" aria-label="Grafik pipeline prospek">
                         <defs>
                           <linearGradient id="pipeline-line" x1="0" x2="1" y1="0" y2="0">
                             <stop offset="0%" stopColor="hsl(151 78% 47%)" />
@@ -429,10 +390,7 @@ export default function HomePage() {
                           </linearGradient>
                           <filter id="pipeline-glow" x="-20%" y="-40%" width="140%" height="180%">
                             <feGaussianBlur stdDeviation="4" result="blur" />
-                            <feMerge>
-                              <feMergeNode in="blur" />
-                              <feMergeNode in="SourceGraphic" />
-                            </feMerge>
+                            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                           </filter>
                         </defs>
                         <path d={pipelineChart.area} fill="url(#pipeline-area)" />
@@ -461,27 +419,38 @@ export default function HomePage() {
                         <WalletCards className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white">Catatan Paket</p>
-                        <p className="text-xs text-slate-400">Saran model pembayaran</p>
+                        <p className="text-sm font-bold text-white">Scraping Berjalan</p>
+                        <p className="text-xs text-slate-400">kafe jakarta selatan</p>
                       </div>
                     </div>
-                    <p className="text-sm leading-6 text-slate-300">
-                      Paket bulanan cocok sebagai model utama. Tambahkan token sebagai add-on untuk blast besar, validasi nomor, atau pemakaian tinggi.
-                    </p>
+                    <div className="space-y-2">
+                      {[
+                        { name: "Kopi Kina Roasters", cat: "Kafe", phone: "+62 811-xxx" },
+                        { name: "Espresso Works", cat: "Kafe", phone: "+62 812-xxx" },
+                        { name: "Daily Grind", cat: "Kafe", phone: "+62 815-xxx" },
+                      ].map((item) => (
+                        <div key={item.name} className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2">
+                          <div className="h-6 w-6 shrink-0 rounded-lg bg-primary/20" />
+                          <div className="min-w-0">
+                            <p className="truncate text-[11px] font-semibold text-white">{item.name}</p>
+                            <p className="text-[9px] text-slate-500">{item.phone}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-2.5 py-2">
+                      <span className="text-[11px] font-semibold text-primary">Live scraping</span>
+                      <span className="text-[11px] font-bold text-white">247 / 500</span>
+                    </div>
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-                    <p className="text-sm font-bold text-white">Status Pelanggan</p>
+                    <p className="text-sm font-bold text-white">Status Workspace</p>
                     <div className="mt-4 space-y-3">
-                      {[
-                        ["Aktif", "78%"],
-                        ["Butuh onboarding", "14%"],
-                        ["Risk", "8%"],
-                      ].map(([label, value]) => (
+                      {[["Lead aktif", "78%"], ["Sudah divalidasi", "54%"], ["Siap di-blast", "31%"]].map(([label, value]) => (
                         <div key={label}>
                           <div className="mb-2 flex justify-between text-xs text-slate-400">
-                            <span>{label}</span>
-                            <span>{value}</span>
+                            <span>{label}</span><span>{value}</span>
                           </div>
                           <div className="h-2 rounded-full bg-white/10">
                             <div className="gradient-primary h-2 rounded-full" style={{ width: value }} />
@@ -513,40 +482,15 @@ export default function HomePage() {
         <div className="mt-5 border-t border-white/[0.06]" />
       </section>
 
-      {/* ── Quick benefits ──────────────────────────────────────────────── */}
-      <section className="cg-section grid-fade-section grid-fade-start py-8">
-        <div className="grid gap-4 md:grid-cols-3">
-          {buyerHighlights.map((item) => {
-            const Icon = item.icon;
-            return (
-              <article key={item.title} className="cg-card rounded-3xl p-6 transition hover:-translate-y-1 hover:border-primary/40">
-                <div className="flex items-start gap-4">
-                  <div className="gradient-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-glow">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-black text-white">{item.title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-slate-300">{item.description}</p>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
       {/* ── Features ────────────────────────────────────────────────────── */}
       <section id="fitur" className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker">
-            <Zap className="h-4 w-4" />
-            Fitur Gaetin
-          </div>
+          <div className="cg-kicker"><Zap className="h-4 w-4" />Fitur Gaetin</div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Dari mencari ribuan prospek sampai mengubahnya jadi pelanggan.
+            Dari menemukan ribuan prospek sampai mengubahnya jadi pelanggan.
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-300">
-            Pengguna bisa melakukan scraping calon customer, merapikan kontak, menjalankan campaign WhatsApp, mengelola CRM, dan membaca laporan tanpa kehilangan konteks kerja.
+            Trial gratis memberi akses ke scraping & ekspor. Upgrade untuk membuka WhatsApp marketing, CRM, dan seluruh fitur otomasi.
           </p>
         </div>
 
@@ -554,7 +498,12 @@ export default function HomePage() {
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
-              <article key={feature.title} className="cg-card group rounded-3xl p-6 transition hover:-translate-y-1 hover:border-primary/45">
+              <article key={feature.title} className="cg-card group relative rounded-3xl p-6 transition hover:-translate-y-1 hover:border-primary/45">
+                {feature.badge && (
+                  <span className="absolute right-4 top-4 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                    {feature.badge}
+                  </span>
+                )}
                 <div className="gradient-primary flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-glow">
                   <Icon className="h-6 w-6" />
                 </div>
@@ -566,33 +515,99 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Workflow ────────────────────────────────────────────────────── */}
-      <section id="workflow" className="cg-section grid-fade-section py-20">
-        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <div className="cg-kicker">
-              <Workflow className="h-4 w-4" />
-              Alur Kerja
-            </div>
-            <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-              Dari prospek hasil scraping sampai pelanggan aktif, alurnya nyambung.
-            </h2>
-            <p className="mt-5 text-base leading-8 text-slate-300">
-              Setiap tahap dibuat sesuai alur Gaetin: cari calon customer, rapikan kontak, kirim pesan, balas percakapan, lalu pantau hasilnya.
-            </p>
-          </div>
+      {/* ── Setup Steps ─────────────────────────────────────────────────── */}
+      <section id="setup" className="cg-section grid-fade-section py-20">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="cg-kicker"><Chrome className="h-4 w-4" />Setup 4 Langkah</div>
+          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
+            Dari install ekstensi sampai scraping pertama: 10 menit.
+          </h2>
+          <p className="mt-5 text-base leading-7 text-slate-300">
+            Tidak perlu coding. Ikuti 4 langkah ini dan kamu langsung bisa mulai scraping ribuan data bisnis dari Google Maps.
+          </p>
+        </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {workflow.map((item) => (
-              <div key={item.title} className="cg-card rounded-3xl p-6">
-                <div className="mb-8 flex items-center justify-between">
-                  <span className="text-sm font-bold text-primary">{item.metric}</span>
-                  <span className="h-px flex-1 bg-gradient-to-r from-primary/70 to-transparent" />
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {setupSteps.map((s) => {
+            const Icon = s.icon;
+            return (
+              <div key={s.step} className={`relative rounded-3xl border p-6 ${s.bg} ${s.highlight ? "ring-1 ring-amber-500/30" : ""}`}>
+                {s.highlight && (
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-500/20 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest text-amber-400 border border-amber-500/30">
+                    Krusial
+                  </span>
+                )}
+                <div className="mb-4 flex items-center justify-between">
+                  <span className={`text-xs font-black ${s.color}`}>{s.step}</span>
+                  <Icon className={`h-5 w-5 ${s.color}`} />
                 </div>
-                <h3 className="text-xl font-black text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{item.description}</p>
+                <h3 className="text-lg font-black text-white">{s.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{s.description}</p>
               </div>
-            ))}
+            );
+          })}
+        </div>
+
+        {/* Maps checkbox visual */}
+        <div className="mt-10 cg-card-strong overflow-hidden rounded-[2rem]">
+          <div className="grid gap-8 p-8 lg:grid-cols-[1fr_1fr] lg:items-center lg:p-10">
+            <div>
+              <div className="cg-kicker mb-4"><MapPin className="h-4 w-4" />Langkah Krusial #2</div>
+              <h3 className="text-2xl font-black text-white">
+                Centang kotak ini di Google Maps — wajib aktif!
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-slate-300">
+                Setelah cari kata kunci bisnis di Google Maps, pastikan kotak{" "}
+                <strong className="text-white">&ldquo;Perbarui hasil saat peta digeser&rdquo;</strong>{" "}
+                sudah dicentang. Ini yang membuat ekstensi bisa mengambil data saat kamu menggeser peta.
+              </p>
+              <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-300">
+                ⚠️ Tanpa kotak ini dicentang, ekstensi tidak bisa melakukan scraping secara otomatis.
+              </div>
+              <Link
+                href="/register"
+                className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-5 text-sm font-bold text-white transition hover:border-primary/40 hover:bg-primary/15"
+              >
+                <DownloadCloud className="h-4 w-4" />
+                Mulai trial & ikuti panduan setup
+              </Link>
+            </div>
+
+            {/* Google Maps mockup */}
+            <div className="rounded-2xl border border-white/10 bg-[#1a1c2a] overflow-hidden">
+              {/* Search bar */}
+              <div className="flex items-center gap-2.5 border-b border-white/10 bg-[#1e2030] px-4 py-3">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/20">
+                  <MapPin className="h-3 w-3 text-blue-400" />
+                </div>
+                <span className="flex-1 text-sm text-slate-400">kafe jakarta pusat</span>
+                <span className="text-xs text-slate-600">×</span>
+              </div>
+              {/* Results header */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.05]">
+                <span className="text-xs font-semibold text-slate-300">Hasil · 50+</span>
+                <span className="text-[10px] text-slate-600">ℹ</span>
+              </div>
+              {/* THE CHECKBOX */}
+              <div className="mx-4 my-3 rounded-xl border-2 border-red-500/60 bg-red-500/5 px-3 py-2.5 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-blue-400 bg-blue-500/30">
+                    <Check className="h-2.5 w-2.5 text-blue-300" />
+                  </div>
+                  <span className="text-sm text-white font-medium">Perbarui hasil saat peta digeser</span>
+                </div>
+                <p className="mt-1.5 text-[10px] font-bold text-red-400 uppercase tracking-wide">↑ Wajib dicentang!</p>
+              </div>
+              {/* Sample results */}
+              <div className="space-y-0.5 px-2 pb-3">
+                {["Kopi Nako · ★4.8 · Tanah Abang", "Escobar Coffee · ★4.7 · Menteng", "Filosofi Kopi · ★4.6 · Kemang"].map((item) => (
+                  <div key={item} className="flex items-center gap-2.5 rounded-lg px-2 py-2">
+                    <div className="h-9 w-9 shrink-0 rounded-lg bg-white/[0.06]" />
+                    <span className="text-xs text-slate-400">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -600,149 +615,48 @@ export default function HomePage() {
       {/* ── Simulation ──────────────────────────────────────────────────── */}
       <section id="simulasi" className="cg-section grid-fade-section py-20">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <div className="cg-kicker">
-            <MousePointerClick className="h-4 w-4" />
-            Coba sebelum daftar
-          </div>
+          <div className="cg-kicker"><MousePointerClick className="h-4 w-4" />Simulasi Hasil</div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Calon pembeli bisa langsung melihat manfaatnya.
+            Lihat potensi hasilnya sebelum daftar.
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-300">
-            Simulasi ini memberi gambaran bagaimana kontak, balasan, follow-up, dan deal akan terbaca di Gaetin.
+            Simulasikan berapa kontak, balasan, follow-up, dan deal yang bisa kamu hasilkan dengan Gaetin.
           </p>
         </div>
         <LandingConversionPanel />
       </section>
 
-      {/* ── Solutions ───────────────────────────────────────────────────── */}
-      <section className="cg-section grid-fade-section py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker">
-            <PlugZap className="h-4 w-4" />
-            Kegunaan
-          </div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Modulnya lengkap, tapi tetap terasa ringan dipakai.
-          </h2>
-        </div>
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
-          {solutionCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <article key={card.title} className="cg-card rounded-3xl p-7">
-                <Icon className="h-8 w-8 text-primary" />
-                <h3 className="mt-8 text-xl font-black text-white">{card.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{card.description}</p>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ── Extension showcase ──────────────────────────────────────────── */}
-      <section className="cg-section grid-fade-section py-16">
-        <div className="cg-card-strong overflow-hidden rounded-[2rem]">
-          <div className="grid gap-8 p-8 lg:grid-cols-2 lg:items-center lg:p-10">
-            <div>
-              <div className="cg-kicker">
-                <Chrome className="h-4 w-4" />
-                Ekstensi Chrome Gaetin
-              </div>
-              <h2 className="mt-5 text-3xl font-black text-white">
-                Scraping langsung dari Google Maps, tanpa coding.
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-300">
-                Install ekstensi Chrome gratis, buka Google Maps, atur kata kunci dan area — Gaetin scraping otomatis dan menyimpan lead ke dashboard kamu secara real-time.
-              </p>
-              <ul className="mt-6 space-y-2.5">
-                {[
-                  "Scraping nama, nomor, alamat, rating, jam buka",
-                  "Filter berdasarkan kategori bisnis dan kota",
-                  "Data tersimpan langsung ke database lead",
-                  "Mode auto-scroll untuk hasil lebih banyak",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-slate-300">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/register"
-                className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-5 text-sm font-bold text-white transition hover:border-primary/40 hover:bg-primary/15"
-              >
-                <DownloadCloud className="h-4 w-4" />
-                Akses ekstensi dari dashboard
-              </Link>
-            </div>
-            <div className="hidden rounded-3xl border border-white/10 bg-[#080a14]/80 p-6 lg:block">
-              <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-400">
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                <span className="flex-1 truncate">Kafe Surabaya Pusat</span>
-                <span className="text-emerald-400">Aktif</span>
-              </div>
-              <div className="mt-4 space-y-2.5">
-                {[
-                  { name: "Kopi Kina Roasters", rating: "4.8", phone: "+62 811-xxx-xxxx" },
-                  { name: "Espresso Works", rating: "4.6", phone: "+62 812-xxx-xxxx" },
-                  { name: "Warung Kopi Tugu", rating: "4.5", phone: "+62 813-xxx-xxxx" },
-                  { name: "Daily Grind Cafe", rating: "4.7", phone: "+62 815-xxx-xxxx" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between rounded-2xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
-                    <div>
-                      <p className="text-xs font-semibold text-white">{item.name}</p>
-                      <p className="mt-0.5 text-[10px] text-slate-500">{item.phone}</p>
-                    </div>
-                    <div className="flex items-center gap-1 text-[10px] font-bold text-amber-300">
-                      <Star className="h-3 w-3 fill-current" />
-                      {item.rating}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 flex items-center justify-between rounded-2xl border border-primary/25 bg-primary/10 px-3 py-2.5">
-                <span className="text-xs font-semibold text-primary">Terscraping otomatis</span>
-                <span className="text-xs font-bold text-white">4 / 500 lead</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── Pricing ─────────────────────────────────────────────────────── */}
       <section id="harga" className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker">
-            <Sparkles className="h-4 w-4" />
-            Paket Harga
-          </div>
+          <div className="cg-kicker"><Sparkles className="h-4 w-4" />Paket Harga</div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Mulai gratis, upgrade saat butuh lebih.
+            Mulai gratis dengan scraping. Upgrade untuk fitur penuh.
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-300">
-            Semua paket termasuk akses ke seluruh fitur. Perbedaan utama ada di jumlah kredit dan batas scraping per bulan. Tambah kredit kapan saja tanpa ganti paket.
+            Trial gratis memberi kamu akses ke Google Maps scraping dan ekspor data. Upgrade ke Bisnis untuk membuka WhatsApp, CRM, blast, dan seluruh fitur pemasaran.
           </p>
         </div>
 
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {pricing.map((plan) => (
-            <article key={plan.name} className={`${plan.highlighted ? "cg-card-strong" : "cg-card"} rounded-[2rem] p-7`}>
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-2xl font-black text-white">{plan.name}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">{plan.description}</p>
-                </div>
-                {plan.highlighted ? (
-                  <span className="shrink-0 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">Disarankan</span>
-                ) : null}
+          {pricingPlans.map((plan) => (
+            <article key={plan.name} className={`${plan.highlighted ? "cg-card-strong" : "cg-card"} relative rounded-[2rem] p-7`}>
+              {plan.badge && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-white shadow-glow">
+                  {plan.badge}
+                </span>
+              )}
+              <div>
+                <h3 className="text-xl font-black text-white">{plan.name}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{plan.description}</p>
               </div>
-              <div className="mt-8 flex items-end gap-2">
+              <div className="mt-6 flex items-end gap-2">
                 <span className="text-4xl font-black text-white">{plan.price}</span>
                 <span className="pb-1 text-sm text-slate-400">{plan.priceNote}</span>
               </div>
               <Link
-                href="/register"
-                className={`mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full text-sm font-bold transition ${
+                href={plan.ctaHref}
+                className={`mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full text-sm font-bold transition ${
                   plan.highlighted
                     ? "cg-button-glow gradient-primary text-white hover:scale-[1.02]"
                     : "cg-pill text-white hover:border-white/25 hover:bg-white/10"
@@ -750,11 +664,15 @@ export default function HomePage() {
               >
                 {plan.cta}
               </Link>
-              <div className="mt-7 space-y-3">
+              <div className="mt-6 space-y-2.5">
                 {plan.features.map((feature) => (
-                  <div key={feature} className="flex items-center gap-3 text-sm text-slate-300">
-                    <Check className="h-4 w-4 text-emerald-300" />
-                    <span>{feature}</span>
+                  <div key={feature.label} className="flex items-center gap-3 text-sm">
+                    {feature.included ? (
+                      <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                    ) : (
+                      <X className="h-4 w-4 shrink-0 text-slate-600" />
+                    )}
+                    <span className={feature.included ? "text-slate-300" : "text-slate-600"}>{feature.label}</span>
                   </div>
                 ))}
               </div>
@@ -762,18 +680,20 @@ export default function HomePage() {
           ))}
         </div>
 
-        <p className="mt-8 text-center text-sm text-slate-500">
-          Harga belum termasuk PPN. Diskon 20% untuk pembayaran tahunan. Kredit tambahan bisa dibeli kapan saja.
-        </p>
+        <div className="mt-8 flex flex-col items-center gap-2">
+          <p className="text-center text-sm text-slate-500">
+            Harga belum termasuk PPN · Diskon 20% untuk pembayaran tahunan · Kredit tambahan bisa dibeli kapan saja
+          </p>
+          <p className="text-center text-xs text-slate-600">
+            Trial tidak perlu kartu kredit · Upgrade bisa dilakukan kapan saja dari dashboard
+          </p>
+        </div>
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
       <section id="faq" className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker">
-            <HelpCircle className="h-4 w-4" />
-            Pertanyaan Umum
-          </div>
+          <div className="cg-kicker"><HelpCircle className="h-4 w-4" />Pertanyaan Umum</div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
             Semua yang perlu diketahui sebelum mulai.
           </h2>
@@ -789,12 +709,9 @@ export default function HomePage() {
       {/* ── Testimonials ────────────────────────────────────────────────── */}
       <section className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker">
-            <Star className="h-4 w-4" />
-            Testimoni
-          </div>
+          <div className="cg-kicker"><Star className="h-4 w-4" />Testimoni</div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Dibuat untuk pemilik sistem yang ingin terlihat serius.
+            Dari scraping sampai closing, semuanya dalam satu dashboard.
           </h2>
         </div>
 
@@ -802,7 +719,7 @@ export default function HomePage() {
           {testimonials.map((testimonial) => (
             <article key={testimonial.name} className="cg-card rounded-3xl p-6">
               <div className="flex gap-1 text-amber-300">
-                {Array.from({ length: 5 }).map((_, index) => (
+                {Array.from({ length: testimonial.stars }).map((_, index) => (
                   <Star key={index} className="h-4 w-4 fill-current" />
                 ))}
               </div>
@@ -828,65 +745,49 @@ export default function HomePage() {
             <Sparkles className="h-7 w-7" />
           </div>
           <h2 className="mx-auto mt-6 max-w-3xl text-3xl font-black text-white sm:text-5xl">
-            Gaetin siap jadi sistem utama untuk operasional WhatsApp-mu.
+            Mulai scraping Google Maps sekarang — gratis.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-300">
-            Daftar gratis dan dapatkan 100 kredit trial untuk mencoba semua fitur — scraping, blast, CRM, dan validasi nomor.
+            Daftar dan dapatkan 100 kredit trial. Cukup untuk scraping ratusan lead dari Google Maps dan ekspor ke CSV — tanpa perlu kartu kredit.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="/register"
-              className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]"
-            >
-              Daftar Gratis Sekarang
+            <Link href="/register" className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]">
+              Daftar & Mulai Scraping
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              href="/login"
-              className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10"
-            >
-              Masuk ke dashboard
+            <Link href="/login" className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10">
+              Sudah punya akun? Masuk
             </Link>
           </div>
-          <p className="mt-5 text-xs text-slate-500">Tidak perlu kartu kredit · Bisa cancel kapan saja</p>
+          <p className="mt-5 text-xs text-slate-500">Tidak perlu kartu kredit · Setup 10 menit · Trial bisa upgrade kapan saja</p>
         </div>
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
       <footer className="cg-section border-t border-white/[0.07] pb-10 pt-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
-          {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">
-                G
-              </span>
+              <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">G</span>
               <span className="text-base font-bold text-white">gaetin</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-slate-400">
-              Platform scraping prospek, WhatsApp marketing, dan CRM untuk bisnis Indonesia.
+              Platform scraping prospek Google Maps, WhatsApp marketing, dan CRM untuk bisnis Indonesia.
             </p>
             <div className="mt-6 flex items-center gap-2">
-              <Link
-                href="/register"
-                className="cg-button-glow gradient-primary inline-flex h-9 items-center gap-2 rounded-full px-4 text-xs font-bold text-white transition hover:scale-[1.02]"
-              >
+              <Link href="/register" className="cg-button-glow gradient-primary inline-flex h-9 items-center gap-2 rounded-full px-4 text-xs font-bold text-white transition hover:scale-[1.02]">
                 Mulai Gratis
               </Link>
             </div>
           </div>
 
-          {/* Links */}
           {Object.entries(footerLinks).map(([group, links]) => (
             <div key={group}>
               <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-500">{group}</p>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm font-medium text-slate-400 transition hover:text-white"
-                    >
+                    <Link href={link.href} className="text-sm font-medium text-slate-400 transition hover:text-white">
                       {link.label}
                     </Link>
                   </li>
@@ -897,12 +798,8 @@ export default function HomePage() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[0.07] pt-8 sm:flex-row">
-          <p className="text-xs text-slate-600">
-            &copy; {new Date().getFullYear()} Gaetin. Semua hak dilindungi.
-          </p>
-          <p className="text-xs text-slate-600">
-            Pembayaran aman via Xendit · SSL terenkripsi
-          </p>
+          <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} Gaetin. Semua hak dilindungi.</p>
+          <p className="text-xs text-slate-600">Pembayaran aman via Xendit · SSL terenkripsi</p>
         </div>
       </footer>
     </main>

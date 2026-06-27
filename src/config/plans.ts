@@ -6,7 +6,10 @@ export type BillingCycle = "MONTHLY" | "YEARLY";
 
 export interface PlanFeatures {
   scraper: boolean;
+  csvExport: boolean;      // export CSV / Excel
   waValidation: boolean;
+  blast: boolean;
+  campaigns: boolean;
   crmPipeline: boolean;
   autoFollowUp: boolean;
   inbox: boolean;
@@ -34,7 +37,10 @@ export interface Plan {
 
 const ALL_FEATURES: PlanFeatures = {
   scraper: true,
+  csvExport: true,
   waValidation: true,
+  blast: true,
+  campaigns: true,
   crmPipeline: true,
   autoFollowUp: true,
   inbox: true,
@@ -49,7 +55,19 @@ export const PLANS: Record<PlanId, Plan> = {
     monthlyPrice: 0,
     monthlyCredits: 100,
     contactQuota: null,
-    features: { ...ALL_FEATURES },
+    // Trial: scraping + CSV export only — upgrade for WhatsApp & CRM
+    features: {
+      scraper: true,
+      csvExport: true,
+      waValidation: false,
+      blast: false,
+      campaigns: false,
+      crmPipeline: false,
+      autoFollowUp: false,
+      inbox: false,
+      whiteLabel: false,
+      prioritySupport: false,
+    },
     limits: {
       scraperJobsPerMonth: 20,
       scraperMaxRadiusKm: 5,
