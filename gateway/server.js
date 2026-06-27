@@ -39,7 +39,7 @@ const logger = pino({ level: "warn" }); // suppress noisy Baileys logs
  */
 const sessions = new Map();
 
-const MAX_RECONNECT = 5;
+const MAX_RECONNECT = 10;
 const RECONNECT_DELAY_MS = 10_000;
 
 // ==================== Webhook helper ====================
@@ -64,7 +64,8 @@ async function callWebhook(payload) {
 
 async function startConnection(accountId) {
   const existing = sessions.get(accountId);
-  if (existing && (existing.status === "connecting" || existing.status === "connected")) return;
+  // Guard only when active socket exists — sock=null means we're mid-reconnect, allow it
+  if (existing?.sock && (existing.status === "connecting" || existing.status === "connected")) return;
 
   const entry = {
     sock: null,
@@ -98,7 +99,7 @@ async function startConnection(accountId) {
     const { connection, lastDisconnect, qr } = update;
 
     if (qr) {
-      console.log(`[${accountId}] QR generated`);
+      console.log(`[${accountId}] QR generated at ${new Date().toISOString()}`);
       entry.qr = await QRCode.toDataURL(qr);
     }
 
@@ -115,7 +116,7 @@ async function startConnection(accountId) {
       const code = lastDisconnect?.error?.output?.statusCode;
       const msg = lastDisconnect?.error?.message ?? "";
       const loggedOut = code === DisconnectReason.loggedOut;
-      console.log(`[${accountId}] Disconnected — code: ${code} msg: ${msg} loggedOut: ${loggedOut}`);
+      console.log(`[${accountId}] Disconnected at ${new Date().toISOString()} — code: ${code} msg: ${msg} loggedOut: ${loggedOut} reconnects: ${entry.reconnects}/${MAX_RECONNECT}`);
 
       entry.sock = null;
 
