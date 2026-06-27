@@ -1,7 +1,9 @@
 import InboxClient from "@/components/dashboard/inbox-client";
 import { Headphones, MessageSquare, Sparkles, UserCheck } from "lucide-react";
+import { requirePlanFeature } from "@/lib/auth/plan-gate";
 
-export default function InboxPage() {
+export default async function InboxPage() {
+  await requirePlanFeature("inbox");
   return (
     <div className="space-y-5">
       <div className="cg-card overflow-hidden rounded-2xl">

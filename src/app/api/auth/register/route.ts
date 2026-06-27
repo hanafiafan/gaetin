@@ -7,6 +7,7 @@ import { AUTH_COOKIE, authCookieOptions } from "@/lib/auth/constants";
 import { fail } from "@/lib/api";
 import { TRIAL_CREDITS } from "@/config/plans";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { sendWelcomeEmail } from "@/lib/email/service";
 
 function slugify(s: string): string {
   const base = s
@@ -78,6 +79,9 @@ export async function POST(req: NextRequest) {
 
     return { user, workspace };
   });
+
+  // Fire-and-forget welcome email
+  sendWelcomeEmail(email, name).catch(() => {});
 
   const token = signToken(result.user.id);
   const res = NextResponse.json(

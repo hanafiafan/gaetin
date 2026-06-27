@@ -1,7 +1,9 @@
 import FollowUpsClient from "@/components/dashboard/followups-client";
 import { Bot, Clock, Repeat, Sparkles } from "lucide-react";
+import { requirePlanFeature } from "@/lib/auth/plan-gate";
 
-export default function FollowUpsPage() {
+export default async function FollowUpsPage() {
+  await requirePlanFeature("autoFollowUp");
   return (
     <div className="space-y-5">
       <div className="cg-card overflow-hidden rounded-2xl">

@@ -7,6 +7,7 @@ import {
   Building2,
   Contact2,
   Database,
+  KeyRound,
   LayoutDashboard,
   LineChart,
   Megaphone,
@@ -31,6 +32,7 @@ const NAV = [
   { href: "/admin/blog", label: "Blog", icon: Newspaper },
   { href: "/admin/announcements", label: "Pengumuman", icon: Megaphone },
   { href: "/admin/plans", label: "Paket", icon: Tags },
+  { href: "/admin/settings", label: "Integrasi", icon: KeyRound },
 ];
 
 export default function AdminSidebar() {

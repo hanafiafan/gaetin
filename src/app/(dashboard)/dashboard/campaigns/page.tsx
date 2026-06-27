@@ -1,7 +1,9 @@
 import CampaignsClient from "@/components/dashboard/campaigns-client";
 import { CalendarClock, Megaphone, PauseCircle, Sparkles } from "lucide-react";
+import { requirePlanFeature } from "@/lib/auth/plan-gate";
 
-export default function CampaignsPage() {
+export default async function CampaignsPage() {
+  await requirePlanFeature("campaigns");
   return (
     <div className="space-y-5">
       <div className="cg-card overflow-hidden rounded-2xl">

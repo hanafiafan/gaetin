@@ -1,6 +1,7 @@
 import { requireSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import Sidebar from "@/components/dashboard/sidebar";
+import MobileNav from "@/components/dashboard/mobile-nav";
 import Header from "@/components/dashboard/header";
 import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
@@ -50,7 +51,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const appName = branding?.appName || "Gaetin";
   const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
   const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
-  const planFeatures = PLANS[planId]?.features ?? PLANS.STARTER.features;
+  const status = workspaceInfo?.subscription?.status ?? "TRIAL";
+  // Trial users are restricted to STARTER features regardless of plan
+  const effectivePlanId = (status === "TRIAL" || status === "TRIAL_EXPIRED") ? "STARTER" : planId;
+  const planFeatures = PLANS[effectivePlanId]?.features ?? PLANS.STARTER.features;
 
   return (
     <div className="cg-shell flex h-screen overflow-hidden bg-[#060810] text-white">
@@ -61,7 +65,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
         isSuperAdmin={session.isSuperAdmin}
         credits={workspaceInfo?.credits ?? 0}
         plan={workspaceInfo?.subscription?.plan ?? "STARTER"}
-        subscriptionStatus={workspaceInfo?.subscription?.status ?? "TRIAL"}
+        subscriptionStatus={status}
+        planFeatures={planFeatures}
+      />
+      <MobileNav
+        appName={appName}
+        featureFlags={ownerCms.featureFlags}
+        isSuperAdmin={session.isSuperAdmin}
+        credits={workspaceInfo?.credits ?? 0}
+        plan={workspaceInfo?.subscription?.plan ?? "STARTER"}
+        subscriptionStatus={status}
         planFeatures={planFeatures}
       />
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">

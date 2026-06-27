@@ -1,7 +1,9 @@
 import BlastClient from "@/components/dashboard/blast-client";
 import { MessageSquareText, Send, ShieldCheck, Sparkles } from "lucide-react";
+import { requirePlanFeature } from "@/lib/auth/plan-gate";
 
-export default function BlastPage() {
+export default async function BlastPage() {
+  await requirePlanFeature("blast");
   return (
     <div className="space-y-5">
       <div className="cg-card overflow-hidden rounded-2xl">

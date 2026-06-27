@@ -1,7 +1,9 @@
 import ValidatorClient from "@/components/dashboard/validator-client";
 import { Gauge, ShieldCheck, Sparkles, WalletCards } from "lucide-react";
+import { requirePlanFeature } from "@/lib/auth/plan-gate";
 
-export default function ValidatorPage() {
+export default async function ValidatorPage() {
+  await requirePlanFeature("waValidation");
   return (
     <div className="space-y-5">
       <div className="cg-card overflow-hidden rounded-2xl">

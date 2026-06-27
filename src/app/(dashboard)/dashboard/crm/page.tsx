@@ -1,7 +1,9 @@
 import CrmBoard from "@/components/dashboard/crm-board";
 import { BadgeDollarSign, KanbanSquare, Sparkles, Workflow } from "lucide-react";
+import { requirePlanFeature } from "@/lib/auth/plan-gate";
 
-export default function CrmPage() {
+export default async function CrmPage() {
+  await requirePlanFeature("crmPipeline");
   return (
     <div className="space-y-5">
       <div className="cg-card overflow-hidden rounded-2xl">
