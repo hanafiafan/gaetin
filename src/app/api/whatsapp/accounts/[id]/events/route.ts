@@ -27,7 +27,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   if (!account) return fail("NOT_FOUND", "Akun WhatsApp tidak ditemukan", 404);
 
   // Mulai koneksi di gateway (idempoten)
-  await gwConnect(account.id).catch(() => undefined);
+  try {
+    await gwConnect(account.id);
+  } catch (e) {
+    console.error("[events] gwConnect failed:", e instanceof Error ? e.message : e);
+  }
 
   const encoder = new TextEncoder();
 
@@ -55,7 +59,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
           }
 
           if (state.status === "connected") {
-            // Update DB dan informasikan client
             await prisma.messagingAccount
               .update({
                 where: { id: account.id },
@@ -69,11 +72,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             send({ type: "status", status: "connected" });
             done = true;
           } else if (state.status === "disconnected" && prevQr) {
-            // QR sudah pernah dikirim tapi koneksi gagal
             send({ type: "status", status: "disconnected" });
             done = true;
           }
-        } catch { /* gateway tidak bisa dihubungi, coba lagi */ }
+        } catch (e) {
+          console.error("[events] gwGetQr failed:", e instanceof Error ? e.message : e);
+        }
 
         if (!done) await sleep(1500);
       }
