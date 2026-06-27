@@ -123,7 +123,9 @@ async function startConnection(accountId) {
         entry.reconnects++;
         entry.status = "connecting";
         entry.qr = null;
-        setTimeout(() => startConnection(accountId).catch(console.error), RECONNECT_DELAY_MS);
+        // 515 = restartRequired: reconnect cepat (2s), error lain tunggu lebih lama
+        const delay = code === 515 ? 2_000 : RECONNECT_DELAY_MS;
+        setTimeout(() => startConnection(accountId).catch(console.error), delay);
       } else {
         entry.status = "disconnected";
         sessions.delete(accountId);
