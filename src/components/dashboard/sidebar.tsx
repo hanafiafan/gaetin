@@ -220,7 +220,7 @@ export default function Sidebar({
         </Link>
 
         {/* Credits card */}
-        <div className={`mt-4 rounded-3xl border p-4 ${isLowCredits ? "border-amber-500/30 bg-amber-500/10" : "border-primary/25 bg-primary/10"}`}>
+        <div className={`mt-3 rounded-2xl border p-3 ${isLowCredits ? "border-amber-500/30 bg-amber-500/10" : "border-primary/25 bg-primary/10"}`}>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/20 text-amber-300" : "gradient-primary text-white"}`}>
@@ -232,7 +232,7 @@ export default function Sidebar({
               {PLAN_LABEL[plan] ?? plan}
             </span>
           </div>
-          <div className="mt-3 text-2xl font-black text-white">{credits.toLocaleString("id-ID")}</div>
+          <div className="mt-2 text-xl font-black text-white">{credits.toLocaleString("id-ID")}</div>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
             <div
               className={`h-full rounded-full transition-all ${isLowCredits ? "bg-amber-400" : "gradient-primary"}`}
@@ -241,7 +241,7 @@ export default function Sidebar({
           </div>
           <Link
             href="/dashboard/billing"
-            className="mt-3 inline-flex h-8 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-xs font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
+            className="mt-2 inline-flex h-7 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-[11px] font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
           >
             {isLowCredits ? "⚠️ Beli kredit" : "Kelola tagihan"}
           </Link>
@@ -261,7 +261,7 @@ export default function Sidebar({
           </Link>
         )}
 
-        <nav className="mt-5 flex-1 space-y-5 overflow-y-auto pr-1 pb-4">
+        <nav className="mt-4 flex-1 space-y-3 overflow-y-auto pr-1 pb-4">
           {navGroups.map((group) => {
             const items = group.items.filter((item) => !item.flag || featureFlags?.[item.flag] !== false);
             if (!items.length) return null;
@@ -335,17 +335,19 @@ export default function Sidebar({
         </div>
 
         {isSuperAdmin && (
-          <div className="mt-4 shrink-0 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
-            <p className="text-sm font-black text-white">Owner CMS</p>
-            <p className="mt-2 text-xs leading-5 text-slate-400">
-              Kelola fitur, aset, media, field pelanggan, dan laporan dari halaman admin.
-            </p>
-            <Link
-              href="/admin/cms"
-              className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-sm font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
-            >
-              Buka CMS
-            </Link>
+          <div className="mt-2 shrink-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold text-white">Owner CMS</p>
+                <p className="text-[10px] text-slate-400">Kelola sistem Gaetin.</p>
+              </div>
+              <Link
+                href="/admin/cms"
+                className="flex h-7 px-3 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-[10px] font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
+              >
+                Buka
+              </Link>
+            </div>
           </div>
         )}
       </aside>

@@ -67,7 +67,7 @@ export default async function DashboardPage({
   const isLowCredits = credits < 100;
 
   const statCards = [
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, color: "text-blue-400", bg: "bg-blue-500/10" },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, color: "text-primary", bg: "bg-primary/10" },
     { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, color: "text-violet-400", bg: "bg-violet-500/10" },
     { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, color: "text-amber-400", bg: "bg-amber-500/10" },
     { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/10" },
