@@ -58,7 +58,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="cg-shell flex h-screen overflow-hidden bg-[#060810] text-white">
-      {hsl && <style dangerouslySetInnerHTML={{ __html: `:root{--primary:${hsl};--ring:${hsl};}` }} />}
       <Sidebar
         appName={appName}
         featureFlags={ownerCms.featureFlags}
