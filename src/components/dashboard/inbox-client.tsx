@@ -87,23 +87,23 @@ export default function InboxClient() {
   return (
     <div className="cg-card grid min-h-[640px] overflow-hidden rounded-2xl lg:grid-cols-[340px_1fr]">
       {/* Conversation list */}
-      <div className="overflow-y-auto border-r border-white/[0.08]">
-        <div className="sticky top-0 z-10 border-b border-white/[0.08] bg-[#0d1020] p-4">
-          <div className="flex items-center gap-2 font-black text-white">
+      <div className="overflow-y-auto border-r border-border">
+        <div className="sticky top-0 z-10 border-b border-border bg-[#0d1020] p-4">
+          <div className="flex items-center gap-2 font-black text-foreground">
             <Inbox className="h-5 w-5 text-primary" />
             Percakapan
           </div>
-          <p className="mt-1 text-xs text-slate-500">{convos.length} thread tersedia</p>
+          <p className="mt-1 text-xs text-muted-foreground">{convos.length} thread tersedia</p>
         </div>
         {convos.length === 0 && (
-          <p className="p-4 text-sm text-slate-500">Belum ada percakapan masuk.</p>
+          <p className="p-4 text-sm text-muted-foreground">Belum ada percakapan masuk.</p>
         )}
         {convos.map((c) => (
           <button
             key={c.id}
             onClick={() => select(c.id)}
             className={cn(
-              "flex w-full items-center justify-between gap-3 border-b border-white/[0.05] p-4 text-left transition hover:bg-white/[0.03]",
+              "flex w-full items-center justify-between gap-3 border-b border-border/50 p-4 text-left transition hover:bg-muted/50",
               selectedId === c.id && "bg-primary/[0.06] border-l-2 border-l-primary"
             )}
           >
@@ -112,12 +112,12 @@ export default function InboxClient() {
                 <UserCircle2 className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white">{c.name ?? `+${c.phone}`}</p>
-                <p className="truncate text-xs text-slate-500">+{c.phone} · {c.status}</p>
+                <p className="truncate text-sm font-bold text-foreground">{c.name ?? `+${c.phone}`}</p>
+                <p className="truncate text-xs text-muted-foreground">+{c.phone} · {c.status}</p>
               </div>
             </div>
             {c.unreadCount > 0 && (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-white">
+              <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-foreground">
                 {c.unreadCount}
               </span>
             )}
@@ -133,22 +133,22 @@ export default function InboxClient() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Inbox className="h-7 w-7" />
               </div>
-              <p className="mt-3 text-sm text-slate-400">Pilih percakapan untuk melihat riwayat dan membalas.</p>
+              <p className="mt-3 text-sm text-muted-foreground">Pilih percakapan untuk melihat riwayat dan membalas.</p>
             </div>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between border-b border-white/[0.08] bg-white/[0.02] p-4">
+            <div className="flex items-center justify-between border-b border-border bg-card p-4">
               <div>
-                <p className="text-sm font-bold text-white">
+                <p className="text-sm font-bold text-foreground">
                   {thread.conversation.contact.name ?? `+${thread.conversation.contact.phone}`}
                 </p>
-                <p className="text-xs text-slate-500">+{thread.conversation.contact.phone}</p>
+                <p className="text-xs text-muted-foreground">+{thread.conversation.contact.phone}</p>
               </div>
               <select
                 value={thread.conversation.status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="h-9 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-xs text-white"
+                className="h-9 rounded-xl border border-border bg-card px-2 text-xs text-foreground"
               >
                 <option value="OPEN">Baru</option>
                 <option value="PENDING">Ditangani</option>
@@ -166,12 +166,12 @@ export default function InboxClient() {
                     className={cn(
                       "max-w-[75%] rounded-2xl px-3 py-2 text-sm",
                       m.direction === "OUTBOUND"
-                        ? "rounded-br-sm bg-primary text-white"
-                        : "rounded-bl-sm border border-white/[0.08] bg-white/[0.06] text-slate-200"
+                        ? "rounded-br-sm bg-primary text-foreground"
+                        : "rounded-bl-sm border border-border bg-muted text-slate-200"
                     )}
                   >
                     {m.content}
-                    <p className={cn("mt-1 text-[10px]", m.direction === "OUTBOUND" ? "text-white/60" : "text-slate-500")}>
+                    <p className={cn("mt-1 text-[10px]", m.direction === "OUTBOUND" ? "text-foreground/60" : "text-muted-foreground")}>
                       {new Date(m.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -179,12 +179,12 @@ export default function InboxClient() {
               ))}
             </div>
 
-            <form onSubmit={send} className="flex gap-2 border-t border-white/[0.08] p-3">
+            <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
               <input
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
                 placeholder="Ketik balasan..."
-                className="h-11 flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+                className="h-11 flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <button
                 type="submit"

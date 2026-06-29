@@ -53,7 +53,7 @@ export default function AnalyticsClient() {
 
   if (!summary || !trends) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center gap-3 text-slate-500">
+      <div className="flex min-h-[200px] items-center justify-center gap-3 text-muted-foreground">
         <Loader2 className="h-5 w-5 animate-spin" />
         <span className="text-sm">Memuat analitik...</span>
       </div>
@@ -77,12 +77,12 @@ export default function AnalyticsClient() {
         {kpiCards.map((c) => (
           <div key={c.label} className="cg-card rounded-2xl p-5">
             <div className="flex items-start justify-between gap-2">
-              <p className="text-xs font-semibold uppercase text-slate-500">{c.label}</p>
+              <p className="text-xs font-semibold uppercase text-muted-foreground">{c.label}</p>
               <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
                 <c.icon className="h-4 w-4" />
               </span>
             </div>
-            <p className="mt-3 text-2xl font-black text-white">{c.value}</p>
+            <p className="mt-3 text-2xl font-black text-foreground">{c.value}</p>
           </div>
         ))}
       </div>
@@ -90,7 +90,7 @@ export default function AnalyticsClient() {
       {/* Charts row */}
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="cg-card rounded-2xl p-5">
-          <h2 className="mb-4 text-sm font-bold text-white">Funnel konversi</h2>
+          <h2 className="mb-4 text-sm font-bold text-foreground">Funnel konversi</h2>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
               <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
@@ -102,7 +102,7 @@ export default function AnalyticsClient() {
         </div>
 
         <div className="cg-card rounded-2xl p-5">
-          <h2 className="mb-4 text-sm font-bold text-white">Sumber lead</h2>
+          <h2 className="mb-4 text-sm font-bold text-foreground">Sumber lead</h2>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={summary.sources}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
@@ -117,7 +117,7 @@ export default function AnalyticsClient() {
 
       {/* Trends */}
       <div className="cg-card rounded-2xl p-5">
-        <h2 className="mb-4 text-sm font-bold text-white">Tren 30 hari</h2>
+        <h2 className="mb-4 text-sm font-bold text-foreground">Tren 30 hari</h2>
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={trends.days}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
@@ -135,25 +135,25 @@ export default function AnalyticsClient() {
       <div className="cg-card rounded-2xl p-5">
         <div className="mb-4 flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-bold text-white">ROI per kampanye</h2>
+          <h2 className="text-sm font-bold text-foreground">ROI per kampanye</h2>
         </div>
         {summary.byCampaign.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/[0.08] p-8 text-center text-sm text-slate-500">
+          <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
             Belum ada revenue dari kampanye.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-white/[0.08]">
+          <div className="overflow-hidden rounded-xl border border-border">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/[0.08]">
-                  <th className="p-4 text-left text-xs font-bold uppercase text-slate-500">Kampanye</th>
-                  <th className="p-4 text-right text-xs font-bold uppercase text-slate-500">Revenue</th>
+                <tr className="border-b border-border">
+                  <th className="p-4 text-left text-xs font-bold uppercase text-muted-foreground">Kampanye</th>
+                  <th className="p-4 text-right text-xs font-bold uppercase text-muted-foreground">Revenue</th>
                 </tr>
               </thead>
               <tbody>
                 {summary.byCampaign.map((c, i) => (
-                  <tr key={i} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
-                    <td className="p-4 font-medium text-white">{c.name}</td>
+                  <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-card">
+                    <td className="p-4 font-medium text-foreground">{c.name}</td>
                     <td className="p-4 text-right font-black text-emerald-400">{formatIDR(c.revenue)}</td>
                   </tr>
                 ))}

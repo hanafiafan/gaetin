@@ -33,11 +33,11 @@ const STATUS_COLOR: Record<string, string> = {
   DONE: "bg-emerald-500/15 text-emerald-400",
   FAILED: "bg-red-500/15 text-red-400",
   PAUSED: "bg-amber-500/15 text-amber-400",
-  DRAFT: "bg-slate-500/15 text-slate-400",
+  DRAFT: "bg-slate-500/15 text-muted-foreground",
   SCHEDULED: "bg-primary/ text-primary",
 };
 
-const SELECT_CLASS = "h-11 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:outline-none";
+const SELECT_CLASS = "h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none";
 
 export default function CampaignsClient() {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -121,23 +121,23 @@ export default function CampaignsClient() {
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div>
-          <h2 className="font-black text-white">Rancang kampanye</h2>
-          <p className="mt-1 text-sm text-slate-400">Gunakan template, targetkan segmen, dan jadwalkan pengiriman.</p>
+          <h2 className="font-black text-foreground">Rancang kampanye</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Gunakan template, targetkan segmen, dan jadwalkan pengiriman.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
         {quota && (
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] p-3">
+          <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm font-bold text-white">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                 <Gauge className="h-4 w-4 text-primary" />
                 Kuota kirim harian
               </div>
-              <span className="text-xs text-slate-400">{quota.planName}</span>
+              <span className="text-xs text-muted-foreground">{quota.planName}</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-white/[0.08]">
               <div className="h-1.5 rounded-full bg-primary" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
             </div>
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-muted-foreground">
               {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.
             </p>
           </div>
@@ -147,7 +147,7 @@ export default function CampaignsClient() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nama kampanye"
-            className="h-11 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
             <option value="">Pilih nomor WhatsApp...</option>
@@ -162,7 +162,7 @@ export default function CampaignsClient() {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="Filter label (opsional)"
-              className="h-11 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
           </div>
           {templates.length > 0 && (
@@ -183,10 +183,10 @@ export default function CampaignsClient() {
             onChange={(e) => setMessage(e.target.value)}
             rows={6}
             placeholder="Halo {{nama}}, kami ingin mengabarkan..."
-            className="w-full resize-none rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <div className="space-y-1.5">
-            <label className="flex items-center gap-2 text-xs font-bold text-slate-400">
+            <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
               <CalendarClock className="h-4 w-4 text-primary" />
               Jadwalkan (opsional)
             </label>
@@ -194,10 +194,10 @@ export default function CampaignsClient() {
               type="datetime-local"
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="h-11 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:outline-none"
+              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none"
             />
           </div>
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-xs leading-5 text-slate-400">
+          <div className="rounded-xl border border-border bg-card p-3 text-xs leading-5 text-muted-foreground">
             <Wand2 className="mr-1 inline h-3.5 w-3.5 text-primary" />
             Kosongkan jadwal untuk membuat draft yang bisa dijalankan manual.
           </div>
@@ -215,22 +215,22 @@ export default function CampaignsClient() {
 
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div>
-          <h2 className="font-black text-white">Daftar kampanye</h2>
-          <p className="text-sm text-slate-400">{campaigns.length} kampanye dibuat</p>
+          <h2 className="font-black text-foreground">Daftar kampanye</h2>
+          <p className="text-sm text-muted-foreground">{campaigns.length} kampanye dibuat</p>
         </div>
         <div className="space-y-3">
           {campaigns.map((campaign) => {
             const pct = campaignPct(campaign);
-            const sc = STATUS_COLOR[campaign.status] ?? "bg-slate-500/15 text-slate-400";
+            const sc = STATUS_COLOR[campaign.status] ?? "bg-slate-500/15 text-muted-foreground";
             return (
-              <div key={campaign.id} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <div key={campaign.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="truncate font-bold text-white">{campaign.name}</h3>
+                      <h3 className="truncate font-bold text-foreground">{campaign.name}</h3>
                       <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-bold", sc)}>{campaign.status}</span>
                     </div>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       {campaign.totalRecipients} penerima · {campaign.sentCount} terkirim · {campaign.failedCount} gagal
                     </p>
                   </div>
@@ -263,11 +263,11 @@ export default function CampaignsClient() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <div className="mb-1 flex justify-between text-xs text-slate-500">
+                  <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                     <span>Progress</span>
                     <span>{pct}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/[0.06]">
+                  <div className="h-1.5 rounded-full bg-muted">
                     <div className="h-1.5 rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function CampaignsClient() {
             );
           })}
           {campaigns.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-white/[0.08] p-10 text-center text-sm text-slate-500">
+            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
               Belum ada kampanye. Buat campaign pertama dari panel di kiri.
             </div>
           )}

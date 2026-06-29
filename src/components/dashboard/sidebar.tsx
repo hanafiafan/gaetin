@@ -115,7 +115,7 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
 
       {/* Modal */}
       <div
-        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-[#0d0f1e] shadow-2xl"
+        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -125,24 +125,24 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white/[0.06] hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="px-6 pb-6">
-          <h2 className="text-xl font-black text-white">
+          <h2 className="text-xl font-black text-foreground">
             {feature} butuh paket Bisnis
           </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Trial gratis hanya mencakup scraping Google Maps dan ekspor CSV. Upgrade untuk membuka seluruh fitur pemasaran.
           </p>
 
           {/* Features list */}
           <div className="mt-5 space-y-2">
             {LOCKED_FEATURES.map((f) => (
-              <div key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
+              <div key={f} className="flex items-center gap-2.5 text-sm text-foreground/80">
                 <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-[9px] font-black">✓</span>
                 {f}
               </div>
@@ -153,12 +153,12 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
           <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-white">Paket Bisnis</p>
-                <p className="text-xs text-slate-400">Mulai dari</p>
+                <p className="text-sm font-bold text-foreground">Paket Bisnis</p>
+                <p className="text-xs text-muted-foreground">Mulai dari</p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-black text-white">Rp199K</p>
-                <p className="text-xs text-slate-400">/bulan</p>
+                <p className="text-2xl font-black text-foreground">Rp199K</p>
+                <p className="text-xs text-muted-foreground">/bulan</p>
               </div>
             </div>
           </div>
@@ -166,14 +166,14 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
           {/* CTAs */}
           <button
             onClick={() => { router.push("/dashboard/billing"); onClose(); }}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-white transition hover:bg-primary/90"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             Upgrade Sekarang
             <ArrowRight className="h-4 w-4" />
           </button>
           <button
             onClick={onClose}
-            className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-slate-500 transition hover:text-slate-300"
+            className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
           >
             Nanti saja
           </button>
@@ -210,12 +210,12 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className="sticky top-0 z-20 hidden h-screen w-[292px] shrink-0 border-r border-white/10 bg-[#050712]/88 px-4 py-4 backdrop-blur-2xl lg:flex lg:flex-col">
+      <aside className="sticky top-0 z-20 hidden h-screen w-[292px] shrink-0 border-r border-border bg-card/90 px-4 py-4 backdrop-blur-2xl lg:flex lg:flex-col">
         <Link href="/dashboard" className="cg-card flex items-center gap-3 rounded-3xl p-3">
-          <span className="gradient-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-base font-black text-white shadow-glow">G</span>
+          <span className="gradient-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-base font-black text-foreground shadow-glow">G</span>
           <span className="min-w-0">
-            <span className="block text-base font-black text-white">{appName}</span>
-            <span className="block truncate text-xs font-medium text-slate-400">Sistem WhatsApp pelanggan</span>
+            <span className="block text-base font-black text-foreground">{appName}</span>
+            <span className="block truncate text-xs font-medium text-muted-foreground">Sistem WhatsApp pelanggan</span>
           </span>
         </Link>
 
@@ -223,17 +223,17 @@ export default function Sidebar({
         <div className={`mt-3 rounded-2xl border p-3 ${isLowCredits ? "border-amber-500/30 bg-amber-500/10" : "border-primary/25 bg-primary/10"}`}>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/20 text-amber-300" : "gradient-primary text-white"}`}>
+              <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/20 text-amber-300" : "gradient-primary text-foreground"}`}>
                 <Zap className="h-3.5 w-3.5" />
               </div>
-              <p className="text-xs font-bold text-white">Kredit tersisa</p>
+              <p className="text-xs font-bold text-foreground">Kredit tersisa</p>
             </div>
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isTrial ? "bg-white/10 text-slate-400" : "bg-primary/20 text-primary"}`}>
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isTrial ? "bg-muted text-muted-foreground" : "bg-primary/20 text-primary"}`}>
               {PLAN_LABEL[plan] ?? plan}
             </span>
           </div>
-          <div className="mt-2 text-xl font-black text-white">{credits.toLocaleString("id-ID")}</div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div className="mt-2 text-xl font-black text-foreground">{credits.toLocaleString("id-ID")}</div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
             <div
               className={`h-full rounded-full transition-all ${isLowCredits ? "bg-amber-400" : "gradient-primary"}`}
               style={{ width: `${creditPct}%` }}
@@ -241,7 +241,7 @@ export default function Sidebar({
           </div>
           <Link
             href="/dashboard/billing"
-            className="mt-2 inline-flex h-7 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-[11px] font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
+            className="mt-2 inline-flex h-7 w-full items-center justify-center rounded-full border border-border bg-card text-[11px] font-bold text-foreground transition hover:border-primary/45 hover:bg-primary/15"
           >
             {isLowCredits ? "⚠️ Beli kredit" : "Kelola tagihan"}
           </Link>
@@ -268,7 +268,7 @@ export default function Sidebar({
 
             return (
               <div key={group.label}>
-                <p className="mb-2 px-3 text-[11px] font-bold uppercase text-slate-500">{group.label}</p>
+                <p className="mb-2 px-3 text-[11px] font-bold uppercase text-muted-foreground">{group.label}</p>
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
@@ -281,11 +281,11 @@ export default function Sidebar({
                           key={item.href}
                           type="button"
                           onClick={() => setLockedFeature(item.label)}
-                          className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm font-semibold text-slate-600 transition hover:border-amber-500/15 hover:bg-amber-500/5 hover:text-slate-500"
+                          className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm font-semibold text-muted-foreground transition hover:border-amber-500/15 hover:bg-amber-500/5"
                         >
-                          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.03]">
+                          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-muted">
                             <Icon className="h-4 w-4 opacity-40" />
-                            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#0d0f1e] border border-amber-500/30">
+                            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-card border border-amber-500/30">
                               <Lock className="h-2.5 w-2.5 text-amber-500" />
                             </span>
                           </span>
@@ -303,11 +303,11 @@ export default function Sidebar({
                         href={item.href}
                         className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition ${
                           active
-                            ? "border border-primary/35 bg-primary/20 text-white shadow-glow"
-                            : "border border-transparent text-slate-400 hover:border-white/10 hover:bg-white/[0.06] hover:text-white"
+                            ? "border border-primary/35 bg-primary/20 text-foreground shadow-glow"
+                            : "border border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
                         }`}
                       >
-                        <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${active ? "gradient-primary text-white" : "bg-white/[0.05] text-slate-400 group-hover:text-white"}`}>
+                        <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${active ? "gradient-primary text-foreground" : "bg-muted text-muted-foreground group-hover:text-foreground"}`}>
                           <Icon className="h-4 w-4" />
                         </span>
                         <span>{item.label}</span>
@@ -320,13 +320,13 @@ export default function Sidebar({
           })}
         </nav>
 
-        <div className="mt-2 shrink-0 border-t border-white/10 pt-4">
+        <div className="mt-2 shrink-0 border-t border-border pt-4">
           <form action="/api/auth/logout" method="POST">
             <button
               type="submit"
-              className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-slate-400 transition hover:bg-white/[0.06] hover:text-red-400"
+              className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-red-400"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.05] text-slate-400">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                 <LogOut className="h-4 w-4" />
               </span>
               <span>Keluar (Logout)</span>
@@ -335,15 +335,15 @@ export default function Sidebar({
         </div>
 
         {isSuperAdmin && (
-          <div className="mt-2 shrink-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+          <div className="mt-2 shrink-0 rounded-2xl border border-border bg-muted p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold text-white">Owner CMS</p>
-                <p className="text-[10px] text-slate-400">Kelola sistem Gaetin.</p>
+                <p className="text-xs font-bold text-foreground">Owner CMS</p>
+                <p className="text-[10px] text-muted-foreground">Kelola sistem Gaetin.</p>
               </div>
               <Link
                 href="/admin/cms"
-                className="flex h-7 px-3 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-[10px] font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
+                className="flex h-7 px-3 items-center justify-center rounded-full border border-border bg-card text-[10px] font-bold text-foreground transition hover:border-primary/45 hover:bg-primary/15"
               >
                 Buka
               </Link>

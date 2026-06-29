@@ -29,12 +29,12 @@ export default async function MapHistoryPage() {
   return (
     <div className="flex h-[calc(100vh-76px)] flex-col gap-4 p-4 md:gap-6 md:p-6 lg:p-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">History Maps</h1>
-        <p className="text-slate-400">Peta sebaran dari seluruh kontak yang berhasil disimpan dari hasil scraping.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">History Maps</h1>
+        <p className="text-muted-foreground">Peta sebaran dari seluruh kontak yang berhasil disimpan dari hasil scraping.</p>
       </div>
 
-      <div className="flex-1 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02]">
-        <Suspense fallback={<div className="flex h-full w-full items-center justify-center text-slate-500">Memuat peta...</div>}>
+      <div className="flex-1 overflow-hidden rounded-2xl border border-border bg-card">
+        <Suspense fallback={<div className="flex h-full w-full items-center justify-center text-muted-foreground">Memuat peta...</div>}>
           <MapHistoryClient leads={leads as any} />
         </Suspense>
       </div>

@@ -59,7 +59,7 @@ export default function ScraperSettings() {
               "flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition",
               provider === opt.value
                 ? "border-primary/30 bg-primary/[0.06]"
-                : "border-white/[0.08] bg-white/[0.02] hover:border-white/15"
+                : "border-border bg-card hover:border-border"
             )}
           >
             <input
@@ -69,8 +69,8 @@ export default function ScraperSettings() {
               className="mt-0.5 accent-primary"
             />
             <span>
-              <span className="block text-sm font-bold text-white">{opt.title}</span>
-              <span className="mt-0.5 block text-xs text-slate-400">{opt.desc}</span>
+              <span className="block text-sm font-bold text-foreground">{opt.title}</span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">{opt.desc}</span>
             </span>
           </label>
         ))}
@@ -78,15 +78,15 @@ export default function ScraperSettings() {
 
       {provider === "GOOGLE_PLACES" && (
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-400">Google Maps API Key</label>
+          <label className="text-xs font-bold text-muted-foreground">Google Maps API Key</label>
           <input
             type="password"
             value={key}
             onChange={(e) => setKey(e.target.value)}
             placeholder={hasGoogleKey ? "•••••• (tersimpan, isi untuk mengganti)" : "Tempel API key Google"}
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Aktifkan Places API (New) di Google Cloud, lalu tempel key di sini.
           </p>
         </div>

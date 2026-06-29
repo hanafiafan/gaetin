@@ -114,9 +114,9 @@ export default function ImportContacts() {
           type="file"
           accept=".csv,.xlsx,.xls"
           onChange={onFile}
-          className="text-sm text-slate-400 file:mr-3 file:rounded-full file:border file:border-white/[0.08] file:bg-white/[0.04] file:px-3 file:py-1.5 file:text-sm file:text-slate-300 file:transition file:hover:border-primary/30 file:hover:text-primary"
+          className="text-sm text-muted-foreground file:mr-3 file:rounded-full file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-sm file:text-foreground/80 file:transition file:hover:border-primary/30 file:hover:text-primary"
         />
-        {fileName && <p className="mt-1 text-xs text-slate-500">{fileName}</p>}
+        {fileName && <p className="mt-1 text-xs text-muted-foreground">{fileName}</p>}
       </div>
 
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -124,18 +124,18 @@ export default function ImportContacts() {
       {headers.length > 0 && !summary && (
         <>
           <div>
-            <h3 className="mb-3 text-sm font-bold text-white">Cocokkan kolom</h3>
+            <h3 className="mb-3 text-sm font-bold text-foreground">Cocokkan kolom</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               {FIELDS.map((f) => (
                 <div key={f.key} className="flex items-center gap-2">
-                  <span className="w-28 text-sm text-slate-400">
+                  <span className="w-28 text-sm text-muted-foreground">
                     {f.label}
                     {f.required && <span className="text-destructive"> *</span>}
                   </span>
                   <select
                     value={mapping[f.key]}
                     onChange={(e) => setMapping((m) => ({ ...m, [f.key]: Number(e.target.value) }))}
-                    className="h-9 flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white"
+                    className="h-9 flex-1 rounded-xl border border-border bg-card px-2 text-sm text-foreground"
                   >
                     <option value={-1}>— tidak ada —</option>
                     {headers.map((h, i) => (<option key={i} value={i}>{h || `Kolom ${i + 1}`}</option>))}
@@ -146,20 +146,20 @@ export default function ImportContacts() {
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-bold text-white">Pratinjau ({Math.min(10, records.length)} dari {records.length} baris)</h3>
-            <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+            <h3 className="mb-2 text-sm font-bold text-foreground">Pratinjau ({Math.min(10, records.length)} dari {records.length} baris)</h3>
+            <div className="overflow-x-auto rounded-xl border border-border">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.08] bg-white/[0.03]">
+                  <tr className="border-b border-border bg-muted/50">
                     {headers.map((h, i) => (
-                      <th key={i} className="p-2 text-left text-slate-500">{h || `Kolom ${i + 1}`}</th>
+                      <th key={i} className="p-2 text-left text-muted-foreground">{h || `Kolom ${i + 1}`}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {preview.map((r, ri) => (
-                    <tr key={ri} className="border-b border-white/[0.05] last:border-0">
-                      {headers.map((_, ci) => (<td key={ci} className="p-2 text-slate-400">{r[ci] ?? ""}</td>))}
+                    <tr key={ri} className="border-b border-border/50 last:border-0">
+                      {headers.map((_, ci) => (<td key={ci} className="p-2 text-muted-foreground">{r[ci] ?? ""}</td>))}
                     </tr>
                   ))}
                 </tbody>
@@ -176,7 +176,7 @@ export default function ImportContacts() {
               {importing ? "Mengimpor..." : "Impor kontak"}
             </button>
             {mapping.phone < 0 && (
-              <p className="text-xs text-slate-500">Kolom nomor telepon wajib dipetakan.</p>
+              <p className="text-xs text-muted-foreground">Kolom nomor telepon wajib dipetakan.</p>
             )}
           </div>
         </>
@@ -186,18 +186,18 @@ export default function ImportContacts() {
         <div className="cg-card rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-            <h3 className="font-bold text-white">Ringkasan impor</h3>
+            <h3 className="font-bold text-foreground">Ringkasan impor</h3>
           </div>
           <ul className="space-y-1 text-sm">
-            <li className="text-slate-300">Total baris: <strong className="text-white">{summary.total}</strong></li>
+            <li className="text-foreground/80">Total baris: <strong className="text-foreground">{summary.total}</strong></li>
             <li className="text-emerald-400">Berhasil diimpor: <strong>{summary.imported}</strong></li>
-            <li className="text-slate-400">Duplikat dalam file: {summary.duplicatesInFile}</li>
-            <li className="text-slate-400">Sudah ada di database: {summary.duplicatesExisting}</li>
-            <li className="text-slate-400">Baris tidak valid: {summary.invalid}</li>
+            <li className="text-muted-foreground">Duplikat dalam file: {summary.duplicatesInFile}</li>
+            <li className="text-muted-foreground">Sudah ada di database: {summary.duplicatesExisting}</li>
+            <li className="text-muted-foreground">Baris tidak valid: {summary.invalid}</li>
           </ul>
           <Link
             href="/dashboard/contacts"
-            className="inline-flex h-9 items-center rounded-full border border-white/[0.08] px-4 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary"
+            className="inline-flex h-9 items-center rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
           >
             Lihat kontak
           </Link>

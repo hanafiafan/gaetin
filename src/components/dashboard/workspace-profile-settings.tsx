@@ -43,28 +43,28 @@ export default function WorkspaceProfileSettings() {
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-400">Nama workspace</label>
+          <label className="text-xs font-bold text-muted-foreground">Nama workspace</label>
           <input
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="Nama bisnis Anda"
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
-          <p className="text-xs text-slate-500">Nama ini ditampilkan di header dan notifikasi.</p>
+          <p className="text-xs text-muted-foreground">Nama ini ditampilkan di header dan notifikasi.</p>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-400">Slug (ID unik)</label>
+          <label className="text-xs font-bold text-muted-foreground">Slug (ID unik)</label>
           <input
             value={slug}
             disabled
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 font-mono text-sm text-slate-500 cursor-not-allowed"
+            className="h-10 w-full rounded-xl border border-border bg-card px-3 font-mono text-sm text-muted-foreground cursor-not-allowed"
           />
-          <p className="text-xs text-slate-500">Tidak bisa diubah setelah dibuat.</p>
+          <p className="text-xs text-muted-foreground">Tidak bisa diubah setelah dibuat.</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-4 py-3 text-xs text-slate-500">
-        Workspace dibuat pada <span className="font-medium text-slate-400">{createdAt || "—"}</span>
+      <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 text-xs text-muted-foreground">
+        Workspace dibuat pada <span className="font-medium text-muted-foreground">{createdAt || "—"}</span>
       </div>
 
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}

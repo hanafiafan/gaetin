@@ -71,10 +71,10 @@ export default function SetupPage() {
           <Sparkles className="h-3 w-3" />
           Panduan Setup
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Setup Ekstensi Gaetin
         </h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-muted-foreground">
           Ikuti 4 langkah ini agar scraping Google Maps berjalan sempurna.
         </p>
       </div>
@@ -95,10 +95,10 @@ export default function SetupPage() {
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition ${
                       isDone
-                        ? "border-primary bg-primary text-white"
+                        ? "border-primary bg-primary text-foreground"
                         : isActive
                           ? "border-primary bg-primary/15 text-primary"
-                          : "border-white/10 bg-white/[0.03] text-slate-500"
+                          : "border-border bg-muted/50 text-muted-foreground"
                     }`}
                   >
                     {isDone ? (
@@ -109,7 +109,7 @@ export default function SetupPage() {
                   </div>
                   <span
                     className={`hidden text-center text-[10px] font-semibold leading-tight sm:block ${
-                      isActive ? "text-primary" : isDone ? "text-primary/70" : "text-slate-600"
+                      isActive ? "text-primary" : isDone ? "text-primary/70" : "text-muted-foreground"
                     }`}
                   >
                     {s.subtitle}
@@ -118,7 +118,7 @@ export default function SetupPage() {
                 {i < STEPS.length - 1 && (
                   <div
                     className={`h-px flex-1 max-w-8 mx-1 ${
-                      s.id < step ? "bg-primary" : "bg-white/10"
+                      s.id < step ? "bg-primary" : "bg-foreground/10"
                     }`}
                   />
                 )}
@@ -141,7 +141,7 @@ export default function SetupPage() {
         {step > 1 ? (
           <button
             onClick={() => setStep((p) => p - 1)}
-            className="flex h-10 items-center gap-2 rounded-full border border-white/[0.08] px-5 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:text-white"
+            className="flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-semibold text-foreground/80 transition hover:border-white/20 hover:text-foreground"
           >
             ← Kembali
           </button>
@@ -152,7 +152,7 @@ export default function SetupPage() {
         {step < 4 ? (
           <button
             onClick={() => setStep((p) => p + 1)}
-            className="flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-white transition hover:bg-primary/90"
+            className="flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-foreground transition hover:bg-primary/90"
           >
             {allChecked(step) ? "Lanjut" : "Lewati"}
             <ArrowRight className="h-4 w-4" />
@@ -160,7 +160,7 @@ export default function SetupPage() {
         ) : (
           <Link
             href="/dashboard/scraper"
-            className="flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-white transition hover:bg-primary/90"
+            className="flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-foreground transition hover:bg-primary/90"
           >
             Mulai Scraping
             <ArrowRight className="h-4 w-4" />
@@ -189,8 +189,8 @@ function StepInstall({
           <Chrome className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Install Ekstensi Chrome</h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <h2 className="text-xl font-bold text-foreground">Install Ekstensi Chrome</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
             Ekstensi ini yang akan berjalan di browser kamu dan melakukan scraping otomatis dari Google Maps.
           </p>
         </div>
@@ -200,13 +200,13 @@ function StepInstall({
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="font-bold text-white">Ekstensi Gaetin untuk Chrome</p>
-            <p className="mt-0.5 text-xs text-slate-400">Versi terbaru · Kompatibel dengan Chrome 100+</p>
+            <p className="font-bold text-foreground">Ekstensi Gaetin untuk Chrome</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Versi terbaru · Kompatibel dengan Chrome 100+</p>
           </div>
           <a
             href="/extension.crx"
             download
-            className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-white transition hover:bg-primary/90"
+            className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
           >
             <Download className="h-4 w-4" />
             Download
@@ -216,7 +216,7 @@ function StepInstall({
 
       {/* Install instructions */}
       <div>
-        <p className="mb-3 text-sm font-semibold text-slate-300">Cara install manual (.crx):</p>
+        <p className="mb-3 text-sm font-semibold text-foreground/80">Cara install manual (.crx):</p>
         <div className="space-y-2.5">
           {[
             { text: "Buka Chrome → ketik chrome://extensions di address bar", sub: "Tekan Enter" },
@@ -224,13 +224,13 @@ function StepInstall({
             { text: "Drag & drop file .crx yang didownload ke halaman extensions", sub: "Atau klik \"Muat yang dibongkar\"" },
             { text: "Klik \"Tambahkan ekstensi\" saat konfirmasi muncul", sub: "Ikon Gaetin akan muncul di toolbar" },
           ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+            <div key={i} className="flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
               <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-[10px] font-black text-primary">
                 {i + 1}
               </span>
               <div>
-                <p className="text-sm font-medium text-white">{item.text}</p>
-                <p className="mt-0.5 text-xs text-slate-500">{item.sub}</p>
+                <p className="text-sm font-medium text-foreground">{item.text}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{item.sub}</p>
               </div>
             </div>
           ))}
@@ -238,25 +238,25 @@ function StepInstall({
       </div>
 
       {/* Checklist */}
-      <div className="space-y-2.5 border-t border-white/[0.06] pt-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Konfirmasi</p>
+      <div className="space-y-2.5 border-t border-border pt-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Konfirmasi</p>
         {[
           "Sudah download file ekstensi",
           "Sudah mengaktifkan Mode Pengembang di Chrome",
           "Ikon Gaetin sudah muncul di toolbar Chrome",
         ].map((label, i) => (
-          <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-4 py-3 transition hover:bg-white/[0.04]">
+          <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition hover:bg-card">
             <div
               onClick={() => onCheck(i)}
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
-                  ? "border-primary bg-primary text-white"
+                  ? "border-primary bg-primary text-foreground"
                   : "border-white/20 bg-transparent"
               }`}
             >
               {checked?.[i] && <Check className="h-3 w-3" />}
             </div>
-            <span className={`text-sm ${checked?.[i] ? "text-white" : "text-slate-400"}`}>{label}</span>
+            <span className={`text-sm ${checked?.[i] ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
           </label>
         ))}
       </div>
@@ -282,31 +282,31 @@ function StepMaps({
           <Map className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Konfigurasi Google Maps</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Ada satu pengaturan wajib di Google Maps yang <strong className="text-white">harus</strong> diaktifkan agar scraping berjalan.
+          <h2 className="text-xl font-bold text-foreground">Konfigurasi Google Maps</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ada satu pengaturan wajib di Google Maps yang <strong className="text-foreground">harus</strong> diaktifkan agar scraping berjalan.
           </p>
         </div>
       </div>
 
       {/* Visual mockup */}
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#1a1c2a]">
+      <div className="overflow-hidden rounded-2xl border border-border bg-[#1a1c2a]">
         {/* Maps top bar */}
-        <div className="flex items-center gap-3 border-b border-white/10 bg-[#202230] px-4 py-2.5">
+        <div className="flex items-center gap-3 border-b border-border bg-[#202230] px-4 py-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/">
             <MapPin className="h-3.5 w-3.5 text-primary" />
           </div>
-          <div className="flex-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs text-slate-400">
+          <div className="flex-1 rounded-full border border-border bg-muted px-3 py-1.5 text-xs text-muted-foreground">
             kafe jakarta pusat
           </div>
-          <span className="text-[10px] text-slate-500">× 📍</span>
+          <span className="text-[10px] text-muted-foreground">× 📍</span>
         </div>
 
         {/* Results panel */}
         <div className="p-4">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-xs font-semibold text-slate-300">Hasil · 50+</p>
-            <span className="text-[10px] text-slate-500">ℹ</span>
+            <p className="text-xs font-semibold text-foreground/80">Hasil · 50+</p>
+            <span className="text-[10px] text-muted-foreground">ℹ</span>
           </div>
 
           {/* THE CHECKBOX — highlighted */}
@@ -315,7 +315,7 @@ function StepMaps({
               <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/">
                 <Check className="h-2.5 w-2.5 text-primary" />
               </div>
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium text-foreground">
                 Perbarui hasil saat peta digeser
               </span>
             </div>
@@ -323,7 +323,7 @@ function StepMaps({
               <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-red-400">
                 Wajib aktif!
               </span>
-              <span className="text-[10px] text-slate-500">Tanpa ini scraping tidak bisa berjalan</span>
+              <span className="text-[10px] text-muted-foreground">Tanpa ini scraping tidak bisa berjalan</span>
             </div>
           </div>
 
@@ -331,8 +331,8 @@ function StepMaps({
           <div className="space-y-1.5">
             {["Kopi Nako · ★4.8", "Escobar Coffee · ★4.7", "Filosofi Kopi · ★4.6"].map((item) => (
               <div key={item} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
-                <div className="h-8 w-8 rounded-lg bg-white/[0.06]" />
-                <span className="text-xs text-slate-400">{item}</span>
+                <div className="h-8 w-8 rounded-lg bg-muted" />
+                <span className="text-xs text-muted-foreground">{item}</span>
               </div>
             ))}
           </div>
@@ -341,20 +341,20 @@ function StepMaps({
 
       {/* Instructions */}
       <div>
-        <p className="mb-3 text-sm font-semibold text-slate-300">Langkah-langkah:</p>
+        <p className="mb-3 text-sm font-semibold text-foreground/80">Langkah-langkah:</p>
         <div className="space-y-2.5">
           {[
             { text: "Buka maps.google.com di browser Chrome", action: null },
             { text: "Ketik kata kunci bisnis yang ingin kamu scrape", action: "Contoh: \"kafe jakarta\", \"salon bandung\"" },
             { text: "Centang kotak \"Perbarui hasil saat peta digeser\"", action: "Ada di bagian atas daftar hasil pencarian" },
           ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+            <div key={i} className="flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
               <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-[10px] font-black text-amber-400">
                 {i + 1}
               </span>
               <div>
-                <p className="text-sm font-medium text-white">{item.text}</p>
-                {item.action && <p className="mt-0.5 text-xs text-slate-500">{item.action}</p>}
+                <p className="text-sm font-medium text-foreground">{item.text}</p>
+                {item.action && <p className="mt-0.5 text-xs text-muted-foreground">{item.action}</p>}
               </div>
             </div>
           ))}
@@ -365,32 +365,32 @@ function StepMaps({
         href="https://maps.google.com"
         target="_blank"
         rel="noreferrer"
-        className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-white/[0.08] text-sm font-semibold text-slate-300 transition hover:border-primary/30 hover:text-primary"
+        className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
       >
         <ExternalLink className="h-4 w-4" />
         Buka Google Maps
       </a>
 
       {/* Checklist */}
-      <div className="space-y-2.5 border-t border-white/[0.06] pt-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Konfirmasi</p>
+      <div className="space-y-2.5 border-t border-border pt-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Konfirmasi</p>
         {[
           "Sudah membuka Google Maps di Chrome",
           "Sudah mencari kata kunci bisnis",
           "Kotak \"Perbarui hasil saat peta digeser\" sudah dicentang",
         ].map((label, i) => (
-          <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-4 py-3 transition hover:bg-white/[0.04]">
+          <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition hover:bg-card">
             <div
               onClick={() => onCheck(i)}
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
-                  ? "border-primary bg-primary text-white"
+                  ? "border-primary bg-primary text-foreground"
                   : "border-white/20 bg-transparent"
               }`}
             >
               {checked?.[i] && <Check className="h-3 w-3" />}
             </div>
-            <span className={`text-sm ${checked?.[i] ? "text-white" : "text-slate-400"}`}>{label}</span>
+            <span className={`text-sm ${checked?.[i] ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
           </label>
         ))}
       </div>
@@ -416,8 +416,8 @@ function StepPermissions({
           <Shield className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Aktifkan Izin Browser</h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <h2 className="text-xl font-bold text-foreground">Aktifkan Izin Browser</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
             Chrome perlu izin popup dan lokasi agar ekstensi Gaetin bisa bekerja dengan optimal di Google Maps.
           </p>
         </div>
@@ -426,14 +426,14 @@ function StepPermissions({
       {/* Permission cards */}
       <div className="grid gap-4 sm:grid-cols-2">
         {/* Popup permission */}
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/ text-primary">
               <Monitor className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white">Izin Popup</p>
-              <p className="text-xs text-slate-500">Pop-up dan pengalihan</p>
+              <p className="text-sm font-bold text-foreground">Izin Popup</p>
+              <p className="text-xs text-muted-foreground">Pop-up dan pengalihan</p>
             </div>
           </div>
           <div className="space-y-1.5">
@@ -443,7 +443,7 @@ function StepPermissions({
               "Pilih \"Izin situs\"",
               "\"Pop-up & pengalihan\" → Izinkan",
             ].map((s, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
+              <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
                 <span className="mt-0.5 shrink-0 font-bold text-primary">{i + 1}.</span>
                 <span>{s}</span>
               </div>
@@ -452,14 +452,14 @@ function StepPermissions({
         </div>
 
         {/* Location permission */}
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
               <MapPin className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white">Izin Lokasi</p>
-              <p className="text-xs text-slate-500">Akses GPS / Geolocation</p>
+              <p className="text-sm font-bold text-foreground">Izin Lokasi</p>
+              <p className="text-xs text-muted-foreground">Akses GPS / Geolocation</p>
             </div>
           </div>
           <div className="space-y-1.5">
@@ -469,7 +469,7 @@ function StepPermissions({
               "Pilih \"Izin situs\"",
               "\"Lokasi\" → Izinkan",
             ].map((s, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
+              <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
                 <span className="mt-0.5 shrink-0 font-bold text-emerald-400">{i + 1}.</span>
                 <span>{s}</span>
               </div>
@@ -487,24 +487,24 @@ function StepPermissions({
       </div>
 
       {/* Checklist */}
-      <div className="space-y-2.5 border-t border-white/[0.06] pt-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Konfirmasi</p>
+      <div className="space-y-2.5 border-t border-border pt-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Konfirmasi</p>
         {[
           "Izin Pop-up sudah diaktifkan untuk maps.google.com",
           "Izin Lokasi sudah diaktifkan untuk maps.google.com",
         ].map((label, i) => (
-          <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-4 py-3 transition hover:bg-white/[0.04]">
+          <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition hover:bg-card">
             <div
               onClick={() => onCheck(i)}
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
-                  ? "border-primary bg-primary text-white"
+                  ? "border-primary bg-primary text-foreground"
                   : "border-white/20 bg-transparent"
               }`}
             >
               {checked?.[i] && <Check className="h-3 w-3" />}
             </div>
-            <span className={`text-sm ${checked?.[i] ? "text-white" : "text-slate-400"}`}>{label}</span>
+            <span className={`text-sm ${checked?.[i] ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
           </label>
         ))}
       </div>
@@ -523,15 +523,15 @@ function StepReady() {
         <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary ring-4 ring-primary/10">
           <Check className="h-8 w-8" />
         </div>
-        <h2 className="text-2xl font-bold text-white">Setup Selesai!</h2>
-        <p className="mt-2 text-slate-400">
+        <h2 className="text-2xl font-bold text-foreground">Setup Selesai!</h2>
+        <p className="mt-2 text-muted-foreground">
           Semua konfigurasi siap. Saatnya menjalankan scraping pertamamu dari Google Maps.
         </p>
       </div>
 
       {/* Quick guide */}
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
-        <p className="mb-4 text-sm font-bold text-white">Cara menjalankan scraping:</p>
+        <p className="mb-4 text-sm font-bold text-foreground">Cara menjalankan scraping:</p>
         <div className="space-y-3">
           {[
             { step: "1", text: "Klik menu Scraper di sidebar kiri" },
@@ -543,7 +543,7 @@ function StepReady() {
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-black text-primary">
                 {item.step}
               </span>
-              <p className="text-sm text-slate-300">{item.text}</p>
+              <p className="text-sm text-foreground/80">{item.text}</p>
             </div>
           ))}
         </div>
@@ -555,10 +555,10 @@ function StepReady() {
           { icon: "💡", title: "Tips Kata Kunci", body: "Gunakan nama kategori bisnis + kota. Contoh: \"toko baju surabaya\", \"salon kecantikan bandung\"" },
           { icon: "⚡", title: "Radius Optimal", body: "Mulai dengan radius 5km untuk hasil yang lebih akurat. Perbesar area jika butuh lebih banyak lead." },
         ].map((tip) => (
-          <div key={tip.title} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <div key={tip.title} className="rounded-xl border border-border bg-card p-4">
             <p className="mb-1 text-lg">{tip.icon}</p>
-            <p className="text-sm font-bold text-white">{tip.title}</p>
-            <p className="mt-1 text-xs leading-5 text-slate-400">{tip.body}</p>
+            <p className="text-sm font-bold text-foreground">{tip.title}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">{tip.body}</p>
           </div>
         ))}
       </div>

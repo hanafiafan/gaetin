@@ -17,7 +17,7 @@ interface Log {
   createdAt: string;
 }
 
-const SELECT_CLASS = "h-8 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2 text-xs text-white";
+const SELECT_CLASS = "h-8 rounded-lg border border-border bg-card px-2 text-xs text-foreground";
 
 export default function TeamClient() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -70,9 +70,9 @@ export default function TeamClient() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email anggota (sudah terdaftar)"
-            className="h-10 max-w-xs flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="h-10 max-w-xs flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
-          <select value={role} onChange={(e) => setRole(e.target.value as "ADMIN" | "AGENT")} className="h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white">
+          <select value={role} onChange={(e) => setRole(e.target.value as "ADMIN" | "AGENT")} className="h-10 rounded-xl border border-border bg-card px-2 text-sm text-foreground">
             <option value="AGENT">Agent</option>
             <option value="ADMIN">Admin</option>
           </select>
@@ -83,21 +83,21 @@ export default function TeamClient() {
         </form>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-white/[0.08]">
+      <div className="overflow-hidden rounded-xl border border-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/[0.08] bg-white/[0.03] text-left">
-              <th className="p-3 text-xs font-bold uppercase text-slate-500">Nama</th>
-              <th className="p-3 text-xs font-bold uppercase text-slate-500">Email</th>
-              <th className="p-3 text-xs font-bold uppercase text-slate-500">Role</th>
+            <tr className="border-b border-border bg-muted/50 text-left">
+              <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Nama</th>
+              <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Email</th>
+              <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Role</th>
               <th className="p-3" />
             </tr>
           </thead>
           <tbody>
             {members.map((m) => (
-              <tr key={m.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
-                <td className="p-3 font-medium text-white">{m.name}{m.isSelf && <span className="ml-1 text-xs text-slate-500">(Anda)</span>}</td>
-                <td className="p-3 text-slate-400">{m.email}</td>
+              <tr key={m.id} className="border-b border-border/50 last:border-0 hover:bg-card">
+                <td className="p-3 font-medium text-foreground">{m.name}{m.isSelf && <span className="ml-1 text-xs text-muted-foreground">(Anda)</span>}</td>
+                <td className="p-3 text-muted-foreground">{m.email}</td>
                 <td className="p-3">
                   {isManager && m.role !== "OWNER" ? (
                     <select value={m.role} onChange={(e) => changeRole(m.id, e.target.value)} className={SELECT_CLASS}>
@@ -105,12 +105,12 @@ export default function TeamClient() {
                       <option value="AGENT">Agent</option>
                     </select>
                   ) : (
-                    <span className="text-slate-300">{m.role}</span>
+                    <span className="text-foreground/80">{m.role}</span>
                   )}
                 </td>
                 <td className="p-3 text-right">
                   {isManager && m.role !== "OWNER" && (
-                    <button onClick={() => remove(m.id)} className="rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs font-bold text-slate-400 transition hover:border-red-500/30 hover:text-red-400">
+                    <button onClick={() => remove(m.id)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground transition hover:border-red-500/30 hover:text-red-400">
                       Hapus
                     </button>
                   )}
@@ -122,15 +122,15 @@ export default function TeamClient() {
       </div>
 
       <div>
-        <h2 className="mb-2 font-bold text-white">Aktivitas terbaru</h2>
+        <h2 className="mb-2 font-bold text-foreground">Aktivitas terbaru</h2>
         <div className="cg-card space-y-1 rounded-2xl p-4 text-sm">
-          {logs.length === 0 && <p className="text-slate-500">Belum ada aktivitas tercatat.</p>}
+          {logs.length === 0 && <p className="text-muted-foreground">Belum ada aktivitas tercatat.</p>}
           {logs.map((l) => (
-            <div key={l.id} className="flex justify-between border-b border-white/[0.05] py-1.5 last:border-0">
-              <span className="text-slate-300">
-                <span className="font-bold text-white">{l.actor}</span> · {l.action}{l.target ? ` · ${l.target}` : ""}
+            <div key={l.id} className="flex justify-between border-b border-border/50 py-1.5 last:border-0">
+              <span className="text-foreground/80">
+                <span className="font-bold text-foreground">{l.actor}</span> · {l.action}{l.target ? ` · ${l.target}` : ""}
               </span>
-              <span className="text-slate-500">{new Date(l.createdAt).toLocaleString("id-ID")}</span>
+              <span className="text-muted-foreground">{new Date(l.createdAt).toLocaleString("id-ID")}</span>
             </div>
           ))}
         </div>

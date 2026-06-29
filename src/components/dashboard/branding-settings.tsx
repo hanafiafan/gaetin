@@ -37,13 +37,13 @@ export default function BrandingSettings() {
     setSaved(true);
   }
 
-  const INPUT_CLASS = "h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none";
-  const LABEL_CLASS = "text-xs font-bold text-slate-400";
+  const INPUT_CLASS = "h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none";
+  const LABEL_CLASS = "text-xs font-bold text-muted-foreground";
 
   if (isPro === false) {
     return (
-      <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] p-4 text-sm text-slate-400">
-        White-label (ganti nama &amp; warna aplikasi) tersedia di paket <span className="font-bold text-white">Pro</span>.{" "}
+      <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+        White-label (ganti nama &amp; warna aplikasi) tersedia di paket <span className="font-bold text-foreground">Pro</span>.{" "}
         <Link href="/dashboard/billing" className="font-bold text-primary hover:underline">Upgrade ke Pro</Link>
       </div>
     );
@@ -67,10 +67,10 @@ export default function BrandingSettings() {
             type="color"
             value={primaryColor}
             onChange={(e) => setPrimaryColor(e.target.value)}
-            className="h-10 w-12 cursor-pointer rounded-xl border border-white/[0.08] bg-transparent"
+            className="h-10 w-12 cursor-pointer rounded-xl border border-border bg-transparent"
             aria-label="Warna primer"
           />
-          <span className="text-sm font-mono text-slate-300">{primaryColor}</span>
+          <span className="text-sm font-mono text-foreground/80">{primaryColor}</span>
         </div>
       </div>
       <div className="space-y-1.5">

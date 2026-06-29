@@ -2,34 +2,36 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(true);
 
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
+    const stored = localStorage.getItem("theme");
+    const isDark = stored === "dark" || (!stored && true); // default dark
+    setDark(isDark);
+    document.documentElement.classList.toggle("dark", isDark);
   }, []);
 
   function toggle() {
     const next = !dark;
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch {
-      // abaikan
-    }
-    fetch("/api/settings/theme", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ theme: next ? "DARK" : "LIGHT" }),
-    }).catch(() => undefined);
+    localStorage.setItem("theme", next ? "dark" : "light");
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggle} aria-label="Ganti tema">
-      {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </Button>
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card transition hover:border-primary/30 hover:bg-primary/10"
+    >
+      {dark ? (
+        <Sun className="h-4 w-4 text-amber-400" />
+      ) : (
+        <Moon className="h-4 w-4 text-foreground" />
+      )}
+    </button>
   );
 }

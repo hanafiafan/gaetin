@@ -51,26 +51,26 @@ export default function TemplatesClient() {
       <div className="cg-card rounded-2xl p-5">
         <form onSubmit={create} className="space-y-3">
           <div>
-            <h2 className="font-black text-white">Template baru</h2>
-            <p className="mt-1 text-sm text-slate-400">Buat copy yang bisa dipakai ulang di blast dan campaign.</p>
+            <h2 className="font-black text-foreground">Template baru</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Buat copy yang bisa dipakai ulang di blast dan campaign.</p>
           </div>
           {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nama template"
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={5}
             placeholder="Halo {{nama}}! {Promo|Penawaran} spesial untuk bisnis di {{kota}}."
-            className="w-full resize-none rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+            className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           {body && (
-            <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-sm">
-              <div className="mb-1 flex items-center gap-1 text-xs text-slate-500">
+            <div className="rounded-xl border border-border bg-card p-3 text-sm">
+              <div className="mb-1 flex items-center gap-1 text-xs text-muted-foreground">
                 <Eye className="h-3.5 w-3.5" /> Pratinjau contoh:
               </div>
               <span className="text-slate-200">{renderMessage(body, SAMPLE)}</span>
@@ -89,27 +89,27 @@ export default function TemplatesClient() {
 
       <div className="cg-card rounded-2xl p-5">
         <div className="mb-4">
-          <h2 className="font-black text-white">Library template</h2>
-          <p className="text-sm text-slate-400">{items.length} template tersimpan</p>
+          <h2 className="font-black text-foreground">Library template</h2>
+          <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>
         </div>
         {items.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/[0.08] p-8 text-center text-sm text-slate-500">
+          <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
             Belum ada template. Buat template pertama dari panel di kiri.
           </div>
         ) : (
           <div className="space-y-3">
             {items.map((t) => (
-              <div key={t.id} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <div key={t.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-bold text-white">{t.name}</p>
+                  <p className="font-bold text-foreground">{t.name}</p>
                   <button
                     onClick={() => remove(t.id)}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-500/10 hover:text-red-400"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-red-500/10 hover:text-red-400"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="mt-1 whitespace-pre-wrap text-sm text-slate-400">{t.body}</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{t.body}</p>
               </div>
             ))}
           </div>

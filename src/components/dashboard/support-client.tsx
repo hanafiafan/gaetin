@@ -43,7 +43,7 @@ const STATUS_MAP: Record<string, { label: string; color: string }> = {
   OPEN: { label: "Terbuka", color: "bg-primary/15 text-primary" },
   IN_PROGRESS: { label: "Diproses", color: "bg-amber-500/15 text-amber-400" },
   RESOLVED: { label: "Selesai", color: "bg-emerald-500/15 text-emerald-400" },
-  CLOSED: { label: "Ditutup", color: "bg-slate-500/15 text-slate-400" },
+  CLOSED: { label: "Ditutup", color: "bg-slate-500/15 text-muted-foreground" },
 };
 
 export default function SupportClient() {
@@ -85,26 +85,26 @@ export default function SupportClient() {
       <div>
         <div className="mb-4 flex items-center gap-2">
           <HelpCircle className="h-4 w-4 text-primary" />
-          <h2 className="font-black text-white">Pertanyaan umum</h2>
+          <h2 className="font-black text-foreground">Pertanyaan umum</h2>
         </div>
         <div className="space-y-2">
           {FAQ.map((f, i) => (
             <div
               key={f.q}
-              className={cn("rounded-2xl border transition", openFaq === i ? "border-primary/25 bg-primary/[0.06]" : "border-white/[0.08] bg-white/[0.02] hover:border-white/15")}
+              className={cn("rounded-2xl border transition", openFaq === i ? "border-primary/25 bg-primary/[0.06]" : "border-border bg-card hover:border-border")}
             >
               <button
                 type="button"
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
               >
-                <span className="text-sm font-bold text-white">{f.q}</span>
+                <span className="text-sm font-bold text-foreground">{f.q}</span>
                 <ChevronDown
-                  className={cn("h-4 w-4 shrink-0 text-slate-400 transition-transform", openFaq === i && "rotate-180 text-primary")}
+                  className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openFaq === i && "rotate-180 text-primary")}
                 />
               </button>
               {openFaq === i && (
-                <div className="border-t border-white/[0.06] px-4 pb-4 pt-3 text-sm leading-7 text-slate-300">
+                <div className="border-t border-border px-4 pb-4 pt-3 text-sm leading-7 text-foreground/80">
                   {f.a}
                 </div>
               )}
@@ -118,7 +118,7 @@ export default function SupportClient() {
         <div className="cg-card rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <LifeBuoy className="h-4 w-4 text-primary" />
-            <h2 className="font-black text-white">Kirim tiket bantuan</h2>
+            <h2 className="font-black text-foreground">Kirim tiket bantuan</h2>
           </div>
 
           {sent && (
@@ -129,30 +129,30 @@ export default function SupportClient() {
 
           <form onSubmit={submit} className="space-y-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400">Subjek</label>
+              <label className="text-xs font-bold text-muted-foreground">Subjek</label>
               <input
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Ringkasan kendala Anda..."
                 required
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none focus:ring-0"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none focus:ring-0"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400">Detail</label>
+              <label className="text-xs font-bold text-muted-foreground">Detail</label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 placeholder="Jelaskan kendala Anda secara detail..."
                 required
-                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none focus:ring-0 resize-none"
+                className="w-full rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none focus:ring-0 resize-none"
               />
             </div>
             <button
               type="submit"
               disabled={loading || !subject.trim() || !message.trim()}
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] text-sm font-bold text-white transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border bg-muted text-sm font-bold text-foreground transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
             >
               <Send className="h-4 w-4" />
               {loading ? "Mengirim..." : "Kirim tiket"}
@@ -163,24 +163,24 @@ export default function SupportClient() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Ticket className="h-4 w-4 text-primary" />
-            <h2 className="font-black text-white">Tiket saya</h2>
+            <h2 className="font-black text-foreground">Tiket saya</h2>
             {tickets.length > 0 && (
               <span className="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-black text-primary">{tickets.length}</span>
             )}
           </div>
           {tickets.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/[0.08] p-6 text-center text-sm text-slate-500">
+            <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
               Belum ada tiket. Kirim tiket jika perlu bantuan.
             </div>
           ) : (
             <div className="space-y-2">
               {tickets.map((t) => {
-                const s = STATUS_MAP[t.status] ?? { label: t.status, color: "bg-slate-500/15 text-slate-400" };
+                const s = STATUS_MAP[t.status] ?? { label: t.status, color: "bg-slate-500/15 text-muted-foreground" };
                 return (
                   <div key={t.id} className="cg-card flex items-center justify-between gap-3 rounded-2xl px-4 py-3">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-white">{t.subject}</p>
-                      <p className="flex items-center gap-1 text-xs text-slate-500">
+                      <p className="truncate text-sm font-bold text-foreground">{t.subject}</p>
+                      <p className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
                         {t.ticketNo} · {new Date(t.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                       </p>

@@ -14,8 +14,8 @@ export default async function ScraperPage() {
             <Sparkles className="h-3 w-3" />
             Market Research Engine
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Scraper Lead</h1>
-          <p className="mt-1 max-w-xl text-sm text-slate-400">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Scraper Lead</h1>
+          <p className="mt-1 max-w-xl text-sm text-muted-foreground">
             {legacyOsmEnabled
               ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach."
               : "Ekstrak data bisnis langsung dari Google Maps via ekstensi Chrome, lalu simpan ke CRM dalam satu klik."}

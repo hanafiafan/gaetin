@@ -41,7 +41,7 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
 const WA_COLOR: Record<Contact["waStatus"], string> = {
   ACTIVE: "bg-emerald-500/15 text-emerald-400",
   INACTIVE: "bg-red-500/15 text-red-400",
-  UNKNOWN: "bg-slate-500/15 text-slate-400",
+  UNKNOWN: "bg-slate-500/15 text-muted-foreground",
 };
 
 export default function ValidatorClient() {
@@ -144,21 +144,21 @@ export default function ValidatorClient() {
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
-          <h2 className="font-black text-white">Sesi validasi</h2>
+          <h2 className="font-black text-foreground">Sesi validasi</h2>
         </div>
 
         {connectedAccounts.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/[0.08] p-4 text-sm text-slate-400">
+          <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
             Belum ada nomor WhatsApp terhubung. Hubungkan dulu di Pengaturan.
           </div>
         ) : (
           <>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400">Nomor WhatsApp</label>
+              <label className="text-xs font-bold text-muted-foreground">Nomor WhatsApp</label>
               <select
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground"
               >
                 {connectedAccounts.map((a) => (
                   <option key={a.id} value={a.id}>{a.label}</option>
@@ -166,11 +166,11 @@ export default function ValidatorClient() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400">Cakupan</label>
+              <label className="text-xs font-bold text-muted-foreground">Cakupan</label>
               <select
                 value={scope}
                 onChange={(e) => { setScope(e.target.value as "unknown" | "all" | "ids"); setError(null); }}
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground"
               >
                 <option value="unknown">Hanya yang belum dicek</option>
                 <option value="all">Semua kontak</option>
@@ -179,14 +179,14 @@ export default function ValidatorClient() {
             </div>
 
             {scope === "ids" && (
-              <div className="space-y-3 rounded-xl border border-white/[0.08] p-3">
+              <div className="space-y-3 rounded-xl border border-border p-3">
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                  <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Cari nama, nomor, atau label..."
-                    className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:outline-none"
+                    className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                   />
                 </div>
                 <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
@@ -199,17 +199,17 @@ export default function ValidatorClient() {
                         onClick={() => toggleContact(contact.id)}
                         className={cn(
                           "flex min-h-14 w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm transition",
-                          checked ? "border-primary/30 bg-primary/[0.06]" : "border-white/[0.08] bg-white/[0.02] hover:border-white/15"
+                          checked ? "border-primary/30 bg-primary/[0.06]" : "border-border bg-card hover:border-border"
                         )}
                       >
                         {checked ? (
                           <SquareCheckBig className="h-5 w-5 shrink-0 text-primary" />
                         ) : (
-                          <Square className="h-5 w-5 shrink-0 text-slate-500" />
+                          <Square className="h-5 w-5 shrink-0 text-muted-foreground" />
                         )}
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate font-bold text-white">{contact.name ?? `+${contact.phone}`}</span>
-                          <span className="block truncate text-xs text-slate-500">
+                          <span className="block truncate font-bold text-foreground">{contact.name ?? `+${contact.phone}`}</span>
+                          <span className="block truncate text-xs text-muted-foreground">
                             +{contact.phone}{contact.label ? ` · ${contact.label}` : ""}
                           </span>
                         </span>
@@ -220,13 +220,13 @@ export default function ValidatorClient() {
                     );
                   })}
                   {contacts.length === 0 && (
-                    <div className="p-4 text-center text-sm text-slate-500">
+                    <div className="p-4 text-center text-sm text-muted-foreground">
                       {contactsLoading ? "Memuat kontak..." : "Kontak tidak ditemukan."}
                     </div>
                   )}
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">{selected.size} kontak dipilih</span>
+                  <span className="text-muted-foreground">{selected.size} kontak dipilih</span>
                   {selected.size > 0 && (
                     <button type="button" onClick={() => setSelected(new Set())} className="text-xs font-bold text-primary hover:underline">
                       Kosongkan
@@ -255,20 +255,20 @@ export default function ValidatorClient() {
 
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="font-black text-white">Progress</h2>
-          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-primary" : "bg-slate-500/15 text-slate-400")}>
+          <h2 className="font-black text-foreground">Progress</h2>
+          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-primary" : "bg-slate-500/15 text-muted-foreground")}>
             {progress?.status ?? "idle"}
           </span>
         </div>
         {progress ? (
           <>
             <div className="space-y-2">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
               </div>
-              <div className="flex items-center justify-between text-sm text-slate-400">
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>{progress.processed} / {progress.total} diproses</span>
-                <span className="font-bold text-white">{pct}%</span>
+                <span className="font-bold text-foreground">{pct}%</span>
               </div>
             </div>
             <div className="space-y-2">
@@ -280,19 +280,19 @@ export default function ValidatorClient() {
                 <span className="flex items-center gap-2 font-medium"><XCircle className="h-4 w-4" /> Tidak aktif</span>
                 <strong>{progress.inactive}</strong>
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-white/[0.04] p-3 text-sm text-slate-400">
+              <div className="flex items-center justify-between rounded-xl bg-card p-3 text-sm text-muted-foreground">
                 <span>Gagal diverifikasi</span>
                 <strong>{progress.unverified}</strong>
               </div>
             </div>
           </>
         ) : (
-          <div className="rounded-xl border border-dashed border-white/[0.08] p-4 text-sm text-slate-500">
+          <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
             Belum ada sesi berjalan. Cakupan saat ini: {SCOPE_LABEL[scope]}.
           </div>
         )}
         {running && (
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
             Validasi berjalan dengan jeda acak antar nomor.
           </div>

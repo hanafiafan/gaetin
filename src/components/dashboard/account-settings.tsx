@@ -71,37 +71,37 @@ export default function AccountSettings() {
     <div className="space-y-8">
       {/* Profil */}
       <div className="space-y-4">
-        <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">Profil Akun</h3>
+        <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Profil Akun</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400">Nama lengkap</label>
+            <label className="text-xs font-bold text-muted-foreground">Nama lengkap</label>
             <input
               value={name}
               onChange={e => setName(e.target.value)}
-              className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+              className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400">Email</label>
+            <label className="text-xs font-bold text-muted-foreground">Email</label>
             <input
               value={email}
               disabled
-              className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.02] px-3 text-sm text-slate-500 cursor-not-allowed"
+              className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-muted-foreground cursor-not-allowed"
             />
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-400">Zona waktu</label>
+          <label className="text-xs font-bold text-muted-foreground">Zona waktu</label>
           <select
             value={timezone}
             onChange={e => setTimezone(e.target.value)}
-            className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:border-primary/40 focus:outline-none"
+            className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none"
           >
             {TIMEZONES.map(tz => (
               <option key={tz.value} value={tz.value}>{tz.label}</option>
             ))}
           </select>
-          <p className="text-xs text-slate-500">Digunakan untuk penjadwalan campaign dan format tampilan waktu.</p>
+          <p className="text-xs text-muted-foreground">Digunakan untuk penjadwalan campaign dan format tampilan waktu.</p>
         </div>
 
         {profileError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{profileError}</div>}
@@ -117,41 +117,41 @@ export default function AccountSettings() {
         </button>
       </div>
 
-      <div className="border-t border-white/[0.06]" />
+      <div className="border-t border-border" />
 
       {/* Password */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">Ganti Password</h3>
-          <p className="mt-1 text-xs text-slate-600">Minimal 8 karakter.</p>
+          <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Ganti Password</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Minimal 8 karakter.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400">Password saat ini</label>
+            <label className="text-xs font-bold text-muted-foreground">Password saat ini</label>
             <div className="relative">
               <input
                 type={showCurrent ? "text" : "password"}
                 value={currentPw}
                 onChange={e => setCurrentPw(e.target.value)}
                 placeholder="••••••••"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 pr-10 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
-              <button type="button" onClick={() => setShowCurrent(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+              <button type="button" onClick={() => setShowCurrent(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80">
                 {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400">Password baru</label>
+            <label className="text-xs font-bold text-muted-foreground">Password baru</label>
             <div className="relative">
               <input
                 type={showNew ? "text" : "password"}
                 value={newPw}
                 onChange={e => setNewPw(e.target.value)}
                 placeholder="••••••••"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 pr-10 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
-              <button type="button" onClick={() => setShowNew(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+              <button type="button" onClick={() => setShowNew(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80">
                 {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
@@ -164,7 +164,7 @@ export default function AccountSettings() {
         <button
           onClick={changePassword}
           disabled={pwStatus === "saving" || !currentPw || !newPw}
-          className="flex h-10 items-center gap-2 rounded-full border border-white/[0.08] px-5 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+          className="flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
         >
           {pwStatus === "saving" && <Loader2 className="h-4 w-4 animate-spin" />}
           Ubah password

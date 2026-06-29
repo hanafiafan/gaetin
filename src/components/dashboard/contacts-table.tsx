@@ -19,7 +19,7 @@ interface Contact {
 const WA_BADGE: Record<Contact["waStatus"], string> = {
   ACTIVE: "bg-emerald-500/15 text-emerald-400",
   INACTIVE: "bg-red-500/15 text-red-400",
-  UNKNOWN: "bg-slate-500/15 text-slate-400",
+  UNKNOWN: "bg-slate-500/15 text-muted-foreground",
 };
 const WA_LABEL: Record<Contact["waStatus"], string> = {
   ACTIVE: "Aktif WA",
@@ -30,7 +30,7 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
 function scoreClass(score: number): string {
   if (score >= 75) return "bg-emerald-500/15 text-emerald-400";
   if (score >= 55) return "bg-amber-500/15 text-amber-400";
-  return "bg-slate-500/15 text-slate-400";
+  return "bg-slate-500/15 text-muted-foreground";
 }
 
 export default function ContactsTable() {
@@ -118,17 +118,17 @@ export default function ContactsTable() {
         {/* Stats */}
         <div className="cg-card rounded-2xl p-4">
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl bg-white/[0.04] p-4">
-              <p className="text-xs font-bold uppercase text-slate-500">Total database</p>
-              <p className="mt-1 text-2xl font-black text-white">{total.toLocaleString("id-ID")}</p>
+            <div className="rounded-xl bg-card p-4">
+              <p className="text-xs font-bold uppercase text-muted-foreground">Total database</p>
+              <p className="mt-1 text-2xl font-black text-foreground">{total.toLocaleString("id-ID")}</p>
             </div>
             <div className="rounded-xl bg-emerald-500/10 p-4">
               <p className="text-xs font-bold uppercase text-emerald-400">Aktif di halaman ini</p>
-              <p className="mt-1 text-2xl font-black text-white">{summary.active}</p>
+              <p className="mt-1 text-2xl font-black text-foreground">{summary.active}</p>
             </div>
             <div className="rounded-xl bg-amber-500/10 p-4">
               <p className="text-xs font-bold uppercase text-amber-400">Belum dicek</p>
-              <p className="mt-1 text-2xl font-black text-white">{summary.unknown}</p>
+              <p className="mt-1 text-2xl font-black text-foreground">{summary.unknown}</p>
             </div>
           </div>
         </div>
@@ -137,21 +137,21 @@ export default function ContactsTable() {
         <div className="cg-card rounded-2xl p-4">
           <form onSubmit={addContact} className="space-y-3">
             <div>
-              <p className="font-bold text-white">Tambah cepat</p>
-              <p className="text-xs text-slate-400">Masukkan prospek manual tanpa keluar dari halaman.</p>
+              <p className="font-bold text-foreground">Tambah cepat</p>
+              <p className="text-xs text-muted-foreground">Masukkan prospek manual tanpa keluar dari halaman.</p>
             </div>
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Nama (opsional)"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="08xxxxxxxxxx"
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
             </div>
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
@@ -171,21 +171,21 @@ export default function ContactsTable() {
           {/* Search + filter */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => { setPage(1); setQuery(e.target.value); }}
                 placeholder="Cari nama, nomor, email, atau label..."
-                className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex h-10 items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm">
-                <Filter className="h-4 w-4 text-slate-500" />
+              <div className="flex h-10 items-center gap-2 rounded-xl border border-border bg-card px-3 text-sm">
+                <Filter className="h-4 w-4 text-muted-foreground" />
                 <select
                   value={waStatus}
                   onChange={(e) => { setPage(1); setWaStatus(e.target.value); }}
-                  className="bg-transparent text-sm text-white outline-none"
+                  className="bg-transparent text-sm text-foreground outline-none"
                 >
                   <option value="">Semua status WA</option>
                   <option value="ACTIVE">Aktif WA</option>
@@ -194,7 +194,7 @@ export default function ContactsTable() {
                 </select>
               </div>
               {loading && (
-                <span className="inline-flex items-center gap-2 text-sm text-slate-500">
+                <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   Memuat
                 </span>
@@ -209,7 +209,7 @@ export default function ContactsTable() {
               <div className="flex gap-2">
                 <button
                   onClick={bulkTag}
-                  className="flex h-8 items-center gap-1.5 rounded-full border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary"
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
                 >
                   <Tag className="h-3.5 w-3.5" /> Label
                 </button>
@@ -228,7 +228,7 @@ export default function ContactsTable() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] text-sm">
             <thead>
-              <tr className="border-y border-white/[0.08] bg-white/[0.03]">
+              <tr className="border-y border-border bg-muted/50">
                 <th className="w-12 p-3">
                   <input
                     type="checkbox"
@@ -239,13 +239,13 @@ export default function ContactsTable() {
                   />
                 </th>
                 {["Kontak", "Telepon", "Lokasi", "Kategori", "Skor", "Status WA"].map((h) => (
-                  <th key={h} className={cn("p-3 text-xs font-bold uppercase text-slate-500", h === "Skor" && "text-center")}>{h}</th>
+                  <th key={h} className={cn("p-3 text-xs font-bold uppercase text-muted-foreground", h === "Skor" && "text-center")}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {items.map((contact) => (
-                <tr key={contact.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+                <tr key={contact.id} className="border-b border-border/50 last:border-0 hover:bg-card">
                   <td className="p-3">
                     <input
                       type="checkbox"
@@ -256,16 +256,16 @@ export default function ContactsTable() {
                     />
                   </td>
                   <td className="p-3">
-                    <p className="font-bold text-white">{contact.name ?? "Tanpa nama"}</p>
-                    <p className="text-xs text-slate-500">{contact.email ?? contact.label ?? "Belum ada detail tambahan"}</p>
+                    <p className="font-bold text-foreground">{contact.name ?? "Tanpa nama"}</p>
+                    <p className="text-xs text-muted-foreground">{contact.email ?? contact.label ?? "Belum ada detail tambahan"}</p>
                   </td>
-                  <td className="p-3 font-medium text-slate-300">+{contact.phone}</td>
-                  <td className="p-3 text-slate-400">{contact.city ?? "-"}</td>
+                  <td className="p-3 font-medium text-foreground/80">+{contact.phone}</td>
+                  <td className="p-3 text-muted-foreground">{contact.city ?? "-"}</td>
                   <td className="p-3">
                     {contact.category ? (
-                      <span className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-xs font-medium text-slate-300">{contact.category}</span>
+                      <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground/80">{contact.category}</span>
                     ) : (
-                      <span className="text-slate-500">-</span>
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </td>
                   <td className="p-3 text-center">
@@ -284,8 +284,8 @@ export default function ContactsTable() {
               {items.length === 0 && !loading && (
                 <tr>
                   <td colSpan={7} className="p-10 text-center">
-                    <p className="font-bold text-white">Belum ada kontak yang cocok</p>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="font-bold text-foreground">Belum ada kontak yang cocok</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
                       Tambahkan manual, impor CSV/Excel, atau ambil lead dari Scraper.
                     </p>
                   </td>
@@ -296,22 +296,22 @@ export default function ContactsTable() {
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col gap-3 border-t border-white/[0.08] p-4 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-sm text-slate-500">
+        <div className="flex flex-col gap-3 border-t border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm text-muted-foreground">
             Halaman {page} dari {totalPages} · {total.toLocaleString("id-ID")} total kontak
           </span>
           <div className="flex gap-2">
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="h-8 rounded-full border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
             >
               Sebelumnya
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="h-8 rounded-full border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
             >
               Berikutnya
             </button>

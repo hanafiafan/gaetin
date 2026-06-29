@@ -56,7 +56,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   ACTIVE: { label: "Aktif", color: "bg-emerald-500/15 text-emerald-400" },
   TRIAL: { label: "Trial", color: "bg-amber-500/15 text-amber-400" },
   EXPIRED: { label: "Kedaluwarsa", color: "bg-red-500/15 text-red-400" },
-  CANCELLED: { label: "Dibatalkan", color: "bg-slate-500/15 text-slate-400" },
+  CANCELLED: { label: "Dibatalkan", color: "bg-slate-500/15 text-muted-foreground" },
 };
 const TX_STATUS: Record<string, { label: string; color: string }> = {
   PAID: { label: "Lunas", color: "bg-emerald-500/15 text-emerald-400" },
@@ -66,7 +66,7 @@ const TX_STATUS: Record<string, { label: string; color: string }> = {
 };
 
 function StatusBadge({ status, map }: { status: string; map: typeof STATUS_LABELS }) {
-  const s = map[status] ?? { label: status, color: "bg-slate-500/15 text-slate-400" };
+  const s = map[status] ?? { label: status, color: "bg-slate-500/15 text-muted-foreground" };
   return (
     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", s.color)}>
       {s.label}
@@ -150,25 +150,25 @@ export default function BillingClient() {
       {/* Status cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div className="cg-card rounded-2xl p-5">
-          <p className="text-xs font-semibold uppercase text-slate-500">Paket aktif</p>
-          <p className="mt-2 text-2xl font-black text-white">{me ? planName(me.plan) : "—"}</p>
+          <p className="text-xs font-semibold uppercase text-muted-foreground">Paket aktif</p>
+          <p className="mt-2 text-2xl font-black text-foreground">{me ? planName(me.plan) : "—"}</p>
         </div>
         <div className="cg-card rounded-2xl p-5">
-          <p className="text-xs font-semibold uppercase text-slate-500">Status</p>
+          <p className="text-xs font-semibold uppercase text-muted-foreground">Status</p>
           <div className="mt-2">
-            {me ? <StatusBadge status={me.status} map={STATUS_LABELS} /> : <span className="text-sm text-slate-500">—</span>}
+            {me ? <StatusBadge status={me.status} map={STATUS_LABELS} /> : <span className="text-sm text-muted-foreground">—</span>}
           </div>
         </div>
         <div className={cn("rounded-2xl border p-5 transition", isLow ? "border-amber-500/30 bg-amber-500/10" : "cg-card")}>
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase text-slate-500">Saldo kredit</p>
+            <p className="text-xs font-semibold uppercase text-muted-foreground">Saldo kredit</p>
             {isLow && <Zap className="h-4 w-4 text-amber-400" />}
           </div>
-          <p className={cn("mt-2 text-2xl font-black", isLow ? "text-amber-300" : "text-white")}>
+          <p className={cn("mt-2 text-2xl font-black", isLow ? "text-amber-300" : "text-foreground")}>
             {me ? me.credits.toLocaleString("id-ID") : "—"}
           </p>
           {me && (
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
               <div
                 className={cn("h-full rounded-full transition-all", isLow ? "bg-amber-400" : "gradient-primary")}
                 style={{ width: `${creditPct}%` }}
@@ -177,8 +177,8 @@ export default function BillingClient() {
           )}
         </div>
         <div className="cg-card rounded-2xl p-5">
-          <p className="text-xs font-semibold uppercase text-slate-500">Berlaku sampai</p>
-          <p className="mt-2 text-lg font-black text-white">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">Berlaku sampai</p>
+          <p className="mt-2 text-lg font-black text-foreground">
             {me?.currentPeriodEnd
               ? new Date(me.currentPeriodEnd).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
               : me?.trialEndsAt
@@ -192,19 +192,19 @@ export default function BillingClient() {
       <div>
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-black text-white">Pilih paket</h2>
-            <p className="mt-0.5 text-xs text-slate-500">Upgrade atau downgrade kapan saja. Bayar via VA, e-wallet, atau QRIS.</p>
+            <h2 className="text-lg font-black text-foreground">Pilih paket</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">Upgrade atau downgrade kapan saja. Bayar via VA, e-wallet, atau QRIS.</p>
           </div>
-          <div className="flex rounded-full border border-white/10 bg-white/[0.04] p-1 text-sm">
+          <div className="flex rounded-full border border-border bg-card p-1 text-sm">
             <button
               onClick={() => setCycle("MONTHLY")}
-              className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "MONTHLY" ? "gradient-primary text-white" : "text-slate-400 hover:text-white")}
+              className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "MONTHLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Bulanan
             </button>
             <button
               onClick={() => setCycle("YEARLY")}
-              className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-white" : "text-slate-400 hover:text-white")}
+              className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Tahunan
               {data && <span className="ml-2 rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-black text-emerald-400">-{Math.round(data.yearlyDiscount * 100)}%</span>}
@@ -226,25 +226,25 @@ export default function BillingClient() {
                   featured
                     ? "border-primary/40 bg-primary/10 shadow-glow"
                     : current
-                    ? "border-primary/30 bg-white/[0.04]"
-                    : "border-white/[0.08] bg-white/[0.03] hover:border-white/20"
+                    ? "border-primary/30 bg-card"
+                    : "border-border bg-muted/50 hover:border-white/20"
                 )}
               >
                 {featured && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="gradient-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black text-white shadow-sm">
+                    <span className="gradient-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black text-foreground shadow-sm">
                       <Sparkles className="h-3 w-3" /> Paling populer
                     </span>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-bold text-slate-400">{p.name}</p>
+                  <p className="text-sm font-bold text-muted-foreground">{p.name}</p>
                   <div className="mt-2 flex items-end gap-1">
-                    <span className="text-3xl font-black text-white">
+                    <span className="text-3xl font-black text-foreground">
                       {amount === 0 ? "Gratis" : idr(amount)}
                     </span>
                     {amount > 0 && (
-                      <span className="mb-0.5 text-sm text-slate-500">
+                      <span className="mb-0.5 text-sm text-muted-foreground">
                         {cycle === "YEARLY" ? "/tahun" : "/bulan"}
                       </span>
                     )}
@@ -258,9 +258,9 @@ export default function BillingClient() {
 
                 <ul className="mt-5 flex-1 space-y-2.5">
                   {features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-slate-300">
-                      <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full", featured ? "bg-primary/20" : "bg-white/10")}>
-                        <Check className={cn("h-2.5 w-2.5", featured ? "text-primary" : "text-slate-400")} />
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/80">
+                      <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full", featured ? "bg-primary/20" : "bg-foreground/10")}>
+                        <Check className={cn("h-2.5 w-2.5", featured ? "text-primary" : "text-muted-foreground")} />
                       </span>
                       {f}
                     </li>
@@ -273,10 +273,10 @@ export default function BillingClient() {
                   className={cn(
                     "mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-full text-sm font-bold transition",
                     current
-                      ? "border border-white/10 bg-white/[0.06] text-slate-400 cursor-not-allowed"
+                      ? "border border-border bg-muted text-muted-foreground cursor-not-allowed"
                       : featured
-                      ? "gradient-primary cg-button-glow text-white hover:opacity-90"
-                      : "border border-white/15 bg-white/[0.06] text-white hover:border-primary/40 hover:bg-primary/15"
+                      ? "gradient-primary cg-button-glow text-foreground hover:opacity-90"
+                      : "border border-border bg-muted text-foreground hover:border-primary/40 hover:bg-primary/15"
                   )}
                 >
                   <CreditCard className="h-4 w-4" />
@@ -287,7 +287,7 @@ export default function BillingClient() {
           })}
         </div>
 
-        <p className="mt-4 flex items-center gap-2 text-xs text-slate-600">
+        <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
           <Shield className="h-3.5 w-3.5" />
           Pembayaran diamankan oleh Xendit. Tidak perlu kartu kredit untuk paket Starter.
         </p>
@@ -296,8 +296,8 @@ export default function BillingClient() {
       {/* Top-up */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-black text-white">Top-up kredit</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Beli kredit tambahan kapan saja, langsung aktif setelah pembayaran.</p>
+          <h2 className="text-lg font-black text-foreground">Top-up kredit</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">Beli kredit tambahan kapan saja, langsung aktif setelah pembayaran.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
           {(data?.topupPacks ?? [
@@ -308,20 +308,20 @@ export default function BillingClient() {
             const ppc = Math.round(pack.price / pack.credits);
             const cheapest = i === (data?.topupPacks?.length ?? 3) - 1;
             return (
-              <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-emerald-500/30 bg-emerald-500/5" : "border-white/[0.08] bg-white/[0.03] hover:border-white/20")}>
+              <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-emerald-500/30 bg-emerald-500/5" : "border-border bg-muted/50 hover:border-white/20")}>
                 {cheapest && (
                   <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-black text-emerald-400">
                     <TrendingUp className="h-3 w-3" /> Terbaik
                   </span>
                 )}
-                <p className="text-2xl font-black text-white">{pack.credits.toLocaleString("id-ID")}</p>
-                <p className="mt-0.5 text-sm font-bold text-slate-400">kredit</p>
-                <p className="mt-3 text-xl font-black text-white">{idr(pack.price)}</p>
-                <p className="mt-0.5 text-xs text-slate-500">{idr(ppc)}/kredit</p>
+                <p className="text-2xl font-black text-foreground">{pack.credits.toLocaleString("id-ID")}</p>
+                <p className="mt-0.5 text-sm font-bold text-muted-foreground">kredit</p>
+                <p className="mt-3 text-xl font-black text-foreground">{idr(pack.price)}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{idr(ppc)}/kredit</p>
                 <button
                   disabled={busy}
                   onClick={() => topup(pack.id)}
-                  className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-sm font-bold text-white transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
+                  className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border bg-muted text-sm font-bold text-foreground transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
                 >
                   <Wallet className="h-4 w-4" />
                   Beli
@@ -335,39 +335,39 @@ export default function BillingClient() {
       {/* Transaction history */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-black text-white">Riwayat transaksi</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Semua pembayaran dan top-up kredit tercatat di sini.</p>
+          <h2 className="text-lg font-black text-foreground">Riwayat transaksi</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">Semua pembayaran dan top-up kredit tercatat di sini.</p>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02]">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/[0.08]">
+                <tr className="border-b border-border">
                   {["Tanggal", "Jenis", "Nominal", "Status", ""].map((h) => (
-                    <th key={h} className={cn("p-4 text-left text-xs font-bold uppercase text-slate-500", h === "Nominal" && "text-right")}>{h}</th>
+                    <th key={h} className={cn("p-4 text-left text-xs font-bold uppercase text-muted-foreground", h === "Nominal" && "text-right")}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {txs.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-12 text-center text-slate-500">
+                    <td colSpan={5} className="p-12 text-center text-muted-foreground">
                       <Wallet className="mx-auto mb-2 h-8 w-8 text-slate-700" />
                       Belum ada transaksi.
                     </td>
                   </tr>
                 ) : (
                   txs.map((t) => (
-                    <tr key={t.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
-                      <td className="p-4 text-slate-400">
+                    <tr key={t.id} className="border-b border-border/50 last:border-0 hover:bg-card">
+                      <td className="p-4 text-muted-foreground">
                         {new Date(t.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
-                      <td className="p-4 font-medium text-white">
+                      <td className="p-4 font-medium text-foreground">
                         {t.kind === "TOPUP"
                           ? `Top-up ${t.credits.toLocaleString("id-ID")} kredit`
                           : `Langganan ${t.plan ?? ""}`}
                       </td>
-                      <td className="p-4 text-right font-bold text-white">{idr(t.grossAmount)}</td>
+                      <td className="p-4 text-right font-bold text-foreground">{idr(t.grossAmount)}</td>
                       <td className="p-4">
                         <StatusBadge status={t.status} map={TX_STATUS} />
                       </td>

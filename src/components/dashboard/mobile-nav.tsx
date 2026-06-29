@@ -97,29 +97,29 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div
-        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-[#0d0f1e] shadow-2xl"
+        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between p-6 pb-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
             <Lock className="h-6 w-6" />
           </div>
-          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white/[0.06] hover:text-white">
+          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="px-6 pb-6">
-          <h2 className="text-xl font-black text-white">{feature} butuh paket Bisnis</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
+          <h2 className="text-xl font-black text-foreground">{feature} butuh paket Bisnis</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Trial gratis hanya mencakup scraping Google Maps dan ekspor CSV.
           </p>
           <button
             onClick={() => { router.push("/dashboard/billing"); onClose(); }}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-white transition hover:bg-primary/90"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             Upgrade Sekarang <ArrowRight className="h-4 w-4" />
           </button>
-          <button onClick={onClose} className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-slate-500 transition hover:text-slate-300">
+          <button onClick={onClose} className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground">
             Nanti saja
           </button>
         </div>
@@ -158,7 +158,7 @@ export default function MobileNav({
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Buka menu"
-        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-2xl text-white lg:hidden"
+        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-2xl text-primary-foreground lg:hidden"
       >
         <Menu className="h-6 w-6" />
       </button>
@@ -167,13 +167,13 @@ export default function MobileNav({
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={close} />
-          <div className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-white/10 bg-[#050712]">
+          <div className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-border bg-card">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-              <span className="text-base font-black text-white">{appName}</span>
+            <div className="flex items-center justify-between border-b border-border px-4 py-4">
+              <span className="text-base font-black text-foreground">{appName}</span>
               <button
                 onClick={close}
-                className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -184,11 +184,11 @@ export default function MobileNav({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Zap className="h-3.5 w-3.5 text-primary" />
-                  <span className="text-xs font-bold text-white">Kredit</span>
+                  <span className="text-xs font-bold text-foreground">Kredit</span>
                 </div>
-                <span className="text-sm font-black text-white">{credits.toLocaleString("id-ID")}</span>
+                <span className="text-sm font-black text-foreground">{credits.toLocaleString("id-ID")}</span>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
                 <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${creditPct}%` }} />
               </div>
             </div>
@@ -200,7 +200,7 @@ export default function MobileNav({
                 if (!items.length) return null;
                 return (
                   <div key={group.label}>
-                    <p className="mb-1 px-2 text-[11px] font-bold uppercase text-slate-500">{group.label}</p>
+                    <p className="mb-1 px-2 text-[11px] font-bold uppercase text-muted-foreground">{group.label}</p>
                     <div className="space-y-0.5">
                       {items.map((item) => {
                         const Icon = item.icon;
@@ -213,7 +213,7 @@ export default function MobileNav({
                               key={item.href}
                               type="button"
                               onClick={() => setLockedFeature(item.label)}
-                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-amber-500/5"
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-amber-500/5"
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -229,8 +229,8 @@ export default function MobileNav({
                             onClick={close}
                             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
                               active
-                                ? "bg-primary/20 text-white"
-                                : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
+                                ? "bg-primary/20 text-foreground"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
                             }`}
                           >
                             <Icon className="h-4 w-4" />
@@ -245,7 +245,7 @@ export default function MobileNav({
             </nav>
 
             {/* Logout */}
-            <div className="shrink-0 border-t border-white/10 p-3">
+            <div className="shrink-0 border-t border-border p-3">
               {isSuperAdmin && (
                 <Link
                   href="/admin"
@@ -259,7 +259,7 @@ export default function MobileNav({
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-400 transition hover:bg-white/[0.06] hover:text-red-400"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-red-400"
                 >
                   <LogOut className="h-4 w-4" />
                   Keluar
