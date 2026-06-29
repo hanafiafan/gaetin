@@ -293,8 +293,8 @@ function StepMaps({
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#1a1c2a]">
         {/* Maps top bar */}
         <div className="flex items-center gap-3 border-b border-white/10 bg-[#202230] px-4 py-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/20">
-            <MapPin className="h-3.5 w-3.5 text-blue-400" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/">
+            <MapPin className="h-3.5 w-3.5 text-primary" />
           </div>
           <div className="flex-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs text-slate-400">
             kafe jakarta pusat
@@ -312,8 +312,8 @@ function StepMaps({
           {/* THE CHECKBOX — highlighted */}
           <div className="mb-4 rounded-xl border-2 border-red-500/60 bg-red-500/5 px-3 py-2.5 shadow-[0_0_18px_rgba(239,68,68,0.25)]">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-blue-400 bg-blue-500/30">
-                <Check className="h-2.5 w-2.5 text-blue-300" />
+              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/">
+                <Check className="h-2.5 w-2.5 text-primary" />
               </div>
               <span className="text-sm font-medium text-white">
                 Perbarui hasil saat peta digeser
@@ -428,7 +428,7 @@ function StepPermissions({
         {/* Popup permission */}
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/ text-primary">
               <Monitor className="h-4 w-4" />
             </div>
             <div>

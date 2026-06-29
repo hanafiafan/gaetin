@@ -18,7 +18,7 @@ const PRIORITY_LABEL = { HIGH: "Tinggi", MEDIUM: "Sedang", LOW: "Rendah" };
 const PRIORITY_COLOR = { HIGH: "bg-red-500/15 text-red-400", MEDIUM: "bg-amber-500/15 text-amber-400", LOW: "bg-slate-500/15 text-slate-400" };
 const STATUS_LABEL = { PENDING: "Belum", COMPLETED: "Selesai", OVERDUE: "Terlambat" };
 
-const SELECT_CLASS = "h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white focus:outline-none";
+const SELECT_CLASS = "h-10 rounded-xl border border-white/[0.08] bg-[#0d0f1e] px-2 text-sm text-white focus:outline-none [&>option]:bg-[#0d0f1e]";
 
 export default function TasksClient() {
   const [tasks, setTasks] = useState<Task[]>([]);

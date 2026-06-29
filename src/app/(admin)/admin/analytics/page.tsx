@@ -482,7 +482,7 @@ export default function AdminAnalyticsPage() {
                         <span className="ml-2 text-xs font-bold tabular-nums text-white">{fmt(c.count)}</span>
                       </div>
                       <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-                        <div className="h-full rounded-full bg-blue-500" style={{ width: `${(c.count / (intel.topContactCategories[0]?.count || 1)) * 100}%` }} />
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${(c.count / (intel.topContactCategories[0]?.count || 1)) * 100}%` }} />
                       </div>
                     </div>
                   </div>

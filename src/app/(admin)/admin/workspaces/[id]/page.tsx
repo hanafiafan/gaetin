@@ -29,12 +29,12 @@ const STATUS_BADGE: Record<string, string> = {
   BLOCKED: "bg-red-600/15 text-red-400",
   CANCELLED: "bg-white/[0.06] text-slate-400",
   COMPLETED: "bg-emerald-500/15 text-emerald-400",
-  RUNNING: "bg-blue-500/15 text-blue-400",
+  RUNNING: "bg-primary/ text-primary",
   FAILED: "bg-red-500/15 text-red-400",
   STOPPED: "bg-white/[0.06] text-slate-400",
   SENT: "bg-emerald-500/15 text-emerald-400",
   DRAFT: "bg-white/[0.06] text-slate-400",
-  SENDING: "bg-blue-500/15 text-blue-400",
+  SENDING: "bg-primary/ text-primary",
 };
 
 const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };

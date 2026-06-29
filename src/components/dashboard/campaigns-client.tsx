@@ -34,7 +34,7 @@ const STATUS_COLOR: Record<string, string> = {
   FAILED: "bg-red-500/15 text-red-400",
   PAUSED: "bg-amber-500/15 text-amber-400",
   DRAFT: "bg-slate-500/15 text-slate-400",
-  SCHEDULED: "bg-blue-500/15 text-blue-400",
+  SCHEDULED: "bg-primary/ text-primary",
 };
 
 const SELECT_CLASS = "h-11 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:outline-none";

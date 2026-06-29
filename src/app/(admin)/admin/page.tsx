@@ -64,7 +64,7 @@ export default async function AdminOverviewPage() {
   const kpiCards = [
     { label: "MRR (estimasi)", value: idr(mrr), icon: DollarSign, color: "text-emerald-400", bg: "bg-emerald-500/10" },
     { label: "Total revenue", value: idr(revenue), icon: CreditCard, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Workspace", value: workspaces.toLocaleString("id-ID"), icon: Building2, color: "text-blue-400", bg: "bg-blue-500/10" },
+    { label: "Workspace", value: workspaces.toLocaleString("id-ID"), icon: Building2, color: "text-primary", bg: "bg-primary/" },
     { label: "User", value: users.toLocaleString("id-ID"), icon: Users, color: "text-violet-400", bg: "bg-violet-500/10" },
     { label: "Aktif / Trial", value: `${activeSubs} / ${trialSubs}`, icon: BarChart3, color: "text-amber-400", bg: "bg-amber-500/10" },
     { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-slate-400", bg: "bg-slate-500/10" },

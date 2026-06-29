@@ -217,7 +217,7 @@ export default function AdminIntegrationsClient({ settings }: Props) {
       {/* Webhook info */}
       <div className="cg-card rounded-2xl p-5">
         <div className="flex items-center gap-3 border-b border-white/[0.08] pb-4">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/ text-primary">
             <Globe className="h-4 w-4" />
           </span>
           <div>
