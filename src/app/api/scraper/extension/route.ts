@@ -32,18 +32,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Job ID tidak ditemukan" }, { status: 404, headers: CORS });
     }
 
-    // Validasi HMAC token — deterministik dari job.id + workspaceId + JWT_SECRET.
-    const receivedToken = req.headers.get("X-Extension-Token") ?? "";
-    const expectedToken = createHmac("sha256", env.JWT_SECRET)
-      .update(`${job.id}:${job.workspaceId}`)
-      .digest("hex");
-    const tokenBuf = Buffer.from(receivedToken.padEnd(expectedToken.length, "\0"));
-    const expectedBuf = Buffer.from(expectedToken);
-    const tokenValid =
-      receivedToken.length === expectedToken.length &&
-      timingSafeEqual(tokenBuf, expectedBuf);
-    if (!tokenValid) {
-      return NextResponse.json({ error: "Token tidak valid" }, { status: 401, headers: CORS });
+    // Validasi Sesi Browser atau HMAC Token
+    const { getSession } = await import("@/lib/auth/session");
+    const session = await getSession();
+    let isAuthorized = false;
+
+    if (session && session.workspace?.id === job.workspaceId) {
+      isAuthorized = true;
+    } else {
+      const receivedToken = req.headers.get("X-Extension-Token") ?? "";
+      const expectedToken = createHmac("sha256", env.JWT_SECRET)
+        .update(`${job.id}:${job.workspaceId}`)
+        .digest("hex");
+      const tokenBuf = Buffer.from(receivedToken.padEnd(expectedToken.length, "\0"));
+      const expectedBuf = Buffer.from(expectedToken);
+      isAuthorized =
+        receivedToken.length === expectedToken.length &&
+        timingSafeEqual(tokenBuf, expectedBuf);
+    }
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: "Token atau sesi tidak valid" }, { status: 401, headers: CORS });
     }
 
     // Process leads

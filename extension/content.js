@@ -467,17 +467,29 @@ function extractCurrentPlace(ariaLabel, dataFields) {
 // ── API ───────────────────────────────────────────────────────────────────────
 
 async function sendToApi(jobId, leads, isFinished, token) {
-  if (leads.length === 0 && !isFinished) return;
+  if (leads.length === 0 && !isFinished) return true;
   try {
     G(`sendToApi: ${leads.length} leads, finished=${isFinished}`);
     const res = await fetch('https://gaetin.run-web.tech/api/scraper/extension', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json', 'X-Extension-Token': token || '' },
       body: JSON.stringify({ jobId, leads, isFinished }),
     });
-    if (!res.ok) { G(`API ERROR ${res.status}:`, await res.text().catch(() => '')); return; }
-    G('API OK:', (await res.json()).added, 'added');
-  } catch (e) { G('sendToApi FAILED:', e.message); }
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      G(`API ERROR ${res.status}:`, errText);
+      setFloatStatus(`Error ${res.status}: ${errText.slice(0, 35)}`, '#ef4444');
+      return false;
+    }
+    const json = await res.json();
+    G('API OK:', json.added, 'added');
+    return true;
+  } catch (e) {
+    G('sendToApi FAILED:', e.message);
+    setFloatStatus(`Gagal API: ${e.message.slice(0, 35)}`, '#ef4444');
+    return false;
+  }
 }
 
 // ── Feed URL collector (used by auto-start) ───────────────────────────────────
@@ -596,7 +608,7 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
       } else {
         chunkLeads.push(lead);
         report(`${lead.phone ? '✓' : '○'} ${lead.businessName}`);
-        if (chunkLeads.length >= 5) {
+        if (chunkLeads.length >= 1) {
           await sendToApi(jobId, [...chunkLeads], false, token);
           totalSaved += chunkLeads.length;
           chunkLeads = [];
@@ -667,10 +679,10 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     updateFloatUI(saved + newChunk.length, maxLeads, `⊘ ${lead.businessName} (dilewati)`);
   }
 
-  // Send batch every 5 items
+  // Send batch immediately on every item
   let newSaved = saved;
   let finalChunk = newChunk;
-  if (newChunk.length >= 5) {
+  if (newChunk.length >= 1) {
     await sendToApi(jobId, newChunk, false, token);
     newSaved += newChunk.length;
     finalChunk = [];
