@@ -470,7 +470,7 @@ async function sendToApi(jobId, leads, isFinished, token) {
   if (leads.length === 0 && !isFinished) return;
   try {
     G(`sendToApi: ${leads.length} leads, finished=${isFinished}`);
-    const res = await fetch('https://gaetin.vercel.app/api/scraper/extension', {
+    const res = await fetch('https://gaetin.run-web.tech/api/scraper/extension', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Extension-Token': token || '' },
       body: JSON.stringify({ jobId, leads, isFinished }),

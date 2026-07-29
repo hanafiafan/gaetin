@@ -12,7 +12,9 @@ services:
       - JWT_SECRET=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://gaetin.run-web.tech}
       - WA_SESSION_DIR=/app/wa-sessions
-      - WA_PROVIDER=baileys
+      - WA_PROVIDER=gateway
+      - WA_GATEWAY_BASE_URL=http://gateway:3001
+      - WA_GATEWAY_TOKEN=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
     depends_on:
       db:
         condition: service_healthy
@@ -39,6 +41,22 @@ services:
     networks:
       - default
       - coolify
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - PORT=3001
+      - GATEWAY_TOKEN=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - WEBHOOK_URL=http://app:3000/api/whatsapp/webhook
+      - WEBHOOK_SECRET=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - SESSION_DIR=/app/wa-sessions
+    volumes:
+      - wa_sessions:/app/wa-sessions
+    networks:
+      - default
 
   db:
     image: postgres:16-alpine
