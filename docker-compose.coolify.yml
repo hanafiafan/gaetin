@@ -22,7 +22,7 @@ services:
     volumes:
       - wa_sessions:/app/wa-sessions
     ports:
-      - "3000"
+      - "${APP_PORT:-3005}:3000"
 
   db:
     image: postgres:16-alpine
