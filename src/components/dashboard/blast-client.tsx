@@ -151,12 +151,17 @@ export default function BlastClient() {
               <option value="activeWa">Hanya aktif WA</option>
               <option value="all">Semua kontak</option>
             </select>
-            <input
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="Filter label (opsional)"
-              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-            />
+            <div>
+              <input
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+                placeholder="Filter label / tag (opsional, contoh: vip)"
+                className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+              />
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                *Biarkan <strong>kosong</strong> jika ingin mengirim ke semua kontak di database.
+              </p>
+            </div>
           </div>
           <textarea
             value={messageText}
