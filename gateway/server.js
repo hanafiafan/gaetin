@@ -227,7 +227,22 @@ app.post("/send", async (req, res) => {
   if (!accountId || !phone || !text) {
     return res.status(400).json({ ok: false, error: "accountId, phone, text required" });
   }
-  const e = sessions.get(accountId);
+  let e = sessions.get(accountId);
+  if (!e?.sock || e.status !== "connected") {
+    // Attempt auto-reconnect if session files exist
+    const sessionPath = path.join(SESSION_DIR, accountId);
+    const sessionDirExists = await fs.access(sessionPath).then(() => true, () => false);
+    if (sessionDirExists) {
+      console.log(`[${accountId}] Attempting auto-reconnect before send...`);
+      await startConnection(accountId).catch(() => {});
+      const startWait = Date.now();
+      while (Date.now() - startWait < 8000) {
+        e = sessions.get(accountId);
+        if (e?.sock && e.status === "connected") break;
+        await new Promise(r => setTimeout(r, 500));
+      }
+    }
+  }
   if (!e?.sock || e.status !== "connected") {
     return res.status(400).json({ ok: false, error: "WA_NOT_CONNECTED" });
   }
@@ -243,7 +258,20 @@ app.post("/send", async (req, res) => {
 // Check if number is registered on WhatsApp
 app.post("/is-registered", async (req, res) => {
   const { accountId, phone } = req.body;
-  const e = sessions.get(accountId);
+  let e = sessions.get(accountId);
+  if (!e?.sock) {
+    const sessionPath = path.join(SESSION_DIR, accountId);
+    const sessionDirExists = await fs.access(sessionPath).then(() => true, () => false);
+    if (sessionDirExists) {
+      await startConnection(accountId).catch(() => {});
+      const startWait = Date.now();
+      while (Date.now() - startWait < 5000) {
+        e = sessions.get(accountId);
+        if (e?.sock) break;
+        await new Promise(r => setTimeout(r, 500));
+      }
+    }
+  }
   if (!e?.sock) {
     return res.status(400).json({ ok: false, error: "WA_NOT_CONNECTED" });
   }
@@ -259,6 +287,20 @@ app.post("/is-registered", async (req, res) => {
 
 (async () => {
   await fs.mkdir(SESSION_DIR, { recursive: true });
+  try {
+    const files = await fs.readdir(SESSION_DIR);
+    for (const file of files) {
+      const fullPath = path.join(SESSION_DIR, file);
+      const stat = await fs.stat(fullPath);
+      if (stat.isDirectory()) {
+        console.log(`🔄 Auto-restoring WA session: ${file}`);
+        startConnection(file).catch(err => console.error(`Failed auto-restoring ${file}:`, err.message));
+      }
+    }
+  } catch (e) {
+    console.error("Error auto-restoring sessions:", e.message);
+  }
+
   app.listen(PORT, () => {
     console.log(`✅ WA Gateway running on port ${PORT}`);
     console.log(`   Sessions dir: ${path.resolve(SESSION_DIR)}`);
