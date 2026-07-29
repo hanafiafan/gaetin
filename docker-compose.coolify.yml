@@ -10,7 +10,7 @@ services:
       - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://smb-natura.run-web.tech}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://gaetin.run-web.tech}
       - WA_SESSION_DIR=/app/wa-sessions
       - WA_PROVIDER=baileys
     depends_on:
@@ -27,11 +27,11 @@ services:
       - "traefik.http.middlewares.gaetin-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.gaetin-redirect.redirectscheme.permanent=true"
       - "traefik.http.routers.gaetin-http.entrypoints=http"
-      - "traefik.http.routers.gaetin-http.rule=Host(`smb-natura.run-web.tech`)"
+      - "traefik.http.routers.gaetin-http.rule=Host(`gaetin.run-web.tech`)"
       - "traefik.http.routers.gaetin-http.middlewares=gaetin-redirect"
       - "traefik.http.routers.gaetin-http.service=app"
       - "traefik.http.routers.gaetin-https.entrypoints=https"
-      - "traefik.http.routers.gaetin-https.rule=Host(`smb-natura.run-web.tech`)"
+      - "traefik.http.routers.gaetin-https.rule=Host(`gaetin.run-web.tech`)"
       - "traefik.http.routers.gaetin-https.service=app"
       - "traefik.http.routers.gaetin-https.tls=true"
       - "traefik.http.routers.gaetin-https.tls.certresolver=letsencrypt"
