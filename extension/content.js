@@ -468,28 +468,40 @@ function extractCurrentPlace(ariaLabel, dataFields) {
 
 async function sendToApi(jobId, leads, isFinished, token) {
   if (leads.length === 0 && !isFinished) return true;
-  try {
+  return new Promise((resolve) => {
     G(`sendToApi: ${leads.length} leads, finished=${isFinished}`);
-    const res = await fetch('https://gaetin.run-web.tech/api/scraper/extension', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json', 'X-Extension-Token': token || '' },
-      body: JSON.stringify({ jobId, leads, isFinished }),
-    });
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '');
-      G(`API ERROR ${res.status}:`, errText);
-      setFloatStatus(`Error ${res.status}: ${errText.slice(0, 35)}`, '#ef4444');
-      return false;
+    try {
+      chrome.runtime.sendMessage(
+        {
+          action: 'SEND_TO_API',
+          jobId,
+          leads,
+          isFinished,
+          token,
+          apiUrl: 'https://gaetin.run-web.tech/api/scraper/extension',
+        },
+        (response) => {
+          if (chrome.runtime.lastError || !response) {
+            const err = chrome.runtime.lastError?.message || 'Gagal koneksi background script';
+            G('sendToApi FAILED:', err);
+            setFloatStatus(`Gagal API: ${err.slice(0, 35)}`, '#ef4444');
+            resolve(false);
+          } else if (!response.success) {
+            G('sendToApi ERROR:', response.error);
+            setFloatStatus(response.error || 'Error API', '#ef4444');
+            resolve(false);
+          } else {
+            G('API OK:', response.added, 'added');
+            resolve(true);
+          }
+        }
+      );
+    } catch (e) {
+      G('sendToApi FAILED:', e.message);
+      setFloatStatus(`Gagal API: ${e.message.slice(0, 35)}`, '#ef4444');
+      resolve(false);
     }
-    const json = await res.json();
-    G('API OK:', json.added, 'added');
-    return true;
-  } catch (e) {
-    G('sendToApi FAILED:', e.message);
-    setFloatStatus(`Gagal API: ${e.message.slice(0, 35)}`, '#ef4444');
-    return false;
-  }
+  });
 }
 
 // ── Feed URL collector (used by auto-start) ───────────────────────────────────
