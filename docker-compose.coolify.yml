@@ -26,18 +26,18 @@ services:
       - "${APP_PORT:-3005}:3000"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.gaetin-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.gaetin-redirect.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.gaetin-redirect-scheme.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.gaetin-redirect-scheme.redirectscheme.permanent=true"
       - "traefik.http.routers.gaetin-http.entrypoints=http"
       - "traefik.http.routers.gaetin-http.rule=Host(`gaetin.run-web.tech`)"
-      - "traefik.http.routers.gaetin-http.middlewares=gaetin-redirect"
-      - "traefik.http.routers.gaetin-http.service=app"
+      - "traefik.http.routers.gaetin-http.middlewares=gaetin-redirect-scheme"
+      - "traefik.http.routers.gaetin-http.service=gaetin-svc"
       - "traefik.http.routers.gaetin-https.entrypoints=https"
       - "traefik.http.routers.gaetin-https.rule=Host(`gaetin.run-web.tech`)"
-      - "traefik.http.routers.gaetin-https.service=app"
+      - "traefik.http.routers.gaetin-https.service=gaetin-svc"
       - "traefik.http.routers.gaetin-https.tls=true"
       - "traefik.http.routers.gaetin-https.tls.certresolver=letsencrypt"
-      - "traefik.http.services.app.loadbalancer.server.port=3000"
+      - "traefik.http.services.gaetin-svc.loadbalancer.server.port=3000"
     networks:
       - default
       - coolify
