@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -8,11 +6,11 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
-      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
+      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET=${JWT_SECRET:-change-this-to-a-very-long-secret-key-at-least-32-chars}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - JWT_SECRET=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://smb-natura.run-web.tech}
       - WA_SESSION_DIR=/app/wa-sessions
       - WA_PROVIDER=baileys
     depends_on:
@@ -24,13 +22,28 @@ services:
       - wa_sessions:/app/wa-sessions
     ports:
       - "${APP_PORT:-3005}:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.gaetin-http.entrypoints=http"
+      - "traefik.http.routers.gaetin-http.middlewares=redirect-to-https@docker"
+      - "traefik.http.routers.gaetin-http.rule=Host(`smb-natura.run-web.tech`)"
+      - "traefik.http.routers.gaetin-https.entrypoints=https"
+      - "traefik.http.routers.gaetin-https.rule=Host(`smb-natura.run-web.tech`)"
+      - "traefik.http.routers.gaetin-https.tls=true"
+      - "traefik.http.routers.gaetin-https.tls.certresolver=letsencrypt"
+      - "traefik.http.services.gaetin-app.loadbalancer.server.port=3000"
+    networks:
+      - default
+      - coolify
 
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gaetin_secure_pass}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}
       POSTGRES_DB: ${POSTGRES_DB:-gaetin}
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -39,14 +52,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - default
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
     volumes:
       - redis_data:/data
+    networks:
+      - default
 
 volumes:
   pgdata:
   redis_data:
   wa_sessions:
+
+networks:
+  default:
+  coolify:
+    external: true
