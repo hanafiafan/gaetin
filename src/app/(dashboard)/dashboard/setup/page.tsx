@@ -198,42 +198,54 @@ function StepInstall({
 
       {/* Download card */}
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="font-bold text-foreground">Ekstensi Gaetin untuk Chrome</p>
             <p className="mt-0.5 text-xs text-muted-foreground">Versi terbaru · Kompatibel dengan Chrome 100+</p>
           </div>
-          <a
-            href="/extension.crx"
-            download
-            className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
-          >
-            <Download className="h-4 w-4" />
-            Download
-          </a>
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href="/extension.zip"
+              download
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
+            >
+              <Download className="h-4 w-4" />
+              Download .ZIP (Rekomendasi)
+            </a>
+            <a
+              href="/extension.crx"
+              download
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground/80 transition hover:border-primary/40 hover:text-foreground"
+            >
+              <Download className="h-4 w-4" />
+              .CRX
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Install instructions */}
       <div>
-        <p className="mb-3 text-sm font-semibold text-foreground/80">Cara install manual (.crx):</p>
-        <div className="space-y-2.5">
-          {[
-            { text: "Buka Chrome → ketik chrome://extensions di address bar", sub: "Tekan Enter" },
-            { text: "Aktifkan toggle \"Mode pengembang\" di pojok kanan atas", sub: "Developer mode" },
-            { text: "Drag & drop file .crx yang didownload ke halaman extensions", sub: "Atau klik \"Muat yang dibongkar\"" },
-            { text: "Klik \"Tambahkan ekstensi\" saat konfirmasi muncul", sub: "Ikon Gaetin akan muncul di toolbar" },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-[10px] font-black text-primary">
-                {i + 1}
-              </span>
-              <div>
-                <p className="text-sm font-medium text-foreground">{item.text}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{item.sub}</p>
-              </div>
-            </div>
-          ))}
+        <p className="mb-3 text-sm font-semibold text-foreground/80">Pilih Cara Install yang Kamu Suka:</p>
+        
+        {/* Method A */}
+        <div className="mb-4 rounded-xl border border-primary/20 bg-card p-4">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">Metode 1: Paling Mudah (File .ZIP & Load Unpacked)</p>
+          <div className="space-y-2 text-xs text-muted-foreground">
+            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-primary">extension.zip</code> lalu **extract/unzip** menjadi folder.</p>
+            <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan **Mode pengembang** (kanan atas).</p>
+            <p><strong className="text-foreground">3.</strong> Klik tombol **"Load unpacked"** (Muat yang dibongkar) → pilih **folder hasil extract** tadi.</p>
+          </div>
+        </div>
+
+        {/* Method B */}
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-foreground/70">Metode 2: Drag & Drop (File .CRX)</p>
+          <div className="space-y-2 text-xs text-muted-foreground">
+            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.crx</code>.</p>
+            <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan **Mode pengembang**.</p>
+            <p><strong className="text-foreground">3.</strong> Buka folder Downloads di Finder/File Explorer, lalu **Tarik (Drag & Drop)** file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.crx</code> langsung ke tengah halaman Chrome.</p>
+          </div>
         </div>
       </div>
 
