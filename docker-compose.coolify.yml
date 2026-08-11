@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
-      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
+      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET:?set a real random JWT_SECRET in Coolify env vars}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://gaetin.run-web.tech}
@@ -65,7 +65,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}
       POSTGRES_DB: ${POSTGRES_DB:-gaetin}
     volumes:
       - pgdata:/var/lib/postgresql/data
