@@ -34,10 +34,15 @@ const logger = pino({ level: "warn" }); // suppress noisy Baileys logs
  *   status: "connecting"|"connected"|"disconnected",
  *   qr: string|null,
  *   phone: string|null,
- *   reconnects: number
+ *   reconnects: number,
+ *   reconnectTimer: NodeJS.Timeout|null
  * }>}
  */
 const sessions = new Map();
+// accountId -> in-flight startConnection() promise, dedupes concurrent calls
+// (e.g. /connect racing /send's auto-reconnect) so we never open two Baileys
+// sockets against the same credential files at once.
+const connecting = new Map();
 
 const MAX_RECONNECT = 10;
 const RECONNECT_DELAY_MS = 10_000;
@@ -67,12 +72,26 @@ async function startConnection(accountId) {
   // Guard only when active socket exists — sock=null means we're mid-reconnect, allow it
   if (existing?.sock && (existing.status === "connecting" || existing.status === "connected")) return;
 
+  // Dedupe concurrent calls for the same account while a start is already in
+  // flight (sock is still null at this point, so the check above can't catch it).
+  const inFlight = connecting.get(accountId);
+  if (inFlight) return inFlight;
+
+  const promise = doStartConnection(accountId, existing).finally(() => connecting.delete(accountId));
+  connecting.set(accountId, promise);
+  return promise;
+}
+
+async function doStartConnection(accountId, existing) {
+  if (existing?.reconnectTimer) clearTimeout(existing.reconnectTimer);
+
   const entry = {
     sock: null,
     status: "connecting",
     qr: null,
     phone: existing?.phone ?? null,
     reconnects: existing?.reconnects ?? 0,
+    reconnectTimer: null,
   };
   sessions.set(accountId, entry);
 
@@ -126,7 +145,7 @@ async function startConnection(accountId) {
         entry.qr = null;
         // 515 = restartRequired: reconnect cepat (2s), error lain tunggu lebih lama
         const delay = code === 515 ? 2_000 : RECONNECT_DELAY_MS;
-        setTimeout(() => startConnection(accountId).catch(console.error), delay);
+        entry.reconnectTimer = setTimeout(() => startConnection(accountId).catch(console.error), delay);
       } else {
         entry.status = "disconnected";
         sessions.delete(accountId);
@@ -162,6 +181,7 @@ async function startConnection(accountId) {
 
 async function disconnectAccount(accountId) {
   const entry = sessions.get(accountId);
+  if (entry?.reconnectTimer) clearTimeout(entry.reconnectTimer);
   if (entry?.sock) {
     try { await entry.sock.logout(); } catch { /* ignore */ }
   }
@@ -259,7 +279,7 @@ app.post("/send", async (req, res) => {
 app.post("/is-registered", async (req, res) => {
   const { accountId, phone } = req.body;
   let e = sessions.get(accountId);
-  if (!e?.sock) {
+  if (!e?.sock || e.status !== "connected") {
     const sessionPath = path.join(SESSION_DIR, accountId);
     const sessionDirExists = await fs.access(sessionPath).then(() => true, () => false);
     if (sessionDirExists) {
@@ -267,12 +287,12 @@ app.post("/is-registered", async (req, res) => {
       const startWait = Date.now();
       while (Date.now() - startWait < 5000) {
         e = sessions.get(accountId);
-        if (e?.sock) break;
+        if (e?.sock && e.status === "connected") break;
         await new Promise(r => setTimeout(r, 500));
       }
     }
   }
-  if (!e?.sock) {
+  if (!e?.sock || e.status !== "connected") {
     return res.status(400).json({ ok: false, error: "WA_NOT_CONNECTED" });
   }
   try {

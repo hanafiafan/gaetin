@@ -17,29 +17,31 @@ async function statusOf(id: string): Promise<string | undefined> {
 
 /** Jalankan kampanye. Berhenti rapi saat status diubah jadi PAUSED (resume melanjutkan). */
 export async function runCampaign(campaignId: string): Promise<void> {
-  const c = await prisma.campaign.findUnique({ where: { id: campaignId } });
-  if (!c) return;
-  if (!c.accountId) {
-    await prisma.campaign.update({ where: { id: campaignId }, data: { status: "FAILED" } });
-    return;
-  }
-
-  const provider = getMessagingProvider();
-  if ((await provider.getStatus(c.accountId)) !== "connected") {
-    await prisma.campaign.update({ where: { id: campaignId }, data: { status: "FAILED" } });
-    return;
-  }
-
-  const messages = await prisma.campaignMessage.findMany({
-    where: { campaignId, status: "PENDING" },
-    include: { contact: true },
-    orderBy: { createdAt: "asc" },
-  });
-
-  let sent = c.sentCount;
-  let failed = c.failedCount;
+  let sent = 0;
+  let failed = 0;
 
   try {
+    const c = await prisma.campaign.findUnique({ where: { id: campaignId } });
+    if (!c) return;
+    if (!c.accountId) {
+      await prisma.campaign.update({ where: { id: campaignId }, data: { status: "FAILED" } });
+      return;
+    }
+    sent = c.sentCount;
+    failed = c.failedCount;
+
+    const provider = getMessagingProvider();
+    if ((await provider.getStatus(c.accountId)) !== "connected") {
+      await prisma.campaign.update({ where: { id: campaignId }, data: { status: "FAILED" } });
+      return;
+    }
+
+    const messages = await prisma.campaignMessage.findMany({
+      where: { campaignId, status: "PENDING" },
+      include: { contact: true },
+      orderBy: { createdAt: "asc" },
+    });
+
     for (const m of messages) {
       if ((await statusOf(campaignId)) !== "ACTIVE") break; // dijeda/diberhentikan
 

@@ -9,12 +9,13 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
       - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-gaetin_secure_pass_2026}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - JWT_SECRET=${JWT_SECRET:?set a real random JWT_SECRET in Coolify env vars}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://gaetin.run-web.tech}
       - WA_SESSION_DIR=/app/wa-sessions
       - WA_PROVIDER=gateway
       - WA_GATEWAY_BASE_URL=http://gateway:3001
-      - WA_GATEWAY_TOKEN=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - WA_GATEWAY_TOKEN=${JWT_SECRET}
+      - WEBHOOK_SECRET=${JWT_SECRET}
     depends_on:
       db:
         condition: service_healthy
@@ -50,9 +51,9 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3001
-      - GATEWAY_TOKEN=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - GATEWAY_TOKEN=${JWT_SECRET}
       - WEBHOOK_URL=http://app:3000/api/whatsapp/webhook
-      - WEBHOOK_SECRET=${JWT_SECRET:-gaetin_secret_key_prod_vps_run_2026_x89a}
+      - WEBHOOK_SECRET=${JWT_SECRET}
       - SESSION_DIR=/app/wa-sessions
     volumes:
       - wa_sessions:/app/wa-sessions

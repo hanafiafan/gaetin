@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
+import { isManager } from "@/lib/auth/roles";
 import { createSubscriptionCheckout } from "@/lib/billing/service";
 import { fail } from "@/lib/api";
 
@@ -12,6 +13,7 @@ const Schema = z.object({
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  if (!isManager(session)) return fail("AUTH_FORBIDDEN", "Hanya owner/admin yang bisa mengubah paket langganan", 403);
 
   let body: unknown;
   try {

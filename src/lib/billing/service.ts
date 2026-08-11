@@ -2,21 +2,29 @@ import { prisma } from "@/lib/db/prisma";
 import { env } from "@/lib/env";
 import { createInvoice } from "@/lib/xendit/client";
 import { addCredits } from "@/lib/credits/service";
+import { addMonths } from "date-fns";
 import { getEffectivePlans, calcPrice } from "@/lib/plans-store";
 import type { PlanId, BillingCycle } from "@/config/plans";
 
 const APP_URL = env.NEXT_PUBLIC_APP_URL;
 
 async function activateSubscription(workspaceId: string, plan: PlanId, cycle: BillingCycle) {
+  const current = await prisma.subscription.findUnique({ where: { workspaceId } });
+  const alreadyActiveThisPeriod =
+    current?.plan === plan &&
+    current.status === "ACTIVE" &&
+    current.currentPeriodEnd !== null &&
+    current.currentPeriodEnd > new Date();
+  if (alreadyActiveThisPeriod) return;
+
   const { plans } = await getEffectivePlans();
   const ep = plans.find((p) => p.id === plan) ?? plans[0];
   const months = cycle === "YEARLY" ? 12 : 1;
-  const end = new Date();
-  end.setMonth(end.getMonth() + months);
+  const end = addMonths(new Date(), months);
   await prisma.subscription
     .update({ where: { workspaceId }, data: { plan, billingCycle: cycle, status: "ACTIVE", currentPeriodEnd: end } })
     .catch(() => undefined);
-  await addCredits(workspaceId, ep.monthlyCredits, "PLAN_ALLOCATION");
+  await addCredits(workspaceId, ep.monthlyCredits * months, "PLAN_ALLOCATION");
 }
 
 export async function createSubscriptionCheckout(
@@ -76,11 +84,13 @@ export async function handlePaidTransaction(orderId: string): Promise<void> {
   const tx = await prisma.transaction.findUnique({ where: { orderId } });
   if (!tx || tx.status === "PAID") return;
 
-  await prisma.transaction.update({ where: { id: tx.id }, data: { status: "PAID", paidAt: new Date() } });
-
   if (tx.kind === "TOPUP") {
     await addCredits(tx.workspaceId, tx.credits, "TOPUP");
   } else if (tx.plan) {
     await activateSubscription(tx.workspaceId, tx.plan, tx.billingCycle ?? "MONTHLY");
   }
+
+  // Tandai PAID hanya setelah kredit/langganan berhasil diberikan, supaya kalau baris di atas
+  // gagal, webhook Xendit akan retry (bukan diblokir permanen oleh guard status==="PAID" di atas).
+  await prisma.transaction.update({ where: { id: tx.id }, data: { status: "PAID", paidAt: new Date() } });
 }

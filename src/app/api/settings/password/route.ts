@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { verifyPassword, hashPassword } from "@/lib/auth/password";
+import { AUTH_COOKIE } from "@/lib/auth/constants";
 import { fail } from "@/lib/api";
 
 const PutSchema = z.object({
@@ -27,5 +29,15 @@ export async function PUT(req: NextRequest) {
 
   const newHash = await hashPassword(parsed.data.newPassword);
   await prisma.user.update({ where: { id: session.user.id }, data: { passwordHash: newHash } });
+
+  // Cabut sesi JWT yang sedang dipakai (Requirement 14.9, sama seperti logout) agar
+  // token yang mungkin sudah dicuri tidak tetap valid setelah password diganti.
+  const token = cookies().get(AUTH_COOKIE)?.value;
+  if (token) {
+    await prisma.invalidatedToken
+      .create({ data: { token, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) } })
+      .catch(() => undefined);
+  }
+
   return NextResponse.json({ success: true });
 }

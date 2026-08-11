@@ -19,31 +19,33 @@ async function blastStopped(blastId: string): Promise<boolean> {
 }
 
 export async function runBlast(blastId: string): Promise<void> {
-  const blast = await prisma.blast.findUnique({ where: { id: blastId } });
-  if (!blast) return;
-
-  const vars = (blast.variables as { accountId?: string } | null) ?? null;
-  const accountId = vars?.accountId;
-  if (!accountId) {
-    await prisma.blast.update({ where: { id: blastId }, data: { status: "FAILED" } });
-    return;
-  }
-
-  const provider = getMessagingProvider();
-  if ((await provider.getStatus(accountId)) !== "connected") {
-    await prisma.blast.update({ where: { id: blastId }, data: { status: "FAILED" } });
-    return;
-  }
-
-  const messages = await prisma.blastMessage.findMany({
-    where: { blastId, status: "PENDING" },
-    include: { contact: true },
-  });
-
-  let sentCount = blast.sentCount;
-  let failedCount = blast.failedCount;
+  let sentCount = 0;
+  let failedCount = 0;
 
   try {
+    const blast = await prisma.blast.findUnique({ where: { id: blastId } });
+    if (!blast) return;
+
+    const vars = (blast.variables as { accountId?: string } | null) ?? null;
+    const accountId = vars?.accountId;
+    if (!accountId) {
+      await prisma.blast.update({ where: { id: blastId }, data: { status: "FAILED" } });
+      return;
+    }
+    sentCount = blast.sentCount;
+    failedCount = blast.failedCount;
+
+    const provider = getMessagingProvider();
+    if ((await provider.getStatus(accountId)) !== "connected") {
+      await prisma.blast.update({ where: { id: blastId }, data: { status: "FAILED" } });
+      return;
+    }
+
+    const messages = await prisma.blastMessage.findMany({
+      where: { blastId, status: "PENDING" },
+      include: { contact: true },
+    });
+
     for (const m of messages) {
       if (await blastStopped(blastId)) break;
 

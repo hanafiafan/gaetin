@@ -30,7 +30,12 @@ export async function POST(req: NextRequest) {
     .catch(() => undefined);
 
   if (payload.status === "PAID" && payload.external_id) {
-    await handlePaidTransaction(payload.external_id).catch(() => undefined);
+    try {
+      await handlePaidTransaction(payload.external_id);
+    } catch {
+      // 500 so Xendit retries instead of silently losing the credit/subscription grant.
+      return NextResponse.json({ error: "processing failed" }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ received: true });

@@ -83,8 +83,10 @@ export async function processFollowUps(workspaceId: string): Promise<{
       continue;
     }
 
+    // Batas harian per akun pengirim: lewati jadwal akun ini, jangan hentikan
+    // seluruh antrean workspace (akun lain mungkin masih punya kuota).
     const acc = await getAccountDailyCounter(accountId);
-    if (!acc || acc.sentToday >= acc.dailyLimit) break;
+    if (!acc || acc.sentToday >= acc.dailyLimit) continue;
 
     const quota = await getDailyMessagingQuota(workspaceId);
     if (quota.remaining <= 0) break;

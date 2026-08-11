@@ -9,10 +9,12 @@ import { handleIncomingMessage } from "@/lib/inbox/service";
  * - message: pesan masuk dari pelanggan
  */
 export async function POST(req: NextRequest) {
-  // Validasi secret agar hanya gateway yang bisa memanggil endpoint ini
+  // Validasi secret agar hanya gateway yang bisa memanggil endpoint ini.
+  // Fail-closed: tanpa WEBHOOK_SECRET terkonfigurasi, endpoint ini publik dan
+  // siapapun bisa memalsukan event WhatsApp (lihat gateway/server.js pengirimnya).
   const secret = req.headers.get("x-webhook-secret") ?? "";
-  const expected = process.env.WA_WEBHOOK_SECRET ?? "";
-  if (expected && secret !== expected) {
+  const expected = process.env.WEBHOOK_SECRET ?? "";
+  if (!expected || secret !== expected) {
     return NextResponse.json({ ok: false, error: "Forbidden" }, { status: 403 });
   }
 
