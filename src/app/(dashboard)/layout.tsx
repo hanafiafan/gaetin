@@ -7,7 +7,7 @@ import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
 import FeatureGate from "@/components/dashboard/feature-gate";
 import { getOwnerCmsSettings } from "@/lib/owner-cms";
-import { PLANS, type PlanId } from "@/config/plans";
+import { PLANS, getEffectivePlanId, type PlanId } from "@/config/plans";
 
 // Konversi hex (#RRGGBB) ke string HSL "H S% L%" untuk override CSS var Tailwind.
 function hexToHsl(hex: string): string | null {
@@ -52,8 +52,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
   const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
   const status = workspaceInfo?.subscription?.status ?? "TRIAL";
-  // Trial users are restricted to STARTER features regardless of plan
-  const effectivePlanId = (status === "TRIAL" || status === "TRIAL_EXPIRED") ? "STARTER" : planId;
+  const effectivePlanId = getEffectivePlanId(planId, status);
   const planFeatures = PLANS[effectivePlanId]?.features ?? PLANS.STARTER.features;
 
   return (

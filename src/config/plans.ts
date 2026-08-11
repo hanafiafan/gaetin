@@ -136,3 +136,12 @@ export const CREDIT_COSTS = {
 };
 
 export const TRIAL_CREDITS = 100;
+
+/**
+ * Plan yang menentukan fitur mana yang terbuka. Trial aktif pakai fitur plan
+ * asli (dibatasi kredit, bukan fitur) supaya blast/CRM/inbox — nilai jual
+ * utama — bisa dicoba; trial yang sudah habis turun ke Starter.
+ */
+export function getEffectivePlanId(plan: PlanId, status: string): PlanId {
+  return status === "TRIAL_EXPIRED" ? "STARTER" : plan;
+}

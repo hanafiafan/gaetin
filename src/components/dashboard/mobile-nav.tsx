@@ -3,80 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  BarChart3,
-  Bot,
-  CheckCircle2,
-  CreditCard,
-  FileText,
-  Headphones,
-  Inbox,
-  LayoutDashboard,
-  Lock,
-  LogOut,
-  Map,
-  Megaphone,
-  Menu,
-  MessageSquareText,
-  Search,
-  Send,
-  Settings,
-  ShieldCheck,
-  SquareKanban,
-  Users,
-  X,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, Lock, LogOut, Menu, Settings, X, Zap } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
-
-type NavItem = {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  flag?: string;
-  planFeature?: keyof PlanFeatures;
-};
-
-const navGroups: { label: string; items: NavItem[] }[] = [
-  {
-    label: "Data",
-    items: [
-      { label: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Kontak", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
-      { label: "Scraper", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
-      { label: "Maps", href: "/dashboard/map", icon: Map, flag: "map" },
-    ],
-  },
-  {
-    label: "Pesan",
-    items: [
-      { label: "Blast", href: "/dashboard/blast", icon: Send, flag: "blast", planFeature: "blast" },
-      { label: "Kampanye", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
-      { label: "CRM", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
-      { label: "Inbox", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
-      { label: "Follow-up", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
-      { label: "Tugas", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
-    ],
-  },
-  {
-    label: "Operasional",
-    items: [
-      { label: "Laporan", href: "/dashboard/analytics", icon: BarChart3, flag: "analytics" },
-      { label: "Templates", href: "/dashboard/templates", icon: FileText, flag: "templates" },
-      { label: "Validator", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
-      { label: "Tagihan", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
-      { label: "Tim", href: "/dashboard/team", icon: Bot, flag: "team" },
-      { label: "Bantuan", href: "/dashboard/support", icon: Headphones, flag: "support" },
-      { label: "Pengaturan", href: "/dashboard/settings", icon: Settings, flag: "settings" },
-    ],
-  },
-];
-
-function isNavActive(pathname: string, href: string) {
-  if (href === "/dashboard") return pathname === href;
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
+import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
 
 const PLAN_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
 
@@ -111,7 +40,7 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
         <div className="px-6 pb-6">
           <h2 className="text-xl font-black text-foreground">{feature} butuh paket Bisnis</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Trial gratis hanya mencakup scraping Google Maps dan ekspor CSV.
+            Paket Starter hanya mencakup scraping Google Maps dan ekspor CSV. Upgrade ke Bisnis untuk membuka fitur ini.
           </p>
           <button
             onClick={() => { router.push("/dashboard/billing"); onClose(); }}
