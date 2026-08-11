@@ -26,6 +26,7 @@ services:
       - "${APP_PORT:-3005}:3000"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
       - "traefik.http.middlewares.gaetin-redirect-scheme.redirectscheme.scheme=https"
       - "traefik.http.middlewares.gaetin-redirect-scheme.redirectscheme.permanent=true"
       - "traefik.http.routers.gaetin-http.entrypoints=http"
