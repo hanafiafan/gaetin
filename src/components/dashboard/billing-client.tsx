@@ -289,7 +289,7 @@ export default function BillingClient() {
 
         <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
           <Shield className="h-3.5 w-3.5" />
-          Pembayaran diamankan oleh Xendit. Tidak perlu kartu kredit untuk paket Starter.
+          Pembayaran diamankan oleh Midtrans. Tidak perlu kartu kredit untuk paket Starter.
         </p>
       </div>
 

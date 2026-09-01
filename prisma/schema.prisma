@@ -1,5 +1,5 @@
 // ============================================================================
-// Gaetin — Prisma Schema
+// Hellens — Prisma Schema
 // Multi-tenant (Workspace) SaaS: Google Maps scraper, lead management, CRM,
 // WhatsApp blast/campaign, inbox/customer-service, follow-up, billing.
 //
@@ -643,7 +643,7 @@ model DoNotContact {
 model BrandingSettings {
   id             String   @id @default(cuid())
   workspaceId    String   @unique
-  appName        String   @default("Gaetin")
+  appName        String   @default("Hellens")
   logoUrl        String?
   faviconUrl     String?
   primaryColor   String   @default("#2563eb")
@@ -704,7 +704,7 @@ model Transaction {
   credits      Int               @default(0) // jumlah kredit (untuk top-up)
   grossAmount  Decimal           @db.Decimal(15, 2)
   status       TransactionStatus @default(PENDING)
-  snapToken    String? // referensi Xendit invoice id
+  snapToken    String? // Midtrans Snap transaction token
   invoiceUrl   String?
   paidAt       DateTime?
   createdAt    DateTime          @default(now())

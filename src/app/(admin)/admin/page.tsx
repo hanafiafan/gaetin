@@ -78,7 +78,7 @@ export default async function AdminOverviewPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-black text-white">Overview Platform</h1>
-        <p className="mt-1 text-sm text-slate-400">Ringkasan seluruh tenant Gaetin — real-time.</p>
+        <p className="mt-1 text-sm text-slate-400">Ringkasan seluruh tenant Hellens — real-time.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">

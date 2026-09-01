@@ -1,7 +1,7 @@
 {
-  "name": "gaetin-wa-gateway",
+  "name": "hellens-wa-gateway",
   "version": "1.0.0",
-  "description": "WhatsApp Baileys gateway server for Gaetin (runs on Railway)",
+  "description": "WhatsApp Baileys gateway server for Hellens (runs on Railway)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

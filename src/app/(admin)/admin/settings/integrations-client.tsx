@@ -13,7 +13,7 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
-import { saveXenditSettings, saveGatewaySettings, saveEmailSettings } from "@/app/actions/admin-settings";
+import { saveMidtransSettings, saveGatewaySettings, saveEmailSettings } from "@/app/actions/admin-settings";
 
 type Props = { settings: Record<string, string> };
 
@@ -81,42 +81,44 @@ function SaveButton({ pending, saved }: { pending: boolean; saved: boolean }) {
 }
 
 export default function AdminIntegrationsClient({ settings }: Props) {
-  const [xenditPending, startXendit] = useTransition();
+  const [midtransPending, startMidtrans] = useTransition();
   const [gatewayPending, startGateway] = useTransition();
   const [emailPending, startEmail] = useTransition();
   const [savedSection, setSavedSection] = useState<string | null>(null);
 
-  const [xenditMode, setXenditMode] = useState<"live" | "sandbox">(
-    (settings.xendit_mode as "live" | "sandbox") ?? "sandbox"
+  const [midtransMode, setMidtransMode] = useState<"live" | "sandbox">(
+    (settings.midtrans_mode as "live" | "sandbox") ?? "sandbox"
   );
 
   function handleSave(section: string, action: (fd: FormData) => Promise<{success: boolean}>, fd: FormData) {
-    if (section === "xendit") startXendit(async () => { await action(fd); setSavedSection("xendit"); setTimeout(() => setSavedSection(null), 3000); });
+    if (section === "midtrans") startMidtrans(async () => { await action(fd); setSavedSection("midtrans"); setTimeout(() => setSavedSection(null), 3000); });
     if (section === "gateway") startGateway(async () => { await action(fd); setSavedSection("gateway"); setTimeout(() => setSavedSection(null), 3000); });
     if (section === "email") startEmail(async () => { await action(fd); setSavedSection("email"); setTimeout(() => setSavedSection(null), 3000); });
   }
 
   return (
     <div className="space-y-4">
-      {/* Xendit */}
-      <Section title="Xendit (Pembayaran)" icon={CreditCard}>
-        <form action={(fd) => handleSave("xendit", saveXenditSettings, fd)} className="space-y-4">
-          <input type="hidden" name="xendit_mode" value={xenditMode} />
+      {/* Midtrans */}
+      <Section title="Midtrans (Pembayaran)" icon={CreditCard}>
+        <form action={(fd) => handleSave("midtrans", saveMidtransSettings, fd)} className="space-y-4">
+          <input type="hidden" name="midtrans_mode" value={midtransMode} />
+
+          <Field label="Merchant ID" name="midtrans_merchant_id" placeholder="M123456789" defaultValue={settings.midtrans_merchant_id} />
 
           {/* Live/Sandbox toggle */}
           <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3">
             <div>
               <p className="text-sm font-bold text-white">Mode Aktif</p>
               <p className="text-xs text-slate-400">
-                {xenditMode === "live" ? "Transaksi nyata (Live)" : "Mode uji coba (Sandbox)"}
+                {midtransMode === "live" ? "Transaksi nyata (Live)" : "Mode uji coba (Sandbox)"}
               </p>
             </div>
             <button
               type="button"
-              onClick={() => setXenditMode((m) => (m === "live" ? "sandbox" : "live"))}
+              onClick={() => setMidtransMode((m) => (m === "live" ? "sandbox" : "live"))}
               className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition"
             >
-              {xenditMode === "live" ? (
+              {midtransMode === "live" ? (
                 <><ToggleRight className="h-6 w-6 text-emerald-400" /><span className="text-emerald-400">Live</span></>
               ) : (
                 <><ToggleLeft className="h-6 w-6 text-amber-400" /><span className="text-amber-400">Sandbox</span></>
@@ -124,33 +126,28 @@ export default function AdminIntegrationsClient({ settings }: Props) {
             </button>
           </div>
 
-          {xenditMode === "live" ? (
+          {midtransMode === "live" ? (
             <>
-              <Field label="API Key (Live)" name="xendit_api_key" type="password" placeholder="xnd_production_..." defaultValue={settings.xendit_api_key} />
-              <Field label="Secret Key (Live)" name="xendit_secret_key" type="password" placeholder="xnd_production_..." defaultValue={settings.xendit_secret_key} />
-              <Field label="Sandbox API Key" name="xendit_sandbox_api_key" type="password" placeholder="xnd_development_..." defaultValue={settings.xendit_sandbox_api_key} hint="Tetap simpan untuk fallback ke sandbox" />
-              <Field label="Sandbox Secret Key" name="xendit_sandbox_secret_key" type="password" placeholder="xnd_development_..." defaultValue={settings.xendit_sandbox_secret_key} />
+              <Field label="Client Key (Live)" name="midtrans_client_key" type="password" placeholder="Mid-client-..." defaultValue={settings.midtrans_client_key} />
+              <Field label="Server Key (Live)" name="midtrans_server_key" type="password" placeholder="Mid-server-..." defaultValue={settings.midtrans_server_key} />
+              <Field label="Client Key (Sandbox)" name="midtrans_sandbox_client_key" type="password" placeholder="SB-Mid-client-..." defaultValue={settings.midtrans_sandbox_client_key} hint="Tetap simpan untuk fallback ke sandbox" />
+              <Field label="Server Key (Sandbox)" name="midtrans_sandbox_server_key" type="password" placeholder="SB-Mid-server-..." defaultValue={settings.midtrans_sandbox_server_key} />
             </>
           ) : (
             <>
-              <Field label="API Key (Sandbox)" name="xendit_sandbox_api_key" type="password" placeholder="xnd_development_..." defaultValue={settings.xendit_sandbox_api_key} />
-              <Field label="Secret Key (Sandbox)" name="xendit_sandbox_secret_key" type="password" placeholder="xnd_development_..." defaultValue={settings.xendit_sandbox_secret_key} />
-              <Field label="Live API Key" name="xendit_api_key" type="password" placeholder="xnd_production_..." defaultValue={settings.xendit_api_key} hint="Isi sebelum switch ke Live" />
-              <Field label="Live Secret Key" name="xendit_secret_key" type="password" placeholder="xnd_production_..." defaultValue={settings.xendit_secret_key} />
+              <Field label="Client Key (Sandbox)" name="midtrans_sandbox_client_key" type="password" placeholder="SB-Mid-client-..." defaultValue={settings.midtrans_sandbox_client_key} />
+              <Field label="Server Key (Sandbox)" name="midtrans_sandbox_server_key" type="password" placeholder="SB-Mid-server-..." defaultValue={settings.midtrans_sandbox_server_key} />
+              <Field label="Client Key (Live)" name="midtrans_client_key" type="password" placeholder="Mid-client-..." defaultValue={settings.midtrans_client_key} hint="Isi sebelum switch ke Live" />
+              <Field label="Server Key (Live)" name="midtrans_server_key" type="password" placeholder="Mid-server-..." defaultValue={settings.midtrans_server_key} />
             </>
           )}
 
-          <Field
-            label="Webhook Token"
-            name="xendit_webhook_token"
-            type="password"
-            placeholder="Token verifikasi webhook Xendit"
-            defaultValue={settings.xendit_webhook_token}
-            hint="Dari dashboard Xendit → Webhooks → Callback token"
-          />
+          <p className="text-xs text-slate-500">
+            Tidak perlu token webhook terpisah — notifikasi Midtrans diverifikasi lewat signature_key bawaan.
+          </p>
 
           <div className="flex justify-end pt-2">
-            <SaveButton pending={xenditPending} saved={savedSection === "xendit"} />
+            <SaveButton pending={midtransPending} saved={savedSection === "midtrans"} />
           </div>
         </form>
       </Section>
@@ -227,7 +224,7 @@ export default function AdminIntegrationsClient({ settings }: Props) {
         </div>
         <div className="mt-4 space-y-3">
           {[
-            { label: "Xendit Callback", url: "/api/webhooks/xendit" },
+            { label: "Midtrans Notification", url: "/api/webhooks/midtrans" },
             { label: "WA Gateway Events", url: "/api/webhooks/gateway" },
           ].map(({ label, url }) => (
             <div key={url} className="flex items-center justify-between gap-3">

@@ -6,11 +6,11 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
-      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}@db:5432/${POSTGRES_DB:-gaetin}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}@db:5432/${POSTGRES_DB:-hellens_scraper}?schema=public
+      - DIRECT_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}@db:5432/${POSTGRES_DB:-hellens_scraper}?schema=public
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET:?set a real random JWT_SECRET in Coolify env vars}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://gaetin.run-web.tech}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://scraper.hellens.dev}
       - WA_SESSION_DIR=/app/wa-sessions
       - WA_PROVIDER=gateway
       - WA_GATEWAY_BASE_URL=http://gateway:3001
@@ -28,18 +28,18 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
-      - "traefik.http.middlewares.gaetin-redirect-scheme.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.gaetin-redirect-scheme.redirectscheme.permanent=true"
-      - "traefik.http.routers.gaetin-http.entrypoints=http"
-      - "traefik.http.routers.gaetin-http.rule=Host(`gaetin.run-web.tech`)"
-      - "traefik.http.routers.gaetin-http.middlewares=gaetin-redirect-scheme"
-      - "traefik.http.routers.gaetin-http.service=gaetin-svc"
-      - "traefik.http.routers.gaetin-https.entrypoints=https"
-      - "traefik.http.routers.gaetin-https.rule=Host(`gaetin.run-web.tech`)"
-      - "traefik.http.routers.gaetin-https.service=gaetin-svc"
-      - "traefik.http.routers.gaetin-https.tls=true"
-      - "traefik.http.routers.gaetin-https.tls.certresolver=letsencrypt"
-      - "traefik.http.services.gaetin-svc.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.scraper-redirect-scheme.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.scraper-redirect-scheme.redirectscheme.permanent=true"
+      - "traefik.http.routers.scraper-http.entrypoints=http"
+      - "traefik.http.routers.scraper-http.rule=Host(`scraper.hellens.dev`)"
+      - "traefik.http.routers.scraper-http.middlewares=scraper-redirect-scheme"
+      - "traefik.http.routers.scraper-http.service=scraper-svc"
+      - "traefik.http.routers.scraper-https.entrypoints=https"
+      - "traefik.http.routers.scraper-https.rule=Host(`scraper.hellens.dev`)"
+      - "traefik.http.routers.scraper-https.service=scraper-svc"
+      - "traefik.http.routers.scraper-https.tls=true"
+      - "traefik.http.routers.scraper-https.tls.certresolver=letsencrypt"
+      - "traefik.http.services.scraper-svc.loadbalancer.server.port=3000"
     networks:
       - default
       - coolify
@@ -66,11 +66,11 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a real random POSTGRES_PASSWORD in Coolify env vars}
-      POSTGRES_DB: ${POSTGRES_DB:-gaetin}
+      POSTGRES_DB: ${POSTGRES_DB:-hellens_scraper}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-gaetin}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-hellens_scraper}"]
       interval: 10s
       timeout: 5s
       retries: 5

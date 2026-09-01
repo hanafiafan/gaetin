@@ -27,11 +27,11 @@ const FAQ = [
   },
   {
     q: "Bagaimana cara upgrade paket?",
-    a: "Buka menu Tagihan, pilih paket yang diinginkan, dan selesaikan pembayaran via Xendit (VA/e-wallet/QRIS).",
+    a: "Buka menu Tagihan, pilih paket yang diinginkan, dan selesaikan pembayaran via Midtrans (VA/e-wallet/QRIS).",
   },
   {
     q: "Apakah nomor WhatsApp saya aman?",
-    a: "Koneksi dibuat via Baileys (library resmi) dengan sesi per nomor. Gaetin tidak menyimpan percakapan pribadi Anda di luar database workspace.",
+    a: "Koneksi dibuat via Baileys (library resmi) dengan sesi per nomor. Hellens tidak menyimpan percakapan pribadi Anda di luar database workspace.",
   },
   {
     q: "Berapa lama kredit kadaluwarsa?",

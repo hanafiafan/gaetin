@@ -83,7 +83,7 @@ export default function AdminCmsPage() {
               Owner CMS
             </span>
             <h1 className="max-w-3xl text-3xl font-black text-white sm:text-4xl">
-              Pusat pengaturan Gaetin untuk konten, fitur, pelanggan, dan keputusan produk.
+              Pusat pengaturan Hellens untuk konten, fitur, pelanggan, dan keputusan produk.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
               CMS ini menjadi ruang internal untuk mengatur halaman, aset, media,

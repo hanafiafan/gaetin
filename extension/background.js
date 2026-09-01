@@ -1,10 +1,10 @@
-// Background Service Worker for Gaetin Chrome Extension
+// Background Service Worker for Hellens Chrome Extension
 // Handles cross-origin API calls to bypass web page CORS restrictions in Manifest V3
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === 'SEND_TO_API') {
     const { jobId, leads, isFinished, token } = request;
-    const apiUrl = request.apiUrl || 'https://gaetin.run-web.tech/api/scraper/extension';
+    const apiUrl = request.apiUrl || 'https://scraper.hellens.dev/api/scraper/extension';
 
     fetch(apiUrl, {
       method: 'POST',
@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         }
       })
       .catch((err) => {
-        console.error('Gaetin Background API Error:', err);
+        console.error('Hellens Background API Error:', err);
         sendResponse({ success: false, error: `Gagal API: ${err.message}` });
       });
 

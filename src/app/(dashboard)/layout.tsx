@@ -48,7 +48,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       },
     }),
   ]);
-  const appName = branding?.appName || "Gaetin";
+  const appName = branding?.appName || "Hellens";
   const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
   const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
   const status = workspaceInfo?.subscription?.status ?? "TRIAL";

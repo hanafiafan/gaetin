@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Gaetin-SaaS%20Growth%20Platform-10B981?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Gaetin" />
+  <img src="https://img.shields.io/badge/Hellens-SaaS%20Growth%20Platform-10B981?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Hellens" />
 </p>
 
-<h1 align="center">🚀 Gaetin</h1>
+<h1 align="center">🚀 Hellens</h1>
 
 <p align="center">
   <strong>All-in-one SaaS growth platform for lead generation, WhatsApp outreach, CRM & analytics.</strong>
@@ -32,13 +32,13 @@
 
 ## 📋 Overview
 
-**Gaetin** is a comprehensive SaaS growth platform designed for businesses that rely on WhatsApp as their primary communication channel. It provides an end-to-end pipeline:
+**Hellens** is a comprehensive SaaS growth platform designed for businesses that rely on WhatsApp as their primary communication channel. It provides an end-to-end pipeline:
 
 ```
 Scrape Leads → Manage & Segment → Blast via WhatsApp → Handle Inbox/CS → Close Deals & Measure ROI
 ```
 
-Built with a **multi-tenant architecture**, Gaetin supports teams and agencies with role-based access control (Owner / Admin / Agent) per workspace.
+Built with a **multi-tenant architecture**, Hellens supports teams and agencies with role-based access control (Owner / Admin / Agent) per workspace.
 
 ---
 
@@ -75,7 +75,7 @@ Built with a **multi-tenant architecture**, Gaetin supports teams and agencies w
 
 ### 💳 Billing & Subscription
 - **Plan Management** — Free, Starter, Pro, Enterprise tiers
-- **Midtrans/Xendit Integration** — Automated payment processing
+- **Midtrans Integration** — Automated payment processing
 - **Credit System** — Usage-based billing for advanced features
 
 ### ⚙️ Platform
@@ -141,8 +141,8 @@ Built with a **multi-tenant architecture**, Gaetin supports teams and agencies w
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/hanafiafan/gaetin.git
-cd gaetin
+git clone https://github.com/hanafiafan/hellens.git
+cd hellens
 
 # 2. Install dependencies
 npm install
@@ -184,7 +184,7 @@ docker compose up -d
 This spins up:
 - **PostgreSQL 16** — Primary database
 - **Redis 7** — Queue & caching
-- **Gaetin App** — Next.js production build
+- **Hellens App** — Next.js production build
 - **Caddy** — Reverse proxy with automatic HTTPS
 
 ---
@@ -208,7 +208,7 @@ This spins up:
 ## 📁 Project Structure
 
 ```
-gaetin/
+hellens/
 ├── prisma/
 │   ├── schema.prisma          # Database schema (multi-tenant)
 │   └── seed.ts                # Demo data seeder
@@ -260,14 +260,14 @@ gaetin/
 
 ## 💰 Cost Architecture
 
-Gaetin is designed for **near-zero operational costs**. All core features run on a single VPS without third-party subscriptions.
+Hellens is designed for **near-zero operational costs**. All core features run on a single VPS without third-party subscriptions.
 
 | Category | Service | Cost |
 |----------|---------|------|
 | ✅ **Core (Free)** | PostgreSQL, Redis, Next.js, Baileys | Self-hosted |
 | ✅ **Maps** | Leaflet + free tiles, Nominatim geocoding | Free tier |
 | ✅ **Scraping** | Self-hosted Google Maps scraper | Free |
-| 💳 **Revenue-Aligned** | Midtrans/Xendit payment processing | Per-transaction fee only |
+| 💳 **Revenue-Aligned** | Midtrans payment processing | Per-transaction fee only |
 | 📧 **Email** | Resend/Brevo transactional emails | Free tier |
 
 > **Scaling note:** Since WhatsApp runs via Baileys, the primary scaling cost is server RAM (per active connection), not per-message API fees — significantly cheaper than gateway services.
@@ -293,7 +293,7 @@ Gaetin is designed for **near-zero operational costs**. All core features run on
 - [x] Inbox / Customer Service (two-way) + auto-reply
 - [x] CRM pipeline + Deal/ROI tracking
 - [x] Follow-up automation + tasks
-- [x] Subscription + Midtrans/Xendit billing
+- [x] Subscription + Midtrans billing
 - [x] Map view (market analysis)
 - [ ] White-label support
 - [ ] WhatsApp Cloud API official integration
@@ -321,5 +321,5 @@ This is a private project. All rights reserved.
 <p align="center">
   Built with ❤️ using Next.js, TypeScript, and Prisma
   <br />
-  <sub>© 2024–2026 Gaetin. All rights reserved.</sub>
+  <sub>© 2024–2026 Hellens. All rights reserved.</sub>
 </p>

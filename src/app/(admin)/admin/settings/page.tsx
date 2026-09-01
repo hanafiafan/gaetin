@@ -4,12 +4,12 @@ import AdminIntegrationsClient from "./integrations-client";
 export const dynamic = "force-dynamic";
 
 const SETTING_KEYS = [
-  "xendit_mode",
-  "xendit_api_key",
-  "xendit_secret_key",
-  "xendit_sandbox_api_key",
-  "xendit_sandbox_secret_key",
-  "xendit_webhook_token",
+  "midtrans_mode",
+  "midtrans_merchant_id",
+  "midtrans_client_key",
+  "midtrans_server_key",
+  "midtrans_sandbox_client_key",
+  "midtrans_sandbox_server_key",
   "wa_gateway_url",
   "wa_gateway_token",
   "email_provider",

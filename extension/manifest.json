@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Gaetin Maps Scraper",
+  "name": "Hellens Maps Scraper",
   "version": "1.0",
-  "description": "Ekstrak leads langsung dari Google Maps ke Gaetin CRM.",
+  "description": "Ekstrak leads langsung dari Google Maps ke Hellens CRM.",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [
     "https://www.google.com/maps/*",
-    "https://gaetin.run-web.tech/*",
+    "https://scraper.hellens.dev/*",
     "http://localhost:3000/*"
   ],
   "icons": {

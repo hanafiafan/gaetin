@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
-      POSTGRES_DB: gaetin
+      POSTGRES_DB: hellens_scraper
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -32,7 +32,7 @@ services:
     environment:
       NODE_ENV: production
       # Override agar menunjuk ke service compose (mengalahkan nilai di .env).
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-password}@db:5432/gaetin?schema=public
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-password}@db:5432/hellens_scraper?schema=public
       REDIS_URL: redis://redis:6379
       WA_SESSION_DIR: ./wa-sessions
     depends_on:

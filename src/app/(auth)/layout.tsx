@@ -27,10 +27,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         <Link href="/" className="relative flex items-center gap-3">
-          <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">
-            G
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-glow">
+            <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-5 w-5" />
           </span>
-          <span className="text-xl font-black text-white">gaetin</span>
+          <span className="text-xl font-black text-white">hellens</span>
         </Link>
 
         <div className="relative mt-auto flex flex-col justify-center py-10">
@@ -43,7 +43,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Dari scraping lead sampai closing, semua di satu workspace.
           </h1>
           <p className="mt-5 max-w-sm text-sm leading-7 text-slate-400">
-            Gaetin menggabungkan scraping Google Maps, WhatsApp blast, CRM pipeline, dan laporan dalam satu platform operasional yang rapi.
+            Hellens menggabungkan scraping Google Maps, WhatsApp blast, CRM pipeline, dan laporan dalam satu platform operasional yang rapi.
           </p>
 
           {/* Stats */}
@@ -92,10 +92,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {/* Mobile logo */}
           <div className="mb-8 text-center lg:hidden">
             <Link href="/" className="inline-flex items-center gap-3">
-              <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">
-                G
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-glow">
+                <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-5 w-5" />
               </span>
-              <span className="text-2xl font-black text-white">gaetin</span>
+              <span className="text-2xl font-black text-white">hellens</span>
             </Link>
             <p className="mt-2 text-sm text-slate-400">Cari leads. Gaet pelanggan. Tutup deal.</p>
           </div>

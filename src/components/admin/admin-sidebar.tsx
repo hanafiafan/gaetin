@@ -45,7 +45,7 @@ export default function AdminSidebar() {
           G
         </div>
         <div className="min-w-0">
-          <div className="text-base font-black text-white">Gaetin</div>
+          <div className="text-base font-black text-white">Hellens</div>
           <div className="truncate text-xs font-medium text-slate-400">Konsol CMS Owner</div>
         </div>
       </Link>

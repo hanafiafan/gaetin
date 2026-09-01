@@ -9,7 +9,7 @@ export default function BillingPage() {
           <div>
             <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-primary"><Sparkles className="h-3.5 w-3.5" /> Subscription</span>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Langganan & Kredit</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Kelola paket, saldo kredit, dan top-up. Pembayaran via Xendit (VA, e-wallet, QRIS).</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Kelola paket, saldo kredit, dan top-up. Pembayaran via Midtrans (VA, e-wallet, QRIS).</p>
           </div>
           <div className="grid gap-2 text-sm">
             <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-foreground/80"><CreditCard className="h-4 w-4 text-primary" /> Subscription bulanan/tahunan</div>

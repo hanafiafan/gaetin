@@ -1,14 +1,14 @@
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const G = (...a) => console.log('%c[Gaetin]', 'color:#10b981;font-weight:bold', ...a);
+const G = (...a) => console.log('%c[Hellens]', 'color:#10b981;font-weight:bold', ...a);
 G('content.js v4 loaded ✓', new Date().toLocaleTimeString());
 
 // ── Float UI ──────────────────────────────────────────────────────────────────
 
 let floatUI = null;
 function createFloatUI() {
-  if (document.getElementById('gaetin-float-ui')) { floatUI = document.getElementById('gaetin-float-ui'); return; }
+  if (document.getElementById('hellens-float-ui')) { floatUI = document.getElementById('hellens-float-ui'); return; }
   floatUI = document.createElement('div');
-  floatUI.id = 'gaetin-float-ui';
+  floatUI.id = 'hellens-float-ui';
   floatUI.style.cssText = `
     position:fixed;top:24px;right:24px;z-index:999999;
     background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);
@@ -20,7 +20,7 @@ function createFloatUI() {
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
       <img src="${chrome.runtime.getURL('icon48.png')}" style="width:36px;height:36px;border-radius:8px;" alt="G">
       <div style="flex:1;overflow:hidden;">
-        <div style="font-weight:600;font-size:14px;margin-bottom:2px;">Gaetin Extractor</div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:2px;">Hellens Extractor</div>
         <div id="gf-status" style="font-size:11px;color:#10b981;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Menjalankan...</div>
       </div>
     </div>
@@ -35,12 +35,12 @@ function createFloatUI() {
   `;
   document.body.appendChild(floatUI);
   document.getElementById('gf-stop').addEventListener('click', async () => {
-    const d = await storageGet(['gaetinJob', 'gaetinChunk']);
-    if (d.gaetinJob) {
+    const d = await storageGet(['hellensJob', 'hellensChunk']);
+    if (d.hellensJob) {
       setFloatStatus('Membatalkan...', '#ef4444');
-      await sendToApi(d.gaetinJob.jobId, d.gaetinChunk || [], true, d.gaetinJob.token);
+      await sendToApi(d.hellensJob.jobId, d.hellensChunk || [], true, d.hellensJob.token);
     }
-    await chrome.storage.local.remove(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk']);
+    await chrome.storage.local.remove(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk']);
     window.close();
   });
 }
@@ -157,23 +157,26 @@ function extractPhone() {
     const lbl = el.getAttribute('aria-label') || '';
     const m = lbl.match(/^(?:Telepon|Phone|Nomor(?:\s*telepon)?|Hubungi|Tel)[:.\s]+(.+)/i);
     if (m) { G('phone via aria-label'); return m[1].trim(); }
-    if (/^(\+62|0)[2-9][\d\s\-\.]{7,}$/.test(lbl.trim())) { G('phone via aria bare'); return lbl.trim(); }
+    if (/^(\+\d{1,3}|0)[2-9][\d\s\-\.]{7,}$/.test(lbl.trim())) { G('phone via aria bare'); return lbl.trim(); }
   }
 
   for (const t of panelTextNodes()) {
-    if (/^(?:\+?62|0)[2-9][\d\-\s]{7,12}$/.test(t) && t.replace(/\D/g, '').length >= 9) {
+    if (/^(?:\+\d{1,3}|0)[2-9][\d\-\s]{7,12}$/.test(t) && t.replace(/\D/g, '').length >= 9) {
       G('phone via text scan', t); return t;
     }
   }
   G('phone: NOT FOUND'); return null;
 }
 
+// Nomor yang sudah punya kode negara (dengan/tanpa "+") dipakai apa adanya.
+// Hanya nomor lokal berawalan "0" yang di-fallback ke kode negara default (62) —
+// heuristik, tidak bisa memastikan negara asal nomor lokal tanpa kode negara.
 function normalizePhone(raw) {
   if (!raw) return null;
   let d = raw.replace(/[\s\-\.\(\)]/g, '');
   if (d.startsWith('+')) d = d.slice(1);
-  if (d.startsWith('0')) d = '62' + d.slice(1);
-  return /^62\d{8,12}$/.test(d) ? d : null;
+  else if (d.startsWith('0')) d = '62' + d.slice(1);
+  return /^\d{8,15}$/.test(d) ? d : null;
 }
 
 function extractWebsite() {
@@ -478,7 +481,7 @@ async function sendToApi(jobId, leads, isFinished, token) {
           leads,
           isFinished,
           token,
-          apiUrl: 'https://gaetin.run-web.tech/api/scraper/extension',
+          apiUrl: 'https://scraper.hellens.dev/api/scraper/extension',
         },
         (response) => {
           if (chrome.runtime.lastError || !response) {
@@ -665,14 +668,14 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 (async function processScrapeQueue() {
   if (!window.location.href.includes('/maps/place/')) return;
 
-  const data = await storageGet(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk', 'gaetinCurrentLabel']);
-  if (!data.gaetinJob || data.gaetinPhase !== 'scraping') return;
+  const data = await storageGet(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk', 'hellensCurrentLabel']);
+  if (!data.hellensJob || data.hellensPhase !== 'scraping') return;
 
-  const { jobId, token, maxLeads, delaySec, dataFields } = data.gaetinJob;
-  const queue = data.gaetinQueue || [];
-  const saved = data.gaetinSaved || 0;
-  const chunk = data.gaetinChunk || [];
-  const ariaLabel = data.gaetinCurrentLabel || '';
+  const { jobId, token, maxLeads, delaySec, dataFields } = data.hellensJob;
+  const queue = data.hellensQueue || [];
+  const saved = data.hellensSaved || 0;
+  const chunk = data.hellensChunk || [];
+  const ariaLabel = data.hellensCurrentLabel || '';
 
   createFloatUI();
   floatUI.style.display = 'block';
@@ -708,14 +711,14 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     // Store next item's aria-label (it's in the URL as the place name)
     const labelFromUrl = decodeURIComponent((nextUrl.match(/\/maps\/place\/([^/@]+)/) || [])[1] || '').replace(/\+/g, ' ');
 
-    await storageSet({ gaetinQueue: restQueue, gaetinSaved: newSaved, gaetinChunk: finalChunk, gaetinCurrentLabel: labelFromUrl });
+    await storageSet({ hellensQueue: restQueue, hellensSaved: newSaved, hellensChunk: finalChunk, hellensCurrentLabel: labelFromUrl });
     await sleep(Math.max(1500, delaySec * 1000));
     window.location.href = nextUrl;
   } else {
     // Done — send remaining + mark finished
     setFloatStatus(`Menyelesaikan...`);
     await sendToApi(jobId, finalChunk, true, token);
-    await storageRemove(['gaetinJob', 'gaetinQueue', 'gaetinPhase', 'gaetinSaved', 'gaetinChunk', 'gaetinCurrentLabel']);
+    await storageRemove(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk', 'hellensCurrentLabel']);
 
     const total = newSaved + finalChunk.length;
     setFloatStatus(`Selesai! ${total} lead tersimpan. Menutup...`, '#10b981');
@@ -733,18 +736,18 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 
 (async function checkAutoStart() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('gaetin_auto') !== 'true') return;
+  if (params.get('hellens_auto') !== 'true') return;
 
-  const jobId    = params.get('gaetin_job_id');
-  const token    = params.get('gaetin_token') || '';
-  const maxLeads = parseInt(params.get('gaetin_max')) || 100;
-  const delaySec = parseFloat(params.get('gaetin_delay')) || 2;
-  const dataFields = params.get('gaetin_fields') ? params.get('gaetin_fields').split(',').filter(Boolean) : null;
+  const jobId    = params.get('hellens_job_id');
+  const token    = params.get('hellens_token') || '';
+  const maxLeads = parseInt(params.get('hellens_max')) || 100;
+  const delaySec = parseFloat(params.get('hellens_delay')) || 2;
+  const dataFields = params.get('hellens_fields') ? params.get('hellens_fields').split(',').filter(Boolean) : null;
 
   if (!jobId) return;
   G('Auto-start phase 1: collecting URLs. jobId:', jobId);
 
-  await storageSet({ gaetinJob: { jobId, token, maxLeads, delaySec, dataFields }, gaetinPhase: 'collecting', gaetinSaved: 0, gaetinChunk: [], gaetinQueue: [] });
+  await storageSet({ hellensJob: { jobId, token, maxLeads, delaySec, dataFields }, hellensPhase: 'collecting', hellensSaved: 0, hellensChunk: [], hellensQueue: [] });
 
   createFloatUI();
   floatUI.style.display = 'block';
@@ -764,7 +767,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   const [firstUrl, ...restQueue] = urls;
   const labelFromUrl = decodeURIComponent((firstUrl.match(/\/maps\/place\/([^/@]+)/) || [])[1] || '').replace(/\+/g, ' ');
 
-  await storageSet({ gaetinPhase: 'scraping', gaetinQueue: restQueue, gaetinCurrentLabel: labelFromUrl });
+  await storageSet({ hellensPhase: 'scraping', hellensQueue: restQueue, hellensCurrentLabel: labelFromUrl });
   await sleep(800);
   window.location.href = firstUrl;
 })();

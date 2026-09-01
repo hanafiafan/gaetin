@@ -1,8 +1,8 @@
 {
-  "name": "gaetin",
+  "name": "hellens-scraper",
   "version": "0.1.0",
   "private": true,
-  "description": "Gaetin — SaaS growth platform for lead generation, WhatsApp outreach, CRM, analytics, and billing",
+  "description": "Hellens Scraper — SaaS growth platform for lead generation, WhatsApp outreach, CRM, analytics, and billing",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

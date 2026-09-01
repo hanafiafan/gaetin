@@ -110,7 +110,7 @@ const setupSteps = [
     icon: Chrome,
     step: "01",
     title: "Install Ekstensi",
-    description: "Download ekstensi Gaetin untuk Chrome. Install dalam 30 detik, tidak perlu coding.",
+    description: "Download ekstensi Hellens untuk Chrome. Install dalam 30 detik, tidak perlu coding.",
     color: "text-primary",
     bg: "bg-primary/ border-primary/",
   },
@@ -254,8 +254,10 @@ export default function HomePage() {
       <header className="landing-header fixed left-1/2 top-4 -translate-x-1/2" style={{ width: "min(calc(100vw - 2rem), 1180px)" }}>
         <nav className="cg-nav relative flex w-full items-center justify-between overflow-hidden rounded-full px-4 py-3 md:px-5">
           <Link href="/" className="flex min-w-0 items-center gap-3 pr-12 sm:pr-0">
-            <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">G</span>
-            <span className="text-base font-bold text-white">gaetin</span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-glow">
+              <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-5 w-5" />
+            </span>
+            <span className="text-base font-bold text-white">hellens</span>
           </Link>
 
           <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex">
@@ -300,7 +302,7 @@ export default function HomePage() {
             <span className="cg-gradient-text"> siap dihubungi via WhatsApp.</span>
           </h1>
           <p className="mt-6 w-full max-w-[20rem] text-sm leading-7 text-slate-300 sm:max-w-2xl sm:text-lg sm:leading-8">
-            Gaetin mengekstrak data bisnis dari Google Maps lewat ekstensi Chrome, merapikan kontak, mengirim WhatsApp, dan mengelola follow-up dari satu dashboard.
+            Hellens mengekstrak data bisnis dari Google Maps lewat ekstensi Chrome, merapikan kontak, mengirim WhatsApp, dan mengelola follow-up dari satu dashboard.
           </p>
 
           {/* Trial callout */}
@@ -485,7 +487,7 @@ export default function HomePage() {
       {/* ── Features ────────────────────────────────────────────────────── */}
       <section id="fitur" className="cg-section grid-fade-section py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker"><Zap className="h-4 w-4" />Fitur Gaetin</div>
+          <div className="cg-kicker"><Zap className="h-4 w-4" />Fitur Hellens</div>
           <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
             Dari menemukan ribuan prospek sampai mengubahnya jadi pelanggan.
           </h2>
@@ -620,7 +622,7 @@ export default function HomePage() {
             Lihat potensi hasilnya sebelum daftar.
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-300">
-            Simulasikan berapa kontak, balasan, follow-up, dan deal yang bisa kamu hasilkan dengan Gaetin.
+            Simulasikan berapa kontak, balasan, follow-up, dan deal yang bisa kamu hasilkan dengan Hellens.
           </p>
         </div>
         <LandingConversionPanel />
@@ -768,8 +770,10 @@ export default function HomePage() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <span className="gradient-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white shadow-glow">G</span>
-              <span className="text-base font-bold text-white">gaetin</span>
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-glow">
+              <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-5 w-5" />
+            </span>
+              <span className="text-base font-bold text-white">hellens</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-slate-400">
               Platform scraping prospek Google Maps, WhatsApp marketing, dan CRM untuk bisnis Indonesia.
@@ -798,8 +802,8 @@ export default function HomePage() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[0.07] pt-8 sm:flex-row">
-          <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} Gaetin. Semua hak dilindungi.</p>
-          <p className="text-xs text-slate-600">Pembayaran aman via Xendit · SSL terenkripsi</p>
+          <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} Hellens. Semua hak dilindungi.</p>
+          <p className="text-xs text-slate-600">Pembayaran aman via Midtrans · SSL terenkripsi</p>
         </div>
       </footer>
     </main>

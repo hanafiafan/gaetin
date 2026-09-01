@@ -1,4 +1,4 @@
-# Gaetin WA Gateway
+# Hellens WA Gateway
 
 Server Baileys persisten untuk koneksi WhatsApp. Di-deploy di Railway, dipanggil oleh aplikasi Next.js di Vercel.
 
@@ -7,7 +7,7 @@ Server Baileys persisten untuk koneksi WhatsApp. Di-deploy di Railway, dipanggil
 | Variable | Required | Keterangan |
 |---|---|---|
 | `GATEWAY_TOKEN` | ✅ | Bearer token untuk auth request dari Next.js |
-| `WEBHOOK_URL` | ✅ | URL webhook Next.js (misal: `https://gaetin.vercel.app/api/whatsapp/webhook`) |
+| `WEBHOOK_URL` | ✅ | URL webhook Next.js (misal: `https://hellens.vercel.app/api/whatsapp/webhook`) |
 | `WEBHOOK_SECRET` | ✅ | Secret bersama untuk validasi webhook |
 | `SESSION_DIR` | ❌ | Folder session (default: `./wa-sessions`) |
 | `PORT` | ❌ | Port server (default: 3001, Railway set otomatis) |

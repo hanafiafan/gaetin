@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { env } from "@/lib/env";
-import { createInvoice } from "@/lib/xendit/client";
+import { createTransaction } from "@/lib/midtrans/client";
 import { addCredits } from "@/lib/credits/service";
 import { addMonths } from "date-fns";
 import { getEffectivePlans, calcPrice } from "@/lib/plans-store";
@@ -45,15 +45,15 @@ export async function createSubscriptionCheckout(
   await prisma.transaction.create({
     data: { workspaceId, orderId, kind: "SUBSCRIPTION", plan, billingCycle: cycle, grossAmount: amount, status: "PENDING" },
   });
-  const inv = await createInvoice({
-    externalId: orderId,
+  const tx = await createTransaction({
+    orderId,
     amount,
     description: `Langganan ${ep.name} (${cycle === "YEARLY" ? "Tahunan" : "Bulanan"})`,
     payerEmail,
     successRedirectUrl: `${APP_URL}/dashboard/billing?paid=1`,
   });
-  await prisma.transaction.updateMany({ where: { orderId }, data: { snapToken: inv.id, invoiceUrl: inv.invoiceUrl } });
-  return { invoiceUrl: inv.invoiceUrl };
+  await prisma.transaction.updateMany({ where: { orderId }, data: { snapToken: tx.token, invoiceUrl: tx.redirectUrl } });
+  return { invoiceUrl: tx.redirectUrl };
 }
 
 export async function createTopupCheckout(
@@ -68,15 +68,15 @@ export async function createTopupCheckout(
   await prisma.transaction.create({
     data: { workspaceId, orderId, kind: "TOPUP", credits: pack.credits, grossAmount: pack.price, status: "PENDING" },
   });
-  const inv = await createInvoice({
-    externalId: orderId,
+  const tx = await createTransaction({
+    orderId,
     amount: pack.price,
     description: `Top-up ${pack.credits.toLocaleString("id-ID")} kredit`,
     payerEmail,
     successRedirectUrl: `${APP_URL}/dashboard/billing?paid=1`,
   });
-  await prisma.transaction.updateMany({ where: { orderId }, data: { snapToken: inv.id, invoiceUrl: inv.invoiceUrl } });
-  return { invoiceUrl: inv.invoiceUrl };
+  await prisma.transaction.updateMany({ where: { orderId }, data: { snapToken: tx.token, invoiceUrl: tx.redirectUrl } });
+  return { invoiceUrl: tx.redirectUrl };
 }
 
 /** Idempotent: aktifkan langganan / tambah kredit saat invoice lunas. */
@@ -91,6 +91,6 @@ export async function handlePaidTransaction(orderId: string): Promise<void> {
   }
 
   // Tandai PAID hanya setelah kredit/langganan berhasil diberikan, supaya kalau baris di atas
-  // gagal, webhook Xendit akan retry (bukan diblokir permanen oleh guard status==="PAID" di atas).
+  // gagal, webhook Midtrans akan retry (bukan diblokir permanen oleh guard status==="PAID" di atas).
   await prisma.transaction.update({ where: { id: tx.id }, data: { status: "PAID", paidAt: new Date() } });
 }

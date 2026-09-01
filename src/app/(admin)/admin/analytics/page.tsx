@@ -108,7 +108,7 @@ export default function AdminAnalyticsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Analitik Platform</h1>
-          <p className="text-sm text-slate-400">Visualisasi data sistem Gaetin secara lengkap.</p>
+          <p className="text-sm text-slate-400">Visualisasi data sistem Hellens secara lengkap.</p>
         </div>
         <button onClick={load} disabled={loading} className="flex h-9 items-center gap-2 rounded-xl border border-white/[0.08] px-3 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-50">
           <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} /> Refresh

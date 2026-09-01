@@ -1,4 +1,4 @@
-// Design tokens untuk UI modern Gaetin.
+// Design tokens untuk UI modern Hellens.
 // Aksen utama mengikuti tema hijau yang dipakai di aplikasi.
 
 export const colors = {
@@ -143,7 +143,7 @@ export const shadows = {
   inner: "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
   none: "none",
 
-  // Glow effects untuk tema hijau Gaetin
+  // Glow effects untuk tema hijau Hellens
   glow: "0 0 20px rgba(34, 197, 94, 0.3)",
   "glow-lg": "0 0 40px rgba(34, 197, 94, 0.4)",
   "glow-primary": "0 0 20px hsl(151, 78%, 47%, 0.3)",

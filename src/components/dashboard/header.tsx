@@ -19,7 +19,7 @@ type HeaderProps = {
 };
 
 function getInitials(name?: string | null, email?: string | null) {
-  const source = name || email || "Gaetin User";
+  const source = name || email || "Hellens User";
   return source
     .split(/[ @._-]+/)
     .filter(Boolean)
@@ -81,7 +81,7 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
               {getInitials(user?.name, user?.email)}
             </div>
             <div className="hidden min-w-0 text-left sm:block">
-              <p className="max-w-[130px] truncate text-sm font-semibold text-foreground">{user?.name ?? "Gaetin Owner"}</p>
+              <p className="max-w-[130px] truncate text-sm font-semibold text-foreground">{user?.name ?? "Hellens Owner"}</p>
               <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-primary" />
                 Aktif

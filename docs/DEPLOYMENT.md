@@ -1,11 +1,11 @@
-# Panduan Deployment — Gaetin
+# Panduan Deployment — Hellens
 
 Deploy dengan Docker Compose di satu VPS: aplikasi (Next.js + Baileys), PostgreSQL, Redis, dan Caddy (reverse proxy + SSL otomatis).
 
 ## Prasyarat
 
 - VPS (mis. 2 vCPU / 4 GB RAM untuk awal) dengan Docker + Docker Compose.
-- Domain yang diarahkan (A record) ke IP VPS, mis. `app.gaetin.id`.
+- Domain yang diarahkan (A record) ke IP VPS, mis. `scraper.hellens.dev`.
 - Port 80 & 443 terbuka.
 
 ## 1. Siapkan environment
@@ -20,15 +20,17 @@ Isi minimal:
 
 ```
 JWT_SECRET=<hasil: openssl rand -base64 48>
-NEXT_PUBLIC_APP_URL=https://app.gaetin.id
-XENDIT_SECRET_KEY=<key Xendit>
-XENDIT_WEBHOOK_TOKEN=<token webhook Xendit>
+NEXT_PUBLIC_APP_URL=https://scraper.hellens.dev
+MIDTRANS_MERCHANT_ID=<merchant ID Midtrans>
+MIDTRANS_CLIENT_KEY=<client key Midtrans>
+MIDTRANS_SERVER_KEY=<server key Midtrans>
+MIDTRANS_IS_PRODUCTION=true
 ```
 
 Lalu set variabel khusus compose (boleh di `.env` yang sama):
 
 ```
-DOMAIN=app.gaetin.id
+DOMAIN=scraper.hellens.dev
 DB_PASSWORD=<password DB kuat>
 ```
 
@@ -48,7 +50,7 @@ Yang terjadi:
 Cek kesehatan:
 
 ```bash
-curl https://app.gaetin.id/api/health   # {"ok":true,"db":"up"}
+curl https://scraper.hellens.dev/api/health   # {"ok":true,"db":"up"}
 ```
 
 ## 3. Buat super-admin
@@ -56,7 +58,7 @@ curl https://app.gaetin.id/api/health   # {"ok":true,"db":"up"}
 Akun super-admin ditandai lewat flag `isSuperAdmin`. Untuk akun pertama, daftar lewat UI lalu set flag via SQL:
 
 ```bash
-docker compose exec db psql -U gaetin -d gaetin -c \
+docker compose exec db psql -U postgres -d hellens_scraper -c \
   "UPDATE \"User\" SET \"isSuperAdmin\" = true WHERE email = 'kamu@email.com';"
 ```
 
@@ -72,9 +74,12 @@ docker compose exec app npx prisma migrate deploy
 
 > Saat development, gunakan `npm run db:migrate` untuk membuat migrasi baru, commit folder `prisma/migrations/`, lalu deploy.
 
-## 5. Webhook Xendit
+## 5. Webhook Midtrans
 
-Arahkan webhook Invoice Xendit ke `https://app.gaetin.id/api/webhooks/xendit` dengan Verification Token = `XENDIT_WEBHOOK_TOKEN`.
+Di dashboard Midtrans (Settings > Configuration), set Payment Notification URL ke
+`https://scraper.hellens.dev/api/webhooks/midtrans`. Tidak perlu token verifikasi terpisah —
+setiap notifikasi diverifikasi lewat `signature_key` (SHA512 dari `order_id + status_code +
+gross_amount + MIDTRANS_SERVER_KEY`) yang dikirim Midtrans di body notifikasi.
 
 ## 6. Backup database (otomatis harian)
 
@@ -82,13 +87,13 @@ Tambahkan cron di host:
 
 ```bash
 0 2 * * * docker compose -f /path/docker-compose.yml exec -T db \
-  pg_dump -U gaetin gaetin | gzip > /backups/gaetin-$(date +\%F).sql.gz
+  pg_dump -U postgres hellens_scraper | gzip > /backups/hellens-$(date +\%F).sql.gz
 ```
 
 Uji restore secara berkala:
 
 ```bash
-gunzip -c backup.sql.gz | docker compose exec -T db psql -U gaetin -d gaetin
+gunzip -c backup.sql.gz | docker compose exec -T db psql -U postgres -d hellens_scraper
 ```
 
 ## 7. Monitoring
@@ -121,7 +126,7 @@ Migrasi baru otomatis diterapkan saat container start.
 - [ ] `.env` lengkap; `JWT_SECRET` & `DB_PASSWORD` kuat dan rahasia.
 - [ ] Domain + SSL aktif (cek gembok https).
 - [ ] `prisma migrate deploy` sukses (cek `/api/health`).
-- [ ] Webhook Xendit terhubung (uji transaksi kecil).
+- [ ] Webhook Midtrans terhubung (uji transaksi kecil).
 - [ ] Backup harian berjalan + uji restore.
 - [ ] Monitoring uptime aktif.
 - [ ] Super-admin dibuat.

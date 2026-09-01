@@ -20,33 +20,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     return { jobId: str.slice(0, idx), token: str.slice(idx + 1) };
   }
 
-  // Auto-detect gaetin params from the current active tab URL
+  // Auto-detect hellens params from the current active tab URL
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('google.com/maps')) {
       const tabUrl = new URL(tab.url);
-      const autoJobId = tabUrl.searchParams.get('gaetin_job_id');
-      const autoToken = tabUrl.searchParams.get('gaetin_token');
+      const autoJobId = tabUrl.searchParams.get('hellens_job_id');
+      const autoToken = tabUrl.searchParams.get('hellens_token');
       if (autoJobId) {
         const key = autoToken ? `${autoJobId}:${autoToken}` : autoJobId;
         sessionKeyInput.value = key;
-        chrome.storage.local.set({ gaetinSessionKey: key });
+        chrome.storage.local.set({ hellensSessionKey: key });
       }
     }
   } catch (_) {}
 
   // Load saved settings (overridden by auto-detect above if found)
-  chrome.storage.local.get(['gaetinSessionKey', 'gaetinMaxLeads', 'gaetinDelay'], (res) => {
-    if (!sessionKeyInput.value && res.gaetinSessionKey) sessionKeyInput.value = res.gaetinSessionKey;
-    if (res.gaetinMaxLeads) maxLeadsInput.value = res.gaetinMaxLeads;
-    if (res.gaetinDelay) delaySecInput.value = res.gaetinDelay;
+  chrome.storage.local.get(['hellensSessionKey', 'hellensMaxLeads', 'hellensDelay'], (res) => {
+    if (!sessionKeyInput.value && res.hellensSessionKey) sessionKeyInput.value = res.hellensSessionKey;
+    if (res.hellensMaxLeads) maxLeadsInput.value = res.hellensMaxLeads;
+    if (res.hellensDelay) delaySecInput.value = res.hellensDelay;
   });
 
   const saveSettings = () => {
     chrome.storage.local.set({
-      gaetinSessionKey: sessionKeyInput.value.trim(),
-      gaetinMaxLeads: parseInt(maxLeadsInput.value, 10) || 100,
-      gaetinDelay: parseFloat(delaySecInput.value) || 2
+      hellensSessionKey: sessionKeyInput.value.trim(),
+      hellensMaxLeads: parseInt(maxLeadsInput.value, 10) || 100,
+      hellensDelay: parseFloat(delaySecInput.value) || 2
     });
   };
 
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const rawKey = sessionKeyInput.value.trim();
     if (!rawKey) {
       statusCard.className = 'status-card active error';
-      statusMsg.textContent = 'Harap isi Session Key dari dashboard Gaetin!';
+      statusMsg.textContent = 'Harap isi Session Key dari dashboard Hellens!';
       statusMsg.style.color = '#ef4444';
       return;
     }

@@ -58,7 +58,7 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
 }
 
 export default function MobileNav({
-  appName = "Gaetin",
+  appName = "Hellens",
   featureFlags,
   isSuperAdmin = false,
   credits = 0,

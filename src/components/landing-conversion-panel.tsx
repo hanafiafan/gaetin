@@ -57,7 +57,7 @@ export default function LandingConversionPanel() {
             Lihat gambaran hasil sebelum mencoba dashboard.
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-300">
-            Pilih tipe bisnis dan jumlah kontak. Gaetin akan memberi gambaran percakapan, follow-up, dan potensi deal yang bisa kamu pantau.
+            Pilih tipe bisnis dan jumlah kontak. Hellens akan memberi gambaran percakapan, follow-up, dan potensi deal yang bisa kamu pantau.
           </p>
 
           <div className="mt-7 space-y-3">

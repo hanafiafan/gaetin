@@ -13,7 +13,7 @@ export async function GET() {
   return NextResponse.json({
     success: true,
     data: {
-      appName: b?.appName ?? "Gaetin",
+      appName: b?.appName ?? "Hellens",
       logoUrl: b?.logoUrl ?? null,
       primaryColor: b?.primaryColor ?? "#10b981",
       secondaryColor: b?.secondaryColor ?? "#7c3aed",
@@ -60,7 +60,7 @@ export async function PUT(req: NextRequest) {
     },
     create: {
       workspaceId: session.workspace.id,
-      appName: d.appName ?? "Gaetin",
+      appName: d.appName ?? "Hellens",
       logoUrl: d.logoUrl || null,
       primaryColor: d.primaryColor ?? "#10b981",
       secondaryColor: d.secondaryColor ?? "#7c3aed",

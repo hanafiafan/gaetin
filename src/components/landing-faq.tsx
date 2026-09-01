@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 const FAQ_ITEMS = [
   {
     q: "Apakah perlu install aplikasi tambahan untuk mulai?",
-    a: "Tidak perlu. Dashboard Gaetin berjalan sepenuhnya di browser. Untuk fitur scraping otomatis di Google Maps, Anda perlu menginstall ekstensi Chrome Gaetin — tersedia gratis, bisa diunduh langsung dari menu Scraper di dashboard.",
+    a: "Tidak perlu. Dashboard Hellens berjalan sepenuhnya di browser. Untuk fitur scraping otomatis di Google Maps, Anda perlu menginstall ekstensi Chrome Hellens — tersedia gratis, bisa diunduh langsung dari menu Scraper di dashboard.",
   },
   {
     q: "Bagaimana cara kerja scraping lead di Google Maps?",
-    a: "Gaetin menggunakan ekstensi Chrome yang terintegrasi dengan Google Maps. Cukup atur kata kunci pencarian (contoh: 'toko baju Surabaya'), area, dan jumlah hasil yang diinginkan. Ekstensi akan berjalan otomatis dan menyimpan data bisnis — nama, nomor, alamat, kategori, rating, jam buka — langsung ke database lead Anda.",
+    a: "Hellens menggunakan ekstensi Chrome yang terintegrasi dengan Google Maps. Cukup atur kata kunci pencarian (contoh: 'toko baju Surabaya'), area, dan jumlah hasil yang diinginkan. Ekstensi akan berjalan otomatis dan menyimpan data bisnis — nama, nomor, alamat, kategori, rating, jam buka — langsung ke database lead Anda.",
   },
   {
     q: "Apakah data scraping legal dan aman?",
@@ -30,7 +30,7 @@ const FAQ_ITEMS = [
     a: "Anda bisa menghubungkan beberapa akun WhatsApp sekaligus dalam satu workspace. Sistem mendukung beberapa provider (Baileys, Gateway, dan Cloud API), sehingga tim bisa membagi beban pengiriman pesan dan menghindari batas harian dari satu nomor.",
   },
   {
-    q: "Apakah Gaetin cocok untuk tim dengan beberapa pengguna?",
+    q: "Apakah Hellens cocok untuk tim dengan beberapa pengguna?",
     a: "Ya. Setiap workspace mendukung beberapa anggota tim dengan role yang berbeda: Owner, Admin, dan Agent. Owner bisa mengatur siapa yang punya akses ke fitur mana — misalnya Agent hanya bisa akses Inbox dan Tugas, sementara Admin bisa mengelola semua fitur.",
   },
   {

@@ -360,12 +360,12 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
       const location = regionInput || "Indonesia";
       const q = encodeURIComponent(`${combinedKeyword} di ${location}`);
       const gmapsUrl = `https://www.google.com/maps/search/${q}` +
-        `?gaetin_job_id=${j.data.id}` +
-        `&gaetin_token=${j.data.extensionToken ?? ""}` +
-        `&gaetin_auto=true` +
-        `&gaetin_max=${maxLeads}` +
-        `&gaetin_delay=2` +
-        `&gaetin_fields=${[...dataFields].join(",")}`;
+        `?hellens_job_id=${j.data.id}` +
+        `&hellens_token=${j.data.extensionToken ?? ""}` +
+        `&hellens_auto=true` +
+        `&hellens_max=${maxLeads}` +
+        `&hellens_delay=2` +
+        `&hellens_fields=${[...dataFields].join(",")}`;
       window.open(gmapsUrl, "_blank");
     } else {
       // Trigger background execution and let it hang so Vercel doesn't kill it

@@ -21,7 +21,7 @@ const STEPS = [
     id: 1,
     icon: Chrome,
     title: "Install Ekstensi Chrome",
-    subtitle: "Download & aktifkan ekstensi Gaetin",
+    subtitle: "Download & aktifkan ekstensi Hellens",
   },
   {
     id: 2,
@@ -72,7 +72,7 @@ export default function SetupPage() {
           Panduan Setup
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Setup Ekstensi Gaetin
+          Setup Ekstensi Hellens
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Ikuti 4 langkah ini agar scraping Google Maps berjalan sempurna.
@@ -200,7 +200,7 @@ function StepInstall({
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="font-bold text-foreground">Ekstensi Gaetin untuk Chrome</p>
+            <p className="font-bold text-foreground">Ekstensi Hellens untuk Chrome</p>
             <p className="mt-0.5 text-xs text-muted-foreground">Versi terbaru · Kompatibel dengan Chrome 100+</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -210,15 +210,7 @@ function StepInstall({
               className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
             >
               <Download className="h-4 w-4" />
-              Download .ZIP (Rekomendasi)
-            </a>
-            <a
-              href="/extension.crx"
-              download
-              className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground/80 transition hover:border-primary/40 hover:text-foreground"
-            >
-              <Download className="h-4 w-4" />
-              .CRX
+              Download .ZIP
             </a>
           </div>
         </div>
@@ -226,25 +218,14 @@ function StepInstall({
 
       {/* Install instructions */}
       <div>
-        <p className="mb-3 text-sm font-semibold text-foreground/80">Pilih Cara Install yang Kamu Suka:</p>
-        
-        {/* Method A */}
-        <div className="mb-4 rounded-xl border border-primary/20 bg-card p-4">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">Metode 1: Paling Mudah (File .ZIP & Load Unpacked)</p>
+        <p className="mb-3 text-sm font-semibold text-foreground/80">Cara Install:</p>
+
+        <div className="rounded-xl border border-primary/20 bg-card p-4">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">File .ZIP & Load Unpacked</p>
           <div className="space-y-2 text-xs text-muted-foreground">
             <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-primary">extension.zip</code> lalu **extract/unzip** menjadi folder.</p>
             <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan **Mode pengembang** (kanan atas).</p>
             <p><strong className="text-foreground">3.</strong> Klik tombol **"Load unpacked"** (Muat yang dibongkar) → pilih **folder hasil extract** tadi.</p>
-          </div>
-        </div>
-
-        {/* Method B */}
-        <div className="rounded-xl border border-border bg-card p-4">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-foreground/70">Metode 2: Drag & Drop (File .CRX)</p>
-          <div className="space-y-2 text-xs text-muted-foreground">
-            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.crx</code>.</p>
-            <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan **Mode pengembang**.</p>
-            <p><strong className="text-foreground">3.</strong> Buka folder Downloads di Finder/File Explorer, lalu **Tarik (Drag & Drop)** file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.crx</code> langsung ke tengah halaman Chrome.</p>
           </div>
         </div>
       </div>
@@ -255,7 +236,7 @@ function StepInstall({
         {[
           "Sudah download file ekstensi",
           "Sudah mengaktifkan Mode Pengembang di Chrome",
-          "Ikon Gaetin sudah muncul di toolbar Chrome",
+          "Ikon Hellens sudah muncul di toolbar Chrome",
         ].map((label, i) => (
           <label key={i} className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition hover:bg-card">
             <div
@@ -430,7 +411,7 @@ function StepPermissions({
         <div>
           <h2 className="text-xl font-bold text-foreground">Aktifkan Izin Browser</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Chrome perlu izin popup dan lokasi agar ekstensi Gaetin bisa bekerja dengan optimal di Google Maps.
+            Chrome perlu izin popup dan lokasi agar ekstensi Hellens bisa bekerja dengan optimal di Google Maps.
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ fetch('https://overpass-api.de/api/interpreter', {
   method: 'POST',
   headers: { 
     'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'GaetinScraperTest/1.0'
+    'User-Agent': 'HellensScraperTest/1.0'
   },
   body: new URLSearchParams({ data: query })
 })

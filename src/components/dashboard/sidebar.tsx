@@ -116,7 +116,7 @@ function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: (
 /* ── Sidebar ───────────────────────────────────────────────── */
 
 export default function Sidebar({
-  appName = "Gaetin",
+  appName = "Hellens",
   featureFlags,
   isSuperAdmin = false,
   credits = 0,
@@ -143,7 +143,9 @@ export default function Sidebar({
     <>
       <aside className="sticky top-0 z-20 hidden h-screen w-[292px] shrink-0 border-r border-border bg-card/90 px-4 py-4 backdrop-blur-2xl lg:flex lg:flex-col">
         <Link href="/dashboard" className="cg-card flex items-center gap-3 rounded-3xl p-3">
-          <span className="gradient-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-base font-black text-foreground shadow-glow">G</span>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary shadow-glow">
+            <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-6 w-6" />
+          </span>
           <span className="min-w-0">
             <span className="block text-base font-black text-foreground">{appName}</span>
             <span className="block truncate text-xs font-medium text-muted-foreground">Sistem WhatsApp pelanggan</span>
@@ -270,7 +272,7 @@ export default function Sidebar({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-foreground">Owner CMS</p>
-                <p className="text-[10px] text-muted-foreground">Kelola sistem Gaetin.</p>
+                <p className="text-[10px] text-muted-foreground">Kelola sistem Hellens.</p>
               </div>
               <Link
                 href="/admin/cms"

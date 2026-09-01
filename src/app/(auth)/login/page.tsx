@@ -45,7 +45,7 @@ function LoginForm() {
   return (
     <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
       <div className="mb-5">
-        <h1 className="text-xl font-black text-white">Masuk ke Gaetin</h1>
+        <h1 className="text-xl font-black text-white">Masuk ke Hellens</h1>
         <p className="mt-1 text-sm text-slate-400">Lanjutkan lead, outreach, dan CRM dari workspace Anda.</p>
       </div>
 

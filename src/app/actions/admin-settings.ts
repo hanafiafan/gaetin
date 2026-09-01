@@ -11,15 +11,15 @@ async function upsertSetting(key: string, value: string) {
   });
 }
 
-export async function saveXenditSettings(formData: FormData) {
+export async function saveMidtransSettings(formData: FormData) {
   await requireSuperAdmin();
   const fields = [
-    "xendit_mode",
-    "xendit_api_key",
-    "xendit_secret_key",
-    "xendit_sandbox_api_key",
-    "xendit_sandbox_secret_key",
-    "xendit_webhook_token",
+    "midtrans_mode",
+    "midtrans_merchant_id",
+    "midtrans_client_key",
+    "midtrans_server_key",
+    "midtrans_sandbox_client_key",
+    "midtrans_sandbox_server_key",
   ];
   for (const key of fields) {
     const value = (formData.get(key) as string | null) ?? "";

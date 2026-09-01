@@ -21,7 +21,7 @@ export const DEFAULT_LANDING: LandingContent = {
   ],
   faq: [
     { q: "Apa itu kredit?", a: "Kredit dipakai saat menyimpan lead jadi kontak dan validasi nomor. Tiap paket memberi jatah kredit bulanan, dan bisa top-up kapan saja." },
-    { q: "Metode pembayaran apa saja?", a: "Pembayaran via Xendit: transfer/virtual account, e-wallet, dan QRIS." },
+    { q: "Metode pembayaran apa saja?", a: "Pembayaran via Midtrans: transfer/virtual account, e-wallet, dan QRIS." },
     { q: "Apakah nomor WhatsApp saya aman?", a: "Pakai nomor bisnis khusus dan ikuti batas kirim harian. Sistem punya pengaman anti-spam." },
     { q: "Bisa coba dulu?", a: "Bisa. Daftar gratis dan dapat kredit trial untuk mencoba scraping dan fitur inti." },
   ],

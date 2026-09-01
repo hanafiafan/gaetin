@@ -65,7 +65,7 @@ export default function RegisterPage() {
 
       <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
         <div className="mb-5">
-          <h1 className="text-xl font-black text-white">Buat workspace Gaetin</h1>
+          <h1 className="text-xl font-black text-white">Buat workspace Hellens</h1>
           <p className="mt-1 text-sm text-slate-400">Daftar gratis, tidak perlu kartu kredit.</p>
         </div>
 

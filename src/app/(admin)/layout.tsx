@@ -11,7 +11,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <header className="sticky top-4 z-20 mx-3 mt-4 flex min-h-16 items-center justify-between gap-4 rounded-[1.75rem] border border-white/10 bg-[#050712]/80 px-5 py-3 shadow-glow backdrop-blur-2xl sm:mx-5 lg:mx-7">
           <div>
             <span className="text-sm font-black text-white">Pengaturan Owner</span>
-            <p className="text-xs text-slate-400">CMS, pelanggan, paket, dan laporan penggunaan Gaetin.</p>
+            <p className="text-xs text-slate-400">CMS, pelanggan, paket, dan laporan penggunaan Hellens.</p>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <span className="hidden text-slate-400 sm:inline">{session.user.name}</span>

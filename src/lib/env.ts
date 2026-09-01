@@ -14,8 +14,15 @@ const envSchema = z.object({
   WA_GATEWAY_BASE_URL: z.string().optional(),
   WA_GATEWAY_TOKEN: z.string().optional(),
 
-  XENDIT_SECRET_KEY: z.string().optional(),
-  XENDIT_WEBHOOK_TOKEN: z.string().optional(),
+  MIDTRANS_MERCHANT_ID: z.string().optional(),
+  MIDTRANS_CLIENT_KEY: z.string().optional(),
+  MIDTRANS_SERVER_KEY: z.string().optional(),
+  MIDTRANS_IS_PRODUCTION: z
+    .string()
+    .default("false")
+    .transform((v) => v === "true"),
+
+  DEFAULT_COUNTRY_CODE: z.string().default("62"),
 
   SCRAPER_SERVICE_URL: z.string().optional(),
   OVERPASS_API_URL: z.string().url().default("https://overpass-api.de/api/interpreter"),
