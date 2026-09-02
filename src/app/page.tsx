@@ -267,11 +267,13 @@ export default function HomePage() {
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <section className="cg-section pb-10 pt-12 md:pt-16">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
           <div className="min-w-0">
             <span className="cg-kicker">Google Maps · WhatsApp · CRM</span>
 
-            <h1 className="cg-display mt-6 text-[clamp(2.75rem,9vw,7rem)]">
+            {/* Sized to fit the column: the longest line ("dari Google Maps,")
+                overflowed into the artwork at the previous 9vw / 7rem. */}
+            <h1 className="cg-display mt-6 text-[clamp(2.5rem,6.4vw,5.25rem)]">
               Ribuan prospek
               <br />
               dari Google Maps,
@@ -287,7 +289,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link href="/register" className="group inline-flex items-center gap-3">
                 <span className="cg-label border-b-2 border-primary pb-1">Coba scraping gratis</span>
-                <ArrowButton href="/register" label="Coba scraping gratis" variant="black" size="sm" />
+                <ArrowButton label="Coba scraping gratis" variant="black" size="sm" decorative />
               </Link>
               <Link href="#setup" className="cg-label text-muted-foreground transition hover:text-foreground">
                 Lihat cara kerja
@@ -341,59 +343,63 @@ export default function HomePage() {
 
       {/* ── Trust bar ───────────────────────────────────────────────────── */}
       <section className="cg-section">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-y border-border py-5">
-          {trustFeatures.map((item, i) => {
+        <div className="grid grid-cols-2 border-y border-border sm:grid-cols-3 lg:grid-cols-6">
+          {trustFeatures.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="flex items-center gap-5">
-                {i > 0 && <span className="cg-cross hidden sm:block" />}
-                <span className="cg-label flex items-center gap-2 text-muted-foreground">
-                  <Icon className="h-3.5 w-3.5" />
-                  {item.label}
-                </span>
-              </div>
+              <span
+                key={item.label}
+                className="cg-label flex items-center gap-2 border-l border-border px-4 py-5 text-muted-foreground first:border-l-0 first:pl-0"
+              >
+                <Icon className="h-3.5 w-3.5 shrink-0" />
+                {item.label}
+              </span>
             );
           })}
         </div>
       </section>
 
-      {/* ── Value band ──────────────────────────────────────────────────── */}
-      <section className="cg-section py-20">
-        <div className="grid gap-10 lg:grid-cols-[260px_1fr_1fr] lg:items-end">
-          {/* Photo with a yellow bar breaking its edge, per the reference */}
-          <div className="relative hidden lg:block">
-            <img
-              src="/media/value-band.jpg"
-              alt="Pemilik bisnis mengelola prospek dari dashboard Hellens"
-              className="aspect-[4/5] w-full object-cover grayscale"
-              loading="lazy"
-            />
-            <span className="absolute -right-6 top-1/2 h-10 w-28 bg-primary" />
-          </div>
+      {/* ── Value band — inverted, so the B&W photo carries it ──────────── */}
+      <section className="cg-invert">
+        <div className="cg-section py-20 lg:py-28">
+          <div className="grid gap-10 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-center lg:gap-14">
+            {/* Photo with a yellow bar breaking its edge, per the reference */}
+            <div className="relative hidden lg:block">
+              <img
+                src="/media/value-band.jpg"
+                alt="Pemilik bisnis mengelola prospek dari dashboard Hellens"
+                className="aspect-[4/5] w-full object-cover grayscale"
+                loading="lazy"
+              />
+              <span className="absolute -right-7 top-1/2 h-12 w-32 bg-primary" />
+            </div>
 
-          <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
-            Dari menemukan prospek
-            <br />
-            sampai <span className="cg-highlight">jadi pelanggan.</span>
-          </h2>
-          <div className="lg:pb-3">
-            <p className="max-w-md text-sm leading-7 text-muted-foreground">
-              Trial gratis memberi akses ke scraping &amp; ekspor. Upgrade untuk membuka WhatsApp
-              marketing, CRM, dan seluruh fitur otomasi.
-            </p>
-            <Link
-              href="#fitur"
-              className="cg-label mt-6 inline-flex items-center gap-2 bg-foreground px-5 py-3.5 text-background transition hover:bg-primary hover:text-primary-foreground"
-            >
-              Lihat semua fitur
-              <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
-            </Link>
+            <div className="min-w-0">
+              <h2 className="cg-display text-[clamp(2.25rem,5.4vw,4.25rem)]">
+                Dari menemukan prospek
+                <br />
+                sampai <span className="cg-highlight">jadi pelanggan.</span>
+              </h2>
+              <div className="mt-10 grid gap-8 border-t border-border pt-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                <p className="max-w-md text-sm leading-7 text-muted-foreground">
+                  Trial gratis memberi akses ke scraping &amp; ekspor. Upgrade untuk membuka
+                  WhatsApp marketing, CRM, dan seluruh fitur otomasi.
+                </p>
+                <Link
+                  href="#fitur"
+                  className="cg-label inline-flex shrink-0 items-center gap-2 bg-primary px-5 py-3.5 text-primary-foreground transition hover:bg-background hover:text-foreground"
+                >
+                  Lihat semua fitur
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── Features ────────────────────────────────────────────────────── */}
-      <section id="fitur" className="cg-section pb-20">
+      <section id="fitur" className="cg-section py-20">
         <div className="flex items-center justify-between gap-4 border-b border-foreground pb-4">
           <h2 className="cg-display text-3xl sm:text-4xl">
             Fitur <span className="text-primary">●</span>
@@ -434,8 +440,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Setup steps ─────────────────────────────────────────────────── */}
-      <section id="setup" className="cg-section py-20">
+      {/* ── Setup steps — tinted band ───────────────────────────────────── */}
+      <section id="setup" className="cg-tint">
+        <div className="cg-section py-20 lg:py-24">
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
           <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
             Install sampai
@@ -525,6 +532,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* ── Simulation ──────────────────────────────────────────────────── */}
@@ -545,8 +553,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Pricing ─────────────────────────────────────────────────────── */}
-      <section id="harga" className="cg-section py-20">
+      {/* ── Pricing — inverted, featured tier in yellow ─────────────────── */}
+      <section id="harga" className="cg-invert">
+        <div className="cg-section py-20 lg:py-28">
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
           <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
             Mulai gratis.
@@ -564,12 +573,12 @@ export default function HomePage() {
             <article
               key={plan.name}
               className={`flex flex-col border-b border-r border-border p-8 ${
-                plan.highlighted ? "bg-foreground text-background" : ""
+                plan.highlighted ? "bg-primary text-primary-foreground" : ""
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <h3 className="cg-display text-3xl">{plan.name}</h3>
-                {plan.badge && <span className="cg-highlight cg-label">{plan.badge}</span>}
+                {plan.badge && <span className="cg-label bg-primary-foreground px-2 py-1 text-primary">{plan.badge}</span>}
               </div>
 
               <div className="mt-6 flex items-end gap-2">
@@ -587,8 +596,8 @@ export default function HomePage() {
                 href={plan.ctaHref}
                 className={`cg-label mt-7 flex items-center justify-between gap-2 px-5 py-4 transition ${
                   plan.highlighted
-                    ? "bg-primary text-primary-foreground hover:bg-background hover:text-foreground"
-                    : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground"
+                    ? "bg-primary-foreground text-primary hover:bg-background hover:text-foreground"
+                    : "bg-primary text-primary-foreground hover:bg-foreground hover:text-background"
                 }`}
               >
                 {plan.cta}
@@ -626,6 +635,7 @@ export default function HomePage() {
         <p className="cg-label mt-8 text-muted-foreground">
           Harga belum termasuk PPN · Diskon 20% pembayaran tahunan · Trial tanpa kartu kredit
         </p>
+        </div>
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
@@ -645,8 +655,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Testimonials ────────────────────────────────────────────────── */}
-      <section className="cg-section py-20">
+      {/* ── Testimonials — inverted for the B&W portraits ───────────────── */}
+      <section className="cg-invert">
+        <div className="cg-section py-20 lg:py-24">
         <div className="flex items-center justify-between gap-4 border-b border-foreground pb-4">
           <h2 className="cg-display text-3xl sm:text-4xl">
             Testimoni <span className="text-primary">●</span>
@@ -662,7 +673,7 @@ export default function HomePage() {
                 <img
                   src={testimonial.photo}
                   alt={testimonial.name}
-                  className="h-12 w-12 shrink-0 object-cover grayscale"
+                  className="h-14 w-14 shrink-0 object-cover grayscale"
                   loading="lazy"
                 />
                 <div>
@@ -673,12 +684,14 @@ export default function HomePage() {
             </article>
           ))}
         </div>
+        </div>
       </section>
 
-      {/* ── Final CTA ───────────────────────────────────────────────────── */}
-      <section className="cg-section pb-20">
+      {/* ── Final CTA — full-bleed accent band ──────────────────────────── */}
+      <section className="cg-accent">
+        <div className="cg-section py-20 lg:py-24">
         <div className="grid lg:grid-cols-[1.2fr_1fr]">
-          <div className="flex flex-col justify-between gap-10 bg-primary p-8 text-primary-foreground sm:p-12">
+          <div className="flex flex-col justify-between gap-10 py-2 pr-8 sm:pr-12">
             <h2 className="cg-display text-[clamp(2.5rem,7vw,5rem)]">
               Mulai scraping
               <br />
@@ -692,10 +705,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-between gap-8 border border-border border-l-0 p-8 sm:p-12">
+          <div className="flex flex-col justify-between gap-8 border-l border-border pl-8 sm:pl-12">
             <div>
               <span className="cg-label text-muted-foreground">Sudah punya akun?</span>
-              <Link href="/login" className="cg-display mt-3 flex items-center gap-3 text-3xl transition hover:text-muted-foreground">
+              <Link href="/login" className="cg-display mt-3 flex items-center gap-3 text-3xl transition hover:opacity-70">
                 Masuk
                 <ArrowUpRight className="h-6 w-6" strokeWidth={2.5} />
               </Link>
@@ -708,6 +721,7 @@ export default function HomePage() {
             </div>
             <span className="cg-cross" />
           </div>
+        </div>
         </div>
       </section>
 

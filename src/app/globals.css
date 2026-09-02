@@ -99,12 +99,16 @@
      The type IS the design here: enormous condensed display against very
      small body copy and tiny wide-tracked meta labels.                     */
 
+  /* Anton, measured: cap height 0.86em, ascent 1.18em, descent 0.33em
+     (content box 1.51em). Leading must clear the cap height or consecutive
+     lines physically collide — 0.88 left only a 0.02em gap. 0.98 stays tight
+     and dramatic while leaving a real 0.12em channel between cap rows. */
   .cg-display {
     font-family: var(--font-display), Impact, sans-serif;
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: -0.02em;
-    line-height: 0.88;
+    line-height: 0.98;
   }
 
   .cg-label {
@@ -115,13 +119,71 @@
     line-height: 1.4;
   }
 
-  /* Acid-yellow marker sitting behind inline text. */
+  /* Acid-yellow marker sitting behind inline text.
+     The bar is drawn as a sized background rather than a plain inline fill:
+     an inline background box is sized by font metrics (~1.15em for Anton),
+     so against .cg-display's 0.88 line-height it bleeds into the line above
+     and reads as a strikethrough. Constraining it keeps tight leading safe
+     even when the highlighted phrase wraps. */
   .cg-highlight {
-    background: hsl(var(--primary));
+    background-image: linear-gradient(hsl(var(--primary)), hsl(var(--primary)));
+    background-repeat: no-repeat;
+    /* Anton's content box is 1.51em with caps sitting 0.32em-1.18em inside it.
+       A 0.98em bar offset 0.26em covers the caps with even padding and lands
+       exactly on the 0.98 line box, so it never bleeds into the line above. */
+    background-size: 100% 0.98em;
+    background-position: 0 0.26em;
     color: hsl(var(--primary-foreground));
     padding: 0 0.18em;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
+  }
+
+  /* Body/label text has normal leading, so a plain fill is safe there. */
+  .cg-label.cg-highlight,
+  p .cg-highlight {
+    background-image: none;
+    background-color: hsl(var(--primary));
+  }
+
+  /* ── Section skins ──────────────────────────────────────────────────────
+     These remap the tokens for their subtree, so every existing semantic
+     class (text-muted-foreground, border-border, cg-card, ...) inverts on
+     its own. --primary and --primary-foreground deliberately do NOT change:
+     yellow stays yellow and always carries near-black text. */
+
+  .cg-invert {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 64%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 0 0% 4%;
+    --border: 0 0% 24%;
+    --input: 0 0% 24%;
+    --ring: 0 0% 100%;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .cg-tint {
+    --background: 0 0% 96%;
+    --muted: 0 0% 91%;
+    --border: 0 0% 85%;
+    background: hsl(var(--background));
+  }
+
+  .cg-accent {
+    --background: 66 100% 50%;
+    --foreground: 0 0% 4%;
+    --card: 66 100% 50%;
+    --muted: 66 60% 44%;
+    --muted-foreground: 0 0% 18%;
+    --border: 0 0% 4%;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 
   /* ── Surfaces ───────────────────────────────────────────────────────────

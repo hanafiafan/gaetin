@@ -22,11 +22,18 @@ interface ArrowButtonProps {
   variant?: Variant;
   size?: Size;
   className?: string;
+  /**
+   * Render as a plain span for use *inside* an existing link or button.
+   * Nesting an <a> or <button> inside an <a> is invalid HTML and breaks
+   * React hydration, so callers that already wrap this in a Link must set it.
+   */
+  decorative?: boolean;
 }
 
 /**
  * The circular ↗ affordance — the reference design's universal "go" control.
- * Renders as a link when `href` is given, otherwise a button.
+ * Renders as a link when `href` is given, a button otherwise, or an inert
+ * span when `decorative`.
  */
 export default function ArrowButton({
   href,
@@ -34,9 +41,18 @@ export default function ArrowButton({
   variant = "black",
   size = "md",
   className = "",
+  decorative = false,
 }: ArrowButtonProps) {
   const classes = `inline-flex shrink-0 items-center justify-center rounded-full transition ${VARIANT[variant]} ${SIZE[size].box} ${className}`;
   const icon = <ArrowUpRight className={SIZE[size].icon} strokeWidth={2.5} />;
+
+  if (decorative) {
+    return (
+      <span aria-hidden="true" className={classes}>
+        {icon}
+      </span>
+    );
+  }
 
   if (href) {
     return (
