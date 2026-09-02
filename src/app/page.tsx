@@ -325,7 +325,7 @@ export default function HomePage() {
         {/* Dashboard mock */}
         <div className="relative z-10 mx-auto mt-14 max-w-6xl">
           <div className="cg-card-strong rounded-[2rem] p-3 sm:p-4">
-            <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#080a14]">
+            <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-background">
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                 <div className="flex items-center gap-2">
                   <span className="h-3 w-3 rounded-full bg-rose-400" />
@@ -376,7 +376,7 @@ export default function HomePage() {
                       </div>
                       <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">+31.8%</div>
                     </div>
-                    <div className="relative h-48 overflow-hidden rounded-3xl border border-white/10 bg-[#070a12] p-3">
+                    <div className="relative h-48 overflow-hidden rounded-3xl border border-white/10 bg-background p-3">
                       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:48px_48px] opacity-45" />
                       <div className="absolute inset-x-4 bottom-5 top-4 rounded-[1.25rem] bg-gradient-to-t from-primary/10 to-transparent blur-xl" />
                       <svg className="relative z-10 h-full w-full overflow-visible" viewBox="0 0 320 170" role="img" aria-label="Grafik pipeline prospek">
@@ -576,10 +576,10 @@ export default function HomePage() {
             </div>
 
             {/* Google Maps mockup */}
-            <div className="rounded-2xl border border-white/10 bg-[#1a1c2a] overflow-hidden">
+            <div className="rounded-2xl border border-white/10 bg-secondary overflow-hidden">
               {/* Search bar */}
-              <div className="flex items-center gap-2.5 border-b border-white/10 bg-[#1e2030] px-4 py-3">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/">
+              <div className="flex items-center gap-2.5 border-b border-white/10 bg-muted px-4 py-3">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20">
                   <MapPin className="h-3 w-3 text-primary" />
                 </div>
                 <span className="flex-1 text-sm text-slate-400">kafe jakarta pusat</span>
@@ -593,7 +593,7 @@ export default function HomePage() {
               {/* THE CHECKBOX */}
               <div className="mx-4 my-3 rounded-xl border-2 border-red-500/60 bg-red-500/5 px-3 py-2.5 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/">
+                  <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/20">
                     <Check className="h-2.5 w-2.5 text-primary" />
                   </div>
                   <span className="text-sm text-white font-medium">Perbarui hasil saat peta digeser</span>

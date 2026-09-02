@@ -16,7 +16,6 @@ import {
   Target,
   TrendingUp,
   Users,
-  Zap,
   AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
@@ -229,28 +228,9 @@ export default async function DashboardPage({
         ))}
       </div>
 
-      {/* Credits + alur kerja */}
-      <div className="grid gap-5 lg:grid-cols-3">
-        <div className={`cg-card rounded-2xl p-6 ${isLowCredits ? "border-amber-500/30" : ""}`}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/15 text-amber-400" : "bg-primary/15 text-primary"}`}>
-                <Zap className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-muted-foreground">Kredit tersisa</div>
-                <div className="text-2xl font-bold text-foreground">{credits.toLocaleString("id-ID")}</div>
-              </div>
-            </div>
-            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">{planLabel}</span>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">1 kredit = 1 lead disimpan atau 1 nomor divalidasi</p>
-          <Link href="/dashboard/billing" className="mt-4 flex h-9 w-full items-center justify-center rounded-xl border border-border bg-card text-sm font-semibold text-foreground/80 transition hover:border-primary/30 hover:text-primary">
-            Kelola kredit &amp; tagihan
-          </Link>
-        </div>
-
-        <div className="cg-card rounded-2xl p-6 lg:col-span-2">
+      {/* Alur kerja */}
+      <div className="grid gap-5">
+        <div className="cg-card rounded-2xl p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-base font-bold text-foreground">Alur kerja hari ini</h2>
