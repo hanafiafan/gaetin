@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { ArrowRight, Lock, LogOut, Menu, Settings, X, Zap } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Lock, LogOut, Menu, Settings, X } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
-
-const PLAN_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
+import UpgradeModal from "@/components/dashboard/upgrade-modal";
+import CreditsWidget from "@/components/dashboard/credits-widget";
 
 type MobileNavProps = {
   appName?: string;
@@ -18,44 +18,6 @@ type MobileNavProps = {
   subscriptionStatus?: string;
   planFeatures?: PlanFeatures;
 };
-
-function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: () => void }) {
-  const router = useRouter();
-  if (!feature) return null;
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div
-        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start justify-between p-6 pb-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
-            <Lock className="h-6 w-6" />
-          </div>
-          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="px-6 pb-6">
-          <h2 className="text-xl font-black text-foreground">{feature} butuh paket Bisnis</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Paket Starter hanya mencakup scraping Google Maps dan ekspor CSV. Upgrade ke Bisnis untuk membuka fitur ini.
-          </p>
-          <button
-            onClick={() => { router.push("/dashboard/billing"); onClose(); }}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-          >
-            Upgrade Sekarang <ArrowRight className="h-4 w-4" />
-          </button>
-          <button onClick={onClose} className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground">
-            Nanti saja
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function MobileNav({
   appName = "Hellens",
@@ -69,9 +31,6 @@ export default function MobileNav({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [lockedFeature, setLockedFeature] = useState<string | null>(null);
-
-  const maxCredits = PLAN_CREDITS[plan] ?? 100;
-  const creditPct = Math.min(100, Math.round((credits / maxCredits) * 100));
 
   function isItemLocked(item: NavItem): boolean {
     if (!item.planFeature || !planFeatures) return false;
@@ -108,19 +67,7 @@ export default function MobileNav({
               </button>
             </div>
 
-            {/* Credits mini card */}
-            <div className="mx-3 mt-3 rounded-2xl border border-primary/25 bg-primary/10 px-4 py-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Zap className="h-3.5 w-3.5 text-primary" />
-                  <span className="text-xs font-bold text-foreground">Kredit</span>
-                </div>
-                <span className="text-sm font-black text-foreground">{credits.toLocaleString("id-ID")}</span>
-              </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
-                <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${creditPct}%` }} />
-              </div>
-            </div>
+            <CreditsWidget credits={credits} plan={plan} subscriptionStatus={subscriptionStatus} variant="compact" />
 
             {/* Nav */}
             <nav className="mt-4 flex-1 space-y-4 px-3 pb-4">

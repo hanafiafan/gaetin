@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -8,13 +8,18 @@ import {
   Chrome,
   Download,
   ExternalLink,
+  Mail,
   Map,
   MapPin,
   Monitor,
+  Search,
+  Send,
   Shield,
+  Smartphone,
   Sparkles,
   Zap,
 } from "lucide-react";
+import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
 
 const STEPS = [
   {
@@ -37,9 +42,21 @@ const STEPS = [
   },
   {
     id: 4,
+    icon: Smartphone,
+    title: "Sambung WhatsApp",
+    subtitle: "Hubungkan nomor pengirim",
+  },
+  {
+    id: 5,
+    icon: Search,
+    title: "Scraping Pertama",
+    subtitle: "Jalankan job pertamamu",
+  },
+  {
+    id: 6,
     icon: Zap,
-    title: "Siap Scraping!",
-    subtitle: "Mulai job pertamamu",
+    title: "Selesai!",
+    subtitle: "Siap outreach",
   },
 ];
 
@@ -50,7 +67,17 @@ export default function SetupPage() {
     2: [false, false, false],
     3: [false, false],
     4: [],
+    5: [],
+    6: [],
   });
+
+  // Deep-link support (?step=N) — dipakai checklist onboarding di dashboard home.
+  // Baca langsung dari window.location sekali saat mount, bukan useSearchParams(),
+  // supaya halaman ini tidak perlu dibungkus <Suspense> hanya untuk satu kali baca.
+  useEffect(() => {
+    const raw = Number(new URLSearchParams(window.location.search).get("step"));
+    if (raw >= 1 && raw <= STEPS.length) setStep(raw);
+  }, []);
 
   function toggle(stepId: number, idx: number) {
     setChecked((prev) => {
@@ -75,7 +102,7 @@ export default function SetupPage() {
           Setup Ekstensi Hellens
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ikuti 4 langkah ini agar scraping Google Maps berjalan sempurna.
+          Ikuti {STEPS.length} langkah ini dari install ekstensi sampai siap kirim WhatsApp/email pertamamu.
         </p>
       </div>
 
@@ -133,7 +160,9 @@ export default function SetupPage() {
         {step === 1 && <StepInstall onCheck={(i) => toggle(1, i)} checked={checked[1]} />}
         {step === 2 && <StepMaps onCheck={(i) => toggle(2, i)} checked={checked[2]} />}
         {step === 3 && <StepPermissions onCheck={(i) => toggle(3, i)} checked={checked[3]} />}
-        {step === 4 && <StepReady />}
+        {step === 4 && <StepWhatsApp />}
+        {step === 5 && <StepFirstScrape />}
+        {step === 6 && <StepDone />}
       </div>
 
       {/* Navigation */}
@@ -149,7 +178,7 @@ export default function SetupPage() {
           <div />
         )}
 
-        {step < 4 ? (
+        {step < STEPS.length ? (
           <button
             onClick={() => setStep((p) => p + 1)}
             className="flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-foreground transition hover:bg-primary/90"
@@ -159,10 +188,10 @@ export default function SetupPage() {
           </button>
         ) : (
           <Link
-            href="/dashboard/scraper"
+            href="/dashboard"
             className="flex h-10 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-foreground transition hover:bg-primary/90"
           >
-            Mulai Scraping
+            Ke Dashboard
             <ArrowRight className="h-4 w-4" />
           </Link>
         )}
@@ -506,23 +535,53 @@ function StepPermissions({
 }
 
 /* ────────────────────────────────────────────────────────────── */
-/* Step 4: Ready!                                                 */
+/* Step 4: Sambung WhatsApp                                       */
 /* ────────────────────────────────────────────────────────────── */
 
-function StepReady() {
+function StepWhatsApp() {
   return (
     <div className="space-y-6">
-      <div className="py-4 text-center">
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary ring-4 ring-primary/10">
-          <Check className="h-8 w-8" />
+      <div className="flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400">
+          <Smartphone className="h-6 w-6" />
         </div>
-        <h2 className="text-2xl font-bold text-foreground">Setup Selesai!</h2>
-        <p className="mt-2 text-muted-foreground">
-          Semua konfigurasi siap. Saatnya menjalankan scraping pertamamu dari Google Maps.
-        </p>
+        <div>
+          <h2 className="text-xl font-bold text-foreground">Sambungkan Nomor WhatsApp</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Scan QR dengan WhatsApp di ponselmu. Nomor ini yang akan mengirim Blast, Kampanye, dan Follow-up nanti.
+          </p>
+        </div>
+      </div>
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <WhatsAppAccounts />
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Belum siap sambung nomor sekarang? Boleh dilewati dulu — bisa disambungkan kapan saja lewat menu{" "}
+        <Link href="/dashboard/settings" className="text-primary hover:underline">Pengaturan</Link>.
+      </p>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────── */
+/* Step 5: Scraping Pertama                                       */
+/* ────────────────────────────────────────────────────────────── */
+
+function StepFirstScrape() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+          <Search className="h-6 w-6" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-foreground">Jalankan Scraping Pertamamu</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Semua sudah siap. Buka menu Scraper untuk mulai mengambil lead dari Google Maps.
+          </p>
+        </div>
       </div>
 
-      {/* Quick guide */}
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
         <p className="mb-4 text-sm font-bold text-foreground">Cara menjalankan scraping:</p>
         <div className="space-y-3">
@@ -540,6 +599,13 @@ function StepReady() {
             </div>
           ))}
         </div>
+        <Link
+          href="/dashboard/scraper"
+          className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+        >
+          Buka Scraper
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
 
       {/* Tips */}
@@ -553,6 +619,48 @@ function StepReady() {
             <p className="text-sm font-bold text-foreground">{tip.title}</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">{tip.body}</p>
           </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────── */
+/* Step 6: Selesai!                                                */
+/* ────────────────────────────────────────────────────────────── */
+
+function StepDone() {
+  const nextActions = [
+    { href: "/dashboard/scraper", label: "Scraper", desc: "Ambil lead baru dari Google Maps", icon: Search },
+    { href: "/dashboard/email-finder", label: "Cari Email", desc: "Temukan email dari website lead", icon: Mail },
+    { href: "/dashboard/blast", label: "WhatsApp Blast", desc: "Kirim pesan ke kontak tersimpan", icon: Send },
+  ];
+  return (
+    <div className="space-y-6">
+      <div className="py-4 text-center">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary ring-4 ring-primary/10">
+          <Check className="h-8 w-8" />
+        </div>
+        <h2 className="text-2xl font-bold text-foreground">Setup Selesai!</h2>
+        <p className="mt-2 text-muted-foreground">
+          Ekstensi terpasang, WhatsApp tersambung. Mau lanjut ke mana dulu?
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        {nextActions.map((action) => (
+          <Link
+            key={action.href}
+            href={action.href}
+            className="group rounded-2xl border border-border bg-card p-4 transition hover:border-primary/30 hover:bg-primary/5"
+          >
+            <action.icon className="h-5 w-5 text-primary" />
+            <p className="mt-2 text-sm font-bold text-foreground">{action.label}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{action.desc}</p>
+            <span className="mt-2 flex items-center gap-1 text-xs font-semibold text-primary opacity-0 transition group-hover:opacity-100">
+              Buka <ArrowRight className="h-3 w-3" />
+            </span>
+          </Link>
         ))}
       </div>
     </div>

@@ -20,6 +20,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
+import StatCard from "@/components/dashboard/stat-card";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -81,9 +82,9 @@ export default async function DashboardPage({
   ];
 
   const onboarding = [
-    { label: "Setup ekstensi Chrome", done: leads > 0, href: "/dashboard/setup" },
-    { label: "Hubungkan WhatsApp", done: accounts > 0, href: "/dashboard/settings" },
-    { label: "Tambah kontak pertama", done: contacts > 0, href: "/dashboard/contacts" },
+    { label: "Setup ekstensi Chrome", done: leads > 0, href: "/dashboard/setup?step=1" },
+    { label: "Hubungkan WhatsApp", done: accounts > 0, href: "/dashboard/setup?step=4" },
+    { label: "Scraping & kontak pertama", done: contacts > 0, href: "/dashboard/setup?step=5" },
     { label: "Jalankan blast/campaign", done: blasts + campaigns > 0, href: "/dashboard/blast" },
   ];
 
@@ -224,21 +225,7 @@ export default async function DashboardPage({
       {/* KPI cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((c) => (
-          <div key={c.label} className="cg-card rounded-2xl p-6">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-sm font-medium text-muted-foreground">{c.label}</div>
-                <div className="mt-2 text-3xl font-bold tracking-tight text-foreground">{c.value}</div>
-              </div>
-              <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${c.bg} ${c.color}`}>
-                <c.icon className="h-6 w-6" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary/50" />
-              {c.detail}
-            </div>
-          </div>
+          <StatCard key={c.label} label={c.label} value={c.value} detail={c.detail} icon={c.icon} color={c.color} bg={c.bg} />
         ))}
       </div>
 

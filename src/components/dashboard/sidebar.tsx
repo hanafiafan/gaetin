@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ArrowRight, Lock, LogOut, X, Zap } from "lucide-react";
+import { ArrowRight, Lock, LogOut } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
-
-const PLAN_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
-const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };
+import UpgradeModal from "@/components/dashboard/upgrade-modal";
+import CreditsWidget from "@/components/dashboard/credits-widget";
 
 type SidebarProps = {
   appName?: string;
@@ -19,99 +18,6 @@ type SidebarProps = {
   subscriptionStatus?: string;
   planFeatures?: PlanFeatures;
 };
-
-/* ── Upgrade Modal ─────────────────────────────────────────── */
-
-function UpgradeModal({ feature, onClose }: { feature: string | null; onClose: () => void }) {
-  const router = useRouter();
-  if (!feature) return null;
-
-  const LOCKED_FEATURES = [
-    "WhatsApp multi-nomor",
-    "Blast & Campaign pesan",
-    "CRM Pipeline & Follow-up otomatis",
-    "Inbox & manajemen percakapan",
-    "Validasi nomor WhatsApp",
-    "2.000–6.000 kredit/bulan",
-  ];
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-
-      {/* Modal */}
-      <div
-        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-start justify-between p-6 pb-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
-            <Lock className="h-6 w-6" />
-          </div>
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="px-6 pb-6">
-          <h2 className="text-xl font-black text-foreground">
-            {feature} butuh paket Bisnis
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Paket Starter hanya mencakup scraping Google Maps dan ekspor CSV. Upgrade ke Bisnis untuk membuka fitur ini.
-          </p>
-
-          {/* Features list */}
-          <div className="mt-5 space-y-2">
-            {LOCKED_FEATURES.map((f) => (
-              <div key={f} className="flex items-center gap-2.5 text-sm text-foreground/80">
-                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-[9px] font-black">✓</span>
-                {f}
-              </div>
-            ))}
-          </div>
-
-          {/* Price teaser */}
-          <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-foreground">Paket Bisnis</p>
-                <p className="text-xs text-muted-foreground">Mulai dari</p>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-black text-foreground">Rp199K</p>
-                <p className="text-xs text-muted-foreground">/bulan</p>
-              </div>
-            </div>
-          </div>
-
-          {/* CTAs */}
-          <button
-            onClick={() => { router.push("/dashboard/billing"); onClose(); }}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-          >
-            Upgrade Sekarang
-            <ArrowRight className="h-4 w-4" />
-          </button>
-          <button
-            onClick={onClose}
-            className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
-          >
-            Nanti saja
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ── Sidebar ───────────────────────────────────────────────── */
 
@@ -127,9 +33,6 @@ export default function Sidebar({
   const pathname = usePathname();
   const [lockedFeature, setLockedFeature] = useState<string | null>(null);
 
-  const maxCredits = PLAN_CREDITS[plan] ?? 100;
-  const creditPct = Math.min(100, Math.round((credits / maxCredits) * 100));
-  const isLowCredits = credits < 50;
   const isTrialExpired = subscriptionStatus === "TRIAL_EXPIRED";
   const isTrial = subscriptionStatus === "TRIAL" || isTrialExpired;
 
@@ -152,33 +55,7 @@ export default function Sidebar({
           </span>
         </Link>
 
-        {/* Credits card */}
-        <div className={`mt-3 rounded-2xl border p-3 ${isLowCredits ? "border-amber-500/30 bg-amber-500/10" : "border-primary/25 bg-primary/10"}`}>
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/20 text-amber-300" : "gradient-primary text-foreground"}`}>
-                <Zap className="h-3.5 w-3.5" />
-              </div>
-              <p className="text-xs font-bold text-foreground">Kredit tersisa</p>
-            </div>
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isTrial ? "bg-muted text-muted-foreground" : "bg-primary/20 text-primary"}`}>
-              {PLAN_LABEL[plan] ?? plan}
-            </span>
-          </div>
-          <div className="mt-2 text-xl font-black text-foreground">{credits.toLocaleString("id-ID")}</div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
-            <div
-              className={`h-full rounded-full transition-all ${isLowCredits ? "bg-amber-400" : "gradient-primary"}`}
-              style={{ width: `${creditPct}%` }}
-            />
-          </div>
-          <Link
-            href="/dashboard/billing"
-            className="mt-2 inline-flex h-7 w-full items-center justify-center rounded-full border border-border bg-card text-[11px] font-bold text-foreground transition hover:border-primary/45 hover:bg-primary/15"
-          >
-            {isLowCredits ? "⚠️ Beli kredit" : "Kelola tagihan"}
-          </Link>
-        </div>
+        <CreditsWidget credits={credits} plan={plan} subscriptionStatus={subscriptionStatus} />
 
         {/* Upgrade nudge — trial aktif dapat fitur penuh (dibatasi kredit); trial habis baru benar-benar terkunci */}
         {isTrial && (

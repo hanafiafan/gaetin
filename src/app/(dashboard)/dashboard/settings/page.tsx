@@ -1,38 +1,24 @@
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
 import WorkspaceProfileSettings from "@/components/dashboard/workspace-profile-settings";
 import AccountSettings from "@/components/dashboard/account-settings";
+import PageHero from "@/components/dashboard/page-hero";
 import { Building2, Chrome, Download, Settings, Smartphone, Sparkles, UserCircle } from "lucide-react";
 
 export default function SettingsPage() {
   return (
     <div className="max-w-6xl space-y-6">
-      <div className="cg-card overflow-hidden rounded-3xl">
-        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[2fr_1fr]">
-          <div className="flex flex-col justify-center">
-            <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> Workspace Settings
-            </span>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Pengaturan</h1>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-              Konfigurasi koneksi WhatsApp, profil workspace, dan pengaturan akun Anda.
-            </p>
-          </div>
-          <div className="grid gap-3 rounded-2xl border border-border bg-card p-5 text-sm">
-            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 font-medium text-foreground/80 transition hover:bg-card">
-              <Smartphone className="h-5 w-5 text-primary" /> Akun WhatsApp
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 font-medium text-foreground/80 transition hover:bg-card">
-              <Building2 className="h-5 w-5 text-primary" /> Profil workspace
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 font-medium text-foreground/80 transition hover:bg-card">
-              <UserCircle className="h-5 w-5 text-primary" /> Akun & keamanan
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 font-medium text-foreground/80 transition hover:bg-card">
-              <Chrome className="h-5 w-5 text-primary" /> Ekstensi Chrome
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        kicker="Workspace Settings"
+        kickerIcon={Sparkles}
+        title="Pengaturan"
+        description="Konfigurasi koneksi WhatsApp, profil workspace, dan pengaturan akun Anda."
+        features={[
+          { icon: Smartphone, label: "Akun WhatsApp" },
+          { icon: Building2, label: "Profil workspace" },
+          { icon: UserCircle, label: "Akun & keamanan" },
+          { icon: Chrome, label: "Ekstensi Chrome" },
+        ]}
+      />
 
       <div className="grid gap-6">
         {/* WhatsApp */}

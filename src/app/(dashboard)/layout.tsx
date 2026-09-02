@@ -49,14 +49,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }),
   ]);
   const appName = branding?.appName || "Hellens";
-  const hsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
+  const primaryHsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
+  const secondaryHsl = branding?.secondaryColor ? hexToHsl(branding.secondaryColor) : null;
+  const brandStyle = (primaryHsl || secondaryHsl
+    ? {
+        ...(primaryHsl ? { "--primary": primaryHsl, "--ring": primaryHsl } : {}),
+        ...(secondaryHsl ? { "--secondary": secondaryHsl } : {}),
+      }
+    : undefined) as React.CSSProperties | undefined;
   const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
   const status = workspaceInfo?.subscription?.status ?? "TRIAL";
   const effectivePlanId = getEffectivePlanId(planId, status);
   const planFeatures = PLANS[effectivePlanId]?.features ?? PLANS.STARTER.features;
 
   return (
-    <div className="cg-shell flex h-screen overflow-hidden bg-background text-foreground">
+    <div className="cg-shell flex h-screen overflow-hidden bg-background text-foreground" style={brandStyle}>
       <Sidebar
         appName={appName}
         featureFlags={ownerCms.featureFlags}
