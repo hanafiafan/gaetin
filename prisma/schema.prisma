@@ -79,6 +79,7 @@ model Workspace {
   segments          Segment[]
   blasts            Blast[]
   emailBlasts       EmailBlast[]
+  emailFindJobs     EmailFindJob[]
   campaigns         Campaign[]
   pipelines         Pipeline[]
   deals             Deal[]
@@ -392,6 +393,33 @@ model EmailBlastMessage {
   contact    Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
   @@index([emailBlastId, status])
+}
+
+// Job pencarian email dari website Lead/Contact — lebih ringan dari Blast, tidak butuh
+// tabel per-target karena hasilnya sudah langsung terlihat di Lead.email / Contact.email.
+model EmailFindJob {
+  id           String          @id @default(cuid())
+  workspaceId  String
+  source       EmailFindSource
+  label        String?
+  status       BlastStatus     @default(DRAFT)
+  totalTargets Int             @default(0)
+  processed    Int             @default(0)
+  found        Int             @default(0)
+  createdById  String?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+}
+
+enum EmailFindSource {
+  LEAD
+  CONTACT
 }
 
 // ==================== CAMPAIGNS ====================

@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Smartphone,
   SquareKanban,
+  UserSearch,
   Users,
 } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
@@ -59,6 +60,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: "Email",
     items: [
+      { label: "Cari Email", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
       { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
     ],
   },

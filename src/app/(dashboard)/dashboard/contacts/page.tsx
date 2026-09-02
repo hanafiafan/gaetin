@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ContactsTable from "@/components/dashboard/contacts-table";
-import { Download, Sparkles, Upload, Users } from "lucide-react";
+import { Download, Mail, Sparkles, Upload, Users } from "lucide-react";
 
 export default function ContactsPage() {
   return (
@@ -25,6 +25,10 @@ export default function ContactsPage() {
             <Link href="/dashboard/contacts/import" className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary">
               <Upload className="h-4 w-4" />
               Impor
+            </Link>
+            <Link href="/dashboard/email-finder" className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary">
+              <Mail className="h-4 w-4" />
+              Cari Email
             </Link>
             <button className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary">
               <Download className="h-4 w-4" />
