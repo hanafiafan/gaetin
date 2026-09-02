@@ -40,7 +40,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
       { label: "Setup Ekstensi", href: "/dashboard/setup", icon: Chrome },
       { label: "Kontak", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
       { label: "Scraper", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
-      { label: "Maps", href: "/dashboard/map", icon: Map, flag: "map" },
+      { label: "Maps", href: "/dashboard/map", icon: Map, flag: "betaMapAnalysis" },
     ],
   },
   {

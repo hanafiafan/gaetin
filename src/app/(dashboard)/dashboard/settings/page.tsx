@@ -1,7 +1,7 @@
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
 import WorkspaceProfileSettings from "@/components/dashboard/workspace-profile-settings";
 import AccountSettings from "@/components/dashboard/account-settings";
-import { Building2, Settings, Smartphone, Sparkles, UserCircle } from "lucide-react";
+import { Building2, Chrome, Download, Settings, Smartphone, Sparkles, UserCircle } from "lucide-react";
 
 export default function SettingsPage() {
   return (
@@ -26,6 +26,9 @@ export default function SettingsPage() {
             </div>
             <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 font-medium text-foreground/80 transition hover:bg-card">
               <UserCircle className="h-5 w-5 text-primary" /> Akun & keamanan
+            </div>
+            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 font-medium text-foreground/80 transition hover:bg-card">
+              <Chrome className="h-5 w-5 text-primary" /> Ekstensi Chrome
             </div>
           </div>
         </div>
@@ -74,6 +77,35 @@ export default function SettingsPage() {
           </div>
           <div className="rounded-2xl border border-border bg-card p-6">
             <AccountSettings />
+          </div>
+        </div>
+
+        {/* Chrome extension */}
+        <div className="cg-card rounded-3xl p-6 sm:p-8">
+          <div className="mb-6 max-w-2xl">
+            <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
+              <Chrome className="h-6 w-6 text-primary" /> Ekstensi Chrome
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Ekstensi yang menjalankan scraping otomatis dari Google Maps di browser Anda.
+            </p>
+          </div>
+          <div className="flex flex-col items-start gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-bold text-foreground">Ekstensi Hellens untuk Chrome</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Versi terbaru · Kompatibel dengan Chrome 100+ · Lihat panduan instalasi lengkap di{" "}
+                <a href="/dashboard/setup" className="text-primary hover:underline">Setup Ekstensi</a>.
+              </p>
+            </div>
+            <a
+              href="/extension.zip"
+              download
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
+            >
+              <Download className="h-4 w-4" />
+              Download .ZIP
+            </a>
           </div>
         </div>
       </div>
