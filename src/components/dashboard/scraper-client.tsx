@@ -126,6 +126,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
   const [savedJobs, setSavedJobs] = useState<Job[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [findingEmail, setFindingEmail] = useState(false);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [leadQuery, setLeadQuery] = useState("");
   const [savedFilter, setSavedFilter] = useState<"all" | "saved" | "unsaved">("all");
@@ -448,6 +449,21 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
     }
     alert(`Tersimpan ${j.data.saved} kontak, masuk pipeline ${j.data.pipelineAdded ?? 0}, dilewati ${j.data.skipped}.`);
     setSelected(new Set());
+    if (selectedJobId) loadLeads(selectedJobId);
+  }
+
+  async function findEmails() {
+    if (selected.size === 0) return;
+    setFindingEmail(true);
+    const r = await fetch("/api/leads/enrich-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: [...selected].slice(0, 30) }),
+    });
+    const j = await r.json();
+    setFindingEmail(false);
+    if (!r.ok) { alert(j?.error?.message ?? "Gagal mencari email"); return; }
+    alert(`Ditemukan ${j.data.found} email dari ${j.data.processed} lead yang punya website (maks 30/klik).`);
     if (selectedJobId) loadLeads(selectedJobId);
   }
 
@@ -835,6 +851,10 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <Download className="h-4 w-4" />
                   Export Excel
                 </a>
+                <button disabled={selected.size === 0 || findingEmail} onClick={findEmails} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40">
+                  {findingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
+                  {findingEmail ? "Mencari..." : "Cari Email"}
+                </button>
                 <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40">
                   <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
