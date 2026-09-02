@@ -9,6 +9,7 @@ export interface PlanFeatures {
   csvExport: boolean;      // export CSV / Excel
   waValidation: boolean;
   blast: boolean;
+  emailBlast: boolean;
   campaigns: boolean;
   crmPipeline: boolean;
   autoFollowUp: boolean;
@@ -40,6 +41,7 @@ const ALL_FEATURES: PlanFeatures = {
   csvExport: true,
   waValidation: true,
   blast: true,
+  emailBlast: true,
   campaigns: true,
   crmPipeline: true,
   autoFollowUp: true,
@@ -61,6 +63,7 @@ export const PLANS: Record<PlanId, Plan> = {
       csvExport: true,
       waValidation: false,
       blast: false,
+      emailBlast: false,
       campaigns: false,
       crmPipeline: false,
       autoFollowUp: false,

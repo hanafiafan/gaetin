@@ -8,6 +8,7 @@ import {
   Headphones,
   Inbox,
   LayoutDashboard,
+  Mail,
   Map,
   Megaphone,
   MessageSquareText,
@@ -47,6 +48,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
     label: "Kirim & Respons",
     items: [
       { label: "Blast", href: "/dashboard/blast", icon: Send, flag: "blast", planFeature: "blast" },
+      { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
       { label: "Kampanye", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
       { label: "CRM", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
       { label: "Inbox", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },

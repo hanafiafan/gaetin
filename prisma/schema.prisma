@@ -78,6 +78,7 @@ model Workspace {
   scraperJobs       ScraperJob[]
   segments          Segment[]
   blasts            Blast[]
+  emailBlasts       EmailBlast[]
   campaigns         Campaign[]
   pipelines         Pipeline[]
   deals             Deal[]
@@ -180,6 +181,7 @@ model Contact {
   pipelineCards     PipelineCard[]
   followUpSchedules FollowUpSchedule[]
   blastMessages     BlastMessage[]
+  emailBlastMessages EmailBlastMessage[]
   campaignMessages  CampaignMessage[]
   conversations     Conversation[]
   deals             Deal[]
@@ -349,6 +351,47 @@ enum MessageStatus {
   DELIVERED
   READ
   FAILED
+}
+
+// ==================== EMAIL BLAST ====================
+// Sama pola dengan Blast (WhatsApp), tapi target ke Contact.email.
+
+model EmailBlast {
+  id              String      @id @default(cuid())
+  workspaceId     String
+  name            String
+  subject         String
+  bodyText        String?
+  variables       Json?
+  status          BlastStatus @default(DRAFT)
+  totalRecipients Int         @default(0)
+  sentCount       Int         @default(0)
+  failedCount     Int         @default(0)
+  createdById     String?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  workspace Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages  EmailBlastMessage[]
+
+  @@index([workspaceId, status])
+}
+
+model EmailBlastMessage {
+  id           String        @id @default(cuid())
+  emailBlastId String
+  contactId    String
+  status       MessageStatus @default(PENDING)
+  errorReason  String?
+  sentAt       DateTime?
+  createdAt    DateTime      @default(now())
+
+  emailBlast EmailBlast @relation(fields: [emailBlastId], references: [id], onDelete: Cascade)
+  contact    Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([emailBlastId, status])
 }
 
 // ==================== CAMPAIGNS ====================

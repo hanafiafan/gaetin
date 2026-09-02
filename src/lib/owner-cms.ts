@@ -12,6 +12,7 @@ export const DEFAULT_OWNER_CMS: OwnerCmsSettings = {
     scraper: true,
     validator: true,
     blast: true,
+    emailBlast: true,
     campaigns: true,
     crm: true,
     inbox: true,

@@ -14,10 +14,39 @@ async function getEmailSettings() {
   };
 }
 
-export async function sendWelcomeEmail(to: string, name: string): Promise<void> {
+export async function isEmailConfigured(): Promise<boolean> {
   const cfg = await getEmailSettings();
-  if (!cfg.provider || !cfg.apiKey) return;
+  return !!(cfg.provider && cfg.apiKey);
+}
 
+export interface SendEmailInput {
+  to: string;
+  subject: string;
+  html: string;
+}
+
+/** Kirim satu email lewat provider yang dikonfigurasi admin (Settings > Integrasi). */
+export async function sendEmail(input: SendEmailInput): Promise<{ ok: boolean; error?: string }> {
+  const cfg = await getEmailSettings();
+  if (!cfg.provider || !cfg.apiKey) return { ok: false, error: "EMAIL_NOT_CONFIGURED" };
+
+  if (cfg.provider === "resend") {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${cfg.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from: cfg.from, to: input.to, subject: input.subject, html: input.html }),
+    }).catch(() => null);
+    if (!res || !res.ok) return { ok: false, error: `Resend error (${res?.status ?? "network"})` };
+    return { ok: true };
+  }
+
+  return { ok: false, error: `Provider tidak didukung: ${cfg.provider}` };
+}
+
+export async function sendWelcomeEmail(to: string, name: string): Promise<void> {
   const subject = "Selamat datang di Hellens! 🚀";
   const html = `
     <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:24px">
@@ -40,14 +69,5 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<void> 
       </p>
     </div>`;
 
-  if (cfg.provider === "resend") {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${cfg.apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ from: cfg.from, to, subject, html }),
-    }).catch(() => {});
-  }
+  await sendEmail({ to, subject, html }).catch(() => undefined);
 }
