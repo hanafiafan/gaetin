@@ -1,6 +1,6 @@
 # Panduan Deployment — Hellens
 
-Deploy dengan Docker Compose di satu VPS: aplikasi (Next.js + Baileys), PostgreSQL, Redis, dan Caddy (reverse proxy + SSL otomatis).
+Deploy dengan Docker Compose di satu VPS: aplikasi (Next.js + Baileys), PostgreSQL, dan Caddy (reverse proxy + SSL otomatis).
 
 ## Prasyarat
 
@@ -34,7 +34,7 @@ DOMAIN=scraper.hellens.dev
 DB_PASSWORD=<password DB kuat>
 ```
 
-> `DATABASE_URL` dan `REDIS_URL` otomatis di-override oleh compose ke service `db`/`redis`, jadi tidak perlu diatur manual untuk mode Docker.
+> `DATABASE_URL` otomatis di-override oleh compose ke service `db`, jadi tidak perlu diatur manual untuk mode Docker.
 
 ## 2. Build & jalankan
 
@@ -43,7 +43,7 @@ docker compose up -d --build
 ```
 
 Yang terjadi:
-- `db` (Postgres) & `redis` menyala dengan volume persisten.
+- `db` (Postgres) menyala dengan volume persisten.
 - `app` build, lalu saat start menjalankan `prisma migrate deploy` (membuat/menerapkan semua migrasi) dan `next start`.
 - `caddy` menerbitkan sertifikat SSL otomatis untuk `DOMAIN` dan mem-proxy ke app.
 

@@ -3,7 +3,6 @@ import { z } from "zod";
 // Validasi environment variable saat startup agar gagal cepat bila salah konfigurasi.
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
-  REDIS_URL: z.string().default("redis://localhost:6379"),
   JWT_SECRET: z.string().min(16, "JWT_SECRET minimal 16 karakter"),
   JWT_EXPIRES_IN: z.string().default("24h"),
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),

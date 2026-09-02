@@ -13,8 +13,6 @@
   <img src="https://img.shields.io/badge/TypeScript-5.5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Prisma-5.18-2D3748?style=flat-square&logo=prisma" alt="Prisma" />
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis" />
-  <img src="https://img.shields.io/badge/BullMQ-Queue-EE4B2B?style=flat-square" alt="BullMQ" />
   <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
   <img src="https://img.shields.io/badge/License-Private-gray?style=flat-square" alt="License" />
 </p>
@@ -107,12 +105,12 @@ Built with a **multi-tenant architecture**, Hellens supports teams and agencies 
 │  └──────────────────────────────────────────────────┘    │
 └──────┬───────────────┬───────────────┬──────────────────┘
        │               │               │
-┌──────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
-│ PostgreSQL  │ │    Redis    │ │   Baileys   │
-│  (Prisma)   │ │  (BullMQ)   │ │ (WhatsApp)  │
-│  Multi-     │ │  Queues &   │ │  Multi-     │
-│  tenant DB  │ │  Caching    │ │  Session    │
-└─────────────┘ └─────────────┘ └─────────────┘
+┌──────▼──────┐ ┌──────▼──────┐
+│ PostgreSQL  │ │   Baileys   │
+│  (Prisma)   │ │ (WhatsApp)  │
+│  Multi-     │ │  Multi-     │
+│  tenant DB  │ │  Session    │
+└─────────────┘ └─────────────┘
 ```
 
 ### Key Design Decisions
@@ -120,8 +118,8 @@ Built with a **multi-tenant architecture**, Hellens supports teams and agencies 
 | Decision | Rationale |
 |----------|-----------|
 | **Multi-tenant via Workspace** | All data scoped by `Workspace`; users connect through `Membership` with roles |
-| **WhatsApp Provider Abstraction** | `IMessagingProvider` interface decouples business logic from backend (Baileys / Fonnte / Cloud API) |
-| **Queue-Based Processing** | Heavy operations (blast, scraping, validation, follow-up) offloaded to BullMQ workers |
+| **WhatsApp Provider Abstraction** | `IMessagingProvider` interface decouples business logic from the backend; `WA_PROVIDER` env supports `baileys`/`gateway`/`cloud_api`, but only Baileys is wired up today — the other two are reserved for later |
+| **In-Process Blast/Follow-up** | Sends run fire-and-forget in the app process with a stop-flag poll — no queue worker yet; a natural next step if volume grows |
 | **Near-Zero Cost Stack** | All core features self-hosted on a single VPS — no per-message API fees |
 
 ---
@@ -134,7 +132,6 @@ Built with a **multi-tenant architecture**, Hellens supports teams and agencies 
 |-------------|---------|
 | Node.js | 20+ (recommended 22) |
 | PostgreSQL | 14+ |
-| Redis | 6+ |
 | npm | 8+ |
 
 ### Installation
@@ -149,7 +146,7 @@ npm install
 
 # 3. Configure environment
 cp .env.example .env
-# Edit .env — fill in DATABASE_URL, REDIS_URL, JWT_SECRET, etc.
+# Edit .env — fill in DATABASE_URL, JWT_SECRET, etc.
 
 # 4. Generate Prisma client & run migrations
 npm run db:generate
@@ -183,7 +180,6 @@ docker compose up -d
 
 This spins up:
 - **PostgreSQL 16** — Primary database
-- **Redis 7** — Queue & caching
 - **Hellens App** — Next.js production build
 - **Caddy** — Reverse proxy with automatic HTTPS
 
@@ -246,7 +242,7 @@ hellens/
 │   │   ├── messaging/         # WhatsApp provider abstraction
 │   │   ├── scraper/           # Lead scraping engine
 │   │   ├── whatsapp/          # Baileys integration
-│   │   └── ...                # + email, redis, validators, etc.
+│   │   └── ...                # + email, validators, etc.
 │   ├── config/                # Plan catalogs & feature flags
 │   └── middleware.ts          # Auth & route protection
 ├── gateway/                   # WhatsApp gateway service
@@ -264,7 +260,7 @@ Hellens is designed for **near-zero operational costs**. All core features run o
 
 | Category | Service | Cost |
 |----------|---------|------|
-| ✅ **Core (Free)** | PostgreSQL, Redis, Next.js, Baileys | Self-hosted |
+| ✅ **Core (Free)** | PostgreSQL, Next.js, Baileys | Self-hosted |
 | ✅ **Maps** | Leaflet + free tiles, Nominatim geocoding | Free tier |
 | ✅ **Scraping** | Self-hosted Google Maps scraper | Free |
 | 💳 **Revenue-Aligned** | Midtrans payment processing | Per-transaction fee only |

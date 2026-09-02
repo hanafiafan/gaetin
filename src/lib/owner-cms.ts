@@ -17,8 +17,6 @@ export const DEFAULT_OWNER_CMS: OwnerCmsSettings = {
     crm: true,
     inbox: true,
     billing: true,
-    whiteLabel: false,
-    aiAssistant: false,
     betaMapAnalysis: true,
     legacyOsmScraper: false,
   },
@@ -49,8 +47,14 @@ export async function getOwnerCmsSettings(): Promise<OwnerCmsSettings> {
   const setting = await prisma.siteSetting.findUnique({ where: { key: "ownerCms" } });
   if (!setting) return DEFAULT_OWNER_CMS;
   const value = setting.value as Partial<OwnerCmsSettings>;
+  // Whitelist merge: cuma key yang masih ada di DEFAULT_OWNER_CMS yang dipakai, supaya
+  // flag lama yang sudah dihapus dari kode tidak nyangkut selamanya di data tersimpan.
+  const featureFlags = { ...DEFAULT_OWNER_CMS.featureFlags };
+  for (const key of Object.keys(featureFlags)) {
+    if (value.featureFlags?.[key] !== undefined) featureFlags[key] = value.featureFlags[key];
+  }
   return {
-    featureFlags: { ...DEFAULT_OWNER_CMS.featureFlags, ...(value.featureFlags ?? {}) },
+    featureFlags,
     mediaAssets: { ...DEFAULT_OWNER_CMS.mediaAssets, ...(value.mediaAssets ?? {}) },
     customerFields: value.customerFields ?? DEFAULT_OWNER_CMS.customerFields,
     experiments: value.experiments ?? DEFAULT_OWNER_CMS.experiments,
