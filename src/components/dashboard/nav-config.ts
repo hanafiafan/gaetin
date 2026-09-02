@@ -30,14 +30,14 @@ export type NavItem = {
   planFeature?: keyof PlanFeatures;
 };
 
-// Dikelompokkan berurutan cara pakainya (mulai -> kirim & respons -> kelola -> akun),
-// bukan berdasar kategori fitur — supaya user baru tidak nyasar di menu datar.
+// Dikelompokkan berurutan cara pakainya, DAN per-channel untuk grup kirim/respons
+// (mulai -> tools WhatsApp -> tools Email -> kelola -> akun) — supaya user baru tidak
+// nyasar di menu datar, dan jelas mana tool yang jalan lewat WhatsApp vs Email.
 export const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: "Mulai",
     items: [
       { label: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings" },
       { label: "Setup Ekstensi", href: "/dashboard/setup", icon: Chrome },
       { label: "Kontak", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
       { label: "Scraper", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
@@ -45,23 +45,29 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
     ],
   },
   {
-    label: "Kirim & Respons",
+    label: "WhatsApp",
     items: [
+      { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings" },
       { label: "Blast", href: "/dashboard/blast", icon: Send, flag: "blast", planFeature: "blast" },
-      { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
       { label: "Kampanye", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
-      { label: "CRM", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
       { label: "Inbox", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
       { label: "Follow-up", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
+      { label: "Validator", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
+      { label: "Templates", href: "/dashboard/templates", icon: FileText, flag: "templates" },
+    ],
+  },
+  {
+    label: "Email",
+    items: [
+      { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
     ],
   },
   {
     label: "Kelola",
     items: [
+      { label: "CRM", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
       { label: "Tugas", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
       { label: "Laporan", href: "/dashboard/analytics", icon: BarChart3, flag: "analytics" },
-      { label: "Templates", href: "/dashboard/templates", icon: FileText, flag: "templates" },
-      { label: "Validator", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
     ],
   },
   {
