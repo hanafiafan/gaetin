@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, Filter, Loader2, Mail, Plus, Search, Tag, Trash2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Contact {
@@ -42,6 +42,7 @@ export default function ContactsTable() {
   const [waStatus, setWaStatus] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const [enriching, setEnriching] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -107,6 +108,20 @@ export default function ContactsTable() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids: [...selected], action: "tag", label }),
     });
+    load();
+  }
+
+  async function bulkFindEmail() {
+    setEnriching(true);
+    const res = await fetch("/api/contacts/enrich-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: [...selected].slice(0, 30) }),
+    });
+    const json = await res.json();
+    setEnriching(false);
+    if (!json.success) { alert(json?.error?.message ?? "Gagal mencari email"); return; }
+    alert(`Ditemukan ${json.data.found} email dari ${json.data.processed} kontak yang punya website (maks 30/klik).`);
     load();
   }
 
@@ -207,6 +222,14 @@ export default function ContactsTable() {
             <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/[0.06] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <span className="text-sm font-bold text-primary">{selected.size} kontak dipilih</span>
               <div className="flex gap-2">
+                <button
+                  onClick={bulkFindEmail}
+                  disabled={enriching}
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-50"
+                >
+                  {enriching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mail className="h-3.5 w-3.5" />}
+                  {enriching ? "Mencari..." : "Cari Email"}
+                </button>
                 <button
                   onClick={bulkTag}
                   className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
