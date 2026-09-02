@@ -186,19 +186,19 @@ const testimonials = [
     quote: "Dalam 10 menit setup, saya sudah bisa scraping 200+ lead kafe di Jakarta. Datanya langsung masuk dashboard dan siap di-blast lewat WhatsApp.",
     name: "Nadia Putri",
     role: "Founder, Local Beauty Brand",
-    initial: "NP",
+    photo: "/media/testimonial-nadia.jpg",
   },
   {
     quote: "Yang paling saya suka adalah alurnya: scrape → validasi → blast dalam satu sistem. Tidak perlu pindah-pindah tools lagi.",
     name: "Rizky Ananda",
     role: "Sales Manager",
-    initial: "RA",
+    photo: "/media/testimonial-rizky.jpg",
   },
   {
     quote: "500 lead dari Google Maps selesai scraping dalam 15 menit. Langsung tersusun di CRM dan siap di-assign ke tim sales.",
     name: "Dimas Pratama",
     role: "Koordinator Penjualan",
-    initial: "DP",
+    photo: "/media/testimonial-dimas.jpg",
   },
 ];
 
@@ -299,13 +299,20 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Right column: line-art composition, no image asset required.
-              A generated 3D form can later drop in behind the globe. */}
+          {/* Right column: wireframe globe as line art, the 3D form on top,
+              rotating badge and section counter as the reference's punctuation. */}
           <div className="relative hidden aspect-square lg:block">
-            <WireGlobe className="absolute inset-0 h-full w-full text-border" />
+            <WireGlobe className="absolute right-0 top-0 h-3/4 w-3/4 text-border" />
 
-            <div className="cg-spin absolute -bottom-2 -left-6 h-32 w-32">
-              <svg viewBox="0 0 120 120" className="h-full w-full">
+            <img
+              src="/media/hero-form.webp"
+              alt=""
+              className="absolute left-0 top-[6%] h-[88%] w-full object-contain"
+            />
+
+            {/* Rotating badge sits above the form, arrow fixed at its centre */}
+            <div className="absolute -bottom-4 -left-8 z-10 h-32 w-32">
+              <svg viewBox="0 0 120 120" className="cg-spin h-full w-full">
                 <defs>
                   <path id="badge-arc" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
                 </defs>
@@ -316,12 +323,12 @@ export default function HomePage() {
                   </textPath>
                 </text>
               </svg>
-            </div>
-            <div className="absolute bottom-8 left-6 flex h-20 w-20 items-center justify-center">
-              <ArrowUpRight className="h-6 w-6" strokeWidth={2.5} />
+              <span className="absolute inset-0 flex items-center justify-center">
+                <ArrowUpRight className="h-7 w-7" strokeWidth={2.5} />
+              </span>
             </div>
 
-            <div className="absolute right-0 top-4 flex flex-col items-end gap-2">
+            <div className="absolute right-0 top-4 z-10 flex flex-col items-end gap-2">
               <span className="cg-display text-3xl">01</span>
               <span className="h-12 w-px bg-border" />
               <span className="cg-display text-3xl text-border">05</span>
@@ -352,7 +359,18 @@ export default function HomePage() {
 
       {/* ── Value band ──────────────────────────────────────────────────── */}
       <section className="cg-section py-20">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-end">
+        <div className="grid gap-10 lg:grid-cols-[260px_1fr_1fr] lg:items-end">
+          {/* Photo with a yellow bar breaking its edge, per the reference */}
+          <div className="relative hidden lg:block">
+            <img
+              src="/media/value-band.jpg"
+              alt="Pemilik bisnis mengelola prospek dari dashboard Hellens"
+              className="aspect-[4/5] w-full object-cover grayscale"
+              loading="lazy"
+            />
+            <span className="absolute -right-6 top-1/2 h-10 w-28 bg-primary" />
+          </div>
+
           <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
             Dari menemukan prospek
             <br />
@@ -641,9 +659,12 @@ export default function HomePage() {
             <article key={testimonial.name} className="flex flex-col justify-between border-b border-r border-border p-8">
               <p className="text-lg leading-8 text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
               <div className="mt-10 flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center bg-foreground text-sm font-bold text-background">
-                  {testimonial.initial}
-                </span>
+                <img
+                  src={testimonial.photo}
+                  alt={testimonial.name}
+                  className="h-12 w-12 shrink-0 object-cover grayscale"
+                  loading="lazy"
+                />
                 <div>
                   <p className="cg-label">{testimonial.name}</p>
                   <p className="cg-label mt-1 text-muted-foreground">{testimonial.role}</p>

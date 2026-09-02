@@ -15,10 +15,26 @@ const body = Inter({
   display: "swap",
 });
 
+const DESCRIPTION =
+  "Sistem untuk mengelola kontak, WhatsApp blast, inbox, CRM, follow-up, tagihan, dan laporan operasional.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://scraper.hellens.dev"),
   title: "Hellens Scraper",
-  description:
-    "Sistem untuk mengelola kontak, WhatsApp blast, inbox, CRM, follow-up, tagihan, dan laporan operasional.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Hellens Scraper",
+    description: DESCRIPTION,
+    url: "https://scraper.hellens.dev",
+    siteName: "Hellens",
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hellens Scraper",
+    description: DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {
