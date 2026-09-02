@@ -20,11 +20,11 @@ function blastPct(blast: EmailBlast) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-primary/15 text-primary",
-  COMPLETED: "bg-emerald-500/15 text-emerald-400",
-  FAILED: "bg-red-500/15 text-red-400",
-  STOPPED: "bg-red-500/15 text-red-400",
-  DRAFT: "bg-slate-500/15 text-muted-foreground",
+  RUNNING: "bg-primary/15 text-foreground",
+  COMPLETED: "bg-success/15 text-success",
+  FAILED: "bg-destructive/15 text-destructive",
+  STOPPED: "bg-destructive/15 text-destructive",
+  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
 };
 
 export default function EmailBlastClient() {
@@ -122,13 +122,13 @@ export default function EmailBlastClient() {
             className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <div className="rounded-xl border border-border bg-card p-3 text-xs leading-5 text-muted-foreground">
-            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-primary" />
+            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-foreground" />
             Personalisasi: {"{{nama}}"}, {"{{kota}}"}. Spintax: {"{pagi|siang|sore}"}.
           </div>
           <button
             type="submit"
             disabled={creating || !name.trim() || !subject.trim() || !bodyText.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat email blast"}
@@ -144,7 +144,7 @@ export default function EmailBlastClient() {
         <div className="space-y-3">
           {blasts.map((blast) => {
             const pct = blastPct(blast);
-            const sc = STATUS_COLOR[blast.status] ?? "bg-slate-500/15 text-muted-foreground";
+            const sc = STATUS_COLOR[blast.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={blast.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -162,7 +162,7 @@ export default function EmailBlastClient() {
                     {blast.status === "DRAFT" && (
                       <button
                         onClick={() => execute(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>
@@ -170,7 +170,7 @@ export default function EmailBlastClient() {
                     {blast.status === "RUNNING" && (
                       <button
                         onClick={() => stop(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/15 px-3 text-xs font-bold text-red-400 transition hover:bg-red-500/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>

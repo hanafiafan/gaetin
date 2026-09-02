@@ -73,13 +73,13 @@ export default function TemplatesClient() {
               <div className="mb-1 flex items-center gap-1 text-xs text-muted-foreground">
                 <Eye className="h-3.5 w-3.5" /> Pratinjau contoh:
               </div>
-              <span className="text-slate-200">{renderMessage(body, SAMPLE)}</span>
+              <span className="text-foreground">{renderMessage(body, SAMPLE)}</span>
             </div>
           )}
           <button
             type="submit"
             disabled={!name.trim() || !body.trim()}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Simpan template
@@ -104,7 +104,7 @@ export default function TemplatesClient() {
                   <p className="font-bold text-foreground">{t.name}</p>
                   <button
                     onClick={() => remove(t.id)}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-red-500/10 hover:text-red-400"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

@@ -39,12 +39,12 @@ export default function AdminUsers() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Cari nama / email..."
-        className="h-10 max-w-xs rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+        className="h-10 max-w-xs rounded-xl border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
       />
-      <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+      <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/[0.08] bg-white/[0.03] text-left text-xs uppercase text-slate-500">
+            <tr className="border-b border-border bg-muted text-left text-xs uppercase text-muted-foreground">
               <th className="p-3">Nama</th>
               <th className="p-3">Email</th>
               <th className="p-3 text-center">Super Admin</th>
@@ -54,22 +54,22 @@ export default function AdminUsers() {
           </thead>
           <tbody>
             {rows.map((u) => (
-              <tr key={u.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
-                <td className="p-3 font-bold text-white">{u.name}</td>
-                <td className="p-3 text-slate-400">{u.email}</td>
-                <td className="p-3 text-center text-slate-300">{u.isSuperAdmin ? "Ya" : "—"}</td>
-                <td className="p-3 text-center">{u.locked ? <span className="text-red-400">Terkunci</span> : <span className="text-emerald-400">Aktif</span>}</td>
+              <tr key={u.id} className="border-b border-border last:border-0 hover:bg-muted">
+                <td className="p-3 font-bold text-foreground">{u.name}</td>
+                <td className="p-3 text-muted-foreground">{u.email}</td>
+                <td className="p-3 text-center text-foreground">{u.isSuperAdmin ? "Ya" : "—"}</td>
+                <td className="p-3 text-center">{u.locked ? <span className="text-destructive">Terkunci</span> : <span className="text-success">Aktif</span>}</td>
                 <td className="p-3">
                   <div className="flex justify-end gap-1">
-                    <button onClick={() => act(u.id, "toggleSuperAdmin")} className="rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">
+                    <button onClick={() => act(u.id, "toggleSuperAdmin")} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">
                       {u.isSuperAdmin ? "Cabut admin" : "Jadikan admin"}
                     </button>
                     {u.locked ? (
-                      <button onClick={() => act(u.id, "unlock")} className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-400 transition hover:bg-emerald-500/20">
+                      <button onClick={() => act(u.id, "unlock")} className="rounded-lg border border-success/30 bg-success/10 px-3 py-1.5 text-xs font-bold text-success transition hover:bg-success/20">
                         Buka kunci
                       </button>
                     ) : (
-                      <button onClick={() => act(u.id, "lock")} className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 transition hover:bg-red-500/20">
+                      <button onClick={() => act(u.id, "lock")} className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-bold text-destructive transition hover:bg-destructive/20">
                         Kunci
                       </button>
                     )}
@@ -78,7 +78,7 @@ export default function AdminUsers() {
               </tr>
             ))}
             {rows.length === 0 && (
-              <tr><td colSpan={5} className="p-8 text-center text-slate-500">Tidak ada user.</td></tr>
+              <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Tidak ada user.</td></tr>
             )}
           </tbody>
         </table>

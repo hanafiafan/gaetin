@@ -27,11 +27,11 @@ function blastPct(blast: Blast) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-primary/15 text-primary",
-  DONE: "bg-emerald-500/15 text-emerald-400",
-  FAILED: "bg-red-500/15 text-red-400",
-  STOPPED: "bg-red-500/15 text-red-400",
-  DRAFT: "bg-slate-500/15 text-muted-foreground",
+  RUNNING: "bg-primary/15 text-foreground",
+  DONE: "bg-success/15 text-success",
+  FAILED: "bg-destructive/15 text-destructive",
+  STOPPED: "bg-destructive/15 text-destructive",
+  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
 };
 
 const SELECT_CLASS = "h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none";
@@ -122,12 +122,12 @@ export default function BlastClient() {
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Gauge className="h-4 w-4 text-primary" />
+                <Gauge className="h-4 w-4 text-foreground" />
                 Kuota kirim harian
               </div>
               <span className="text-xs text-muted-foreground">{quota.planName}</span>
             </div>
-            <div className="mt-2 h-1.5 rounded-full bg-white/[0.08]">
+            <div className="mt-2 h-1.5 rounded-full bg-muted">
               <div className="h-1.5 rounded-full bg-primary" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
@@ -171,13 +171,13 @@ export default function BlastClient() {
             className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <div className="rounded-xl border border-border bg-card p-3 text-xs leading-5 text-muted-foreground">
-            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-primary" />
+            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-foreground" />
             Personalisasi: {"{{nama}}"}, {"{{kota}}"}. Spintax: {"{pagi|siang|sore}"}.
           </div>
           <button
             type="submit"
             disabled={creating || !accountId || !name.trim() || !messageText.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat blast"}
@@ -196,7 +196,7 @@ export default function BlastClient() {
         <div className="space-y-3">
           {blasts.map((blast) => {
             const pct = blastPct(blast);
-            const sc = STATUS_COLOR[blast.status] ?? "bg-slate-500/15 text-muted-foreground";
+            const sc = STATUS_COLOR[blast.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={blast.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -214,7 +214,7 @@ export default function BlastClient() {
                       <button
                         onClick={() => execute(blast.id)}
                         disabled={quota?.remaining === 0}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>
@@ -222,7 +222,7 @@ export default function BlastClient() {
                     {blast.status === "RUNNING" && (
                       <button
                         onClick={() => stop(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/15 px-3 text-xs font-bold text-red-400 transition hover:bg-red-500/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>

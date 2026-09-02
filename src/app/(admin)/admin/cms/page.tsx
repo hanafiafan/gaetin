@@ -78,26 +78,26 @@ export default function AdminCmsPage() {
       <div className="cg-card-strong overflow-hidden rounded-[2rem]">
         <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
-            <span className="mb-4 inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-primary">
+            <span className="mb-4 inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground">
               <Sparkles className="h-3.5 w-3.5" />
               Owner CMS
             </span>
-            <h1 className="max-w-3xl text-3xl font-black text-white sm:text-4xl">
+            <h1 className="max-w-3xl text-3xl font-black text-foreground sm:text-4xl">
               Pusat pengaturan Hellens untuk konten, fitur, pelanggan, dan keputusan produk.
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-foreground">
               CMS ini menjadi ruang internal untuk mengatur halaman, aset, media,
               kontrol fitur, paket, data client, dan laporan penggunaan tanpa perlu ubah kode.
             </p>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5">
+          <div className="rounded-3xl border border-border bg-muted p-5">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <Database className="h-4 w-4 text-primary" />
+              <Database className="h-4 w-4 text-foreground" />
               Data yang dikumpulkan
             </div>
             <div className="mt-3 space-y-2">
               {usageSignals.map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-[#080a14]/70 px-3 py-2 text-xs text-slate-300">
+                <div key={item} className="rounded-2xl border border-border bg-background/70 px-3 py-2 text-xs text-foreground">
                   {item}
                 </div>
               ))}
@@ -112,13 +112,13 @@ export default function AdminCmsPage() {
           return (
             <div key={m.title} className="cg-card rounded-3xl p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40">
               <div className="mb-3 flex items-start justify-between gap-3">
-                <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-glow">
+                <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-foreground">
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="rounded-full border border-white/[0.08] px-2.5 py-1 text-xs text-slate-400">{m.status}</span>
+                <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{m.status}</span>
               </div>
-              <p className="mb-1 text-base font-bold text-white">{m.title}</p>
-              <p className="text-sm leading-6 text-slate-300">{m.desc}</p>
+              <p className="mb-1 text-base font-bold text-foreground">{m.title}</p>
+              <p className="text-sm leading-6 text-foreground">{m.desc}</p>
             </div>
           );
         })}
@@ -127,11 +127,11 @@ export default function AdminCmsPage() {
       <OwnerCmsControl />
 
       <div className="cg-card rounded-3xl p-6">
-        <div className="mb-4 flex items-center gap-2 text-base font-bold text-white">
-          <Megaphone className="h-5 w-5 text-primary" />
+        <div className="mb-4 flex items-center gap-2 text-base font-bold text-foreground">
+          <Megaphone className="h-5 w-5 text-foreground" />
           Editor Landing Saat Ini
         </div>
-        <p className="mb-5 max-w-2xl text-sm text-slate-300">
+        <p className="mb-5 max-w-2xl text-sm text-foreground">
           Ini adalah modul CMS yang sudah aktif. Berikutnya akan dipecah menjadi form visual,
           media picker, preview, versi draft/published, dan audit perubahan.
         </p>

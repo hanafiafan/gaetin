@@ -31,7 +31,7 @@ export default async function MapHistoryPage() {
   return (
     <div className="flex h-[calc(100vh-76px)] flex-col gap-4 p-4 md:gap-6 md:p-6 lg:p-8">
       <div>
-        <Badge className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-primary hover:bg-primary/15">
+        <Badge className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground hover:bg-primary/15">
           <MapPinned className="h-3.5 w-3.5" /> Geo Intelligence
         </Badge>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">History Maps</h1>

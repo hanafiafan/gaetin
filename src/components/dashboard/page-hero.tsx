@@ -35,23 +35,20 @@ export default function PageHero({
   className,
 }: PageHeroProps) {
   return (
-    <Card className={cn("cg-card overflow-hidden rounded-2xl border-0", className)}>
-      <div className="grid gap-5 p-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <Card className={cn("border-x-0 border-t-0 border-b border-foreground bg-transparent", className)}>
+      <div className="grid gap-6 pb-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
         <div>
-          <Badge className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-primary hover:bg-primary/15">
+          <Badge className="cg-kicker rounded-none hover:bg-primary">
             <KickerIcon className="h-3.5 w-3.5" /> {kicker}
           </Badge>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
+          <h1 className="cg-display mt-5 text-[clamp(2rem,4.5vw,3.25rem)]">{title}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
         {rightSlot ?? (
-          <div className="grid gap-2 text-sm">
+          <div className="grid gap-px bg-border">
             {features?.map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-foreground/80"
-              >
-                <Icon className="h-4 w-4 text-primary" /> {label}
+              <div key={label} className="cg-label flex items-center gap-2.5 bg-background py-2.5">
+                <Icon className="h-4 w-4 shrink-0" /> {label}
               </div>
             ))}
           </div>

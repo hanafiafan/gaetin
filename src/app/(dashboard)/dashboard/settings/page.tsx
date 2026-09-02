@@ -25,7 +25,7 @@ export default function SettingsPage() {
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <Smartphone className="h-6 w-6 text-primary" /> Koneksi WhatsApp
+              <Smartphone className="h-6 w-6 text-foreground" /> Koneksi WhatsApp
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Hubungkan satu atau lebih nomor WhatsApp. Tiap nomor punya batas kirim harian sendiri.
@@ -40,7 +40,7 @@ export default function SettingsPage() {
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <Building2 className="h-6 w-6 text-primary" /> Profil Workspace
+              <Building2 className="h-6 w-6 text-foreground" /> Profil Workspace
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Nama dan informasi workspace Anda.
@@ -55,7 +55,7 @@ export default function SettingsPage() {
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <UserCircle className="h-6 w-6 text-primary" /> Akun & Keamanan
+              <UserCircle className="h-6 w-6 text-foreground" /> Akun & Keamanan
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Perbarui nama, zona waktu, dan password akun Anda.
@@ -70,7 +70,7 @@ export default function SettingsPage() {
         <div className="cg-card rounded-3xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <Chrome className="h-6 w-6 text-primary" /> Ekstensi Chrome
+              <Chrome className="h-6 w-6 text-foreground" /> Ekstensi Chrome
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Ekstensi yang menjalankan scraping otomatis dari Google Maps di browser Anda.
@@ -81,7 +81,7 @@ export default function SettingsPage() {
               <p className="font-bold text-foreground">Ekstensi Hellens untuk Chrome</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 Versi terbaru · Kompatibel dengan Chrome 100+ · Lihat panduan instalasi lengkap di{" "}
-                <a href="/dashboard/setup" className="text-primary hover:underline">Setup Ekstensi</a>.
+                <a href="/dashboard/setup" className="text-foreground hover:underline">Setup Ekstensi</a>.
               </p>
             </div>
             <a

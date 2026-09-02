@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Bell, Command, Search, ShieldCheck, Sparkles } from "lucide-react";
-import ThemeToggle from "./theme-toggle";
+import { Bell, Search, ShieldCheck } from "lucide-react";
 
 type HeaderProps = {
   user?: {
@@ -33,24 +32,21 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
   const workspaceName = workspace?.name ?? "Main Workspace";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+    <header className="sticky top-0 z-30 border-b border-foreground bg-background">
       <div className="mx-auto flex min-h-[72px] max-w-[1440px] items-center justify-between gap-4 px-3 sm:px-5 lg:px-7">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="hidden h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary sm:flex">
-            <Command className="h-5 w-5" />
-          </div>
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="truncate text-lg font-bold text-foreground sm:text-xl">{workspaceName}</h1>
-              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                {planName}
-              </span>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1 className="cg-display truncate text-2xl text-foreground sm:text-3xl">{workspaceName}</h1>
+              <span className="cg-highlight cg-label">{planName}</span>
             </div>
-            <p className="hidden text-sm text-muted-foreground sm:block">Ringkasan kontak, pesan, CRM, CMS, dan laporan.</p>
+            <p className="cg-label mt-1 hidden text-muted-foreground sm:block">
+              Kontak · Pesan · CRM · Laporan
+            </p>
           </div>
         </div>
 
-        <div className="hidden min-w-[280px] max-w-md flex-1 items-center rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground xl:flex">
+        <div className="hidden min-w-[280px] max-w-md flex-1 items-center border border-border px-4 py-2.5 text-sm text-muted-foreground xl:flex">
           <Search className="mr-2 h-4 w-4" />
           Cari kontak, campaign, template, atau workspace
         </div>
@@ -59,33 +55,30 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
           {isSuperAdmin ? (
             <Link
               href="/admin"
-              className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground transition hover:border-primary/30 hover:text-primary md:inline-flex"
+              className="cg-label hidden h-10 items-center gap-2 border border-foreground px-4 text-foreground transition hover:bg-foreground hover:text-background md:inline-flex"
             >
-              <ShieldCheck className="h-4 w-4 text-primary" />
+              <ShieldCheck className="h-4 w-4" />
               Admin
             </Link>
           ) : null}
 
-          <ThemeToggle />
-
           <button
             type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card transition hover:border-primary/30"
+            className="relative flex h-10 w-10 items-center justify-center border border-border transition hover:border-foreground"
           >
             <Bell className="h-4 w-4 text-foreground" />
-            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-card" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
           </button>
 
-          <div className="flex cursor-pointer items-center gap-3 rounded-full border border-border bg-card py-1 pl-1 pr-3 transition hover:border-primary/30">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+          <div className="flex cursor-pointer items-center gap-3 border border-border py-1 pl-1 pr-3 transition hover:border-foreground">
+            <div className="flex h-8 w-8 items-center justify-center bg-foreground text-xs font-bold text-background">
               {getInitials(user?.name, user?.email)}
             </div>
             <div className="hidden min-w-0 text-left sm:block">
-              <p className="max-w-[130px] truncate text-sm font-semibold text-foreground">{user?.name ?? "Hellens Owner"}</p>
-              <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                <Sparkles className="h-3 w-3 text-primary" />
-                Aktif
+              <p className="max-w-[130px] truncate text-sm font-bold text-foreground">
+                {user?.name ?? "Hellens Owner"}
               </p>
+              <p className="cg-label text-muted-foreground">Aktif</p>
             </div>
           </div>
         </div>

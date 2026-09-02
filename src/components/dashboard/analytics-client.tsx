@@ -14,6 +14,7 @@ import {
   Legend,
 } from "recharts";
 import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
+import { CHART, CHART_TOOLTIP } from "@/lib/chart-theme";
 
 interface Summary {
   funnel: { stage: string; value: number }[];
@@ -30,13 +31,7 @@ function formatIDR(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
 }
 
-const CHART_TOOLTIP_STYLE = {
-  backgroundColor: "#0f1119",
-  border: "1px solid rgba(255,255,255,0.08)",
-  borderRadius: "12px",
-  color: "#e2e8f0",
-  fontSize: "12px",
-};
+const CHART_TOOLTIP_STYLE = CHART_TOOLTIP;
 
 export default function AnalyticsClient() {
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -64,10 +59,10 @@ export default function AnalyticsClient() {
   const leads = summary.funnel.find((f) => f.stage === "Lead mentah")?.value ?? 0;
 
   const kpiCards = [
-    { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target, color: "text-violet-400", bg: "bg-violet-500/10" },
+    { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, color: "text-success", bg: "bg-success/10" },
+    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp, color: "text-foreground", bg: "bg-primary/10" },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-foreground", bg: "bg-primary/10" },
+    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target, color: "text-foreground", bg: "bg-muted" },
   ];
 
   return (
@@ -93,10 +88,10 @@ export default function AnalyticsClient() {
           <h2 className="mb-4 text-sm font-bold text-foreground">Funnel konversi</h2>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
-              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-              <Bar dataKey="value" fill="#6366f1" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="value" fill={CHART.accent} radius={0} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -106,10 +101,10 @@ export default function AnalyticsClient() {
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={summary.sources}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="source" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="source" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-              <Bar dataKey="count" fill="#10b981" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" fill={CHART.ink} radius={0} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -121,12 +116,12 @@ export default function AnalyticsClient() {
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={trends.days}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} interval={4} />
-            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} interval={4} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
             <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ stroke: "rgba(255,255,255,0.1)" }} />
-            <Legend wrapperStyle={{ fontSize: "12px", color: "#94a3b8" }} />
-            <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke="#6366f1" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "#6366f1" }} />
-            <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke="#10b981" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "#10b981" }} />
+            <Legend wrapperStyle={{ fontSize: "12px", color: CHART.axis }} />
+            <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke={CHART.accent} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.accent }} />
+            <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke={CHART.ink} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.ink }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -134,7 +129,7 @@ export default function AnalyticsClient() {
       {/* ROI per campaign */}
       <div className="cg-card rounded-2xl p-5">
         <div className="mb-4 flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-primary" />
+          <BarChart3 className="h-4 w-4 text-foreground" />
           <h2 className="text-sm font-bold text-foreground">ROI per kampanye</h2>
         </div>
         {summary.byCampaign.length === 0 ? (
@@ -154,7 +149,7 @@ export default function AnalyticsClient() {
                 {summary.byCampaign.map((c, i) => (
                   <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-card">
                     <td className="p-4 font-medium text-foreground">{c.name}</td>
-                    <td className="p-4 text-right font-black text-emerald-400">{formatIDR(c.revenue)}</td>
+                    <td className="p-4 text-right font-black text-success">{formatIDR(c.revenue)}</td>
                   </tr>
                 ))}
               </tbody>

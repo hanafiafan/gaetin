@@ -1,27 +1,18 @@
 import Link from "next/link";
 import LandingConversionPanel from "@/components/landing-conversion-panel";
 import LandingFaq from "@/components/landing-faq";
+import ArrowButton from "@/components/brand/arrow-button";
+import StatRow from "@/components/brand/stat-row";
 import {
-  ArrowRight,
+  ArrowUpRight,
   Check,
-  ChevronRight,
   ClipboardCheck,
   Database,
-  Gauge,
-  HelpCircle,
   LineChart,
-  LockKeyhole,
   MessageSquareText,
-  MousePointerClick,
-  PlugZap,
   Search,
   ShieldCheck,
-  Sparkles,
-  Star,
-  Target,
   Users,
-  WalletCards,
-  Workflow,
   Zap,
   Chrome,
   Cpu,
@@ -30,7 +21,6 @@ import {
   X,
   Map,
   Shield,
-  Phone,
 } from "lucide-react";
 
 const navItems = [
@@ -52,19 +42,8 @@ const trustFeatures = [
   { icon: Users, label: "Multi-anggota tim" },
   { icon: Cpu, label: "WhatsApp multi-nomor" },
   { icon: DownloadCloud, label: "Ekspor CSV & Excel" },
-  { icon: Sparkles, label: "100 kredit trial gratis" },
+  { icon: Zap, label: "100 kredit trial gratis" },
 ];
-
-const pipelineChart = {
-  path: "M8 132 C48 106 72 114 104 90 C142 60 166 78 198 52 C232 24 266 40 304 18",
-  area: "M8 132 C48 106 72 114 104 90 C142 60 166 78 198 52 C232 24 266 40 304 18 L304 156 L8 156 Z",
-  points: [
-    { x: 8, y: 132, label: "Scrape" },
-    { x: 104, y: 90, label: "Valid" },
-    { x: 198, y: 52, label: "Follow-up" },
-    { x: 304, y: 18, label: "Deal" },
-  ],
-};
 
 const features = [
   {
@@ -72,36 +51,42 @@ const features = [
     title: "Scraping Calon Customer",
     description: "Ekstensi Chrome terintegrasi langsung dengan Google Maps. Atur kata kunci, area, dan jumlah hasil — data tersimpan real-time ke dashboard.",
     badge: null,
+    fill: "yellow" as const,
   },
   {
     icon: MessageSquareText,
     title: "Pusat Pesan WhatsApp",
     description: "Inbox, blast, follow-up, template, dan validasi kontak tersusun dalam satu alur agar tim tidak perlu berpindah menu.",
     badge: "Bisnis+",
+    fill: "plain" as const,
   },
   {
     icon: ClipboardCheck,
     title: "CRM & Tindak Lanjut",
     description: "Pantau prospek, jadwal balasan, status deal, dan tugas tim agar tidak ada peluang yang terlewat.",
     badge: "Bisnis+",
+    fill: "black" as const,
   },
   {
     icon: Database,
     title: "Database Prospek",
     description: "Kontak, lead, deal, percakapan, dan aktivitas tersimpan rapi dan bisa difilter kapan saja.",
     badge: "Bisnis+",
+    fill: "black" as const,
   },
   {
     icon: LineChart,
     title: "Laporan Operasional",
     description: "Pantau performa broadcast, konversi CRM, tagihan, dan aktivitas workspace secara real-time.",
     badge: "Bisnis+",
+    fill: "plain" as const,
   },
   {
     icon: ShieldCheck,
     title: "Kontrol Profesional",
     description: "Peran pengguna, batas pemakaian, tagihan, audit, dan konfigurasi workspace disiapkan untuk operasional yang rapi.",
     badge: "Bisnis+",
+    fill: "yellow" as const,
   },
 ];
 
@@ -111,16 +96,12 @@ const setupSteps = [
     step: "01",
     title: "Install Ekstensi",
     description: "Download ekstensi Hellens untuk Chrome. Install dalam 30 detik, tidak perlu coding.",
-    color: "text-primary",
-    bg: "bg-primary/ border-primary/",
   },
   {
     icon: Map,
     step: "02",
     title: "Aktifkan Fitur Maps",
     description: "Buka Google Maps, centang \"Perbarui hasil saat peta digeser\" — satu langkah krusial.",
-    color: "text-amber-400",
-    bg: "bg-amber-500/10 border-amber-500/20",
     highlight: true,
   },
   {
@@ -128,16 +109,12 @@ const setupSteps = [
     step: "03",
     title: "Izinkan Popup & Lokasi",
     description: "Aktifkan izin popup dan lokasi di Chrome untuk maps.google.com.",
-    color: "text-violet-400",
-    bg: "bg-violet-500/10 border-violet-500/20",
   },
   {
     icon: Zap,
     step: "04",
     title: "Mulai Scraping",
     description: "Buat job scraping, buka Google Maps, dan lead langsung masuk ke dashboard secara real-time.",
-    color: "text-primary",
-    bg: "bg-primary/10 border-primary/20",
   },
 ];
 
@@ -210,21 +187,18 @@ const testimonials = [
     name: "Nadia Putri",
     role: "Founder, Local Beauty Brand",
     initial: "NP",
-    stars: 5,
   },
   {
     quote: "Yang paling saya suka adalah alurnya: scrape → validasi → blast dalam satu sistem. Tidak perlu pindah-pindah tools lagi.",
     name: "Rizky Ananda",
     role: "Sales Manager",
     initial: "RA",
-    stars: 5,
   },
   {
     quote: "500 lead dari Google Maps selesai scraping dalam 15 menit. Langsung tersusun di CRM dan siap di-assign ke tim sales.",
     name: "Dimas Pratama",
     role: "Koordinator Penjualan",
     initial: "DP",
-    stars: 5,
   },
 ];
 
@@ -247,365 +221,286 @@ const footerLinks = {
   ],
 };
 
+/* Wireframe globe — the reference's line-drawn sphere, hand-built so the hero
+   needs no image asset. */
+function WireGlobe({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 200 200" className={className} aria-hidden="true" fill="none">
+      <circle cx="100" cy="100" r="78" stroke="currentColor" strokeWidth="1" />
+      {[-52, -26, 0, 26, 52].map((dy) => (
+        <ellipse key={dy} cx="100" cy={100 + dy} rx={Math.sqrt(Math.max(78 * 78 - dy * dy, 0))} ry="7" stroke="currentColor" strokeWidth="0.75" />
+      ))}
+      {[16, 34, 56, 78].map((rx) => (
+        <ellipse key={rx} cx="100" cy="100" rx={rx} ry="78" stroke="currentColor" strokeWidth="0.75" />
+      ))}
+    </svg>
+  );
+}
+
 export default function HomePage() {
   return (
-    <main className="cg-shell min-h-screen text-white">
+    <main className="cg-shell min-h-screen">
       {/* ── Nav ─────────────────────────────────────────────────────────── */}
-      <header className="landing-header fixed left-1/2 top-4 -translate-x-1/2" style={{ width: "min(calc(100vw - 2rem), 1180px)" }}>
-        <nav className="cg-nav relative flex w-full items-center justify-between overflow-hidden rounded-full px-4 py-3 md:px-5">
-          <Link href="/" className="flex min-w-0 items-center gap-3 pr-12 sm:pr-0">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-glow">
-              <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-5 w-5" />
-            </span>
-            <span className="text-base font-bold text-white">hellens</span>
+      <header className="landing-header sticky top-0 border-b border-foreground bg-background">
+        <nav className="cg-section flex items-center justify-between gap-4 py-4">
+          <Link href="/" className="flex min-w-0 items-center gap-2.5">
+            <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7" />
+            <span className="cg-display text-2xl">Hellens</span>
           </Link>
 
-          <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1 md:flex">
+          <div className="hidden items-center gap-7 md:flex">
             {navItems.map((item) => (
-              <Link key={item.href} href={item.href} className="rounded-full px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white">
+              <Link key={item.href} href={item.href} className="cg-label text-foreground transition hover:text-muted-foreground">
                 {item.label}
               </Link>
             ))}
           </div>
 
-          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:static sm:translate-y-0">
-            <Link href="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-white/90 transition hover:text-white sm:inline-flex">Masuk</Link>
-            <Link href="/register" className="cg-button-glow gradient-primary inline-flex h-10 w-10 items-center justify-center gap-2 rounded-full text-sm font-bold text-white transition hover:scale-[1.02] sm:w-auto sm:px-4">
-              <span className="hidden sm:inline">Mulai</span>
-              <ArrowRight className="h-4 w-4" />
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="cg-label hidden text-foreground transition hover:text-muted-foreground sm:block">
+              Masuk
             </Link>
+            <ArrowButton href="/register" label="Mulai gratis" variant="yellow" size="sm" />
           </div>
         </nav>
       </header>
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
-      <section className="cg-section earth-hero-section relative isolate pb-20 pt-28 md:pb-28 md:pt-32">
-        <div className="earth-video-bg" aria-hidden="true">
-          <video className="earth-bg-video" autoPlay muted loop playsInline preload="metadata">
-            <source src="/media/earth-spin.mp4" type="video/mp4" />
-          </video>
-          <div className="earth-orbit" />
-          <div className="earth-orbit" />
-          <span className="earth-pin pin-a" />
-          <span className="earth-pin pin-b" />
-          <span className="earth-pin pin-c" />
-          <span className="earth-signal-line" />
-        </div>
+      <section className="cg-section pb-10 pt-12 md:pt-16">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
+          <div className="min-w-0">
+            <span className="cg-kicker">Google Maps · WhatsApp · CRM</span>
 
-        <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-5xl flex-col items-center text-center">
-          <div className="cg-kicker">
-            <Sparkles className="h-4 w-4" />
-            Google Maps Scraper · WhatsApp · CRM
+            <h1 className="cg-display mt-6 text-[clamp(2.75rem,9vw,7rem)]">
+              Ribuan prospek
+              <br />
+              dari Google Maps,
+              <br />
+              <span className="cg-highlight">siap dihubungi.</span>
+            </h1>
+
+            <p className="mt-8 max-w-md text-sm leading-7 text-muted-foreground">
+              Hellens mengekstrak data bisnis dari Google Maps lewat ekstensi Chrome, merapikan
+              kontak, mengirim WhatsApp, dan mengelola follow-up dari satu dashboard.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <Link href="/register" className="group inline-flex items-center gap-3">
+                <span className="cg-label border-b-2 border-primary pb-1">Coba scraping gratis</span>
+                <ArrowButton href="/register" label="Coba scraping gratis" variant="black" size="sm" />
+              </Link>
+              <Link href="#setup" className="cg-label text-muted-foreground transition hover:text-foreground">
+                Lihat cara kerja
+              </Link>
+            </div>
+
+            <p className="cg-label mt-8 text-muted-foreground">
+              Trial gratis · 100 kredit · Tanpa kartu kredit
+            </p>
           </div>
-          <h1 className="mt-7 w-full max-w-[22rem] break-words text-balance text-4xl font-black leading-[1.05] text-white sm:max-w-5xl sm:text-6xl lg:text-7xl">
-            Ribuan prospek dari Google Maps,
-            <span className="cg-gradient-text"> siap dihubungi via WhatsApp.</span>
-          </h1>
-          <p className="mt-6 w-full max-w-[20rem] text-sm leading-7 text-slate-300 sm:max-w-2xl sm:text-lg sm:leading-8">
-            Hellens mengekstrak data bisnis dari Google Maps lewat ekstensi Chrome, merapikan kontak, mengirim WhatsApp, dan mengelola follow-up dari satu dashboard.
-          </p>
 
-          {/* Trial callout */}
-          <div className="mt-5 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-semibold text-primary">
-            ✓ Trial gratis · 100 kredit · Scraping langsung bisa dipakai · Tidak perlu kartu kredit
-          </div>
+          {/* Right column: line-art composition, no image asset required.
+              A generated 3D form can later drop in behind the globe. */}
+          <div className="relative hidden aspect-square lg:block">
+            <WireGlobe className="absolute inset-0 h-full w-full text-border" />
 
-          <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
-            <Link href="/register" className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]">
-              Coba Scraping Gratis
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-            <Link href="#setup" className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10">
-              Lihat cara kerja
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
+            <div className="cg-spin absolute -bottom-2 -left-6 h-32 w-32">
+              <svg viewBox="0 0 120 120" className="h-full w-full">
+                <defs>
+                  <path id="badge-arc" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+                </defs>
+                <circle cx="60" cy="60" r="58" fill="hsl(var(--primary))" />
+                <text className="fill-foreground text-[11px] font-bold uppercase" style={{ letterSpacing: "0.24em" }}>
+                  <textPath href="#badge-arc" startOffset="0%">
+                    Scrape · Kirim · Closing ·
+                  </textPath>
+                </text>
+              </svg>
+            </div>
+            <div className="absolute bottom-8 left-6 flex h-20 w-20 items-center justify-center">
+              <ArrowUpRight className="h-6 w-6" strokeWidth={2.5} />
+            </div>
 
-        {/* Dashboard mock */}
-        <div className="relative z-10 mx-auto mt-14 max-w-6xl">
-          <div className="cg-card-strong rounded-[2rem] p-3 sm:p-4">
-            <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-background">
-              <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full bg-rose-400" />
-                  <span className="h-3 w-3 rounded-full bg-amber-300" />
-                  <span className="h-3 w-3 rounded-full bg-emerald-400" />
-                </div>
-                <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold text-slate-300 sm:block">
-                  Scraping Lead · Google Maps
-                </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
-                  <span className="h-2 w-2 rounded-full bg-emerald-300" />
-                  Aktif · 247 lead ditemukan
-                </div>
-              </div>
-
-              <div className="grid gap-4 p-4 lg:grid-cols-[220px_1fr_300px]">
-                <aside className="hidden rounded-3xl border border-white/10 bg-white/[0.04] p-4 lg:block">
-                  <div className="mb-5 flex items-center gap-3">
-                    <div className="gradient-primary h-9 w-9 rounded-2xl" />
-                    <div>
-                      <div className="h-2.5 w-20 rounded-full bg-white/70" />
-                      <div className="mt-2 h-2 w-14 rounded-full bg-white/25" />
-                    </div>
-                  </div>
-                  {["Ringkasan", "Scraping", "Campaign", "CRM", "Laporan"].map((item, index) => (
-                    <div key={item} className={`mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm ${index === 0 ? "bg-primary/20 text-white" : "text-slate-400"}`}>
-                      <span className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-primary" : "bg-white/20"}`} />
-                      {item}
-                    </div>
-                  ))}
-                </aside>
-
-                <div className="space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    {heroStats.map((stat) => (
-                      <div key={stat.label} className="rounded-3xl border border-white/10 bg-white/[0.05] p-4">
-                        <p className="text-xs font-medium text-slate-400">{stat.label}</p>
-                        <p className="mt-2 text-2xl font-black text-white">{stat.value}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-                    <div className="mb-5 flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-white">Pipeline Prospek</p>
-                        <p className="mt-1 text-xs text-slate-400">Scrape → Validasi → Follow-up → Closing</p>
-                      </div>
-                      <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">+31.8%</div>
-                    </div>
-                    <div className="relative h-48 overflow-hidden rounded-3xl border border-white/10 bg-background p-3">
-                      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:48px_48px] opacity-45" />
-                      <div className="absolute inset-x-4 bottom-5 top-4 rounded-[1.25rem] bg-gradient-to-t from-primary/10 to-transparent blur-xl" />
-                      <svg className="relative z-10 h-full w-full overflow-visible" viewBox="0 0 320 170" role="img" aria-label="Grafik pipeline prospek">
-                        <defs>
-                          <linearGradient id="pipeline-line" x1="0" x2="1" y1="0" y2="0">
-                            <stop offset="0%" stopColor="hsl(151 78% 47%)" />
-                            <stop offset="55%" stopColor="hsl(124 70% 52%)" />
-                            <stop offset="100%" stopColor="hsl(82 90% 61%)" />
-                          </linearGradient>
-                          <linearGradient id="pipeline-area" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(151 78% 47% / 0.34)" />
-                            <stop offset="100%" stopColor="hsl(151 78% 47% / 0)" />
-                          </linearGradient>
-                          <filter id="pipeline-glow" x="-20%" y="-40%" width="140%" height="180%">
-                            <feGaussianBlur stdDeviation="4" result="blur" />
-                            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                          </filter>
-                        </defs>
-                        <path d={pipelineChart.area} fill="url(#pipeline-area)" />
-                        <path d={pipelineChart.path} fill="none" stroke="url(#pipeline-line)" strokeLinecap="round" strokeWidth="5" filter="url(#pipeline-glow)" />
-                        <path d={pipelineChart.path} fill="none" stroke="hsl(0 0% 100% / 0.72)" strokeLinecap="round" strokeWidth="1.5" />
-                        {pipelineChart.points.map((point) => (
-                          <g key={point.label}>
-                            <circle cx={point.x} cy={point.y} r="8" fill="hsl(151 78% 47% / 0.2)" />
-                            <circle cx={point.x} cy={point.y} r="4" fill="hsl(82 90% 61%)" />
-                          </g>
-                        ))}
-                        {pipelineChart.points.map((point, index) => (
-                          <text key={point.label} x={point.x} y="166" textAnchor={index === 0 ? "start" : index === pipelineChart.points.length - 1 ? "end" : "middle"} className="fill-slate-400 text-[10px] font-semibold">
-                            {point.label}
-                          </text>
-                        ))}
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                <aside className="space-y-4">
-                  <div className="rounded-3xl border border-primary/25 bg-primary/10 p-5">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="gradient-primary flex h-10 w-10 items-center justify-center rounded-2xl text-white">
-                        <WalletCards className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-white">Scraping Berjalan</p>
-                        <p className="text-xs text-slate-400">kafe jakarta selatan</p>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      {[
-                        { name: "Kopi Kina Roasters", cat: "Kafe", phone: "+62 811-xxx" },
-                        { name: "Espresso Works", cat: "Kafe", phone: "+62 812-xxx" },
-                        { name: "Daily Grind", cat: "Kafe", phone: "+62 815-xxx" },
-                      ].map((item) => (
-                        <div key={item.name} className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2">
-                          <div className="h-6 w-6 shrink-0 rounded-lg bg-primary/20" />
-                          <div className="min-w-0">
-                            <p className="truncate text-[11px] font-semibold text-white">{item.name}</p>
-                            <p className="text-[9px] text-slate-500">{item.phone}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-2.5 py-2">
-                      <span className="text-[11px] font-semibold text-primary">Live scraping</span>
-                      <span className="text-[11px] font-bold text-white">247 / 500</span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-                    <p className="text-sm font-bold text-white">Status Workspace</p>
-                    <div className="mt-4 space-y-3">
-                      {[["Lead aktif", "78%"], ["Sudah divalidasi", "54%"], ["Siap di-blast", "31%"]].map(([label, value]) => (
-                        <div key={label}>
-                          <div className="mb-2 flex justify-between text-xs text-slate-400">
-                            <span>{label}</span><span>{value}</span>
-                          </div>
-                          <div className="h-2 rounded-full bg-white/10">
-                            <div className="gradient-primary h-2 rounded-full" style={{ width: value }} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </aside>
-              </div>
+            <div className="absolute right-0 top-4 flex flex-col items-end gap-2">
+              <span className="cg-display text-3xl">01</span>
+              <span className="h-12 w-px bg-border" />
+              <span className="cg-display text-3xl text-border">05</span>
             </div>
           </div>
         </div>
+
+        <StatRow stats={heroStats} className="mt-14 border-t border-foreground" />
       </section>
 
-      {/* ── Trust features bar ──────────────────────────────────────────── */}
-      <section className="cg-section relative z-10 py-8">
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-          {trustFeatures.map((item) => {
+      {/* ── Trust bar ───────────────────────────────────────────────────── */}
+      <section className="cg-section">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-y border-border py-5">
+          {trustFeatures.map((item, i) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="flex items-center gap-2 text-sm font-semibold text-slate-400">
-                <Icon className="h-4 w-4 text-primary/70" />
-                {item.label}
+              <div key={item.label} className="flex items-center gap-5">
+                {i > 0 && <span className="cg-cross hidden sm:block" />}
+                <span className="cg-label flex items-center gap-2 text-muted-foreground">
+                  <Icon className="h-3.5 w-3.5" />
+                  {item.label}
+                </span>
               </div>
             );
           })}
         </div>
-        <div className="mt-5 border-t border-white/[0.06]" />
+      </section>
+
+      {/* ── Value band ──────────────────────────────────────────────────── */}
+      <section className="cg-section py-20">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-end">
+          <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
+            Dari menemukan prospek
+            <br />
+            sampai <span className="cg-highlight">jadi pelanggan.</span>
+          </h2>
+          <div className="lg:pb-3">
+            <p className="max-w-md text-sm leading-7 text-muted-foreground">
+              Trial gratis memberi akses ke scraping &amp; ekspor. Upgrade untuk membuka WhatsApp
+              marketing, CRM, dan seluruh fitur otomasi.
+            </p>
+            <Link
+              href="#fitur"
+              className="cg-label mt-6 inline-flex items-center gap-2 bg-foreground px-5 py-3.5 text-background transition hover:bg-primary hover:text-primary-foreground"
+            >
+              Lihat semua fitur
+              <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* ── Features ────────────────────────────────────────────────────── */}
-      <section id="fitur" className="cg-section grid-fade-section py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker"><Zap className="h-4 w-4" />Fitur Hellens</div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Dari menemukan ribuan prospek sampai mengubahnya jadi pelanggan.
+      <section id="fitur" className="cg-section pb-20">
+        <div className="flex items-center justify-between gap-4 border-b border-foreground pb-4">
+          <h2 className="cg-display text-3xl sm:text-4xl">
+            Fitur <span className="text-primary">●</span>
           </h2>
-          <p className="mt-5 text-base leading-7 text-slate-300">
-            Trial gratis memberi akses ke scraping & ekspor. Upgrade untuk membuka WhatsApp marketing, CRM, dan seluruh fitur otomasi.
-          </p>
+          <Link href="/register" className="cg-label hidden items-center gap-2 text-foreground transition hover:text-muted-foreground sm:flex">
+            Mulai gratis
+            <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
+          </Link>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => {
             const Icon = feature.icon;
+            const skin =
+              feature.fill === "yellow"
+                ? "bg-primary text-primary-foreground"
+                : feature.fill === "black"
+                  ? "bg-foreground text-background"
+                  : "bg-background text-foreground";
+            const meta = feature.fill === "plain" ? "text-muted-foreground" : "opacity-70";
+
             return (
-              <article key={feature.title} className="cg-card group relative rounded-3xl p-6 transition hover:-translate-y-1 hover:border-primary/45">
-                {feature.badge && (
-                  <span className="absolute right-4 top-4 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                    {feature.badge}
-                  </span>
-                )}
-                <div className="gradient-primary flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-glow">
-                  <Icon className="h-6 w-6" />
+              <article
+                key={feature.title}
+                className={`group relative flex min-h-[300px] flex-col justify-between border-b border-r border-border p-7 ${skin}`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <Icon className="h-7 w-7" strokeWidth={1.75} />
+                  {feature.badge && <span className={`cg-label ${meta}`}>{feature.badge}</span>}
                 </div>
-                <h3 className="mt-6 text-xl font-black text-white">{feature.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{feature.description}</p>
+                <div>
+                  <h3 className="cg-display text-2xl">{feature.title}</h3>
+                  <p className={`mt-3 text-sm leading-6 ${meta}`}>{feature.description}</p>
+                </div>
               </article>
             );
           })}
         </div>
       </section>
 
-      {/* ── Setup Steps ─────────────────────────────────────────────────── */}
-      <section id="setup" className="cg-section grid-fade-section py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker"><Chrome className="h-4 w-4" />Setup 4 Langkah</div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Dari install ekstensi sampai scraping pertama: 10 menit.
+      {/* ── Setup steps ─────────────────────────────────────────────────── */}
+      <section id="setup" className="cg-section py-20">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+          <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
+            Install sampai
+            <br />
+            scraping: <span className="cg-highlight">10 menit.</span>
           </h2>
-          <p className="mt-5 text-base leading-7 text-slate-300">
-            Tidak perlu coding. Ikuti 4 langkah ini dan kamu langsung bisa mulai scraping ribuan data bisnis dari Google Maps.
+          <p className="max-w-md text-sm leading-7 text-muted-foreground lg:pb-3">
+            Tidak perlu coding. Ikuti 4 langkah ini dan kamu langsung bisa mulai scraping ribuan
+            data bisnis dari Google Maps.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 border-t border-foreground">
           {setupSteps.map((s) => {
             const Icon = s.icon;
             return (
-              <div key={s.step} className={`relative rounded-3xl border p-6 ${s.bg} ${s.highlight ? "ring-1 ring-amber-500/30" : ""}`}>
-                {s.highlight && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-500/20 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest text-amber-400 border border-amber-500/30">
-                    Krusial
-                  </span>
-                )}
-                <div className="mb-4 flex items-center justify-between">
-                  <span className={`text-xs font-black ${s.color}`}>{s.step}</span>
-                  <Icon className={`h-5 w-5 ${s.color}`} />
+              <div
+                key={s.step}
+                className="grid items-start gap-4 border-b border-border py-8 sm:grid-cols-[auto_1fr_auto] sm:gap-8"
+              >
+                <span className="cg-display w-24 text-5xl text-border sm:text-6xl">{s.step}</span>
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="cg-display text-2xl">{s.title}</h3>
+                    {s.highlight && <span className="cg-highlight cg-label">Krusial</span>}
+                  </div>
+                  <p className="mt-2 max-w-xl text-sm leading-7 text-muted-foreground">{s.description}</p>
                 </div>
-                <h3 className="text-lg font-black text-white">{s.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{s.description}</p>
+                <Icon className="hidden h-6 w-6 text-muted-foreground sm:block" strokeWidth={1.75} />
               </div>
             );
           })}
         </div>
 
-        {/* Maps checkbox visual */}
-        <div className="mt-10 cg-card-strong overflow-hidden rounded-[2rem]">
-          <div className="grid gap-8 p-8 lg:grid-cols-[1fr_1fr] lg:items-center lg:p-10">
-            <div>
-              <div className="cg-kicker mb-4"><MapPin className="h-4 w-4" />Langkah Krusial #2</div>
-              <h3 className="text-2xl font-black text-white">
-                Centang kotak ini di Google Maps — wajib aktif!
-              </h3>
-              <p className="mt-4 text-sm leading-7 text-slate-300">
-                Setelah cari kata kunci bisnis di Google Maps, pastikan kotak{" "}
-                <strong className="text-white">&ldquo;Perbarui hasil saat peta digeser&rdquo;</strong>{" "}
-                sudah dicentang. Ini yang membuat ekstensi bisa mengambil data saat kamu menggeser peta.
-              </p>
-              <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-300">
-                ⚠️ Tanpa kotak ini dicentang, ekstensi tidak bisa melakukan scraping secara otomatis.
-              </div>
-              <Link
-                href="/register"
-                className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-5 text-sm font-bold text-white transition hover:border-primary/40 hover:bg-primary/15"
-              >
-                <DownloadCloud className="h-4 w-4" />
-                Mulai trial & ikuti panduan setup
-              </Link>
-            </div>
+        {/* The critical Google Maps checkbox */}
+        <div className="mt-12 grid gap-0 border border-foreground lg:grid-cols-2">
+          <div className="border-b border-foreground p-8 lg:border-b-0 lg:border-r lg:p-10">
+            <span className="cg-kicker">Langkah krusial #2</span>
+            <h3 className="cg-display mt-5 text-3xl">Centang kotak ini di Google Maps</h3>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              Setelah cari kata kunci bisnis di Google Maps, pastikan kotak{" "}
+              <strong className="font-bold text-foreground">
+                &ldquo;Perbarui hasil saat peta digeser&rdquo;
+              </strong>{" "}
+              sudah dicentang. Ini yang membuat ekstensi bisa mengambil data saat kamu menggeser peta.
+            </p>
+            <p className="cg-label mt-6 border-l-2 border-destructive pl-3 text-destructive">
+              Tanpa kotak ini, ekstensi tidak bisa scraping otomatis
+            </p>
+            <Link
+              href="/register"
+              className="cg-label mt-7 inline-flex items-center gap-2 bg-foreground px-5 py-3.5 text-background transition hover:bg-primary hover:text-primary-foreground"
+            >
+              <DownloadCloud className="h-4 w-4" />
+              Mulai trial &amp; ikuti panduan
+            </Link>
+          </div>
 
-            {/* Google Maps mockup */}
-            <div className="rounded-2xl border border-white/10 bg-secondary overflow-hidden">
-              {/* Search bar */}
-              <div className="flex items-center gap-2.5 border-b border-white/10 bg-muted px-4 py-3">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20">
-                  <MapPin className="h-3 w-3 text-primary" />
-                </div>
-                <span className="flex-1 text-sm text-slate-400">kafe jakarta pusat</span>
-                <span className="text-xs text-slate-600">×</span>
+          {/* Google Maps mockup */}
+          <div className="bg-muted p-6 sm:p-8">
+            <div className="border border-border bg-background">
+              <div className="flex items-center gap-2.5 border-b border-border px-4 py-3">
+                <MapPin className="h-3.5 w-3.5 text-foreground" />
+                <span className="flex-1 text-xs text-muted-foreground">kafe jakarta pusat</span>
+                <X className="h-3 w-3 text-muted-foreground" />
               </div>
-              {/* Results header */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.05]">
-                <span className="text-xs font-semibold text-slate-300">Hasil · 50+</span>
-                <span className="text-[10px] text-slate-600">ℹ</span>
+              <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+                <span className="cg-label text-muted-foreground">Hasil · 50+</span>
               </div>
-              {/* THE CHECKBOX */}
-              <div className="mx-4 my-3 rounded-xl border-2 border-red-500/60 bg-red-500/5 px-3 py-2.5 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+              <div className="m-3 border-2 border-destructive bg-destructive/5 px-3 py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/20">
-                    <Check className="h-2.5 w-2.5 text-primary" />
-                  </div>
-                  <span className="text-sm text-white font-medium">Perbarui hasil saat peta digeser</span>
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center bg-primary">
+                    <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+                  </span>
+                  <span className="text-xs font-bold text-foreground">Perbarui hasil saat peta digeser</span>
                 </div>
-                <p className="mt-1.5 text-[10px] font-bold text-red-400 uppercase tracking-wide">↑ Wajib dicentang!</p>
+                <p className="cg-label mt-2 text-destructive">↑ Wajib dicentang</p>
               </div>
-              {/* Sample results */}
-              <div className="space-y-0.5 px-2 pb-3">
+              <div className="px-3 pb-3">
                 {["Kopi Nako · ★4.8 · Tanah Abang", "Escobar Coffee · ★4.7 · Menteng", "Filosofi Kopi · ★4.6 · Kemang"].map((item) => (
-                  <div key={item} className="flex items-center gap-2.5 rounded-lg px-2 py-2">
-                    <div className="h-9 w-9 shrink-0 rounded-lg bg-white/[0.06]" />
-                    <span className="text-xs text-slate-400">{item}</span>
+                  <div key={item} className="flex items-center gap-2.5 border-t border-border py-2.5">
+                    <span className="h-8 w-8 shrink-0 bg-muted" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
                   </div>
                 ))}
               </div>
@@ -615,66 +510,94 @@ export default function HomePage() {
       </section>
 
       {/* ── Simulation ──────────────────────────────────────────────────── */}
-      <section id="simulasi" className="cg-section grid-fade-section py-20">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <div className="cg-kicker"><MousePointerClick className="h-4 w-4" />Simulasi Hasil</div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Lihat potensi hasilnya sebelum daftar.
+      <section id="simulasi" className="cg-section py-20">
+        <div className="grid gap-8 border-b border-foreground pb-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+          <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
+            Lihat potensinya
+            <br />
+            <span className="cg-highlight">sebelum daftar.</span>
           </h2>
-          <p className="mt-5 text-base leading-7 text-slate-300">
-            Simulasikan berapa kontak, balasan, follow-up, dan deal yang bisa kamu hasilkan dengan Hellens.
+          <p className="max-w-md text-sm leading-7 text-muted-foreground lg:pb-3">
+            Simulasikan berapa kontak, balasan, follow-up, dan deal yang bisa kamu hasilkan dengan
+            Hellens.
           </p>
         </div>
-        <LandingConversionPanel />
+        <div className="mt-10">
+          <LandingConversionPanel />
+        </div>
       </section>
 
       {/* ── Pricing ─────────────────────────────────────────────────────── */}
-      <section id="harga" className="cg-section grid-fade-section py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker"><Sparkles className="h-4 w-4" />Paket Harga</div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Mulai gratis dengan scraping. Upgrade untuk fitur penuh.
+      <section id="harga" className="cg-section py-20">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+          <h2 className="cg-display text-[clamp(2.25rem,6vw,4.5rem)]">
+            Mulai gratis.
+            <br />
+            <span className="cg-highlight">Upgrade nanti.</span>
           </h2>
-          <p className="mt-5 text-base leading-7 text-slate-300">
-            Trial gratis memberi kamu akses ke Google Maps scraping dan ekspor data. Upgrade ke Bisnis untuk membuka WhatsApp, CRM, blast, dan seluruh fitur pemasaran.
+          <p className="max-w-md text-sm leading-7 text-muted-foreground lg:pb-3">
+            Trial gratis memberi akses ke Google Maps scraping dan ekspor data. Upgrade ke Bisnis
+            untuk membuka WhatsApp, CRM, blast, dan seluruh fitur pemasaran.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+        <div className="mt-14 grid border-t border-foreground lg:grid-cols-3">
           {pricingPlans.map((plan) => (
-            <article key={plan.name} className={`${plan.highlighted ? "cg-card-strong" : "cg-card"} relative rounded-[2rem] p-7`}>
-              {plan.badge && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-white shadow-glow">
-                  {plan.badge}
-                </span>
-              )}
-              <div>
-                <h3 className="text-xl font-black text-white">{plan.name}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{plan.description}</p>
+            <article
+              key={plan.name}
+              className={`flex flex-col border-b border-r border-border p-8 ${
+                plan.highlighted ? "bg-foreground text-background" : ""
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="cg-display text-3xl">{plan.name}</h3>
+                {plan.badge && <span className="cg-highlight cg-label">{plan.badge}</span>}
               </div>
+
               <div className="mt-6 flex items-end gap-2">
-                <span className="text-4xl font-black text-white">{plan.price}</span>
-                <span className="pb-1 text-sm text-slate-400">{plan.priceNote}</span>
+                <span className="cg-display text-5xl">{plan.price}</span>
+                <span className={`cg-label pb-2 ${plan.highlighted ? "opacity-60" : "text-muted-foreground"}`}>
+                  {plan.priceNote}
+                </span>
               </div>
+
+              <p className={`mt-4 text-sm leading-6 ${plan.highlighted ? "opacity-70" : "text-muted-foreground"}`}>
+                {plan.description}
+              </p>
+
               <Link
                 href={plan.ctaHref}
-                className={`mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full text-sm font-bold transition ${
+                className={`cg-label mt-7 flex items-center justify-between gap-2 px-5 py-4 transition ${
                   plan.highlighted
-                    ? "cg-button-glow gradient-primary text-white hover:scale-[1.02]"
-                    : "cg-pill text-white hover:border-white/25 hover:bg-white/10"
+                    ? "bg-primary text-primary-foreground hover:bg-background hover:text-foreground"
+                    : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground"
                 }`}
               >
                 {plan.cta}
+                <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
               </Link>
-              <div className="mt-6 space-y-2.5">
+
+              <div className="mt-8 space-y-3">
                 {plan.features.map((feature) => (
                   <div key={feature.label} className="flex items-center gap-3 text-sm">
                     {feature.included ? (
-                      <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <Check className="h-4 w-4 shrink-0" strokeWidth={3} />
                     ) : (
-                      <X className="h-4 w-4 shrink-0 text-slate-600" />
+                      <X className={`h-4 w-4 shrink-0 ${plan.highlighted ? "opacity-40" : "text-border"}`} />
                     )}
-                    <span className={feature.included ? "text-slate-300" : "text-slate-600"}>{feature.label}</span>
+                    <span
+                      className={
+                        feature.included
+                          ? plan.highlighted
+                            ? ""
+                            : "text-foreground"
+                          : plan.highlighted
+                            ? "opacity-40"
+                            : "text-muted-foreground"
+                      }
+                    >
+                      {feature.label}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -682,57 +605,48 @@ export default function HomePage() {
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-2">
-          <p className="text-center text-sm text-slate-500">
-            Harga belum termasuk PPN · Diskon 20% untuk pembayaran tahunan · Kredit tambahan bisa dibeli kapan saja
-          </p>
-          <p className="text-center text-xs text-slate-600">
-            Trial tidak perlu kartu kredit · Upgrade bisa dilakukan kapan saja dari dashboard
-          </p>
-        </div>
+        <p className="cg-label mt-8 text-muted-foreground">
+          Harga belum termasuk PPN · Diskon 20% pembayaran tahunan · Trial tanpa kartu kredit
+        </p>
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
-      <section id="faq" className="cg-section grid-fade-section py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker"><HelpCircle className="h-4 w-4" />Pertanyaan Umum</div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Semua yang perlu diketahui sebelum mulai.
-          </h2>
-          <p className="mt-5 text-base leading-7 text-slate-300">
-            Masih ada pertanyaan lain? Hubungi tim kami melalui halaman Bantuan di dalam dashboard.
-          </p>
-        </div>
-        <div className="mx-auto mt-12 max-w-3xl">
+      <section id="faq" className="cg-section py-20">
+        <div className="grid gap-10 lg:grid-cols-[380px_1fr] lg:items-start">
+          <div>
+            <span className="cg-kicker">Pertanyaan umum</span>
+            <h2 className="cg-display mt-5 text-[clamp(2rem,4.5vw,3.5rem)]">
+              Semua yang perlu diketahui.
+            </h2>
+            <p className="mt-5 max-w-xs text-sm leading-7 text-muted-foreground">
+              Masih ada pertanyaan lain? Hubungi tim kami melalui halaman Bantuan di dalam
+              dashboard.
+            </p>
+          </div>
           <LandingFaq />
         </div>
       </section>
 
       {/* ── Testimonials ────────────────────────────────────────────────── */}
-      <section className="cg-section grid-fade-section py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="cg-kicker"><Star className="h-4 w-4" />Testimoni</div>
-          <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">
-            Dari scraping sampai closing, semuanya dalam satu dashboard.
+      <section className="cg-section py-20">
+        <div className="flex items-center justify-between gap-4 border-b border-foreground pb-4">
+          <h2 className="cg-display text-3xl sm:text-4xl">
+            Testimoni <span className="text-primary">●</span>
           </h2>
+          <span className="cg-label text-muted-foreground">03 Klien</span>
         </div>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-3">
+        <div className="grid lg:grid-cols-3">
           {testimonials.map((testimonial) => (
-            <article key={testimonial.name} className="cg-card rounded-3xl p-6">
-              <div className="flex gap-1 text-amber-300">
-                {Array.from({ length: testimonial.stars }).map((_, index) => (
-                  <Star key={index} className="h-4 w-4 fill-current" />
-                ))}
-              </div>
-              <p className="mt-6 text-sm leading-7 text-slate-300">{testimonial.quote}</p>
-              <div className="mt-8 flex items-center gap-3">
-                <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-full text-sm font-black text-white">
+            <article key={testimonial.name} className="flex flex-col justify-between border-b border-r border-border p-8">
+              <p className="text-lg leading-8 text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
+              <div className="mt-10 flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center bg-foreground text-sm font-bold text-background">
                   {testimonial.initial}
-                </div>
+                </span>
                 <div>
-                  <p className="text-sm font-bold text-white">{testimonial.name}</p>
-                  <p className="text-xs text-slate-400">{testimonial.role}</p>
+                  <p className="cg-label">{testimonial.name}</p>
+                  <p className="cg-label mt-1 text-muted-foreground">{testimonial.role}</p>
                 </div>
               </div>
             </article>
@@ -741,69 +655,85 @@ export default function HomePage() {
       </section>
 
       {/* ── Final CTA ───────────────────────────────────────────────────── */}
-      <section className="cg-section grid-fade-section pb-24 pt-10">
-        <div className="cg-card-strong rounded-[2rem] p-8 text-center sm:p-12">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-primary">
-            <Sparkles className="h-7 w-7" />
+      <section className="cg-section pb-20">
+        <div className="grid lg:grid-cols-[1.2fr_1fr]">
+          <div className="flex flex-col justify-between gap-10 bg-primary p-8 text-primary-foreground sm:p-12">
+            <h2 className="cg-display text-[clamp(2.5rem,7vw,5rem)]">
+              Mulai scraping
+              <br />
+              sekarang — gratis.
+            </h2>
+            <div className="flex items-center gap-5">
+              <ArrowButton href="/register" label="Daftar dan mulai scraping" variant="black" size="lg" />
+              <span className="cg-label max-w-[14rem]">
+                100 kredit trial · Tanpa kartu kredit · Setup 10 menit
+              </span>
+            </div>
           </div>
-          <h2 className="mx-auto mt-6 max-w-3xl text-3xl font-black text-white sm:text-5xl">
-            Mulai scraping Google Maps sekarang — gratis.
-          </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-300">
-            Daftar dan dapatkan 100 kredit trial. Cukup untuk scraping ratusan lead dari Google Maps dan ekspor ke CSV — tanpa perlu kartu kredit.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/register" className="cg-button-glow gradient-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-bold text-white transition hover:scale-[1.02]">
-              Daftar & Mulai Scraping
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/login" className="cg-pill inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10">
-              Sudah punya akun? Masuk
-            </Link>
+
+          <div className="flex flex-col justify-between gap-8 border border-border border-l-0 p-8 sm:p-12">
+            <div>
+              <span className="cg-label text-muted-foreground">Sudah punya akun?</span>
+              <Link href="/login" className="cg-display mt-3 flex items-center gap-3 text-3xl transition hover:text-muted-foreground">
+                Masuk
+                <ArrowUpRight className="h-6 w-6" strokeWidth={2.5} />
+              </Link>
+            </div>
+            <div className="cg-rule pt-6">
+              <span className="cg-label text-muted-foreground">Butuh bantuan?</span>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                Tim kami siap membantu setup ekstensi dan scraping pertamamu.
+              </p>
+            </div>
+            <span className="cg-cross" />
           </div>
-          <p className="mt-5 text-xs text-slate-500">Tidak perlu kartu kredit · Setup 10 menit · Trial bisa upgrade kapan saja</p>
         </div>
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="cg-section border-t border-white/[0.07] pb-10 pt-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
-          <div>
-            <Link href="/" className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-glow">
-              <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-5 w-5" />
-            </span>
-              <span className="text-base font-bold text-white">hellens</span>
-            </Link>
-            <p className="mt-4 max-w-xs text-sm leading-7 text-slate-400">
-              Platform scraping prospek Google Maps, WhatsApp marketing, dan CRM untuk bisnis Indonesia.
-            </p>
-            <div className="mt-6 flex items-center gap-2">
-              <Link href="/register" className="cg-button-glow gradient-primary inline-flex h-9 items-center gap-2 rounded-full px-4 text-xs font-bold text-white transition hover:scale-[1.02]">
-                Mulai Gratis
+      <footer className="bg-foreground text-background">
+        <div className="cg-section py-14">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+            <div>
+              <Link href="/" className="flex items-center gap-2.5">
+                <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
+                <span className="cg-display text-2xl">Hellens</span>
+              </Link>
+              <p className="mt-5 max-w-xs text-sm leading-7 opacity-60">
+                Platform scraping prospek Google Maps, WhatsApp marketing, dan CRM untuk bisnis
+                Indonesia.
+              </p>
+              <Link
+                href="/register"
+                className="cg-label mt-7 inline-flex items-center gap-2 bg-primary px-5 py-3.5 text-primary-foreground transition hover:bg-background hover:text-foreground"
+              >
+                Mulai gratis
+                <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
               </Link>
             </div>
+
+            {Object.entries(footerLinks).map(([group, links]) => (
+              <div key={group}>
+                <p className="cg-label opacity-50">{group}</p>
+                <ul className="mt-5 space-y-3">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Link href={link.href} className="text-sm transition hover:text-primary">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          {Object.entries(footerLinks).map(([group, links]) => (
-            <div key={group}>
-              <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-500">{group}</p>
-              <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Link href={link.href} className="text-sm font-medium text-slate-400 transition hover:text-white">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[0.07] pt-8 sm:flex-row">
-          <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} Hellens. Semua hak dilindungi.</p>
-          <p className="text-xs text-slate-600">Pembayaran aman via Midtrans · SSL terenkripsi</p>
+          <div className="mt-14 flex flex-col justify-between gap-3 border-t border-background/20 pt-8 sm:flex-row">
+            <p className="cg-label opacity-50">
+              &copy; {new Date().getFullYear()} Hellens. Semua hak dilindungi.
+            </p>
+            <p className="cg-label opacity-50">Midtrans · SSL terenkripsi</p>
+          </div>
         </div>
       </footer>
     </main>

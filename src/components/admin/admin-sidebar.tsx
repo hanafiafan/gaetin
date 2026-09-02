@@ -39,25 +39,21 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 z-20 hidden h-screen w-[292px] shrink-0 border-r border-white/10 bg-[#050712]/88 px-4 py-4 backdrop-blur-2xl md:flex md:flex-col">
-      <Link href="/admin" className="cg-card flex items-center gap-3 rounded-3xl p-3">
-        <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-black text-white shadow-glow">
-          G
-        </div>
+    <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col border-r border-foreground bg-background px-4 py-5 md:flex">
+      <Link href="/admin" className="flex items-center gap-2.5">
+        <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
         <div className="min-w-0">
-          <div className="text-base font-black text-white">Hellens</div>
-          <div className="truncate text-xs font-medium text-slate-400">Konsol CMS Owner</div>
+          <div className="cg-display text-2xl">Hellens</div>
+          <div className="cg-label truncate text-muted-foreground">Konsol Owner</div>
         </div>
       </Link>
 
-      <div className="mt-4 rounded-3xl border border-primary/25 bg-primary/10 p-4">
+      <div className="mt-5 bg-primary p-4 text-primary-foreground">
         <div className="flex items-center gap-3">
-          <div className="gradient-primary flex h-9 w-9 items-center justify-center rounded-2xl text-white">
-            <Sparkles className="h-5 w-5" />
-          </div>
+          <Sparkles className="h-5 w-5 shrink-0" />
           <div>
-            <p className="text-sm font-black text-white">Mode pemilik</p>
-            <p className="text-xs text-slate-400">Kontrol sistem aktif</p>
+            <p className="cg-label">Mode pemilik</p>
+            <p className="mt-1 text-[10px] opacity-70">Kontrol sistem aktif</p>
           </div>
         </div>
       </div>
@@ -71,37 +67,30 @@ export default function AdminSidebar() {
               key={href}
               href={href}
               className={cn(
-                "group flex min-h-12 items-center gap-3 rounded-2xl border px-3 py-2.5 text-sm font-semibold transition-all",
+                "group flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition",
                 active
-                  ? "border-primary/35 bg-primary/20 text-white shadow-glow"
-                  : "border-transparent text-slate-400 hover:border-white/10 hover:bg-white/[0.06] hover:text-white",
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
-              <span
-                className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl transition",
-                  active ? "gradient-primary text-white" : "bg-white/[0.05] text-slate-400 group-hover:text-white",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-              </span>
+              <Icon className="h-4 w-4 shrink-0" />
               {label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
-        <div className="flex items-center gap-2 text-sm font-black text-white">
-          <BarChart3 className="h-4 w-4 text-primary" />
+      <div className="mt-4 border border-border p-4">
+        <div className="cg-label flex items-center gap-2">
+          <BarChart3 className="h-4 w-4" />
           Laporan Penggunaan
         </div>
-        <p className="mt-2 text-xs leading-5 text-slate-400">
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">
           Pantau workspace, konten, paket, fitur, media, dan kebutuhan pelanggan dari satu tempat.
         </p>
         <Link
           href="/admin/cms"
-          className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-sm font-bold text-white transition hover:border-primary/45 hover:bg-primary/15"
+          className="cg-label mt-4 flex h-10 w-full items-center justify-center border border-foreground transition hover:bg-foreground hover:text-background"
         >
           Buka CMS
         </Link>

@@ -109,7 +109,7 @@ export default function AccountSettings() {
         <button
           onClick={saveProfile}
           disabled={profileStatus === "saving"}
-          className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+          className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
         >
           {profileStatus === "saving" && <Loader2 className="h-4 w-4 animate-spin" />}
           {profileStatus === "saved" && <CheckCircle2 className="h-4 w-4" />}
@@ -159,12 +159,12 @@ export default function AccountSettings() {
         </div>
 
         {pwError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{pwError}</div>}
-        {pwStatus === "saved" && <div className="rounded-xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-400">Password berhasil diubah.</div>}
+        {pwStatus === "saved" && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">Password berhasil diubah.</div>}
 
         <button
           onClick={changePassword}
           disabled={pwStatus === "saving" || !currentPw || !newPw}
-          className="flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+          className="flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
         >
           {pwStatus === "saving" && <Loader2 className="h-4 w-4 animate-spin" />}
           Ubah password

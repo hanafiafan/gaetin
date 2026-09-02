@@ -114,7 +114,7 @@ export default function ImportContacts() {
           type="file"
           accept=".csv,.xlsx,.xls"
           onChange={onFile}
-          className="text-sm text-muted-foreground file:mr-3 file:rounded-full file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-sm file:text-foreground/80 file:transition file:hover:border-primary/30 file:hover:text-primary"
+          className="text-sm text-muted-foreground file:mr-3 file:rounded-full file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-sm file:text-foreground/80 file:transition file:hover:border-primary/30 file:hover:text-foreground"
         />
         {fileName && <p className="mt-1 text-xs text-muted-foreground">{fileName}</p>}
       </div>
@@ -171,7 +171,7 @@ export default function ImportContacts() {
             <button
               onClick={runImport}
               disabled={mapping.phone < 0 || importing}
-              className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+              className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
             >
               {importing ? "Mengimpor..." : "Impor kontak"}
             </button>
@@ -185,19 +185,19 @@ export default function ImportContacts() {
       {summary && (
         <div className="cg-card rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+            <CheckCircle2 className="h-5 w-5 text-success" />
             <h3 className="font-bold text-foreground">Ringkasan impor</h3>
           </div>
           <ul className="space-y-1 text-sm">
             <li className="text-foreground/80">Total baris: <strong className="text-foreground">{summary.total}</strong></li>
-            <li className="text-emerald-400">Berhasil diimpor: <strong>{summary.imported}</strong></li>
+            <li className="text-success">Berhasil diimpor: <strong>{summary.imported}</strong></li>
             <li className="text-muted-foreground">Duplikat dalam file: {summary.duplicatesInFile}</li>
             <li className="text-muted-foreground">Sudah ada di database: {summary.duplicatesExisting}</li>
             <li className="text-muted-foreground">Baris tidak valid: {summary.invalid}</li>
           </ul>
           <Link
             href="/dashboard/contacts"
-            className="inline-flex h-9 items-center rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+            className="inline-flex h-9 items-center rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
           >
             Lihat kontak
           </Link>

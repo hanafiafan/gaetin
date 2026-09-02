@@ -17,9 +17,9 @@ interface Contact {
 }
 
 const WA_BADGE: Record<Contact["waStatus"], string> = {
-  ACTIVE: "bg-emerald-500/15 text-emerald-400",
-  INACTIVE: "bg-red-500/15 text-red-400",
-  UNKNOWN: "bg-slate-500/15 text-muted-foreground",
+  ACTIVE: "bg-success/15 text-success",
+  INACTIVE: "bg-destructive/15 text-destructive",
+  UNKNOWN: "bg-muted-foreground/15 text-muted-foreground",
 };
 const WA_LABEL: Record<Contact["waStatus"], string> = {
   ACTIVE: "Aktif WA",
@@ -28,9 +28,9 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
 };
 
 function scoreClass(score: number): string {
-  if (score >= 75) return "bg-emerald-500/15 text-emerald-400";
-  if (score >= 55) return "bg-amber-500/15 text-amber-400";
-  return "bg-slate-500/15 text-muted-foreground";
+  if (score >= 75) return "bg-success/15 text-success";
+  if (score >= 55) return "bg-warning/15 text-warning";
+  return "bg-muted-foreground/15 text-muted-foreground";
 }
 
 export default function ContactsTable() {
@@ -122,12 +122,12 @@ export default function ContactsTable() {
               <p className="text-xs font-bold uppercase text-muted-foreground">Total database</p>
               <p className="mt-1 text-2xl font-black text-foreground">{total.toLocaleString("id-ID")}</p>
             </div>
-            <div className="rounded-xl bg-emerald-500/10 p-4">
-              <p className="text-xs font-bold uppercase text-emerald-400">Aktif di halaman ini</p>
+            <div className="rounded-xl bg-success/10 p-4">
+              <p className="text-xs font-bold uppercase text-success">Aktif di halaman ini</p>
               <p className="mt-1 text-2xl font-black text-foreground">{summary.active}</p>
             </div>
-            <div className="rounded-xl bg-amber-500/10 p-4">
-              <p className="text-xs font-bold uppercase text-amber-400">Belum dicek</p>
+            <div className="rounded-xl bg-warning/10 p-4">
+              <p className="text-xs font-bold uppercase text-warning">Belum dicek</p>
               <p className="mt-1 text-2xl font-black text-foreground">{summary.unknown}</p>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function ContactsTable() {
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
             <button
               type="submit"
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25"
             >
               <Plus className="h-4 w-4" />
               Tambah kontak
@@ -195,7 +195,7 @@ export default function ContactsTable() {
               </div>
               {loading && (
                 <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <Loader2 className="h-4 w-4 animate-spin text-foreground" />
                   Memuat
                 </span>
               )}
@@ -205,17 +205,17 @@ export default function ContactsTable() {
           {/* Bulk actions */}
           {selected.size > 0 && (
             <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/[0.06] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-sm font-bold text-primary">{selected.size} kontak dipilih</span>
+              <span className="text-sm font-bold text-foreground">{selected.size} kontak dipilih</span>
               <div className="flex gap-2">
                 <button
                   onClick={bulkTag}
-                  className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                 >
                   <Tag className="h-3.5 w-3.5" /> Label
                 </button>
                 <button
                   onClick={bulkDelete}
-                  className="flex h-8 items-center gap-1.5 rounded-full border border-red-500/20 bg-red-500/10 px-3 text-xs font-bold text-red-400 transition hover:bg-red-500/20"
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/20"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Hapus
                 </button>
@@ -304,14 +304,14 @@ export default function ContactsTable() {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
             >
               Sebelumnya
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40"
+              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
             >
               Berikutnya
             </button>

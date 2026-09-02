@@ -20,7 +20,7 @@ export default async function ScraperPage() {
         }
         rightSlot={
           <div className="flex h-full items-center justify-end lg:items-start lg:justify-start">
-            <div className="flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+            <div className="flex items-center gap-1.5 rounded-lg border border-warning/20 bg-warning/5 px-3 py-2 text-xs text-warning">
               <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
               Gunakan secara bertanggung jawab
             </div>

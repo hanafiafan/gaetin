@@ -29,12 +29,12 @@ function campaignPct(c: Campaign) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  ACTIVE: "bg-primary/15 text-primary",
-  DONE: "bg-emerald-500/15 text-emerald-400",
-  FAILED: "bg-red-500/15 text-red-400",
-  PAUSED: "bg-amber-500/15 text-amber-400",
-  DRAFT: "bg-slate-500/15 text-muted-foreground",
-  SCHEDULED: "bg-primary/ text-primary",
+  ACTIVE: "bg-primary/15 text-foreground",
+  DONE: "bg-success/15 text-success",
+  FAILED: "bg-destructive/15 text-destructive",
+  PAUSED: "bg-warning/15 text-warning",
+  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
+  SCHEDULED: "bg-primary/ text-foreground",
 };
 
 const SELECT_CLASS = "h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none";
@@ -129,12 +129,12 @@ export default function CampaignsClient() {
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Gauge className="h-4 w-4 text-primary" />
+                <Gauge className="h-4 w-4 text-foreground" />
                 Kuota kirim harian
               </div>
               <span className="text-xs text-muted-foreground">{quota.planName}</span>
             </div>
-            <div className="mt-2 h-1.5 rounded-full bg-white/[0.08]">
+            <div className="mt-2 h-1.5 rounded-full bg-muted">
               <div className="h-1.5 rounded-full bg-primary" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
@@ -187,7 +187,7 @@ export default function CampaignsClient() {
           />
           <div className="space-y-1.5">
             <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-              <CalendarClock className="h-4 w-4 text-primary" />
+              <CalendarClock className="h-4 w-4 text-foreground" />
               Jadwalkan (opsional)
             </label>
             <input
@@ -198,13 +198,13 @@ export default function CampaignsClient() {
             />
           </div>
           <div className="rounded-xl border border-border bg-card p-3 text-xs leading-5 text-muted-foreground">
-            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-primary" />
+            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-foreground" />
             Kosongkan jadwal untuk membuat draft yang bisa dijalankan manual.
           </div>
           <button
             type="submit"
             disabled={creating || !accountId || !name.trim() || !message.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat kampanye"}
@@ -221,7 +221,7 @@ export default function CampaignsClient() {
         <div className="space-y-3">
           {campaigns.map((campaign) => {
             const pct = campaignPct(campaign);
-            const sc = STATUS_COLOR[campaign.status] ?? "bg-slate-500/15 text-muted-foreground";
+            const sc = STATUS_COLOR[campaign.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={campaign.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -239,7 +239,7 @@ export default function CampaignsClient() {
                       <button
                         onClick={() => act(campaign.id, "execute")}
                         disabled={quota?.remaining === 0}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
                       >
                         <Play className="h-3 w-3" /> Jalankan
                       </button>
@@ -247,7 +247,7 @@ export default function CampaignsClient() {
                     {campaign.status === "ACTIVE" && (
                       <button
                         onClick={() => act(campaign.id, "pause")}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/15 px-3 text-xs font-bold text-amber-400 transition hover:bg-amber-500/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-warning/30 bg-warning/15 px-3 text-xs font-bold text-warning transition hover:bg-warning/25"
                       >
                         <Pause className="h-3 w-3" /> Jeda
                       </button>
@@ -255,7 +255,7 @@ export default function CampaignsClient() {
                     {campaign.status === "PAUSED" && (
                       <button
                         onClick={() => act(campaign.id, "resume")}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
                       >
                         <RotateCcw className="h-3 w-3" /> Lanjutkan
                       </button>

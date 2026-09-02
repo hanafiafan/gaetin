@@ -13,7 +13,7 @@ interface Ws {
   contacts: number;
 }
 
-const SELECT_CLASS = "h-8 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2 text-xs text-white";
+const SELECT_CLASS = "h-8 rounded-lg border border-border bg-muted px-2 text-xs text-foreground";
 
 export default function AdminWorkspaces() {
   const router = useRouter();
@@ -47,28 +47,28 @@ export default function AdminWorkspaces() {
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+    <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/[0.08] bg-white/[0.03] text-left">
-            <th className="p-3 text-xs font-bold uppercase text-slate-500">Workspace</th>
-            <th className="p-3 text-xs font-bold uppercase text-slate-500">Owner</th>
-            <th className="p-3 text-xs font-bold uppercase text-slate-500">Paket</th>
-            <th className="p-3 text-center text-xs font-bold uppercase text-slate-500">Status</th>
-            <th className="p-3 text-right text-xs font-bold uppercase text-slate-500">Kredit</th>
-            <th className="p-3 text-right text-xs font-bold uppercase text-slate-500">Aksi</th>
+          <tr className="border-b border-border bg-muted text-left">
+            <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Workspace</th>
+            <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Owner</th>
+            <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Paket</th>
+            <th className="p-3 text-center text-xs font-bold uppercase text-muted-foreground">Status</th>
+            <th className="p-3 text-right text-xs font-bold uppercase text-muted-foreground">Kredit</th>
+            <th className="p-3 text-right text-xs font-bold uppercase text-muted-foreground">Aksi</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((w) => (
-            <tr key={w.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+            <tr key={w.id} className="border-b border-border last:border-0 hover:bg-muted">
               <td className="p-3 font-medium">
-                <button onClick={() => router.push(`/admin/workspaces/${w.id}`)} className="text-left text-white hover:text-primary">
+                <button onClick={() => router.push(`/admin/workspaces/${w.id}`)} className="text-left text-foreground hover:text-foreground">
                   {w.name}
                 </button>
-                <div className="text-xs text-slate-500">{w.contacts} kontak</div>
+                <div className="text-xs text-muted-foreground">{w.contacts} kontak</div>
               </td>
-              <td className="p-3 text-slate-400">{w.owner}</td>
+              <td className="p-3 text-muted-foreground">{w.owner}</td>
               <td className="p-3">
                 <select value={w.plan} onChange={(e) => act(w.id, { action: "setPlan", plan: e.target.value })} className={SELECT_CLASS}>
                   <option value="STARTER">Starter</option>
@@ -85,18 +85,18 @@ export default function AdminWorkspaces() {
                   <option value="CANCELLED">Batal</option>
                 </select>
               </td>
-              <td className="p-3 text-right text-white">{w.credits.toLocaleString("id-ID")}</td>
+              <td className="p-3 text-right text-foreground">{w.credits.toLocaleString("id-ID")}</td>
               <td className="p-3">
                 <div className="flex justify-end gap-1">
-                  <button onClick={() => router.push(`/admin/workspaces/${w.id}`)} className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">Detail</button>
-                  <button onClick={() => impersonate(w.id)} className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">Masuk</button>
-                  <button onClick={() => addCredits(w.id)} className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:border-white/15">Kredit</button>
+                  <button onClick={() => router.push(`/admin/workspaces/${w.id}`)} className="rounded-lg border border-border bg-muted px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">Detail</button>
+                  <button onClick={() => impersonate(w.id)} className="rounded-lg border border-border bg-muted px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">Masuk</button>
+                  <button onClick={() => addCredits(w.id)} className="rounded-lg border border-border bg-muted px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-border">Kredit</button>
                 </div>
               </td>
             </tr>
           ))}
           {rows.length === 0 && (
-            <tr><td colSpan={6} className="p-8 text-center text-slate-500">Belum ada workspace.</td></tr>
+            <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Belum ada workspace.</td></tr>
           )}
         </tbody>
       </table>

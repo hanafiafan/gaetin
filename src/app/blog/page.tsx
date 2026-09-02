@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { prisma } from "@/lib/db/prisma";
 
 export const dynamic = "force-dynamic";
@@ -11,18 +12,36 @@ export default async function BlogListPage() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <Link href="/" className="text-sm text-primary hover:underline">← Beranda</Link>
-      <h1 className="mt-2 text-3xl font-bold text-white">Blog</h1>
-      <div className="mt-8 space-y-5">
-        {posts.length === 0 && <p className="text-slate-400">Belum ada artikel.</p>}
+    <main className="cg-section py-14">
+      <Link href="/" className="cg-label text-muted-foreground transition hover:text-foreground">
+        ← Beranda
+      </Link>
+
+      <h1 className="cg-display mt-6 text-[clamp(2.5rem,7vw,5rem)]">Blog</h1>
+
+      <div className="mt-12 border-t border-foreground">
+        {posts.length === 0 && (
+          <p className="py-10 text-sm text-muted-foreground">Belum ada artikel.</p>
+        )}
         {posts.map((p) => (
-          <Link key={p.id} href={`/blog/${p.slug}`} className="block rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 transition hover:border-white/15 hover:bg-white/[0.04]">
-            <h2 className="text-lg font-semibold text-white">{p.title}</h2>
-            {p.excerpt && <p className="mt-1 text-sm text-slate-400">{p.excerpt}</p>}
-            {p.publishedAt && (
-              <p className="mt-2 text-xs text-slate-500">{new Date(p.publishedAt).toLocaleDateString("id-ID")}</p>
-            )}
+          <Link
+            key={p.id}
+            href={`/blog/${p.slug}`}
+            className="group flex items-start justify-between gap-6 border-b border-border py-7 transition hover:bg-muted"
+          >
+            <div className="min-w-0">
+              <h2 className="cg-display text-2xl sm:text-3xl">{p.title}</h2>
+              {p.excerpt && <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{p.excerpt}</p>}
+              {p.publishedAt && (
+                <p className="cg-label mt-4 text-muted-foreground">
+                  {new Date(p.publishedAt).toLocaleDateString("id-ID")}
+                </p>
+              )}
+            </div>
+            <ArrowUpRight
+              className="mt-1 h-6 w-6 shrink-0 text-muted-foreground transition group-hover:text-foreground"
+              strokeWidth={2}
+            />
           </Link>
         ))}
       </div>

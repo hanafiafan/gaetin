@@ -23,12 +23,12 @@ interface Contact {
 interface Workspace { id: string; name: string }
 
 const WA_BADGE: Record<string, string> = {
-  ACTIVE: "bg-emerald-500/15 text-emerald-400",
-  INACTIVE: "bg-red-500/15 text-red-400",
-  UNKNOWN: "bg-white/[0.06] text-slate-400",
+  ACTIVE: "bg-success/15 text-success",
+  INACTIVE: "bg-destructive/15 text-destructive",
+  UNKNOWN: "bg-muted text-muted-foreground",
 };
 
-const SELECT_CLASS = "h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white";
+const SELECT_CLASS = "h-10 rounded-xl border border-border bg-muted px-3 text-sm text-foreground";
 
 export default function AdminContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -69,33 +69,33 @@ export default function AdminContactsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Kontak & Nomor</h1>
-        <p className="text-sm text-slate-400">Semua nomor yang telah dimasukkan ke kontak. Total: {total.toLocaleString("id-ID")}</p>
+        <h1 className="text-2xl font-bold text-foreground">Kontak & Nomor</h1>
+        <p className="text-sm text-muted-foreground">Semua nomor yang telah dimasukkan ke kontak. Total: {total.toLocaleString("id-ID")}</p>
       </div>
 
-      <div className="flex flex-wrap gap-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
+      <div className="flex flex-wrap gap-3 rounded-xl border border-border bg-muted p-3">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-          <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && load(true)} placeholder="Cari nama, nomor, email..." className="h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && load(true)} placeholder="Cari nama, nomor, email..." className="h-10 w-full rounded-xl border border-border bg-muted pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
         </div>
         <select value={wsFilter} onChange={e => setWsFilter(e.target.value)} className={SELECT_CLASS}>
           <option value="">Semua workspace</option>
           {workspaces.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
-        <label className="flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-slate-300">
+        <label className="flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-border bg-muted px-3 text-sm text-foreground">
           <input type="checkbox" checked={hasPhone} onChange={e => setHasPhone(e.target.checked)} className="accent-primary" />
           Ada nomor
         </label>
-        <button onClick={() => load(true)} className="flex h-10 items-center gap-1.5 rounded-xl border border-white/[0.08] px-3 text-sm font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">
+        <button onClick={() => load(true)} className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">
           <Filter className="h-4 w-4" />Cari
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-white/[0.08]">
+      <div className="overflow-hidden rounded-xl border border-border">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.08] bg-white/[0.03] text-left text-xs uppercase text-slate-500">
+              <tr className="border-b border-border bg-muted text-left text-xs uppercase text-muted-foreground">
                 <th className="p-3">Kontak</th>
                 <th className="p-3">Nomor WA</th>
                 <th className="p-3">Status WA</th>
@@ -104,20 +104,20 @@ export default function AdminContactsPage() {
                 <th className="p-3">Bergabung</th>
               </tr>
             </thead>
-            <tbody className="bg-white/[0.01]">
-              {loading && <tr><td colSpan={6} className="p-8 text-center text-slate-500">Memuat...</td></tr>}
-              {!loading && contacts.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-slate-500">Tidak ada kontak.</td></tr>}
+            <tbody className="bg-muted">
+              {loading && <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Memuat...</td></tr>}
+              {!loading && contacts.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Tidak ada kontak.</td></tr>}
               {contacts.map(c => (
-                <tr key={c.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
+                <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted">
                   <td className="p-3">
-                    <div className="font-medium text-white">{c.name ?? "(tanpa nama)"}</div>
-                    {c.email && <div className="text-xs text-slate-500">{c.email}</div>}
-                    {c.category && <span className="mt-1 inline-block rounded-full border border-white/[0.08] px-2 py-0.5 text-xs text-slate-400">{c.category}</span>}
-                    {c.label && <span className="ml-1 inline-flex items-center gap-0.5 text-xs text-slate-500"><Tag className="h-3 w-3" />{c.label}</span>}
+                    <div className="font-medium text-foreground">{c.name ?? "(tanpa nama)"}</div>
+                    {c.email && <div className="text-xs text-muted-foreground">{c.email}</div>}
+                    {c.category && <span className="mt-1 inline-block rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{c.category}</span>}
+                    {c.label && <span className="ml-1 inline-flex items-center gap-0.5 text-xs text-muted-foreground"><Tag className="h-3 w-3" />{c.label}</span>}
                   </td>
                   <td className="p-3">
-                    <span className="inline-flex items-center gap-1 font-mono text-sm text-slate-300">
-                      <Phone className="h-3.5 w-3.5 text-emerald-400" />+{c.phone}
+                    <span className="inline-flex items-center gap-1 font-mono text-sm text-foreground">
+                      <Phone className="h-3.5 w-3.5 text-success" />+{c.phone}
                     </span>
                   </td>
                   <td className="p-3">
@@ -125,11 +125,11 @@ export default function AdminContactsPage() {
                       <MessageCircle className="h-3 w-3" />{c.waStatus}
                     </span>
                   </td>
-                  <td className="p-3 text-slate-400">{c.crmStage ?? "-"}</td>
+                  <td className="p-3 text-muted-foreground">{c.crmStage ?? "-"}</td>
                   <td className="p-3">
-                    <span className="inline-flex items-center gap-1 text-slate-400"><Building2 className="h-3.5 w-3.5" />{c.workspace.name}</span>
+                    <span className="inline-flex items-center gap-1 text-muted-foreground"><Building2 className="h-3.5 w-3.5" />{c.workspace.name}</span>
                   </td>
-                  <td className="whitespace-nowrap p-3 text-xs text-slate-500">
+                  <td className="whitespace-nowrap p-3 text-xs text-muted-foreground">
                     {new Date(c.createdAt).toLocaleDateString("id-ID")}
                   </td>
                 </tr>
@@ -140,11 +140,11 @@ export default function AdminContactsPage() {
       </div>
 
       {total > LIMIT && (
-        <div className="flex items-center justify-between text-sm text-slate-400">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Menampilkan {offset + 1}–{Math.min(offset + LIMIT, total)} dari {total.toLocaleString("id-ID")}</span>
           <div className="flex gap-2">
-            <button disabled={offset === 0} onClick={() => { setOffset(Math.max(0, offset - LIMIT)); load(); }} className="flex h-8 items-center rounded-lg border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40">Prev</button>
-            <button disabled={offset + LIMIT >= total} onClick={() => { setOffset(offset + LIMIT); load(); }} className="flex h-8 items-center rounded-lg border border-white/[0.08] px-3 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary disabled:opacity-40">Next</button>
+            <button disabled={offset === 0} onClick={() => { setOffset(Math.max(0, offset - LIMIT)); load(); }} className="flex h-8 items-center rounded-lg border border-border px-3 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">Prev</button>
+            <button disabled={offset + LIMIT >= total} onClick={() => { setOffset(offset + LIMIT); load(); }} className="flex h-8 items-center rounded-lg border border-border px-3 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">Next</button>
           </div>
         </div>
       )}

@@ -88,9 +88,9 @@ export default function InboxClient() {
     <div className="cg-card grid min-h-[640px] overflow-hidden rounded-2xl lg:grid-cols-[340px_1fr]">
       {/* Conversation list */}
       <div className="overflow-y-auto border-r border-border">
-        <div className="sticky top-0 z-10 border-b border-border bg-[#0d1020] p-4">
+        <div className="sticky top-0 z-10 border-b border-border bg-background p-4">
           <div className="flex items-center gap-2 font-black text-foreground">
-            <Inbox className="h-5 w-5 text-primary" />
+            <Inbox className="h-5 w-5 text-foreground" />
             Percakapan
           </div>
           <p className="mt-1 text-xs text-muted-foreground">{convos.length} thread tersedia</p>
@@ -108,7 +108,7 @@ export default function InboxClient() {
             )}
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-foreground">
                 <UserCircle2 className="h-5 w-5" />
               </div>
               <div className="min-w-0">
@@ -130,7 +130,7 @@ export default function InboxClient() {
         {!thread ? (
           <div className="flex flex-1 items-center justify-center p-8 text-center">
             <div>
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-foreground">
                 <Inbox className="h-7 w-7" />
               </div>
               <p className="mt-3 text-sm text-muted-foreground">Pilih percakapan untuk melihat riwayat dan membalas.</p>
@@ -156,7 +156,7 @@ export default function InboxClient() {
               </select>
             </div>
 
-            <div className="flex-1 space-y-3 overflow-y-auto bg-white/[0.01] p-4">
+            <div className="flex-1 space-y-3 overflow-y-auto bg-muted p-4">
               {thread.messages.map((m) => (
                 <div
                   key={m.id}
@@ -167,7 +167,7 @@ export default function InboxClient() {
                       "max-w-[75%] rounded-2xl px-3 py-2 text-sm",
                       m.direction === "OUTBOUND"
                         ? "rounded-br-sm bg-primary text-foreground"
-                        : "rounded-bl-sm border border-border bg-muted text-slate-200"
+                        : "rounded-bl-sm border border-border bg-muted text-foreground"
                     )}
                   >
                     {m.content}
@@ -189,7 +189,7 @@ export default function InboxClient() {
               <button
                 type="submit"
                 disabled={sending || !reply.trim()}
-                className="flex h-11 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+                className="flex h-11 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
                 Kirim

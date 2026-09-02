@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const FAQ_ITEMS = [
@@ -51,27 +51,23 @@ export default function LandingFaq() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <div className="space-y-2.5">
+    <div className="border-t border-foreground">
       {FAQ_ITEMS.map((item, i) => (
-        <div
-          key={i}
-          className={cn(
-            "overflow-hidden rounded-2xl border transition-all duration-200",
-            open === i
-              ? "border-primary/35 bg-primary/[0.07]"
-              : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]",
-          )}
-        >
+        <div key={i} className={cn("border-b border-border transition", open === i && "bg-muted")}>
           <button
             onClick={() => setOpen(open === i ? null : i)}
-            className="flex w-full items-start gap-4 p-5 text-left"
+            className="flex w-full items-start gap-4 py-5 pl-5 pr-4 text-left"
           >
-            <span className="flex-1 text-sm font-bold leading-6 text-white">{item.q}</span>
-            <ChevronDown
+            <span className="cg-label w-8 shrink-0 pt-0.5 text-muted-foreground">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span className="flex-1 text-sm font-bold leading-6 text-foreground">{item.q}</span>
+            <Plus
               className={cn(
-                "mt-0.5 h-5 w-5 shrink-0 text-slate-400 transition-transform duration-200",
-                open === i && "rotate-180 text-primary",
+                "mt-0.5 h-4 w-4 shrink-0 transition-transform duration-200",
+                open === i && "rotate-45",
               )}
+              strokeWidth={2.5}
             />
           </button>
           <div
@@ -80,7 +76,7 @@ export default function LandingFaq() {
               open === i ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
             )}
           >
-            <p className="px-5 pb-5 text-sm leading-7 text-slate-300">{item.a}</p>
+            <p className="pb-6 pl-[3.25rem] pr-8 text-sm leading-7 text-muted-foreground">{item.a}</p>
           </div>
         </div>
       ))}

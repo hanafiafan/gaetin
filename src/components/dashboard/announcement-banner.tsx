@@ -10,8 +10,8 @@ interface Ann {
 }
 
 const STYLE: Record<string, string> = {
-  WARNING: "bg-amber-500/10 text-amber-700",
-  INFO: "bg-primary/10 text-primary",
+  WARNING: "bg-warning/10 text-amber-700",
+  INFO: "bg-primary/10 text-foreground",
   SUCCESS: "bg-green-500/10 text-green-700",
   PROMO: "bg-green-500/10 text-green-700",
 };

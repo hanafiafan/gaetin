@@ -44,15 +44,10 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className="sticky top-0 z-20 hidden h-screen w-[292px] shrink-0 border-r border-border bg-card/90 px-4 py-4 backdrop-blur-2xl lg:flex lg:flex-col">
-        <Link href="/dashboard" className="cg-card flex items-center gap-3 rounded-3xl p-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary shadow-glow">
-            <img src="/brand/hellens-mark-white.png" alt="Hellens" className="h-6 w-6" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-base font-black text-foreground">{appName}</span>
-            <span className="block truncate text-xs font-medium text-muted-foreground">Sistem WhatsApp pelanggan</span>
-          </span>
+      <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col border-r border-foreground bg-background px-4 py-5 lg:flex">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
+          <span className="cg-display text-2xl">{appName}</span>
         </Link>
 
         <CreditsWidget credits={credits} plan={plan} subscriptionStatus={subscriptionStatus} />
@@ -61,7 +56,7 @@ export default function Sidebar({
         {isTrial && (
           <Link
             href="/dashboard/billing"
-            className="mt-3 flex items-center justify-between gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5 text-xs font-semibold text-amber-400 transition hover:border-amber-500/40 hover:bg-amber-500/10"
+            className="cg-label mt-4 flex items-center justify-between gap-2 border border-warning px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
           >
             <span className="flex items-center gap-1.5">
               <Lock className="h-3 w-3" />
@@ -78,7 +73,7 @@ export default function Sidebar({
 
             return (
               <div key={group.label}>
-                <p className="mb-2 px-3 text-[11px] font-bold uppercase text-muted-foreground">{group.label}</p>
+                <p className="cg-label mb-2 text-muted-foreground">{group.label}</p>
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
@@ -91,18 +86,11 @@ export default function Sidebar({
                           key={item.href}
                           type="button"
                           onClick={() => setLockedFeature(item.label)}
-                          className="group flex w-full items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm font-semibold text-muted-foreground transition hover:border-amber-500/15 hover:bg-amber-500/5"
+                          className="group flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted"
                         >
-                          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-muted">
-                            <Icon className="h-4 w-4 opacity-40" />
-                            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-card border border-amber-500/30">
-                              <Lock className="h-2.5 w-2.5 text-amber-500" />
-                            </span>
-                          </span>
+                          <Icon className="h-4 w-4 shrink-0 opacity-40" />
                           <span className="flex-1 text-left opacity-50">{item.label}</span>
-                          <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-600">
-                            Bisnis
-                          </span>
+                          <Lock className="h-3 w-3 shrink-0 text-warning" />
                         </button>
                       );
                     }
@@ -111,15 +99,13 @@ export default function Sidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition ${
+                        className={`group flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition ${
                           active
-                            ? "border border-primary/35 bg-primary/20 text-foreground shadow-glow"
-                            : "border border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`}
                       >
-                        <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${active ? "gradient-primary text-foreground" : "bg-muted text-muted-foreground group-hover:text-foreground"}`}>
-                          <Icon className="h-4 w-4" />
-                        </span>
+                        <Icon className="h-4 w-4 shrink-0" />
                         <span>{item.label}</span>
                       </Link>
                     );
@@ -130,30 +116,28 @@ export default function Sidebar({
           })}
         </nav>
 
-        <div className="mt-2 shrink-0 border-t border-border pt-4">
+        <div className="mt-2 shrink-0 border-t border-border pt-3">
           <form action="/api/auth/logout" method="POST">
             <button
               type="submit"
-              className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-red-400"
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-destructive"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                <LogOut className="h-4 w-4" />
-              </span>
+              <LogOut className="h-4 w-4 shrink-0" />
               <span>Keluar (Logout)</span>
             </button>
           </form>
         </div>
 
         {isSuperAdmin && (
-          <div className="mt-2 shrink-0 rounded-2xl border border-border bg-muted p-3">
+          <div className="mt-2 shrink-0 border border-border p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold text-foreground">Owner CMS</p>
-                <p className="text-[10px] text-muted-foreground">Kelola sistem Hellens.</p>
+                <p className="cg-label">Owner CMS</p>
+                <p className="mt-1 text-[10px] text-muted-foreground">Kelola sistem Hellens.</p>
               </div>
               <Link
                 href="/admin/cms"
-                className="flex h-7 px-3 items-center justify-center rounded-full border border-border bg-card text-[10px] font-bold text-foreground transition hover:border-primary/45 hover:bg-primary/15"
+                className="cg-label flex h-7 items-center justify-center border border-foreground px-3 transition hover:bg-foreground hover:text-background"
               >
                 Buka
               </Link>

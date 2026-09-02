@@ -473,9 +473,9 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <div className="flex items-center gap-2">
                     <form onSubmit={handleMapSearch} className="flex items-center">
                        <input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 max-w-[140px] rounded-xl border border-border bg-card px-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
-                       <button type="submit" className="ml-1 flex h-8 items-center rounded-lg border border-border px-2 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary">Cari</button>
+                       <button type="submit" className="ml-1 flex h-8 items-center rounded-lg border border-border px-2 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">Cari</button>
                     </form>
-                    <button type="button" onClick={locateMe} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-primary/30 hover:text-primary" title="Lokasi Saya">
+                    <button type="button" onClick={locateMe} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-primary/30 hover:text-foreground" title="Lokasi Saya">
                       <Compass className="h-4 w-4" />
                     </button>
                     <span className="ml-2 rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{radius} km</span>
@@ -487,7 +487,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           ) : mode === "auto" ? (
             <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-2xl">
               <div className="p-6 max-w-md text-center">
-                <Radar className="h-12 w-12 mx-auto text-primary/40 mb-4" />
+                <Radar className="h-12 w-12 mx-auto text-foreground/40 mb-4" />
                 <h3 className="text-lg font-bold text-foreground">Otomatis Wilayah</h3>
                 <p className="text-sm text-muted-foreground mt-2">
                   Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
@@ -509,7 +509,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               <div className="p-5">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                    <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                    <Loader2 className="h-5 w-5 text-foreground animate-spin" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-sm">Scraping berjalan</div>
@@ -517,7 +517,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     {currentJob && (
                       <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="font-medium text-foreground">{currentJob.name ?? currentJob.keyword}</span>
-                        <span className="text-primary font-semibold">{currentJob.totalFound} lead</span>
+                        <span className="text-foreground font-semibold">{currentJob.totalFound} lead</span>
                       </div>
                     )}
                     <button
@@ -570,7 +570,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap gap-2">
                   {keywords.map((kw, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                    <span key={i} className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-foreground">
                       {kw}
                       <button
                         type="button"
@@ -611,7 +611,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         setKeywordInput("");
                       }
                     }}
-                    className="flex h-10 items-center rounded-xl border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+                    className="flex h-10 items-center rounded-xl border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                   >
                     Tambah
                   </button>
@@ -623,17 +623,17 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-xl border border-border bg-muted/50 px-3 py-3">
-                      <Search className="mx-auto mb-2 h-4 w-4 text-primary" />
+                      <Search className="mx-auto mb-2 h-4 w-4 text-foreground" />
                       <div className="text-xs font-semibold text-foreground">Kata kunci</div>
                       <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Jenis bisnis yang dicari</div>
                     </div>
                     <div className="rounded-xl border border-border bg-muted/50 px-3 py-3">
-                      <MapPin className="mx-auto mb-2 h-4 w-4 text-primary" />
+                      <MapPin className="mx-auto mb-2 h-4 w-4 text-foreground" />
                       <div className="text-xs font-semibold text-foreground">Target wilayah</div>
                       <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Kota atau kecamatan</div>
                     </div>
                     <div className="rounded-xl border border-border bg-muted/50 px-3 py-3">
-                      <Radar className="mx-auto mb-2 h-4 w-4 text-primary" />
+                      <Radar className="mx-auto mb-2 h-4 w-4 text-foreground" />
                       <div className="text-xs font-semibold text-foreground">Mulai</div>
                       <div className="mt-0.5 text-[11px] leading-snug text-muted-foreground">Maps terbuka otomatis</div>
                     </div>
@@ -652,7 +652,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 </div>
               ) : mode === "auto" ? (
               <div className="relative space-y-2 border-l-2 border-primary py-1 pl-3">
-                <label className="text-sm font-medium text-primary">Nama Wilayah / Kota</label>
+                <label className="text-sm font-medium text-foreground">Nama Wilayah / Kota</label>
                 <input
                   value={regionInput}
                   onChange={(e) => {
@@ -666,12 +666,12 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 />
                 <p className="text-xs text-muted-foreground">Sistem akan mencari lead di seluruh area administrasi ini.</p>
                 {showSuggestions && regionSuggestions.length > 0 && (
-                  <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-xl border border-border bg-[#0d1126]/95 shadow-xl backdrop-blur-md">
+                  <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-xl border border-border bg-background/95 shadow-xl backdrop-blur-md">
                     {regionSuggestions.map((s, i) => (
                       <button
                         key={i}
                         type="button"
-                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-2.5 text-left text-sm text-foreground/80 outline-none transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
+                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-2.5 text-left text-sm text-foreground/80 outline-none transition-colors hover:bg-primary/10 hover:text-foreground focus:bg-primary/10 focus:text-foreground"
                         onClick={() => {
                           setRegionInput(s.display_name);
                           setShowSuggestions(false);
@@ -724,7 +724,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                         active
-                          ? "border-primary/40 bg-primary/10 text-primary"
+                          ? "border-primary/40 bg-primary/10 text-foreground"
                           : "border-border bg-muted/50 text-muted-foreground hover:border-border hover:text-foreground",
                       )}
                       aria-pressed={active}
@@ -750,7 +750,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             )}
 
             <button
-              className="flex h-11 w-full items-center justify-center rounded-full bg-primary font-semibold text-black transition hover:bg-primary/90 disabled:opacity-50"
+              className="flex h-11 w-full items-center justify-center rounded-full bg-primary font-semibold text-foreground transition hover:bg-primary/90 disabled:opacity-50"
               onClick={start}
               disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim()) || (mode === "extension" && !regionInput.trim())}
             >
@@ -776,7 +776,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           <div className="p-4">
             <div className="mb-3 flex items-center gap-2">
               <h2 className="text-sm font-bold text-foreground">Riwayat scraping</h2>
-              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary">{savedJobs.length}</span>
+              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold text-foreground">{savedJobs.length}</span>
             </div>
             <div className="flex flex-wrap gap-2">
             {savedJobs.map((j) => (
@@ -793,11 +793,11 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   className="flex items-center gap-2"
                 >
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: j.color ?? "#888" }} />
-                  <span className={cn("max-w-[140px] truncate", currentJob?.id === j.id && "font-semibold text-primary")}>
+                  <span className={cn("max-w-[140px] truncate", currentJob?.id === j.id && "font-semibold text-foreground")}>
                     {j.name ?? j.keyword}
                   </span>
                   <span className="text-xs tabular-nums text-muted-foreground">{j.totalFound}</span>
-                  {j.status === "RUNNING" && <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />}
+                  {j.status === "RUNNING" && <span className="h-1.5 w-1.5 rounded-full bg-warning animate-pulse" />}
                 </button>
                 <button
                   type="button"
@@ -820,7 +820,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <h2 className="text-base font-bold text-foreground">Hasil lead</h2>
-                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold tabular-nums text-primary">
+                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold tabular-nums text-foreground">
                   {leads.length}
                 </span>
                 {currentJob?.name && (
@@ -828,19 +828,19 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
-                <a href={exportHref("csv")} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary">
+                <a href={exportHref("csv")} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
                   <Download className="h-4 w-4" />
                   Export CSV
                 </a>
-                <a href={exportHref("xlsx")} className="flex h-8 items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 text-xs font-bold text-emerald-400 transition hover:bg-emerald-500/20">
+                <a href={exportHref("xlsx")} className="flex h-8 items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 text-xs font-bold text-success transition hover:bg-success/20">
                   <Download className="h-4 w-4" />
                   Export Excel
                 </a>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary disabled:opacity-40">
+                <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">
                   <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
                 </button>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25 disabled:opacity-40">
+                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-40">
                   <Columns3 className="h-4 w-4" />
                   Simpan + pipeline
                 </button>
@@ -907,11 +907,11 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     <td className="p-3">
                       <div className="flex items-center gap-2 font-bold text-foreground">
                         {l.businessName}
-                        {l.saved && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+                        {l.saved && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="text-xs text-muted-foreground">{l.address ?? "-"}</div>
                       {l.email && (
-                        <div className="mt-1 flex items-center gap-1 text-xs text-primary">
+                        <div className="mt-1 flex items-center gap-1 text-xs text-foreground">
                           <Mail className="h-3.5 w-3.5" />
                           {l.email}
                         </div>
@@ -932,15 +932,15 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     <td className="p-3">
                       <div className="flex justify-end gap-1">
                         {l.phone && (
-                          <a href={`https://wa.me/${l.phone}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400 hover:bg-emerald-500/20">Chat</a>
+                          <a href={`https://wa.me/${l.phone}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg bg-success/10 px-2 py-1 text-xs font-medium text-success hover:bg-success/20">Chat</a>
                         )}
                         {l.website && (
-                          <a href={l.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-foreground/80 hover:border-white/20">
+                          <a href={l.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-foreground/80 hover:border-border">
                             <Globe2 className="h-3.5 w-3.5" />
                             Web
                           </a>
                         )}
-                        <a href={mapsLink(l)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-foreground/80 hover:border-white/20">
+                        <a href={mapsLink(l)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-foreground/80 hover:border-border">
                           <ExternalLink className="h-3.5 w-3.5" />
                           Maps
                         </a>

@@ -24,11 +24,11 @@ function jobPct(job: FindJob) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-primary/15 text-primary",
-  COMPLETED: "bg-emerald-500/15 text-emerald-400",
-  FAILED: "bg-red-500/15 text-red-400",
-  STOPPED: "bg-red-500/15 text-red-400",
-  DRAFT: "bg-slate-500/15 text-muted-foreground",
+  RUNNING: "bg-primary/15 text-foreground",
+  COMPLETED: "bg-success/15 text-success",
+  FAILED: "bg-destructive/15 text-destructive",
+  STOPPED: "bg-destructive/15 text-destructive",
+  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
 };
 
 const SOURCE_LABEL: Record<Source, string> = { LEAD: "Lead (hasil scraping)", CONTACT: "Kontak tersimpan" };
@@ -110,7 +110,7 @@ export default function EmailFinderClient() {
                 onClick={() => setSource(s)}
                 className={cn(
                   "h-11 rounded-xl border px-3 text-xs font-bold transition",
-                  source === s ? "border-primary/40 bg-primary/15 text-primary" : "border-border text-foreground/70 hover:border-primary/30",
+                  source === s ? "border-primary/40 bg-primary/15 text-foreground" : "border-border text-foreground/70 hover:border-primary/30",
                 )}
               >
                 {SOURCE_LABEL[s]}
@@ -133,7 +133,7 @@ export default function EmailFinderClient() {
           <button
             type="submit"
             disabled={creating || !candidateCount}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
             {creating ? "Memulai..." : "Mulai Cari Email"}
@@ -154,7 +154,7 @@ export default function EmailFinderClient() {
         <div className="space-y-3">
           {jobs.map((job) => {
             const pct = jobPct(job);
-            const sc = STATUS_COLOR[job.status] ?? "bg-slate-500/15 text-muted-foreground";
+            const sc = STATUS_COLOR[job.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={job.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -172,7 +172,7 @@ export default function EmailFinderClient() {
                     {job.status === "RUNNING" && (
                       <button
                         onClick={() => stop(job.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/15 px-3 text-xs font-bold text-red-400 transition hover:bg-red-500/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>
@@ -180,7 +180,7 @@ export default function EmailFinderClient() {
                     {job.status === "COMPLETED" && job.found > 0 && (
                       <Link
                         href="/dashboard/email-blast"
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-primary transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
                       >
                         <Send className="h-3 w-3" /> Kirim Email Blast
                       </Link>

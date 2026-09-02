@@ -9,8 +9,8 @@ interface Ann {
   active: boolean;
 }
 
-const INPUT_CLASS = "h-10 min-w-[260px] flex-1 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none";
-const SELECT_CLASS = "h-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 text-sm text-white";
+const INPUT_CLASS = "h-10 min-w-[260px] flex-1 rounded-xl border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none";
+const SELECT_CLASS = "h-10 rounded-xl border border-border bg-muted px-2 text-sm text-foreground";
 
 export default function AdminAnnouncements() {
   const [items, setItems] = useState<Ann[]>([]);
@@ -57,24 +57,24 @@ export default function AdminAnnouncements() {
           <option value="WARNING">Peringatan</option>
           <option value="PROMO">Promo</option>
         </select>
-        <button type="submit" className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-primary transition hover:bg-primary/25">
+        <button type="submit" className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25">
           Tambah
         </button>
       </form>
 
       <div className="space-y-2">
-        {items.length === 0 && <p className="text-sm text-slate-500">Belum ada pengumuman.</p>}
+        {items.length === 0 && <p className="text-sm text-muted-foreground">Belum ada pengumuman.</p>}
         {items.map((a) => (
-          <div key={a.id} className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
+          <div key={a.id} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-muted p-3">
             <div className="min-w-0">
-              <div className="truncate text-sm text-white">{a.message}</div>
-              <div className="text-xs text-slate-500">{a.type} · {a.active ? "aktif" : "nonaktif"}</div>
+              <div className="truncate text-sm text-foreground">{a.message}</div>
+              <div className="text-xs text-muted-foreground">{a.type} · {a.active ? "aktif" : "nonaktif"}</div>
             </div>
             <div className="flex shrink-0 gap-1">
-              <button onClick={() => toggle(a)} className="rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:border-primary/30 hover:text-primary">
+              <button onClick={() => toggle(a)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">
                 {a.active ? "Nonaktifkan" : "Aktifkan"}
               </button>
-              <button onClick={() => remove(a.id)} className="rounded-lg px-3 py-1.5 text-xs font-bold text-slate-400 transition hover:bg-red-500/10 hover:text-red-400">
+              <button onClick={() => remove(a.id)} className="rounded-lg px-3 py-1.5 text-xs font-bold text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive">
                 Hapus
               </button>
             </div>

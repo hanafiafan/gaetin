@@ -76,7 +76,7 @@ export default function TeamClient() {
             <option value="AGENT">Agent</option>
             <option value="ADMIN">Admin</option>
           </select>
-          <button type="submit" className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-primary transition hover:bg-primary/25">
+          <button type="submit" className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25">
             Tambah anggota
           </button>
           {error && <span className="text-sm text-destructive">{error}</span>}
@@ -110,7 +110,7 @@ export default function TeamClient() {
                 </td>
                 <td className="p-3 text-right">
                   {isManager && m.role !== "OWNER" && (
-                    <button onClick={() => remove(m.id)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground transition hover:border-red-500/30 hover:text-red-400">
+                    <button onClick={() => remove(m.id)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground transition hover:border-destructive/30 hover:text-destructive">
                       Hapus
                     </button>
                   )}

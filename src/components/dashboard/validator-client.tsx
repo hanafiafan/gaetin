@@ -39,9 +39,9 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
 };
 
 const WA_COLOR: Record<Contact["waStatus"], string> = {
-  ACTIVE: "bg-emerald-500/15 text-emerald-400",
-  INACTIVE: "bg-red-500/15 text-red-400",
-  UNKNOWN: "bg-slate-500/15 text-muted-foreground",
+  ACTIVE: "bg-success/15 text-success",
+  INACTIVE: "bg-destructive/15 text-destructive",
+  UNKNOWN: "bg-muted-foreground/15 text-muted-foreground",
 };
 
 export default function ValidatorClient() {
@@ -143,7 +143,7 @@ export default function ValidatorClient() {
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-primary" />
+          <ShieldCheck className="h-5 w-5 text-foreground" />
           <h2 className="font-black text-foreground">Sesi validasi</h2>
         </div>
 
@@ -203,7 +203,7 @@ export default function ValidatorClient() {
                         )}
                       >
                         {checked ? (
-                          <SquareCheckBig className="h-5 w-5 shrink-0 text-primary" />
+                          <SquareCheckBig className="h-5 w-5 shrink-0 text-foreground" />
                         ) : (
                           <Square className="h-5 w-5 shrink-0 text-muted-foreground" />
                         )}
@@ -228,7 +228,7 @@ export default function ValidatorClient() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{selected.size} kontak dipilih</span>
                   {selected.size > 0 && (
-                    <button type="button" onClick={() => setSelected(new Set())} className="text-xs font-bold text-primary hover:underline">
+                    <button type="button" onClick={() => setSelected(new Set())} className="text-xs font-bold text-foreground hover:underline">
                       Kosongkan
                     </button>
                   )}
@@ -239,12 +239,12 @@ export default function ValidatorClient() {
             {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
 
             {running ? (
-              <button onClick={stop} className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-red-500/15 text-sm font-bold text-red-400 transition hover:bg-red-500/25">
+              <button onClick={stop} className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-destructive/15 text-sm font-bold text-destructive transition hover:bg-destructive/25">
                 <StopCircle className="h-4 w-4" />
                 Hentikan validasi
               </button>
             ) : (
-              <button onClick={start} className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-primary transition hover:bg-primary/25">
+              <button onClick={start} className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25">
                 <ShieldCheck className="h-4 w-4" />
                 Mulai validasi
               </button>
@@ -256,7 +256,7 @@ export default function ValidatorClient() {
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="font-black text-foreground">Progress</h2>
-          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-primary" : "bg-slate-500/15 text-muted-foreground")}>
+          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-foreground" : "bg-muted-foreground/15 text-muted-foreground")}>
             {progress?.status ?? "idle"}
           </span>
         </div>
@@ -272,11 +272,11 @@ export default function ValidatorClient() {
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between rounded-xl bg-emerald-500/10 p-3 text-sm text-emerald-400">
+              <div className="flex items-center justify-between rounded-xl bg-success/10 p-3 text-sm text-success">
                 <span className="flex items-center gap-2 font-medium"><CheckCircle2 className="h-4 w-4" /> Aktif WhatsApp</span>
                 <strong>{progress.active}</strong>
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-red-500/10 p-3 text-sm text-red-400">
+              <div className="flex items-center justify-between rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
                 <span className="flex items-center gap-2 font-medium"><XCircle className="h-4 w-4" /> Tidak aktif</span>
                 <strong>{progress.inactive}</strong>
               </div>
@@ -293,7 +293,7 @@ export default function ValidatorClient() {
         )}
         {running && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            <Loader2 className="h-4 w-4 animate-spin text-foreground" />
             Validasi berjalan dengan jeda acak antar nomor.
           </div>
         )}

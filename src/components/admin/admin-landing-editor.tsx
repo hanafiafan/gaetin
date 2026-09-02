@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-const INPUT_CLASS = "h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none";
-const TEXTAREA_CLASS = "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none";
-const MONO_CLASS = "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 font-mono text-xs text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none";
-const LABEL_CLASS = "text-sm font-bold text-white";
+const INPUT_CLASS = "h-10 w-full rounded-xl border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none";
+const TEXTAREA_CLASS = "w-full rounded-xl border border-border bg-muted p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none";
+const MONO_CLASS = "w-full rounded-xl border border-border bg-muted p-3 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none";
+const LABEL_CLASS = "text-sm font-bold text-foreground";
 
 export default function AdminLandingEditor() {
   const [heroTitle, setHeroTitle] = useState("");
@@ -69,8 +69,8 @@ export default function AdminLandingEditor() {
         <textarea value={faqJson} onChange={(e) => setFaqJson(e.target.value)} rows={8} className={MONO_CLASS} />
       </div>
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
-      {saved && <div className="rounded-xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-400">Tersimpan. Konten landing diperbarui.</div>}
-      <button onClick={save} className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-primary transition hover:bg-primary/25">
+      {saved && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">Tersimpan. Konten landing diperbarui.</div>}
+      <button onClick={save} className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25">
         Simpan konten
       </button>
     </div>

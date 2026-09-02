@@ -94,7 +94,7 @@ export default function SetupPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       {/* Header */}
       <div>
-        <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium tracking-wide text-primary">
+        <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium tracking-wide text-foreground">
           <Sparkles className="h-3 w-3" />
           Panduan Setup
         </div>
@@ -124,7 +124,7 @@ export default function SetupPage() {
                       isDone
                         ? "border-primary bg-primary text-foreground"
                         : isActive
-                          ? "border-primary bg-primary/15 text-primary"
+                          ? "border-primary bg-primary/15 text-foreground"
                           : "border-border bg-muted/50 text-muted-foreground"
                     }`}
                   >
@@ -136,7 +136,7 @@ export default function SetupPage() {
                   </div>
                   <span
                     className={`hidden text-center text-[10px] font-semibold leading-tight sm:block ${
-                      isActive ? "text-primary" : isDone ? "text-primary/70" : "text-muted-foreground"
+                      isActive ? "text-foreground" : isDone ? "text-foreground/70" : "text-muted-foreground"
                     }`}
                   >
                     {s.subtitle}
@@ -170,7 +170,7 @@ export default function SetupPage() {
         {step > 1 ? (
           <button
             onClick={() => setStep((p) => p - 1)}
-            className="flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-semibold text-foreground/80 transition hover:border-white/20 hover:text-foreground"
+            className="flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-semibold text-foreground/80 transition hover:border-border hover:text-foreground"
           >
             ← Kembali
           </button>
@@ -214,7 +214,7 @@ function StepInstall({
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-foreground">
           <Chrome className="h-6 w-6" />
         </div>
         <div>
@@ -250,9 +250,9 @@ function StepInstall({
         <p className="mb-3 text-sm font-semibold text-foreground/80">Cara Install:</p>
 
         <div className="rounded-xl border border-primary/20 bg-card p-4">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">File .ZIP & Load Unpacked</p>
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-foreground">File .ZIP & Load Unpacked</p>
           <div className="space-y-2 text-xs text-muted-foreground">
-            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-primary">extension.zip</code> lalu **extract/unzip** menjadi folder.</p>
+            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.zip</code> lalu **extract/unzip** menjadi folder.</p>
             <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan **Mode pengembang** (kanan atas).</p>
             <p><strong className="text-foreground">3.</strong> Klik tombol **"Load unpacked"** (Muat yang dibongkar) → pilih **folder hasil extract** tadi.</p>
           </div>
@@ -273,7 +273,7 @@ function StepInstall({
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
                   ? "border-primary bg-primary text-foreground"
-                  : "border-white/20 bg-transparent"
+                  : "border-border bg-transparent"
               }`}
             >
               {checked?.[i] && <Check className="h-3 w-3" />}
@@ -300,7 +300,7 @@ function StepMaps({
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-warning/15 text-warning">
           <Map className="h-6 w-6" />
         </div>
         <div>
@@ -312,11 +312,11 @@ function StepMaps({
       </div>
 
       {/* Visual mockup */}
-      <div className="overflow-hidden rounded-2xl border border-border bg-[#1a1c2a]">
+      <div className="overflow-hidden rounded-2xl border border-border bg-muted">
         {/* Maps top bar */}
-        <div className="flex items-center gap-3 border-b border-border bg-[#202230] px-4 py-2.5">
+        <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/">
-            <MapPin className="h-3.5 w-3.5 text-primary" />
+            <MapPin className="h-3.5 w-3.5 text-foreground" />
           </div>
           <div className="flex-1 rounded-full border border-border bg-muted px-3 py-1.5 text-xs text-muted-foreground">
             kafe jakarta pusat
@@ -332,17 +332,17 @@ function StepMaps({
           </div>
 
           {/* THE CHECKBOX — highlighted */}
-          <div className="mb-4 rounded-xl border-2 border-red-500/60 bg-red-500/5 px-3 py-2.5 shadow-[0_0_18px_rgba(239,68,68,0.25)]">
+          <div className="mb-4 rounded-xl border-2 border-destructive/60 bg-destructive/5 px-3 py-2.5 shadow-[0_0_18px_rgba(239,68,68,0.25)]">
             <div className="flex items-center gap-2.5">
               <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/">
-                <Check className="h-2.5 w-2.5 text-primary" />
+                <Check className="h-2.5 w-2.5 text-foreground" />
               </div>
               <span className="text-sm font-medium text-foreground">
                 Perbarui hasil saat peta digeser
               </span>
             </div>
             <div className="mt-1.5 flex items-center gap-1.5">
-              <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-red-400">
+              <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-destructive">
                 Wajib aktif!
               </span>
               <span className="text-[10px] text-muted-foreground">Tanpa ini scraping tidak bisa berjalan</span>
@@ -371,7 +371,7 @@ function StepMaps({
             { text: "Centang kotak \"Perbarui hasil saat peta digeser\"", action: "Ada di bagian atas daftar hasil pencarian" },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-[10px] font-black text-amber-400">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/20 text-[10px] font-black text-warning">
                 {i + 1}
               </span>
               <div>
@@ -387,7 +387,7 @@ function StepMaps({
         href="https://maps.google.com"
         target="_blank"
         rel="noreferrer"
-        className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+        className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
       >
         <ExternalLink className="h-4 w-4" />
         Buka Google Maps
@@ -407,7 +407,7 @@ function StepMaps({
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
                   ? "border-primary bg-primary text-foreground"
-                  : "border-white/20 bg-transparent"
+                  : "border-border bg-transparent"
               }`}
             >
               {checked?.[i] && <Check className="h-3 w-3" />}
@@ -434,7 +434,7 @@ function StepPermissions({
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-muted text-foreground">
           <Shield className="h-6 w-6" />
         </div>
         <div>
@@ -450,7 +450,7 @@ function StepPermissions({
         {/* Popup permission */}
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/ text-primary">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/ text-foreground">
               <Monitor className="h-4 w-4" />
             </div>
             <div>
@@ -466,7 +466,7 @@ function StepPermissions({
               "\"Pop-up & pengalihan\" → Izinkan",
             ].map((s, i) => (
               <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                <span className="mt-0.5 shrink-0 font-bold text-primary">{i + 1}.</span>
+                <span className="mt-0.5 shrink-0 font-bold text-foreground">{i + 1}.</span>
                 <span>{s}</span>
               </div>
             ))}
@@ -476,7 +476,7 @@ function StepPermissions({
         {/* Location permission */}
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success/15 text-success">
               <MapPin className="h-4 w-4" />
             </div>
             <div>
@@ -492,7 +492,7 @@ function StepPermissions({
               "\"Lokasi\" → Izinkan",
             ].map((s, i) => (
               <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                <span className="mt-0.5 shrink-0 font-bold text-emerald-400">{i + 1}.</span>
+                <span className="mt-0.5 shrink-0 font-bold text-success">{i + 1}.</span>
                 <span>{s}</span>
               </div>
             ))}
@@ -501,9 +501,9 @@ function StepPermissions({
       </div>
 
       {/* Alternative via Chrome settings */}
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
+      <div className="rounded-xl border border-warning/20 bg-warning/5 p-4 text-sm text-warning">
         <p className="font-semibold">Alternatif via Chrome Settings:</p>
-        <p className="mt-1 text-xs leading-5 text-amber-300/80">
+        <p className="mt-1 text-xs leading-5 text-warning/80">
           Buka <code className="rounded bg-black/20 px-1">chrome://settings/content</code> → Izin Situs → Pop-up & Lokasi → Tambahkan maps.google.com
         </p>
       </div>
@@ -521,7 +521,7 @@ function StepPermissions({
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
                   ? "border-primary bg-primary text-foreground"
-                  : "border-white/20 bg-transparent"
+                  : "border-border bg-transparent"
               }`}
             >
               {checked?.[i] && <Check className="h-3 w-3" />}
@@ -542,7 +542,7 @@ function StepWhatsApp() {
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success">
           <Smartphone className="h-6 w-6" />
         </div>
         <div>
@@ -557,7 +557,7 @@ function StepWhatsApp() {
       </div>
       <p className="text-xs text-muted-foreground">
         Belum siap sambung nomor sekarang? Boleh dilewati dulu — bisa disambungkan kapan saja lewat menu{" "}
-        <Link href="/dashboard/settings" className="text-primary hover:underline">Pengaturan</Link>.
+        <Link href="/dashboard/settings" className="text-foreground hover:underline">Pengaturan</Link>.
       </p>
     </div>
   );
@@ -571,7 +571,7 @@ function StepFirstScrape() {
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-foreground">
           <Search className="h-6 w-6" />
         </div>
         <div>
@@ -592,7 +592,7 @@ function StepFirstScrape() {
             { step: "4", text: "Ekstensi akan scrape otomatis dan data masuk ke dashboard" },
           ].map((item) => (
             <div key={item.step} className="flex items-start gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-black text-primary">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-black text-foreground">
                 {item.step}
               </span>
               <p className="text-sm text-foreground/80">{item.text}</p>
@@ -638,7 +638,7 @@ function StepDone() {
   return (
     <div className="space-y-6">
       <div className="py-4 text-center">
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary ring-4 ring-primary/10">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-foreground ring-4 ring-primary/10">
           <Check className="h-8 w-8" />
         </div>
         <h2 className="text-2xl font-bold text-foreground">Setup Selesai!</h2>
@@ -654,10 +654,10 @@ function StepDone() {
             href={action.href}
             className="group rounded-2xl border border-border bg-card p-4 transition hover:border-primary/30 hover:bg-primary/5"
           >
-            <action.icon className="h-5 w-5 text-primary" />
+            <action.icon className="h-5 w-5 text-foreground" />
             <p className="mt-2 text-sm font-bold text-foreground">{action.label}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">{action.desc}</p>
-            <span className="mt-2 flex items-center gap-1 text-xs font-semibold text-primary opacity-0 transition group-hover:opacity-100">
+            <span className="mt-2 flex items-center gap-1 text-xs font-semibold text-foreground opacity-0 transition group-hover:opacity-100">
               Buka <ArrowRight className="h-3 w-3" />
             </span>
           </Link>

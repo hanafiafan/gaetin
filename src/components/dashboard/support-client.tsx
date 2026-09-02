@@ -40,10 +40,10 @@ const FAQ = [
 ];
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  OPEN: { label: "Terbuka", color: "bg-primary/15 text-primary" },
-  IN_PROGRESS: { label: "Diproses", color: "bg-amber-500/15 text-amber-400" },
-  RESOLVED: { label: "Selesai", color: "bg-emerald-500/15 text-emerald-400" },
-  CLOSED: { label: "Ditutup", color: "bg-slate-500/15 text-muted-foreground" },
+  OPEN: { label: "Terbuka", color: "bg-primary/15 text-foreground" },
+  IN_PROGRESS: { label: "Diproses", color: "bg-warning/15 text-warning" },
+  RESOLVED: { label: "Selesai", color: "bg-success/15 text-success" },
+  CLOSED: { label: "Ditutup", color: "bg-muted-foreground/15 text-muted-foreground" },
 };
 
 export default function SupportClient() {
@@ -84,7 +84,7 @@ export default function SupportClient() {
       {/* FAQ */}
       <div>
         <div className="mb-4 flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-primary" />
+          <HelpCircle className="h-4 w-4 text-foreground" />
           <h2 className="font-black text-foreground">Pertanyaan umum</h2>
         </div>
         <div className="space-y-2">
@@ -100,7 +100,7 @@ export default function SupportClient() {
               >
                 <span className="text-sm font-bold text-foreground">{f.q}</span>
                 <ChevronDown
-                  className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openFaq === i && "rotate-180 text-primary")}
+                  className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openFaq === i && "rotate-180 text-foreground")}
                 />
               </button>
               {openFaq === i && (
@@ -117,12 +117,12 @@ export default function SupportClient() {
       <div className="space-y-5">
         <div className="cg-card rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2">
-            <LifeBuoy className="h-4 w-4 text-primary" />
+            <LifeBuoy className="h-4 w-4 text-foreground" />
             <h2 className="font-black text-foreground">Kirim tiket bantuan</h2>
           </div>
 
           {sent && (
-            <div className="mb-4 rounded-xl bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-400">
+            <div className="mb-4 rounded-xl bg-success/10 px-4 py-3 text-sm font-medium text-success">
               Tiket <span className="font-black">{sent}</span> terkirim. Tim kami merespons maks 1×24 jam kerja.
             </div>
           )}
@@ -162,10 +162,10 @@ export default function SupportClient() {
 
         <div>
           <div className="mb-3 flex items-center gap-2">
-            <Ticket className="h-4 w-4 text-primary" />
+            <Ticket className="h-4 w-4 text-foreground" />
             <h2 className="font-black text-foreground">Tiket saya</h2>
             {tickets.length > 0 && (
-              <span className="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-black text-primary">{tickets.length}</span>
+              <span className="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-black text-foreground">{tickets.length}</span>
             )}
           </div>
           {tickets.length === 0 ? (
@@ -175,7 +175,7 @@ export default function SupportClient() {
           ) : (
             <div className="space-y-2">
               {tickets.map((t) => {
-                const s = STATUS_MAP[t.status] ?? { label: t.status, color: "bg-slate-500/15 text-muted-foreground" };
+                const s = STATUS_MAP[t.status] ?? { label: t.status, color: "bg-muted-foreground/15 text-muted-foreground" };
                 return (
                   <div key={t.id} className="cg-card flex items-center justify-between gap-3 rounded-2xl px-4 py-3">
                     <div className="min-w-0 flex-1">

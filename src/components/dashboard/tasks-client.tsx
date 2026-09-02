@@ -15,7 +15,7 @@ interface Task {
 interface ContactLite { id: string; name: string | null; phone: string }
 
 const PRIORITY_LABEL = { HIGH: "Tinggi", MEDIUM: "Sedang", LOW: "Rendah" };
-const PRIORITY_COLOR = { HIGH: "bg-red-500/15 text-red-400", MEDIUM: "bg-amber-500/15 text-amber-400", LOW: "bg-muted text-muted-foreground" };
+const PRIORITY_COLOR = { HIGH: "bg-destructive/15 text-destructive", MEDIUM: "bg-warning/15 text-warning", LOW: "bg-muted text-muted-foreground" };
 const STATUS_LABEL = { PENDING: "Belum", COMPLETED: "Selesai", OVERDUE: "Terlambat" };
 
 const SELECT_CLASS = "h-10 rounded-xl border border-border bg-card px-2 text-sm text-foreground focus:outline-none [&>option]:bg-card [&>option]:text-foreground";
@@ -107,7 +107,7 @@ export default function TasksClient() {
           <button
             type="submit"
             disabled={!title.trim()}
-            className="flex h-10 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-primary transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-10 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Tambah
@@ -124,7 +124,7 @@ export default function TasksClient() {
             className={cn(
               "h-8 rounded-full px-3 text-xs font-bold transition",
               filter === f.key
-                ? "bg-primary/20 text-primary"
+                ? "bg-primary/20 text-foreground"
                 : "border border-border text-muted-foreground hover:border-primary/20 hover:text-foreground"
             )}
           >
@@ -169,8 +169,8 @@ export default function TasksClient() {
                   </td>
                   <td className="p-3">
                     <span className={cn("rounded-full px-2 py-0.5 text-xs font-bold",
-                      t.status === "OVERDUE" ? "bg-red-500/15 text-red-400"
-                        : t.status === "COMPLETED" ? "bg-emerald-500/15 text-emerald-400"
+                      t.status === "OVERDUE" ? "bg-destructive/15 text-destructive"
+                        : t.status === "COMPLETED" ? "bg-success/15 text-success"
                           : "bg-muted text-muted-foreground"
                     )}>
                       {STATUS_LABEL[t.status]}
@@ -179,7 +179,7 @@ export default function TasksClient() {
                   <td className="p-3 text-right">
                     <button
                       onClick={() => remove(t.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-red-500/10 hover:text-red-400"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

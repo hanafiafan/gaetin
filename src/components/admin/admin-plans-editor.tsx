@@ -12,8 +12,8 @@ interface PlanLimits {
 interface Plan { id: string; name: string; monthlyPrice: number; monthlyCredits: number; limits: PlanLimits }
 interface Pack { id: string; credits: number; price: number }
 
-const INPUT_CLASS = "h-10 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none";
-const LABEL_CLASS = "text-xs text-slate-400";
+const INPUT_CLASS = "h-10 w-full rounded-xl border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none";
+const LABEL_CLASS = "text-xs text-muted-foreground";
 
 export default function AdminPlansEditor() {
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -67,8 +67,8 @@ export default function AdminPlansEditor() {
     <div className="max-w-5xl space-y-5">
       <div className="space-y-3">
         {plans.map((p) => (
-          <div key={p.id} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
-            <div className="mb-2 text-sm font-bold text-slate-400">{p.id}</div>
+          <div key={p.id} className="rounded-xl border border-border bg-muted p-4">
+            <div className="mb-2 text-sm font-bold text-muted-foreground">{p.id}</div>
             <div className="grid gap-2 sm:grid-cols-3">
               <div>
                 <label className={LABEL_CLASS}>Nama</label>
@@ -110,26 +110,26 @@ export default function AdminPlansEditor() {
       </div>
 
       <div className="flex items-center gap-2">
-        <label className="text-sm font-bold text-white">Diskon tahunan (0–0.9):</label>
-        <input type="number" step="0.05" min="0" max="0.9" value={yearlyDiscount} onChange={(e) => setYearlyDiscount(Number(e.target.value))} className="h-10 w-28 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 text-sm text-white focus:border-primary/40 focus:outline-none" />
-        <span className="text-sm text-slate-400">= {Math.round(yearlyDiscount * 100)}%</span>
+        <label className="text-sm font-bold text-foreground">Diskon tahunan (0–0.9):</label>
+        <input type="number" step="0.05" min="0" max="0.9" value={yearlyDiscount} onChange={(e) => setYearlyDiscount(Number(e.target.value))} className="h-10 w-28 rounded-xl border border-border bg-muted px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none" />
+        <span className="text-sm text-muted-foreground">= {Math.round(yearlyDiscount * 100)}%</span>
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-sm font-bold text-white">
+        <label className="text-sm font-bold text-foreground">
           Paket top-up (JSON: [{'{'}&#34;id&#34;: &#34;...&#34;, &#34;credits&#34;: 1000, &#34;price&#34;: 100000{'}'}])
         </label>
         <textarea
           value={packsJson}
           onChange={(e) => setPacksJson(e.target.value)}
           rows={8}
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] p-3 font-mono text-xs text-white placeholder:text-slate-500 focus:border-primary/40 focus:outline-none"
+          className="w-full rounded-xl border border-border bg-muted p-3 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
         />
       </div>
 
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
-      {saved && <div className="rounded-xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-400">Tersimpan. Harga berlaku di landing &amp; billing.</div>}
-      <button onClick={save} className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-primary transition hover:bg-primary/25">
+      {saved && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">Tersimpan. Harga berlaku di landing &amp; billing.</div>}
+      <button onClick={save} className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25">
         Simpan paket
       </button>
     </div>

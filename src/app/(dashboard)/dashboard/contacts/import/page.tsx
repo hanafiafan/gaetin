@@ -5,7 +5,7 @@ export default function ImportPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <Link href="/dashboard/contacts" className="text-sm text-primary hover:underline">
+        <Link href="/dashboard/contacts" className="text-sm text-foreground hover:underline">
           ← Kembali ke Kontak
         </Link>
         <h1 className="mt-1 text-2xl font-bold text-foreground">Impor Kontak</h1>

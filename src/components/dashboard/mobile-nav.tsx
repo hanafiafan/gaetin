@@ -89,11 +89,11 @@ export default function MobileNav({
                               key={item.href}
                               type="button"
                               onClick={() => setLockedFeature(item.label)}
-                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-amber-500/5"
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-warning/5"
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
-                              <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-black uppercase text-amber-600">Bisnis</span>
+                              <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[9px] font-black uppercase text-warning">Bisnis</span>
                             </button>
                           );
                         }
@@ -126,7 +126,7 @@ export default function MobileNav({
                 <Link
                   href="/admin"
                   onClick={close}
-                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/10"
+                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-primary/10"
                 >
                   <Settings className="h-4 w-4" />
                   Admin Panel
@@ -135,7 +135,7 @@ export default function MobileNav({
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-red-400"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-destructive"
                 >
                   <LogOut className="h-4 w-4" />
                   Keluar

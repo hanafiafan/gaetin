@@ -28,10 +28,10 @@ export default function AdminTransactions() {
   }, []);
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+    <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/[0.08] bg-white/[0.03] text-left text-xs uppercase text-slate-500">
+          <tr className="border-b border-border bg-muted text-left text-xs uppercase text-muted-foreground">
             <th className="p-3">Tanggal</th>
             <th className="p-3">Workspace</th>
             <th className="p-3">Jenis</th>
@@ -41,16 +41,16 @@ export default function AdminTransactions() {
         </thead>
         <tbody>
           {rows.map((t) => (
-            <tr key={t.id} className="border-b border-white/[0.05] last:border-0 hover:bg-white/[0.02]">
-              <td className="p-3 text-slate-500">{new Date(t.createdAt).toLocaleDateString("id-ID")}</td>
-              <td className="p-3 font-bold text-white">{t.workspace}</td>
-              <td className="p-3 text-slate-300">{t.kind === "TOPUP" ? `Top-up ${t.credits.toLocaleString("id-ID")} kredit` : `Langganan ${t.plan ?? ""}`}</td>
-              <td className="p-3 text-right font-bold tabular-nums text-white">{idr(t.grossAmount)}</td>
-              <td className="p-3 text-slate-300">{t.status}</td>
+            <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted">
+              <td className="p-3 text-muted-foreground">{new Date(t.createdAt).toLocaleDateString("id-ID")}</td>
+              <td className="p-3 font-bold text-foreground">{t.workspace}</td>
+              <td className="p-3 text-foreground">{t.kind === "TOPUP" ? `Top-up ${t.credits.toLocaleString("id-ID")} kredit` : `Langganan ${t.plan ?? ""}`}</td>
+              <td className="p-3 text-right font-bold tabular-nums text-foreground">{idr(t.grossAmount)}</td>
+              <td className="p-3 text-foreground">{t.status}</td>
             </tr>
           ))}
           {rows.length === 0 && (
-            <tr><td colSpan={5} className="p-8 text-center text-slate-500">Belum ada transaksi.</td></tr>
+            <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Belum ada transaksi.</td></tr>
           )}
         </tbody>
       </table>

@@ -53,20 +53,20 @@ const PLAN_FEATURES: Record<string, string[]> = {
 };
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  ACTIVE: { label: "Aktif", color: "bg-emerald-500/15 text-emerald-400" },
-  TRIAL: { label: "Trial", color: "bg-amber-500/15 text-amber-400" },
-  EXPIRED: { label: "Kedaluwarsa", color: "bg-red-500/15 text-red-400" },
-  CANCELLED: { label: "Dibatalkan", color: "bg-slate-500/15 text-muted-foreground" },
+  ACTIVE: { label: "Aktif", color: "bg-success/15 text-success" },
+  TRIAL: { label: "Trial", color: "bg-warning/15 text-warning" },
+  EXPIRED: { label: "Kedaluwarsa", color: "bg-destructive/15 text-destructive" },
+  CANCELLED: { label: "Dibatalkan", color: "bg-muted-foreground/15 text-muted-foreground" },
 };
 const TX_STATUS: Record<string, { label: string; color: string }> = {
-  PAID: { label: "Lunas", color: "bg-emerald-500/15 text-emerald-400" },
-  PENDING: { label: "Menunggu", color: "bg-amber-500/15 text-amber-400" },
-  EXPIRED: { label: "Kedaluwarsa", color: "bg-red-500/15 text-red-400" },
-  FAILED: { label: "Gagal", color: "bg-red-500/15 text-red-400" },
+  PAID: { label: "Lunas", color: "bg-success/15 text-success" },
+  PENDING: { label: "Menunggu", color: "bg-warning/15 text-warning" },
+  EXPIRED: { label: "Kedaluwarsa", color: "bg-destructive/15 text-destructive" },
+  FAILED: { label: "Gagal", color: "bg-destructive/15 text-destructive" },
 };
 
 function StatusBadge({ status, map }: { status: string; map: typeof STATUS_LABELS }) {
-  const s = map[status] ?? { label: status, color: "bg-slate-500/15 text-muted-foreground" };
+  const s = map[status] ?? { label: status, color: "bg-muted-foreground/15 text-muted-foreground" };
   return (
     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", s.color)}>
       {s.label}
@@ -133,11 +133,11 @@ export default function BillingClient() {
     <div className="space-y-7">
       {/* Trial banner */}
       {isTrial && (
-        <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
+        <div className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
           <div>
-            <p className="font-bold text-amber-300 text-sm">Anda sedang dalam masa trial</p>
-            <p className="mt-0.5 text-xs text-amber-400/80">
+            <p className="font-bold text-warning text-sm">Anda sedang dalam masa trial</p>
+            <p className="mt-0.5 text-xs text-warning/80">
               {me?.trialEndsAt
                 ? `Trial berakhir ${new Date(me.trialEndsAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}. `
                 : ""}
@@ -159,18 +159,18 @@ export default function BillingClient() {
             {me ? <StatusBadge status={me.status} map={STATUS_LABELS} /> : <span className="text-sm text-muted-foreground">—</span>}
           </div>
         </div>
-        <div className={cn("rounded-2xl border p-5 transition", isLow ? "border-amber-500/30 bg-amber-500/10" : "cg-card")}>
+        <div className={cn("rounded-2xl border p-5 transition", isLow ? "border-warning/30 bg-warning/10" : "cg-card")}>
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase text-muted-foreground">Saldo kredit</p>
-            {isLow && <Zap className="h-4 w-4 text-amber-400" />}
+            {isLow && <Zap className="h-4 w-4 text-warning" />}
           </div>
-          <p className={cn("mt-2 text-2xl font-black", isLow ? "text-amber-300" : "text-foreground")}>
+          <p className={cn("mt-2 text-2xl font-black", isLow ? "text-warning" : "text-foreground")}>
             {me ? me.credits.toLocaleString("id-ID") : "—"}
           </p>
           {me && (
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
               <div
-                className={cn("h-full rounded-full transition-all", isLow ? "bg-amber-400" : "gradient-primary")}
+                className={cn("h-full rounded-full transition-all", isLow ? "bg-warning" : "gradient-primary")}
                 style={{ width: `${creditPct}%` }}
               />
             </div>
@@ -207,7 +207,7 @@ export default function BillingClient() {
               className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Tahunan
-              {data && <span className="ml-2 rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-black text-emerald-400">-{Math.round(data.yearlyDiscount * 100)}%</span>}
+              {data && <span className="ml-2 rounded-full bg-success/20 px-1.5 py-0.5 text-[10px] font-black text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
             </button>
           </div>
         </div>
@@ -224,10 +224,10 @@ export default function BillingClient() {
                 className={cn(
                   "relative flex flex-col rounded-3xl border p-6 transition",
                   featured
-                    ? "border-primary/40 bg-primary/10 shadow-glow"
+                    ? "border-primary/40 bg-primary/10"
                     : current
                     ? "border-primary/30 bg-card"
-                    : "border-border bg-muted/50 hover:border-white/20"
+                    : "border-border bg-muted/50 hover:border-border"
                 )}
               >
                 {featured && (
@@ -250,7 +250,7 @@ export default function BillingClient() {
                     )}
                   </div>
                   {cycle === "YEARLY" && amount > 0 && data && (
-                    <p className="mt-0.5 text-xs text-emerald-400">
+                    <p className="mt-0.5 text-xs text-success">
                       Hemat {idr(Math.round(p.monthlyPrice * 12 * data.yearlyDiscount))} vs bulanan
                     </p>
                   )}
@@ -260,7 +260,7 @@ export default function BillingClient() {
                   {features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/80">
                       <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full", featured ? "bg-primary/20" : "bg-foreground/10")}>
-                        <Check className={cn("h-2.5 w-2.5", featured ? "text-primary" : "text-muted-foreground")} />
+                        <Check className={cn("h-2.5 w-2.5", featured ? "text-foreground" : "text-muted-foreground")} />
                       </span>
                       {f}
                     </li>
@@ -275,7 +275,7 @@ export default function BillingClient() {
                     current
                       ? "border border-border bg-muted text-muted-foreground cursor-not-allowed"
                       : featured
-                      ? "gradient-primary cg-button-glow text-foreground hover:opacity-90"
+                      ? "gradient-primary text-foreground hover:opacity-90"
                       : "border border-border bg-muted text-foreground hover:border-primary/40 hover:bg-primary/15"
                   )}
                 >
@@ -308,9 +308,9 @@ export default function BillingClient() {
             const ppc = Math.round(pack.price / pack.credits);
             const cheapest = i === (data?.topupPacks?.length ?? 3) - 1;
             return (
-              <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-emerald-500/30 bg-emerald-500/5" : "border-border bg-muted/50 hover:border-white/20")}>
+              <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-success/30 bg-success/5" : "border-border bg-muted/50 hover:border-border")}>
                 {cheapest && (
-                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-black text-emerald-400">
+                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-success/20 px-2.5 py-0.5 text-[11px] font-black text-success">
                     <TrendingUp className="h-3 w-3" /> Terbaik
                   </span>
                 )}
@@ -352,7 +352,7 @@ export default function BillingClient() {
                 {txs.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-12 text-center text-muted-foreground">
-                      <Wallet className="mx-auto mb-2 h-8 w-8 text-slate-700" />
+                      <Wallet className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
                       Belum ada transaksi.
                     </td>
                   </tr>
@@ -377,7 +377,7 @@ export default function BillingClient() {
                             href={t.invoiceUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-foreground hover:underline"
                           >
                             Bayar sekarang <ExternalLink className="h-3 w-3" />
                           </a>

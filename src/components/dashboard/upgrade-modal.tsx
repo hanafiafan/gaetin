@@ -25,7 +25,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between p-6 pb-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-warning/15 text-warning">
             <Lock className="h-6 w-6" />
           </div>
           <button
@@ -45,7 +45,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
           <div className="mt-5 space-y-2">
             {LOCKED_FEATURES.map((f) => (
               <div key={f} className="flex items-center gap-2.5 text-sm text-foreground/80">
-                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-[9px] font-black">✓</span>
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/20 text-foreground text-[9px] font-black">✓</span>
                 {f}
               </div>
             ))}

@@ -67,10 +67,10 @@ export default async function DashboardPage({
   const isLowCredits = credits < 100;
 
   const statCards = [
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, color: "text-violet-400", bg: "bg-violet-500/10" },
-    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, color: "text-amber-400", bg: "bg-amber-500/10" },
-    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, color: "text-foreground", bg: "bg-primary/10" },
+    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, color: "text-foreground", bg: "bg-muted" },
+    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, color: "text-warning", bg: "bg-warning/10" },
+    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, color: "text-success", bg: "bg-success/10" },
   ];
 
   const quickActions = [
@@ -97,7 +97,7 @@ export default async function DashboardPage({
         <div className="overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/10 to-primary/5">
           <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-foreground">
                 <Chrome className="h-5 w-5" />
               </div>
               <div>
@@ -126,19 +126,19 @@ export default async function DashboardPage({
       )}
 
       {isLowCredits && (
-        <div className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-3.5">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
-          <span className="flex-1 text-sm font-medium text-amber-400 dark:text-amber-300">
+        <div className="flex items-center gap-3 rounded-2xl border border-warning/30 bg-warning/10 px-5 py-3.5">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-warning" />
+          <span className="flex-1 text-sm font-medium text-warning">
             Kredit hampir habis ({credits} tersisa). Beli kredit tambahan agar scraping dan validasi tidak terhenti.
           </span>
-          <Link href="/dashboard/billing" className="shrink-0 rounded-xl bg-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-400 dark:text-amber-300 transition hover:bg-amber-500/30">
+          <Link href="/dashboard/billing" className="shrink-0 rounded-xl bg-warning/20 px-3 py-1.5 text-xs font-bold text-warning transition hover:bg-warning/30">
             Beli kredit
           </Link>
         </div>
       )}
 
       {searchParams?.feature === "disabled" && (
-        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm font-medium text-amber-400 dark:text-amber-300">
+        <div className="rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning">
           Fitur tersebut sedang dinonaktifkan oleh pemilik sistem melalui Owner CMS.
         </div>
       )}
@@ -149,7 +149,7 @@ export default async function DashboardPage({
           <div className="flex flex-col justify-center">
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-primary">Ringkasan Workspace</span>
+                <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-foreground">Ringkasan Workspace</span>
                 {subscription && (
                   <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
                     {planLabel} · {subscription.status === "TRIAL" ? `Trial ${trialDaysLeft ?? 0} hari` : subscription.status}
@@ -173,7 +173,7 @@ export default async function DashboardPage({
                     className={
                       action.primary
                         ? "flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-                        : "flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+                        : "flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                     }
                   >
                     <Icon className="h-4 w-4" />
@@ -190,7 +190,7 @@ export default async function DashboardPage({
                 <div className="mt-1 text-xs text-muted-foreground">{doneSteps} dari {onboarding.length} langkah selesai</div>
               </div>
               {trialDaysLeft !== null && (
-                <span className="rounded-xl bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
+                <span className="rounded-xl bg-primary/10 px-3 py-1.5 text-xs font-bold text-foreground">
                   Trial {trialDaysLeft} hari
                 </span>
               )}
@@ -207,7 +207,7 @@ export default async function DashboardPage({
                 >
                   <span className="flex items-center gap-2.5">
                     {step.done ? (
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="h-4 w-4 text-foreground" />
                     ) : (
                       <Clock3 className="h-4 w-4 text-muted-foreground" />
                     )}
@@ -236,7 +236,7 @@ export default async function DashboardPage({
               <h2 className="text-base font-bold text-foreground">Alur kerja hari ini</h2>
               <p className="mt-0.5 text-xs text-muted-foreground">Prioritas yang menggerakkan alur penjualan</p>
             </div>
-            <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary">
+            <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Plus className="h-3.5 w-3.5" />
               Buat Tugas
             </Link>
@@ -250,9 +250,9 @@ export default async function DashboardPage({
               const Icon = item.icon;
               return (
                 <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition hover:border-primary/30 hover:bg-muted">
-                  <Icon className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:text-primary" />
+                  <Icon className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
                   <div>
-                    <div className="text-2xl font-bold text-foreground transition group-hover:text-primary">{item.value.toLocaleString("id-ID")}</div>
+                    <div className="text-2xl font-bold text-foreground transition group-hover:text-foreground">{item.value.toLocaleString("id-ID")}</div>
                     <div className="text-xs text-muted-foreground">{item.label}</div>
                   </div>
                 </Link>
@@ -267,12 +267,12 @@ export default async function DashboardPage({
         <div className="cg-card rounded-2xl p-6">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-foreground">Lead terbaru</h2>
-            <Link href="/dashboard/scraper" className="text-xs font-semibold text-primary transition hover:underline">Lihat semua</Link>
+            <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
           </div>
           <div className="mt-4 space-y-2">
             {recentLeads.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                Belum ada lead. <Link href="/dashboard/scraper" className="text-primary hover:underline">Mulai scraping.</Link>
+                Belum ada lead. <Link href="/dashboard/scraper" className="text-foreground hover:underline">Mulai scraping.</Link>
               </div>
             ) : (
               recentLeads.map((lead, i) => (
@@ -306,7 +306,7 @@ export default async function DashboardPage({
               return (
                 <div key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm transition hover:bg-muted">
                   <span className="flex items-center gap-2.5 font-medium text-foreground/80">
-                    <Icon className="h-4 w-4 text-primary" />
+                    <Icon className="h-4 w-4 text-foreground" />
                     {item.label}
                   </span>
                   <strong className="text-base tabular-nums text-foreground">{item.value}</strong>

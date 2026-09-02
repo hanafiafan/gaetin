@@ -94,14 +94,14 @@ export default function CrmBoard() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-primary/10 p-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-primary">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-foreground">
                 <BadgeDollarSign className="h-4 w-4" />
                 Revenue closing
               </div>
               <p className="mt-1 text-2xl font-black text-foreground">{formatIDR(revenue)}</p>
             </div>
-            <div className="rounded-xl bg-emerald-500/10 p-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-emerald-400">
+            <div className="rounded-xl bg-success/10 p-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-success">
                 <Trophy className="h-4 w-4" />
                 Deal menang
               </div>
@@ -110,7 +110,7 @@ export default function CrmBoard() {
           </div>
           <button
             onClick={openAdd}
-            className="flex h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+            className="flex h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
           >
             <Plus className="h-4 w-4" />
             Tambah kontak ke pipeline
@@ -134,7 +134,7 @@ export default function CrmBoard() {
               <button
                 key={c.id}
                 onClick={() => addToBoard(c.id)}
-                className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground/80 transition hover:border-primary/30 hover:text-primary"
+                className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
               >
                 {c.name ?? `+${c.phone}`}
               </button>

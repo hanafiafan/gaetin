@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
 
 const PLAN_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
 const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };
@@ -20,46 +19,41 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
 
   if (variant === "compact") {
     return (
-      <div className="mx-3 mt-3 rounded-2xl border border-primary/25 bg-primary/10 px-4 py-3">
+      <div className="mx-3 mt-3 border border-border p-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-bold text-foreground">Kredit</span>
-          </div>
-          <span className="text-sm font-black text-foreground">{credits.toLocaleString("id-ID")}</span>
+          <span className="cg-label text-muted-foreground">Kredit</span>
+          <span className="cg-display text-lg">{credits.toLocaleString("id-ID")}</span>
         </div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
-          <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${creditPct}%` }} />
+        <div className="mt-2 h-1.5 bg-muted">
+          <div
+            className={`h-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
+            style={{ width: `${creditPct}%` }}
+          />
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`mt-3 rounded-2xl border p-3 ${isLowCredits ? "border-amber-500/30 bg-amber-500/10" : "border-primary/25 bg-primary/10"}`}>
+    <div className={`mt-5 border p-3 ${isLowCredits ? "border-warning" : "border-border"}`}>
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <div className={`flex h-7 w-7 items-center justify-center rounded-xl ${isLowCredits ? "bg-amber-500/20 text-amber-300" : "gradient-primary text-foreground"}`}>
-            <Zap className="h-3.5 w-3.5" />
-          </div>
-          <p className="text-xs font-bold text-foreground">Kredit tersisa</p>
-        </div>
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${isTrial ? "bg-muted text-muted-foreground" : "bg-primary/20 text-primary"}`}>
+        <span className="cg-label text-muted-foreground">Kredit tersisa</span>
+        <span className={`cg-label ${isTrial ? "text-muted-foreground" : ""}`}>
           {PLAN_LABEL[plan] ?? plan}
         </span>
       </div>
-      <div className="mt-2 text-xl font-black text-foreground">{credits.toLocaleString("id-ID")}</div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
+      <div className="cg-display mt-2 text-3xl">{credits.toLocaleString("id-ID")}</div>
+      <div className="mt-2 h-1.5 bg-muted">
         <div
-          className={`h-full rounded-full transition-all ${isLowCredits ? "bg-amber-400" : "gradient-primary"}`}
+          className={`h-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
           style={{ width: `${creditPct}%` }}
         />
       </div>
       <Link
         href="/dashboard/billing"
-        className="mt-2 inline-flex h-7 w-full items-center justify-center rounded-full border border-border bg-card text-[11px] font-bold text-foreground transition hover:border-primary/45 hover:bg-primary/15"
+        className="cg-label mt-3 flex h-8 w-full items-center justify-center border border-foreground transition hover:bg-foreground hover:text-background"
       >
-        {isLowCredits ? "⚠️ Beli kredit" : "Kelola tagihan"}
+        {isLowCredits ? "Beli kredit" : "Kelola tagihan"}
       </Link>
     </div>
   );

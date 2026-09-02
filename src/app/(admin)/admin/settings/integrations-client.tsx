@@ -24,15 +24,15 @@ function Section({ title, icon: Icon, children }: { title: string; icon: React.C
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-3 border-b border-white/[0.08] px-6 py-4 text-left"
+        className="flex w-full items-center justify-between gap-3 border-b border-border px-6 py-4 text-left"
       >
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-foreground">
             <Icon className="h-4 w-4" />
           </span>
-          <span className="text-sm font-black text-white">{title}</span>
+          <span className="text-sm font-black text-foreground">{title}</span>
         </div>
-        <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && <div className="px-6 py-5">{children}</div>}
     </div>
@@ -49,15 +49,15 @@ function Field({ label, name, type = "text", placeholder, defaultValue, hint }: 
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-bold text-slate-300">{label}</label>
+      <label className="mb-1.5 block text-xs font-bold text-foreground">{label}</label>
       <input
         name={name}
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+        className="w-full rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground placeholder-slate-600 outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
       />
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
 }
@@ -67,12 +67,12 @@ function SaveButton({ pending, saved }: { pending: boolean; saved: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary/90 disabled:opacity-50"
+      className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-foreground transition hover:bg-primary/90 disabled:opacity-50"
     >
       {saved ? (
         <><CheckCircle2 className="h-4 w-4" /> Tersimpan</>
       ) : pending ? (
-        <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Menyimpan…</>
+        <><span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-white" /> Menyimpan…</>
       ) : (
         <><Save className="h-4 w-4" /> Simpan</>
       )}
@@ -106,10 +106,10 @@ export default function AdminIntegrationsClient({ settings }: Props) {
           <Field label="Merchant ID" name="midtrans_merchant_id" placeholder="M123456789" defaultValue={settings.midtrans_merchant_id} />
 
           {/* Live/Sandbox toggle */}
-          <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3">
+          <div className="flex items-center justify-between rounded-xl border border-border bg-muted px-4 py-3">
             <div>
-              <p className="text-sm font-bold text-white">Mode Aktif</p>
-              <p className="text-xs text-slate-400">
+              <p className="text-sm font-bold text-foreground">Mode Aktif</p>
+              <p className="text-xs text-muted-foreground">
                 {midtransMode === "live" ? "Transaksi nyata (Live)" : "Mode uji coba (Sandbox)"}
               </p>
             </div>
@@ -119,9 +119,9 @@ export default function AdminIntegrationsClient({ settings }: Props) {
               className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition"
             >
               {midtransMode === "live" ? (
-                <><ToggleRight className="h-6 w-6 text-emerald-400" /><span className="text-emerald-400">Live</span></>
+                <><ToggleRight className="h-6 w-6 text-success" /><span className="text-success">Live</span></>
               ) : (
-                <><ToggleLeft className="h-6 w-6 text-amber-400" /><span className="text-amber-400">Sandbox</span></>
+                <><ToggleLeft className="h-6 w-6 text-warning" /><span className="text-warning">Sandbox</span></>
               )}
             </button>
           </div>
@@ -142,7 +142,7 @@ export default function AdminIntegrationsClient({ settings }: Props) {
             </>
           )}
 
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Tidak perlu token webhook terpisah — notifikasi Midtrans diverifikasi lewat signature_key bawaan.
           </p>
 
@@ -179,16 +179,16 @@ export default function AdminIntegrationsClient({ settings }: Props) {
       <Section title="Email Transaksional" icon={Mail}>
         <form action={(fd) => handleSave("email", saveEmailSettings, fd)} className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-bold text-slate-300">Provider</label>
+            <label className="mb-1.5 block text-xs font-bold text-foreground">Provider</label>
             <select
               name="email_provider"
               defaultValue={settings.email_provider ?? "resend"}
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm text-white outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
             >
               <option value="resend">Resend</option>
               <option value="">Nonaktif</option>
             </select>
-            <p className="mt-1 text-xs text-slate-500">Hanya Resend yang didukung saat ini</p>
+            <p className="mt-1 text-xs text-muted-foreground">Hanya Resend yang didukung saat ini</p>
           </div>
           <Field
             label="API Key"
@@ -213,13 +213,13 @@ export default function AdminIntegrationsClient({ settings }: Props) {
 
       {/* Webhook info */}
       <div className="cg-card rounded-2xl p-5">
-        <div className="flex items-center gap-3 border-b border-white/[0.08] pb-4">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/ text-primary">
+        <div className="flex items-center gap-3 border-b border-border pb-4">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/ text-foreground">
             <Globe className="h-4 w-4" />
           </span>
           <div>
-            <p className="text-sm font-black text-white">URL Webhook</p>
-            <p className="text-xs text-slate-400">Daftarkan URL ini di provider masing-masing</p>
+            <p className="text-sm font-black text-foreground">URL Webhook</p>
+            <p className="text-xs text-muted-foreground">Daftarkan URL ini di provider masing-masing</p>
           </div>
         </div>
         <div className="mt-4 space-y-3">
@@ -228,8 +228,8 @@ export default function AdminIntegrationsClient({ settings }: Props) {
             { label: "WA Gateway Events", url: "/api/webhooks/gateway" },
           ].map(({ label, url }) => (
             <div key={url} className="flex items-center justify-between gap-3">
-              <span className="text-xs text-slate-400">{label}</span>
-              <code className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-mono text-slate-300">
+              <span className="text-xs text-muted-foreground">{label}</span>
+              <code className="rounded-lg border border-border bg-muted px-3 py-1 text-xs font-mono text-foreground">
                 {`<domain>${url}`}
               </code>
             </div>
