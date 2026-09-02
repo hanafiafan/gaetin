@@ -79,6 +79,7 @@ interface Lead {
   phone: string | null;
   address: string | null;
   website: string | null;
+  email: string | null;
   rating: number | null;
   reviewCount: number | null;
   category: string | null;
@@ -929,6 +930,12 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                         {l.saved && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
                       </div>
                       <div className="text-xs text-muted-foreground">{l.address ?? "-"}</div>
+                      {l.email && (
+                        <div className="mt-1 flex items-center gap-1 text-xs text-primary">
+                          <Mail className="h-3.5 w-3.5" />
+                          {l.email}
+                        </div>
+                      )}
                       {l.category && <span className="mt-2 inline-block rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{l.category}</span>}
                     </td>
                     <td className="p-3 text-muted-foreground">
