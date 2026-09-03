@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, FileSpreadsheet, Upload } from "lucide-react";
 
 type Field = "phone" | "name" | "label" | "email" | "city" | "category";
 const FIELDS: { key: Field; label: string; required?: boolean }[] = [
@@ -109,15 +109,20 @@ export default function ImportContacts() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <input
-          type="file"
-          accept=".csv,.xlsx,.xls"
-          onChange={onFile}
-          className="text-sm text-muted-foreground file:mr-3 file: file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-sm file:text-foreground/80 file:transition file:hover:border-primary/30 file:hover:text-foreground"
-        />
-        {fileName && <p className="mt-1 text-xs text-muted-foreground">{fileName}</p>}
-      </div>
+      <label className="group flex cursor-pointer items-center gap-4 border border-dashed border-border p-6 transition hover:border-foreground hover:bg-muted">
+        <input type="file" accept=".csv,.xlsx,.xls" onChange={onFile} className="sr-only" />
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-border bg-muted transition group-hover:border-foreground group-hover:bg-background">
+          {fileName ? <FileSpreadsheet className="h-5 w-5" /> : <Upload className="h-5 w-5" />}
+        </span>
+        <span>
+          <span className="cg-label block">
+            {fileName || "Pilih file CSV atau Excel"}
+          </span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            {fileName ? "Klik untuk ganti file" : "Format .csv, .xlsx, atau .xls"}
+          </span>
+        </span>
+      </label>
 
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
 
@@ -171,7 +176,7 @@ export default function ImportContacts() {
             <button
               onClick={runImport}
               disabled={mapping.phone < 0 || importing}
-              className="flex h-10 items-center gap-2 border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+              className="flex h-10 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
             >
               {importing ? "Mengimpor..." : "Impor kontak"}
             </button>

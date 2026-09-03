@@ -198,13 +198,13 @@ export default function BillingClient() {
           <div className="flex rounded-full border border-border bg-card p-1 text-sm">
             <button
               onClick={() => setCycle("MONTHLY")}
-              className={cn("px-4 py-1.5 font-bold transition", cycle === "MONTHLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
+              className={cn("px-4 py-1.5 font-bold transition", cycle === "MONTHLY" ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Bulanan
             </button>
             <button
               onClick={() => setCycle("YEARLY")}
-              className={cn("px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
+              className={cn("px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Tahunan
               {data && <span className="ml-2 bg-success/20 px-1.5 py-0.5 text-[10px] font-black text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
@@ -232,7 +232,7 @@ export default function BillingClient() {
               >
                 {featured && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="gradient-primary inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black text-foreground shadow-sm">
+                    <span className="gradient-primary inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black text-primary-foreground shadow-sm">
                       <Sparkles className="h-3 w-3" /> Paling populer
                     </span>
                   </div>
@@ -275,8 +275,8 @@ export default function BillingClient() {
                     current
                       ? "border border-border bg-muted text-muted-foreground cursor-not-allowed"
                       : featured
-                      ? "gradient-primary text-foreground hover:opacity-90"
-                      : "border border-border bg-muted text-foreground hover:border-primary/40 hover:bg-primary/15"
+                      ? "bg-primary text-primary-foreground hover:bg-foreground hover:text-background"
+                      : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground"
                   )}
                 >
                   <CreditCard className="h-4 w-4" />

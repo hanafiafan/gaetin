@@ -13,8 +13,26 @@ import {
   Line,
   Legend,
 } from "recharts";
-import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
+import { BarChart3, BarChart2, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
 import { CHART, CHART_TOOLTIP } from "@/lib/chart-theme";
+
+/** Recharts renders a blank canvas for an all-zero dataset — this makes that
+ * state look like a designed empty panel instead of a broken chart. */
+function isAllZero(data: { [k: string]: unknown }[], keys: string[]) {
+  return data.length === 0 || data.every((row) => keys.every((k) => !row[k]));
+}
+
+function EmptyChart({ height, label }: { height: number; label: string }) {
+  return (
+    <div
+      style={{ height }}
+      className="flex flex-col items-center justify-center gap-2 border border-dashed border-border text-center"
+    >
+      <BarChart2 className="h-5 w-5 text-muted-foreground" />
+      <p className="text-xs text-muted-foreground">{label}</p>
+    </div>
+  );
+}
 
 interface Summary {
   funnel: { stage: string; value: number }[];
@@ -86,44 +104,56 @@ export default function AnalyticsClient() {
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="cg-card rounded-2xl p-5">
           <h2 className="mb-4 text-sm font-bold text-foreground">Funnel konversi</h2>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
-              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-              <Bar dataKey="value" fill={CHART.accent} radius={0} />
-            </BarChart>
-          </ResponsiveContainer>
+          {isAllZero(summary.funnel, ["value"]) ? (
+            <EmptyChart height={240} label="Belum ada data funnel." />
+          ) : (
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+                <Bar dataKey="value" fill={CHART.accent} radius={0} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         <div className="cg-card rounded-2xl p-5">
           <h2 className="mb-4 text-sm font-bold text-foreground">Sumber lead</h2>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={summary.sources}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="source" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-              <Bar dataKey="count" fill={CHART.ink} radius={0} />
-            </BarChart>
-          </ResponsiveContainer>
+          {isAllZero(summary.sources, ["count"]) ? (
+            <EmptyChart height={240} label="Belum ada sumber lead." />
+          ) : (
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={summary.sources}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="source" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+                <Bar dataKey="count" fill={CHART.ink} radius={0} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 
       {/* Trends */}
       <div className="cg-card rounded-2xl p-5">
         <h2 className="mb-4 text-sm font-bold text-foreground">Tren 30 hari</h2>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={trends.days}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} interval={4} />
-            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ stroke: "rgba(255,255,255,0.1)" }} />
-            <Legend wrapperStyle={{ fontSize: "12px", color: CHART.axis }} />
-            <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke={CHART.accent} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.accent }} />
-            <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke={CHART.ink} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.ink }} />
-          </LineChart>
-        </ResponsiveContainer>
+        {isAllZero(trends.days, ["contacts", "messages"]) ? (
+          <EmptyChart height={260} label="Belum ada aktivitas dalam 30 hari terakhir." />
+        ) : (
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={trends.days}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} interval={4} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ stroke: "rgba(255,255,255,0.1)" }} />
+              <Legend wrapperStyle={{ fontSize: "12px", color: CHART.axis }} />
+              <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke={CHART.accent} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.accent }} />
+              <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke={CHART.ink} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.ink }} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* ROI per campaign */}

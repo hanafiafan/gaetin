@@ -112,7 +112,7 @@ export default function AdminCmsPage() {
           return (
             <div key={m.title} className="cg-card rounded-3xl p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40">
               <div className="mb-3 flex items-start justify-between gap-3">
-                <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-foreground">
+                <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-primary-foreground">
                   <Icon className="h-5 w-5" />
                 </div>
                 <span className="border border-border px-2.5 py-1 text-xs text-muted-foreground">{m.status}</span>

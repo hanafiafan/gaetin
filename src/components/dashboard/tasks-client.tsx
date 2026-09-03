@@ -107,7 +107,7 @@ export default function TasksClient() {
           <button
             type="submit"
             disabled={!title.trim()}
-            className="flex h-10 items-center gap-1.5 border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-10 items-center gap-1.5 bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Tambah

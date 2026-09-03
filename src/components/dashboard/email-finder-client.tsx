@@ -133,7 +133,7 @@ export default function EmailFinderClient() {
           <button
             type="submit"
             disabled={creating || !candidateCount}
-            className="flex h-11 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
             {creating ? "Memulai..." : "Mulai Cari Email"}
@@ -180,7 +180,7 @@ export default function EmailFinderClient() {
                     {job.status === "COMPLETED" && job.found > 0 && (
                       <Link
                         href="/dashboard/email-blast"
-                        className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                       >
                         <Send className="h-3 w-3" /> Kirim Email Blast
                       </Link>

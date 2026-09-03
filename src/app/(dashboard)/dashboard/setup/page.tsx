@@ -93,21 +93,19 @@ export default function SetupPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       {/* Header */}
-      <div>
-        <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium tracking-wide text-foreground">
-          <Sparkles className="h-3 w-3" />
+      <div className="border-b border-foreground pb-6">
+        <span className="cg-kicker">
+          <Sparkles className="h-3.5 w-3.5" />
           Panduan Setup
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Setup Ekstensi Hellens
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        </span>
+        <h1 className="cg-display mt-4 text-4xl">Setup Ekstensi Hellens</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
           Ikuti {STEPS.length} langkah ini dari install ekstensi sampai siap kirim WhatsApp/email pertamamu.
         </p>
       </div>
 
       {/* Step progress */}
-      <div className="cg-card rounded-2xl p-4">
+      <div className="border border-border p-4">
         <div className="flex items-center gap-0">
           {STEPS.map((s, i) => {
             const Icon = s.icon;
@@ -120,7 +118,7 @@ export default function SetupPage() {
                   className="flex flex-col items-center gap-1.5 min-w-0 flex-1"
                 >
                   <div
-                    className={`flex h-10 w-10 items-center justify-center border-2 transition ${ isDone ?"border-primary bg-primary text-foreground"
+                    className={`flex h-10 w-10 items-center justify-center border-2 transition ${ isDone ?"border-primary bg-primary text-primary-foreground"
                         : isActive
                           ? "border-primary bg-primary/15 text-foreground"
                           : "border-border bg-muted/50 text-muted-foreground"
@@ -179,7 +177,7 @@ export default function SetupPage() {
         {step < STEPS.length ? (
           <button
             onClick={() => setStep((p) => p + 1)}
-            className="flex h-10 items-center gap-2 bg-primary px-6 text-sm font-bold text-foreground transition hover:bg-primary/90"
+            className="flex h-10 items-center gap-2 bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             {allChecked(step) ? "Lanjut" : "Lewati"}
             <ArrowRight className="h-4 w-4" />
@@ -187,7 +185,7 @@ export default function SetupPage() {
         ) : (
           <Link
             href="/dashboard"
-            className="flex h-10 items-center gap-2 bg-primary px-6 text-sm font-bold text-foreground transition hover:bg-primary/90"
+            className="flex h-10 items-center gap-2 bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             Ke Dashboard
             <ArrowRight className="h-4 w-4" />
@@ -234,7 +232,7 @@ function StepInstall({
             <a
               href="/extension.zip"
               download
-              className="flex h-10 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
+              className="flex h-10 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
             >
               <Download className="h-4 w-4" />
               Download .ZIP
@@ -250,9 +248,9 @@ function StepInstall({
         <div className="rounded-xl border border-primary/20 bg-card p-4">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-foreground">File .ZIP & Load Unpacked</p>
           <div className="space-y-2 text-xs text-muted-foreground">
-            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.zip</code> lalu **extract/unzip** menjadi folder.</p>
-            <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan **Mode pengembang** (kanan atas).</p>
-            <p><strong className="text-foreground">3.</strong> Klik tombol **"Load unpacked"** (Muat yang dibongkar) → pilih **folder hasil extract** tadi.</p>
+            <p><strong className="text-foreground">1.</strong> Download file <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">extension.zip</code> lalu <strong className="text-foreground">extract/unzip</strong> menjadi folder.</p>
+            <p><strong className="text-foreground">2.</strong> Buka Chrome → ketik <code className="rounded bg-muted px-1.5 py-0.5 text-foreground">chrome://extensions</code> → aktifkan <strong className="text-foreground">Mode pengembang</strong> (kanan atas).</p>
+            <p><strong className="text-foreground">3.</strong> Klik tombol <strong className="text-foreground">&ldquo;Load unpacked&rdquo;</strong> (Muat yang dibongkar) → pilih <strong className="text-foreground">folder hasil extract</strong> tadi.</p>
           </div>
         </div>
       </div>
@@ -270,7 +268,7 @@ function StepInstall({
               onClick={() => onCheck(i)}
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
-                  ? "border-primary bg-primary text-foreground"
+                  ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-transparent"
               }`}
             >
@@ -404,7 +402,7 @@ function StepMaps({
               onClick={() => onCheck(i)}
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
-                  ? "border-primary bg-primary text-foreground"
+                  ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-transparent"
               }`}
             >
@@ -448,7 +446,7 @@ function StepPermissions({
         {/* Popup permission */}
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/ text-foreground">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/15 text-foreground">
               <Monitor className="h-4 w-4" />
             </div>
             <div>
@@ -518,7 +516,7 @@ function StepPermissions({
               onClick={() => onCheck(i)}
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
                 checked?.[i]
-                  ? "border-primary bg-primary text-foreground"
+                  ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-transparent"
               }`}
             >

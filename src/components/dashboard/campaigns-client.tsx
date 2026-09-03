@@ -204,7 +204,7 @@ export default function CampaignsClient() {
           <button
             type="submit"
             disabled={creating || !accountId || !name.trim() || !message.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat kampanye"}
@@ -239,7 +239,7 @@ export default function CampaignsClient() {
                       <button
                         onClick={() => act(campaign.id, "execute")}
                         disabled={quota?.remaining === 0}
-                        className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+                        className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
                       >
                         <Play className="h-3 w-3" /> Jalankan
                       </button>
@@ -255,7 +255,7 @@ export default function CampaignsClient() {
                     {campaign.status === "PAUSED" && (
                       <button
                         onClick={() => act(campaign.id, "resume")}
-                        className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                       >
                         <RotateCcw className="h-3 w-3" /> Lanjutkan
                       </button>

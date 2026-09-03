@@ -835,7 +835,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
                 </button>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-40">
+                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-40">
                   <Columns3 className="h-4 w-4" />
                   Simpan + pipeline
                 </button>

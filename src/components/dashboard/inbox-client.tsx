@@ -117,7 +117,7 @@ export default function InboxClient() {
               </div>
             </div>
             {c.unreadCount > 0 && (
-              <span className="bg-primary px-2 py-0.5 text-xs font-bold text-foreground">
+              <span className="bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
                 {c.unreadCount}
               </span>
             )}
@@ -166,7 +166,7 @@ export default function InboxClient() {
                     className={cn(
                       "max-w-[75%] rounded-2xl px-3 py-2 text-sm",
                       m.direction === "OUTBOUND"
-                        ? "rounded-br-sm bg-primary text-foreground"
+                        ? "rounded-br-sm bg-primary text-primary-foreground"
                         : "rounded-bl-sm border border-border bg-muted text-foreground"
                     )}
                   >
@@ -189,7 +189,7 @@ export default function InboxClient() {
               <button
                 type="submit"
                 disabled={sending || !reply.trim()}
-                className="flex h-11 items-center gap-2 border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+                className="flex h-11 items-center gap-2 bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
                 Kirim

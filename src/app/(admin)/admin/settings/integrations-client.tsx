@@ -67,7 +67,7 @@ function SaveButton({ pending, saved }: { pending: boolean; saved: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="flex items-center gap-2 bg-primary px-5 py-2.5 text-sm font-bold text-foreground transition hover:bg-primary/90 disabled:opacity-50"
+      className="flex items-center gap-2 bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
     >
       {saved ? (
         <><CheckCircle2 className="h-4 w-4" /> Tersimpan</>
