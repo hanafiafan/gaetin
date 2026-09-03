@@ -8,6 +8,7 @@ export default function SettingsPage() {
   return (
     <div className="max-w-6xl space-y-6">
       <PageHero
+        tone="akun"
         kicker="Workspace Settings"
         kickerIcon={Sparkles}
         title="Pengaturan"

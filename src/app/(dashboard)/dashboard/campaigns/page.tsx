@@ -8,6 +8,7 @@ export default async function CampaignsPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="whatsapp"
         kicker="Campaign Manager"
         kickerIcon={Sparkles}
         title="Kampanye"

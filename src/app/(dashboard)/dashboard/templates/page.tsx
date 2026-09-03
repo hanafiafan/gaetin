@@ -6,6 +6,7 @@ export default function TemplatesPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="whatsapp"
         kicker="Message Library"
         kickerIcon={Sparkles}
         title="Template Pesan"

@@ -6,6 +6,7 @@ export default function SupportPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="akun"
         kicker="Help Center"
         kickerIcon={Sparkles}
         title="Bantuan"

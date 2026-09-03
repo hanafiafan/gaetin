@@ -37,6 +37,18 @@
     --warning: 35 92% 38%;
     --warning-foreground: 0 0% 100%;
 
+    /* Section wayfinding — each sidebar nav group gets its own identity
+       (kicker badge, active nav highlight, hero accent) so the app doesn't
+       read as one undifferentiated yellow blob. "Mulai" keeps the primary
+       yellow as the anchor/home color; "Akun" stays neutral black since it's
+       administrative, not a workflow. */
+    --whatsapp: 142 66% 33%;
+    --whatsapp-foreground: 0 0% 100%;
+    --email: 217 80% 42%;
+    --email-foreground: 0 0% 100%;
+    --kelola: 262 55% 42%;
+    --kelola-foreground: 0 0% 100%;
+
     --border: 0 0% 89%;
     --input: 0 0% 89%;
     /* Black focus ring — a yellow ring on white is invisible. */
@@ -280,6 +292,13 @@
   .cg-scrollfade {
     mask-image: linear-gradient(to bottom, black calc(100% - 1.5rem), transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1.5rem), transparent 100%);
+  }
+
+  /* Same idea, horizontal — for the CRM kanban board, whose next column gets
+     abruptly clipped on mobile with no hint it's swipeable. */
+  .cg-scrollfade-x {
+    mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
   }
 
   /* Rotating circular badge (hero). */

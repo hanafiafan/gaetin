@@ -8,6 +8,7 @@ export default async function EmailFinderPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="email"
         kicker="Enrichment Engine"
         kickerIcon={Sparkles}
         title="Cari Email"

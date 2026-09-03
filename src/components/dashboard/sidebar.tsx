@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ArrowRight, Lock, LogOut } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
+import { TONE_BG, TONE_TEXT } from "@/components/dashboard/section-tone";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
 
@@ -73,7 +74,7 @@ export default function Sidebar({
 
             return (
               <div key={group.label}>
-                <p className="cg-label mb-1.5 text-muted-foreground">{group.label}</p>
+                <p className={`cg-label mb-1.5 transition-colors duration-200 ${TONE_TEXT[group.tone]}`}>{group.label}</p>
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
@@ -86,9 +87,9 @@ export default function Sidebar({
                           key={item.href}
                           type="button"
                           onClick={() => setLockedFeature(item.label)}
-                          className="group flex w-full items-center gap-3 px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted"
+                          className="group flex w-full items-center gap-3 px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-muted"
                         >
-                          <Icon className="h-4 w-4 shrink-0 opacity-40" />
+                          <Icon className="h-4 w-4 shrink-0 opacity-40 transition-transform duration-200 group-hover:scale-110" />
                           <span className="flex-1 text-left opacity-50">{item.label}</span>
                           <Lock className="h-3 w-3 shrink-0 text-warning" />
                         </button>
@@ -99,13 +100,13 @@ export default function Sidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`group flex items-center gap-3 px-3 py-2 text-sm font-semibold transition ${
+                        className={`group flex items-center gap-3 px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
                           active
-                            ? "bg-primary text-primary-foreground"
+                            ? TONE_BG[group.tone]
                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`}
                       >
-                        <Icon className="h-4 w-4 shrink-0" />
+                        <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
                         <span>{item.label}</span>
                       </Link>
                     );

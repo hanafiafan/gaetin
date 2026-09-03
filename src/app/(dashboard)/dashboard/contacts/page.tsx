@@ -7,6 +7,7 @@ export default function ContactsPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="primary"
         kicker="Contact Intelligence"
         kickerIcon={Sparkles}
         title="Kontak & Lead"

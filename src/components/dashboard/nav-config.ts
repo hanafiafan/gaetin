@@ -21,6 +21,7 @@ import {
   Users,
 } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
+import type { SectionTone } from "@/components/dashboard/section-tone";
 
 export type NavItem = {
   label: string;
@@ -33,9 +34,12 @@ export type NavItem = {
 // Dikelompokkan berurutan cara pakainya, DAN per-channel untuk grup kirim/respons
 // (mulai -> tools WhatsApp -> tools Email -> kelola -> akun) — supaya user baru tidak
 // nyasar di menu datar, dan jelas mana tool yang jalan lewat WhatsApp vs Email.
-export const navGroups: { label: string; items: NavItem[] }[] = [
+// Tiap grup punya warna sendiri (lihat section-tone.ts) supaya user langsung tahu
+// "sedang di area mana" tanpa baca label — Mulai=kuning (anchor), Akun=netral.
+export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[] = [
   {
     label: "Mulai",
+    tone: "primary",
     items: [
       { label: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
       { label: "Setup Ekstensi", href: "/dashboard/setup", icon: Chrome },
@@ -45,6 +49,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "WhatsApp",
+    tone: "whatsapp",
     items: [
       { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings" },
       { label: "Blast", href: "/dashboard/blast", icon: Send, flag: "blast", planFeature: "blast" },
@@ -57,6 +62,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "Email",
+    tone: "email",
     items: [
       { label: "Cari Email", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
       { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
@@ -64,6 +70,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "Kelola",
+    tone: "kelola",
     items: [
       { label: "CRM", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
       { label: "Tugas", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
@@ -72,6 +79,7 @@ export const navGroups: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "Akun",
+    tone: "akun",
     items: [
       { label: "Tagihan", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
       { label: "Tim", href: "/dashboard/team", icon: Bot, flag: "team" },

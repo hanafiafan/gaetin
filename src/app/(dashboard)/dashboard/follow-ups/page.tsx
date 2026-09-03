@@ -8,6 +8,7 @@ export default async function FollowUpsPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="whatsapp"
         kicker="Automation"
         kickerIcon={Sparkles}
         title="Follow-up Otomatis"

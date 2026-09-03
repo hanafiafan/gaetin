@@ -6,6 +6,7 @@ export default function TasksPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="kelola"
         kicker="Sales Taskboard"
         kickerIcon={Sparkles}
         title="Tugas"

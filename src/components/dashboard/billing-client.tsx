@@ -358,7 +358,7 @@ export default function BillingClient() {
                   </tr>
                 ) : (
                   txs.map((t) => (
-                    <tr key={t.id} className="border-b border-border/50 last:border-0 hover:bg-card">
+                    <tr key={t.id} className="border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-card">
                       <td className="p-4 text-muted-foreground">
                         {new Date(t.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                       </td>

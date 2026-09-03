@@ -8,6 +8,7 @@ export default async function EmailBlastPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="email"
         kicker="Outreach Engine"
         kickerIcon={Sparkles}
         title="Email Blast"

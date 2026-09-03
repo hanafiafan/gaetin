@@ -8,6 +8,7 @@ export default async function CrmPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="kelola"
         kicker="Sales Pipeline"
         kickerIcon={Sparkles}
         title="CRM Pipeline"

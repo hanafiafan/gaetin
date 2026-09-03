@@ -245,7 +245,7 @@ export default function ContactsTable() {
             </thead>
             <tbody>
               {items.map((contact) => (
-                <tr key={contact.id} className="border-b border-border/50 last:border-0 hover:bg-card">
+                <tr key={contact.id} className="border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-card">
                   <td className="p-3">
                     <input
                       type="checkbox"

@@ -10,6 +10,7 @@ export default async function ScraperPage() {
   return (
     <div className="space-y-6">
       <PageHero
+        tone="primary"
         kicker="Market Research Engine"
         kickerIcon={Sparkles}
         title="Scraper Lead"

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Lock, LogOut, Menu, Settings, X } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
+import { TONE_BG, TONE_TEXT } from "@/components/dashboard/section-tone";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
 
@@ -76,7 +77,7 @@ export default function MobileNav({
                 if (!items.length) return null;
                 return (
                   <div key={group.label}>
-                    <p className="mb-1 px-2 text-[11px] font-bold uppercase text-muted-foreground">{group.label}</p>
+                    <p className={`mb-1 px-2 text-[11px] font-bold uppercase transition-colors duration-200 ${TONE_TEXT[group.tone]}`}>{group.label}</p>
                     <div className="space-y-0.5">
                       {items.map((item) => {
                         const Icon = item.icon;
@@ -89,7 +90,7 @@ export default function MobileNav({
                               key={item.href}
                               type="button"
                               onClick={() => setLockedFeature(item.label)}
-                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-warning/5"
+                              className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-warning/5"
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -103,9 +104,9 @@ export default function MobileNav({
                             key={item.href}
                             href={item.href}
                             onClick={close}
-                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                            className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${
                               active
-                                ? "bg-primary/20 text-foreground"
+                                ? TONE_BG[group.tone]
                                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
                             }`}
                           >

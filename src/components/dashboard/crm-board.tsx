@@ -144,7 +144,7 @@ export default function CrmBoard() {
         </div>
       )}
 
-      <div className="flex gap-4 overflow-x-auto border-t border-foreground pt-4 pb-2">
+      <div className="cg-scrollfade-x flex gap-4 overflow-x-auto border-t border-foreground pt-4 pb-2">
         {columns.map((col) => (
           <div
             key={col.id}

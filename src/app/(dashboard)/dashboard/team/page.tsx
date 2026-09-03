@@ -6,6 +6,7 @@ export default function TeamPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="akun"
         kicker="Workspace Access"
         kickerIcon={Sparkles}
         title="Tim"

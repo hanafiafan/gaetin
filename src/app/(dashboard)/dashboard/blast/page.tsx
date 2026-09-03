@@ -8,6 +8,7 @@ export default async function BlastPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="whatsapp"
         kicker="Outreach Engine"
         kickerIcon={Sparkles}
         title="WhatsApp Blast"

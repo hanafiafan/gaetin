@@ -2,6 +2,9 @@ import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { TONE_BG, TONE_BORDER, TONE_TEXT, type SectionTone } from "@/components/dashboard/section-tone";
+
+export type PageHeroTone = SectionTone;
 
 export interface PageHeroFeature {
   icon: LucideIcon;
@@ -13,6 +16,8 @@ interface PageHeroProps {
   kickerIcon: LucideIcon;
   title: string;
   description: string;
+  /** Section identity — matches the sidebar nav group this page belongs to. */
+  tone?: PageHeroTone;
   /** Standard 3-row feature list on the right (most pages). Ignored if rightSlot is set. */
   features?: PageHeroFeature[];
   /** Custom right-side content (action buttons, jump-nav, etc.) instead of the feature list. */
@@ -30,15 +35,16 @@ export default function PageHero({
   kickerIcon: KickerIcon,
   title,
   description,
+  tone = "primary",
   features,
   rightSlot,
   className,
 }: PageHeroProps) {
   return (
-    <Card className={cn("border-x-0 border-t-0 border-b border-foreground bg-transparent", className)}>
+    <Card className={cn("border-x-0 border-t-0 border-b-2 bg-transparent transition-colors duration-300", TONE_BORDER[tone], className)}>
       <div className="grid gap-6 pb-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
         <div>
-          <Badge className="cg-kicker rounded-none hover:bg-primary">
+          <Badge className={cn("inline-flex items-center gap-1.5 rounded-none px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300", TONE_BG[tone])}>
             <KickerIcon className="h-3.5 w-3.5" /> {kicker}
           </Badge>
           <h1 className="cg-display mt-5 text-[clamp(2rem,4.5vw,3.25rem)]">{title}</h1>
@@ -50,11 +56,16 @@ export default function PageHero({
               <div
                 key={label}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5",
+                  "group flex items-center gap-3 px-3 py-2.5 transition-colors duration-200 hover:bg-muted",
                   i > 0 && "border-t border-border",
                 )}
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-border bg-muted">
+                <span
+                  className={cn(
+                    "flex h-7 w-7 shrink-0 items-center justify-center border border-border bg-muted transition-colors duration-200 group-hover:border-current group-hover:bg-background",
+                    TONE_TEXT[tone],
+                  )}
+                >
                   <Icon className="h-3.5 w-3.5" />
                 </span>
                 <span className="cg-label">{label}</span>

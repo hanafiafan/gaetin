@@ -47,6 +47,18 @@ const config: Config = {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        whatsapp: {
+          DEFAULT: "hsl(var(--whatsapp))",
+          foreground: "hsl(var(--whatsapp-foreground))",
+        },
+        email: {
+          DEFAULT: "hsl(var(--email))",
+          foreground: "hsl(var(--email-foreground))",
+        },
+        kelola: {
+          DEFAULT: "hsl(var(--kelola))",
+          foreground: "hsl(var(--kelola-foreground))",
+        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

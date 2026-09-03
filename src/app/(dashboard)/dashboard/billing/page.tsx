@@ -6,6 +6,7 @@ export default function BillingPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="akun"
         kicker="Subscription"
         kickerIcon={Sparkles}
         title="Langganan & Kredit"

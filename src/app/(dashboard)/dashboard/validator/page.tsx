@@ -8,6 +8,7 @@ export default async function ValidatorPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="whatsapp"
         kicker="Number Hygiene"
         kickerIcon={Sparkles}
         title="Validasi Nomor"

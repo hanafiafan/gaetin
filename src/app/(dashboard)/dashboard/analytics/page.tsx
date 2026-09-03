@@ -6,6 +6,7 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="kelola"
         kicker="Business Intelligence"
         kickerIcon={Sparkles}
         title="Analitik"

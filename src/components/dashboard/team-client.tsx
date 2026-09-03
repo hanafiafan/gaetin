@@ -95,7 +95,7 @@ export default function TeamClient() {
           </thead>
           <tbody>
             {members.map((m) => (
-              <tr key={m.id} className="border-b border-border/50 last:border-0 hover:bg-card">
+              <tr key={m.id} className="border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-card">
                 <td className="p-3 font-medium text-foreground">{m.name}{m.isSelf && <span className="ml-1 text-xs text-muted-foreground">(Anda)</span>}</td>
                 <td className="p-3 text-muted-foreground">{m.email}</td>
                 <td className="p-3">

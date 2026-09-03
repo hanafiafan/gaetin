@@ -8,6 +8,7 @@ export default async function InboxPage() {
   return (
     <div className="space-y-5">
       <PageHero
+        tone="whatsapp"
         kicker="Conversation Hub"
         kickerIcon={Sparkles}
         title="Inbox"

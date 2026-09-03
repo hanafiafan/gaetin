@@ -149,7 +149,7 @@ export default function TasksClient() {
             </thead>
             <tbody>
               {tasks.map((t) => (
-                <tr key={t.id} className="border-b border-border/50 last:border-0 hover:bg-muted/30">
+                <tr key={t.id} className="border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-muted/30">
                   <td className="p-3">
                     <input
                       type="checkbox"
