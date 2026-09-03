@@ -51,7 +51,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
       </div>
       <Link
         href="/dashboard/billing"
-        className="cg-label mt-3 flex h-8 w-full items-center justify-center border border-foreground transition hover:bg-foreground hover:text-background"
+        className="cg-label mt-3 flex h-8 w-full items-center justify-center border border-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
       >
         {isLowCredits ? "Beli kredit" : "Kelola tagihan"}
       </Link>

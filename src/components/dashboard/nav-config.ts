@@ -29,6 +29,11 @@ export type NavItem = {
   icon: React.ComponentType<{ className?: string }>;
   flag?: string;
   planFeature?: keyof PlanFeatures;
+  /** For shortcut items that share a destination with another item in a
+   * different group (e.g. "Sambung WhatsApp" -> /dashboard/settings, same
+   * page as "Pengaturan"). Without this, landing on that page would
+   * highlight both nav items — in two different section colors — at once. */
+  skipActiveHighlight?: boolean;
 };
 
 // Dikelompokkan berurutan cara pakainya, DAN per-channel untuk grup kirim/respons
@@ -51,7 +56,7 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     label: "WhatsApp",
     tone: "whatsapp",
     items: [
-      { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings" },
+      { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings", skipActiveHighlight: true },
       { label: "Blast", href: "/dashboard/blast", icon: Send, flag: "blast", planFeature: "blast" },
       { label: "Kampanye", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
       { label: "Inbox", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },

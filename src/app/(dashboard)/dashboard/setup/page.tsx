@@ -20,6 +20,8 @@ import {
   Zap,
 } from "lucide-react";
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
+import { TONE_TEXT, type SectionTone } from "@/components/dashboard/section-tone";
+import { cn } from "@/lib/utils";
 
 const STEPS = [
   {
@@ -538,7 +540,7 @@ function StepWhatsApp() {
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-whatsapp/15 text-whatsapp">
           <Smartphone className="h-6 w-6" />
         </div>
         <div>
@@ -626,10 +628,13 @@ function StepFirstScrape() {
 /* ────────────────────────────────────────────────────────────── */
 
 function StepDone() {
-  const nextActions = [
-    { href: "/dashboard/scraper", label: "Scraper", desc: "Ambil lead baru dari Google Maps", icon: Search },
-    { href: "/dashboard/email-finder", label: "Cari Email", desc: "Temukan email dari website lead", icon: Mail },
-    { href: "/dashboard/blast", label: "WhatsApp Blast", desc: "Kirim pesan ke kontak tersimpan", icon: Send },
+  // Tone matches each destination's sidebar section, so the color someone
+  // is about to land in is already visible here — same wayfinding system
+  // as the rest of the dashboard, not just a plain link list.
+  const nextActions: { href: string; label: string; desc: string; icon: typeof Search; tone: SectionTone }[] = [
+    { href: "/dashboard/scraper", label: "Scraper", desc: "Ambil lead baru dari Google Maps", icon: Search, tone: "primary" },
+    { href: "/dashboard/email-finder", label: "Cari Email", desc: "Temukan email dari website lead", icon: Mail, tone: "email" },
+    { href: "/dashboard/blast", label: "WhatsApp Blast", desc: "Kirim pesan ke kontak tersimpan", icon: Send, tone: "whatsapp" },
   ];
   return (
     <div className="space-y-6">
@@ -648,12 +653,14 @@ function StepDone() {
           <Link
             key={action.href}
             href={action.href}
-            className="group rounded-2xl border border-border bg-card p-4 transition hover:border-primary/30 hover:bg-primary/5"
+            className="group border border-border bg-card p-4 transition-colors duration-200 hover:border-current"
           >
-            <action.icon className="h-5 w-5 text-foreground" />
-            <p className="mt-2 text-sm font-bold text-foreground">{action.label}</p>
+            <span className={cn("flex h-9 w-9 items-center justify-center border border-border bg-muted transition-colors duration-200 group-hover:border-current group-hover:bg-background", TONE_TEXT[action.tone])}>
+              <action.icon className="h-4 w-4" />
+            </span>
+            <p className="mt-3 text-sm font-bold text-foreground">{action.label}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">{action.desc}</p>
-            <span className="mt-2 flex items-center gap-1 text-xs font-semibold text-foreground opacity-0 transition group-hover:opacity-100">
+            <span className={cn("mt-2 flex items-center gap-1 text-xs font-semibold opacity-0 transition-opacity duration-200 group-hover:opacity-100", TONE_TEXT[action.tone])}>
               Buka <ArrowRight className="h-3 w-3" />
             </span>
           </Link>

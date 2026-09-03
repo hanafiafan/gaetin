@@ -78,7 +78,7 @@ export default function Sidebar({
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
-                    const active = isNavActive(pathname, item.href);
+                    const active = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
                     const locked = isItemLocked(item);
 
                     if (locked) {
