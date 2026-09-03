@@ -108,7 +108,7 @@ export default function InboxClient() {
             )}
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-foreground">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-primary/10 text-foreground">
                 <UserCircle2 className="h-5 w-5" />
               </div>
               <div className="min-w-0">
@@ -117,7 +117,7 @@ export default function InboxClient() {
               </div>
             </div>
             {c.unreadCount > 0 && (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-foreground">
+              <span className="bg-primary px-2 py-0.5 text-xs font-bold text-foreground">
                 {c.unreadCount}
               </span>
             )}
@@ -189,7 +189,7 @@ export default function InboxClient() {
               <button
                 type="submit"
                 disabled={sending || !reply.trim()}
-                className="flex h-11 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+                className="flex h-11 items-center gap-2 border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
                 Kirim

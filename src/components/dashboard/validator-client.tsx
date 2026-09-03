@@ -213,7 +213,7 @@ export default function ValidatorClient() {
                             +{contact.phone}{contact.label ? ` · ${contact.label}` : ""}
                           </span>
                         </span>
-                        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-bold", WA_COLOR[contact.waStatus])}>
+                        <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", WA_COLOR[contact.waStatus])}>
                           {WA_LABEL[contact.waStatus]}
                         </span>
                       </button>
@@ -239,12 +239,12 @@ export default function ValidatorClient() {
             {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
 
             {running ? (
-              <button onClick={stop} className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-destructive/15 text-sm font-bold text-destructive transition hover:bg-destructive/25">
+              <button onClick={stop} className="flex h-10 w-full items-center justify-center gap-2 bg-destructive/15 text-sm font-bold text-destructive transition hover:bg-destructive/25">
                 <StopCircle className="h-4 w-4" />
                 Hentikan validasi
               </button>
             ) : (
-              <button onClick={start} className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25">
+              <button onClick={start} className="flex h-10 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25">
                 <ShieldCheck className="h-4 w-4" />
                 Mulai validasi
               </button>
@@ -256,7 +256,7 @@ export default function ValidatorClient() {
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="font-black text-foreground">Progress</h2>
-          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-foreground" : "bg-muted-foreground/15 text-muted-foreground")}>
+          <span className={cn("px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-foreground" : "bg-muted-foreground/15 text-muted-foreground")}>
             {progress?.status ?? "idle"}
           </span>
         </div>

@@ -123,7 +123,7 @@ export default function WorkspaceDetailPage() {
             <option value="BLOCKED">Suspend</option>
             <option value="CANCELLED">Batal</option>
           </select>
-          <button onClick={impersonate} className="flex h-9 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25">
+          <button onClick={impersonate} className="flex h-9 items-center gap-1.5 border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25">
             <Shield className="h-4 w-4" /> Masuk sebagai user
           </button>
         </div>
@@ -151,13 +151,13 @@ export default function WorkspaceDetailPage() {
       <div className="cg-card flex flex-wrap items-center gap-6 rounded-2xl p-4">
         <div>
           <div className="mb-1 text-xs text-muted-foreground">Status langganan</div>
-          <span className={cn("rounded-full px-3 py-1 text-xs font-bold", STATUS_BADGE[sub?.status ?? "TRIAL"] ?? STATUS_BADGE.TRIAL)}>
+          <span className={cn("px-3 py-1 text-xs font-bold", STATUS_BADGE[sub?.status ?? "TRIAL"] ?? STATUS_BADGE.TRIAL)}>
             {sub?.status ?? "TRIAL"}
           </span>
         </div>
         <div>
           <div className="mb-1 text-xs text-muted-foreground">Paket</div>
-          <span className="rounded-full border border-border px-3 py-1 text-xs font-bold text-foreground">
+          <span className="border border-border px-3 py-1 text-xs font-bold text-foreground">
             {PLAN_LABEL[sub?.plan ?? "STARTER"] ?? sub?.plan}
           </span>
         </div>
@@ -206,7 +206,7 @@ export default function WorkspaceDetailPage() {
                     <div className="font-bold text-foreground">{m.user.name}</div>
                     <div className="text-xs text-muted-foreground">{m.user.email}</div>
                   </div>
-                  <span className="rounded-full border border-border px-3 py-1 text-xs text-foreground">{m.role}</span>
+                  <span className="border border-border px-3 py-1 text-xs text-foreground">{m.role}</span>
                 </div>
               ))}
             </div>
@@ -220,7 +220,7 @@ export default function WorkspaceDetailPage() {
                     <div className="truncate font-bold text-foreground">{j.name ?? j.keyword}</div>
                     <div className="text-xs text-muted-foreground">{j.totalFound} lead</div>
                   </div>
-                  <span className={cn("ml-2 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-bold", STATUS_BADGE[j.status] ?? STATUS_BADGE.STOPPED)}>{j.status}</span>
+                  <span className={cn("ml-2 whitespace-nowrap px-2 py-0.5 text-xs font-bold", STATUS_BADGE[j.status] ?? STATUS_BADGE.STOPPED)}>{j.status}</span>
                 </div>
               ))}
               {scraperJobs.length === 0 && <div className="text-sm text-muted-foreground">Belum ada scraping.</div>}
@@ -248,7 +248,7 @@ export default function WorkspaceDetailPage() {
                     <div className="text-xs text-muted-foreground">{j.keyword}</div>
                   </td>
                   <td className="p-3 text-center font-bold text-foreground">{j.totalFound}</td>
-                  <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", STATUS_BADGE[j.status] ?? STATUS_BADGE.STOPPED)}>{j.status}</span></td>
+                  <td className="p-3"><span className={cn("px-2 py-0.5 text-xs font-bold", STATUS_BADGE[j.status] ?? STATUS_BADGE.STOPPED)}>{j.status}</span></td>
                   <td className="p-3 text-xs text-muted-foreground">{new Date(j.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               ))}
@@ -276,7 +276,7 @@ export default function WorkspaceDetailPage() {
                   <td className="p-3 text-center">
                     <span className="inline-flex items-center gap-1 text-foreground"><Phone className="h-3.5 w-3.5" />{b.totalRecipients}</span>
                   </td>
-                  <td className="p-3"><span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", STATUS_BADGE[b.status] ?? STATUS_BADGE.DRAFT)}>{b.status}</span></td>
+                  <td className="p-3"><span className={cn("px-2 py-0.5 text-xs font-bold", STATUS_BADGE[b.status] ?? STATUS_BADGE.DRAFT)}>{b.status}</span></td>
                   <td className="p-3 text-xs text-muted-foreground">{new Date(b.createdAt).toLocaleDateString("id-ID")}</td>
                 </tr>
               ))}
@@ -301,7 +301,7 @@ export default function WorkspaceDetailPage() {
               {creditLedger.map((l) => (
                 <tr key={l.id} className="border-b border-border last:border-0 hover:bg-muted">
                   <td className="p-3">
-                    <span className="rounded-full border border-border px-2 py-0.5 text-xs text-foreground">{l.reason}</span>
+                    <span className="border border-border px-2 py-0.5 text-xs text-foreground">{l.reason}</span>
                   </td>
                   <td className="p-3 text-right tabular-nums text-muted-foreground">{l.balanceAfter.toLocaleString("id-ID")}</td>
                   <td className={cn("p-3 text-right font-bold tabular-nums", l.amount >= 0 ? "text-success" : "text-destructive")}>

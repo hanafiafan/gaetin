@@ -110,7 +110,7 @@ export default function CrmBoard() {
           </div>
           <button
             onClick={openAdd}
-            className="flex h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+            className="flex h-10 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
           >
             <Plus className="h-4 w-4" />
             Tambah kontak ke pipeline
@@ -134,7 +134,7 @@ export default function CrmBoard() {
               <button
                 key={c.id}
                 onClick={() => addToBoard(c.id)}
-                className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                className="border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
               >
                 {c.name ?? `+${c.phone}`}
               </button>

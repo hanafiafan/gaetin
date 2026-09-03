@@ -114,7 +114,7 @@ export default function ImportContacts() {
           type="file"
           accept=".csv,.xlsx,.xls"
           onChange={onFile}
-          className="text-sm text-muted-foreground file:mr-3 file:rounded-full file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-sm file:text-foreground/80 file:transition file:hover:border-primary/30 file:hover:text-foreground"
+          className="text-sm text-muted-foreground file:mr-3 file: file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-sm file:text-foreground/80 file:transition file:hover:border-primary/30 file:hover:text-foreground"
         />
         {fileName && <p className="mt-1 text-xs text-muted-foreground">{fileName}</p>}
       </div>
@@ -171,7 +171,7 @@ export default function ImportContacts() {
             <button
               onClick={runImport}
               disabled={mapping.phone < 0 || importing}
-              className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+              className="flex h-10 items-center gap-2 border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
             >
               {importing ? "Mengimpor..." : "Impor kontak"}
             </button>
@@ -197,7 +197,7 @@ export default function ImportContacts() {
           </ul>
           <Link
             href="/dashboard/contacts"
-            className="inline-flex h-9 items-center rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+            className="inline-flex h-9 items-center border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
           >
             Lihat kontak
           </Link>

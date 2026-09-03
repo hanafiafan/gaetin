@@ -177,7 +177,7 @@ export default function BlastClient() {
           <button
             type="submit"
             disabled={creating || !accountId || !name.trim() || !messageText.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat blast"}
@@ -203,7 +203,7 @@ export default function BlastClient() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold text-foreground">{blast.name}</h3>
-                      <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-bold", sc)}>{blast.status}</span>
+                      <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", sc)}>{blast.status}</span>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {blast.totalRecipients} penerima · {blast.sentCount} terkirim · {blast.failedCount} gagal
@@ -214,7 +214,7 @@ export default function BlastClient() {
                       <button
                         onClick={() => execute(blast.id)}
                         disabled={quota?.remaining === 0}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+                        className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>
@@ -222,7 +222,7 @@ export default function BlastClient() {
                     {blast.status === "RUNNING" && (
                       <button
                         onClick={() => stop(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
+                        className="flex h-8 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>

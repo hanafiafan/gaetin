@@ -239,7 +239,7 @@ export default function OwnerCmsControl() {
                   )}
                 >
                   <span className="font-bold">{labelize(key)}</span>
-                  <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold", enabled ? "bg-primary/20 text-foreground" : "bg-muted text-muted-foreground")}>
+                  <span className={cn("px-2 py-0.5 text-[11px] font-bold", enabled ? "bg-primary/20 text-foreground" : "bg-muted text-muted-foreground")}>
                     {enabled ? "On" : "Off"}
                   </span>
                 </button>
@@ -279,7 +279,7 @@ export default function OwnerCmsControl() {
                         <button
                           type="button"
                           onClick={() => updateCustomerField(index, "enabled", !field.enabled)}
-                          className={cn("rounded-full px-2.5 py-1 text-xs font-bold", field.enabled ? "bg-primary/10 text-foreground" : "bg-muted text-muted-foreground")}
+                          className={cn("px-2.5 py-1 text-xs font-bold", field.enabled ? "bg-primary/10 text-foreground" : "bg-muted text-muted-foreground")}
                         >
                           {field.enabled ? "Aktif" : "Nonaktif"}
                         </button>
@@ -319,7 +319,7 @@ export default function OwnerCmsControl() {
                         <button
                           type="button"
                           onClick={() => updateExperiment(index, "enabled", !experiment.enabled)}
-                          className={cn("rounded-full px-2.5 py-1 text-xs font-bold", experiment.enabled ? "bg-primary/10 text-foreground" : "bg-muted text-muted-foreground")}
+                          className={cn("px-2.5 py-1 text-xs font-bold", experiment.enabled ? "bg-primary/10 text-foreground" : "bg-muted text-muted-foreground")}
                         >
                           {experiment.enabled ? "Aktif" : "Nonaktif"}
                         </button>
@@ -375,14 +375,14 @@ export default function OwnerCmsControl() {
                             <div className="truncate text-sm font-bold text-foreground">{customer.workspace}</div>
                             <div className="truncate text-xs text-muted-foreground">{customer.ownerEmail}</div>
                           </div>
-                          <span className={cn("whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-bold", healthClass(customer.health))}>
+                          <span className={cn("whitespace-nowrap border px-2 py-0.5 text-[11px] font-bold", healthClass(customer.health))}>
                             {healthLabel(customer.health)}
                           </span>
                         </div>
                         {customer.needs.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1">
                             {customer.needs.slice(0, 2).map((need) => (
-                              <span key={need} className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">
+                              <span key={need} className="border border-border px-2 py-0.5 text-[10px] text-muted-foreground">
                                 {need}
                               </span>
                             ))}
@@ -440,7 +440,7 @@ export default function OwnerCmsControl() {
                       <div className="truncate text-sm font-bold text-foreground">{customer.workspace}</div>
                       <div className="truncate text-xs text-muted-foreground">{customer.ownerEmail}</div>
                     </div>
-                    <span className="whitespace-nowrap rounded-full border border-border px-2.5 py-1 text-xs text-foreground">{customer.plan}</span>
+                    <span className="whitespace-nowrap border border-border px-2.5 py-1 text-xs text-foreground">{customer.plan}</span>
                   </div>
                   <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
                     <div className="rounded-lg bg-muted p-2">
@@ -466,7 +466,7 @@ export default function OwnerCmsControl() {
       {error && <div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>}
       {saved && <div className="rounded-xl bg-success/10 px-4 py-3 text-sm text-success">Konfigurasi owner CMS tersimpan.</div>}
       <div className="sticky bottom-4 z-10 flex justify-end">
-        <button onClick={save} disabled={saving} className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground shadow-lg transition hover:bg-primary/25 disabled:opacity-50">
+        <button onClick={save} disabled={saving} className="flex h-10 items-center gap-2 border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground shadow-lg transition hover:bg-primary/25 disabled:opacity-50">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           Simpan CMS Control
         </button>

@@ -133,7 +133,7 @@ export default function EmailFinderClient() {
           <button
             type="submit"
             disabled={creating || !candidateCount}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
             {creating ? "Memulai..." : "Mulai Cari Email"}
@@ -161,7 +161,7 @@ export default function EmailFinderClient() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold text-foreground">{SOURCE_LABEL[job.source]}</h3>
-                      <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-bold", sc)}>{job.status}</span>
+                      <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", sc)}>{job.status}</span>
                     </div>
                     {job.label && <p className="mt-0.5 text-xs text-muted-foreground">Filter: {job.label}</p>}
                     <p className="mt-1 text-sm text-muted-foreground">
@@ -172,7 +172,7 @@ export default function EmailFinderClient() {
                     {job.status === "RUNNING" && (
                       <button
                         onClick={() => stop(job.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
+                        className="flex h-8 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>
@@ -180,7 +180,7 @@ export default function EmailFinderClient() {
                     {job.status === "COMPLETED" && job.found > 0 && (
                       <Link
                         href="/dashboard/email-blast"
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
                       >
                         <Send className="h-3 w-3" /> Kirim Email Blast
                       </Link>

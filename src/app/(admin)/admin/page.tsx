@@ -116,7 +116,7 @@ export default async function AdminOverviewPage() {
                   <td className="p-4 text-xs text-foreground">{PLAN_LABEL[w.subscription?.plan ?? ""] ?? w.subscription?.plan ?? "—"}</td>
                   <td className="p-4">
                     {w.subscription ? (
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${STATUS_COLOR[w.subscription.status] ?? "bg-muted-foreground/15 text-muted-foreground"}`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-bold ${STATUS_COLOR[w.subscription.status] ??"bg-muted-foreground/15 text-muted-foreground"}`}>
                         {w.subscription.status}
                       </span>
                     ) : "—"}

@@ -129,7 +129,7 @@ export default function AdminPlansEditor() {
 
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
       {saved && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">Tersimpan. Harga berlaku di landing &amp; billing.</div>}
-      <button onClick={save} className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25">
+      <button onClick={save} className="flex h-10 items-center gap-2 border border-primary/30 bg-primary/15 px-5 text-sm font-bold text-foreground transition hover:bg-primary/25">
         Simpan paket
       </button>
     </div>

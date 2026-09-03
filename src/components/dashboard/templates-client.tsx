@@ -79,7 +79,7 @@ export default function TemplatesClient() {
           <button
             type="submit"
             disabled={!name.trim() || !body.trim()}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-10 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Simpan template

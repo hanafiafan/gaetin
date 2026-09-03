@@ -128,7 +128,7 @@ export default function EmailBlastClient() {
           <button
             type="submit"
             disabled={creating || !name.trim() || !subject.trim() || !bodyText.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat email blast"}
@@ -151,7 +151,7 @@ export default function EmailBlastClient() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold text-foreground">{blast.name}</h3>
-                      <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-bold", sc)}>{blast.status}</span>
+                      <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", sc)}>{blast.status}</span>
                     </div>
                     <p className="mt-1 truncate text-xs text-muted-foreground">{blast.subject}</p>
                     <p className="mt-1 text-sm text-muted-foreground">
@@ -162,7 +162,7 @@ export default function EmailBlastClient() {
                     {blast.status === "DRAFT" && (
                       <button
                         onClick={() => execute(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
+                        className="flex h-8 items-center gap-1.5 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>
@@ -170,7 +170,7 @@ export default function EmailBlastClient() {
                     {blast.status === "RUNNING" && (
                       <button
                         onClick={() => stop(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
+                        className="flex h-8 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>

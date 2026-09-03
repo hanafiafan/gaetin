@@ -87,7 +87,7 @@ export default function SettingsPage() {
             <a
               href="/extension.zip"
               download
-              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
+              className="flex h-10 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-bold text-foreground transition hover:bg-primary/90"
             >
               <Download className="h-4 w-4" />
               Download .ZIP

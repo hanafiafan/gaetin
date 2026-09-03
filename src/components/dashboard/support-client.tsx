@@ -152,7 +152,7 @@ export default function SupportClient() {
             <button
               type="submit"
               disabled={loading || !subject.trim() || !message.trim()}
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border bg-muted text-sm font-bold text-foreground transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
+              className="flex h-10 w-full items-center justify-center gap-2 border border-border bg-muted text-sm font-bold text-foreground transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
             >
               <Send className="h-4 w-4" />
               {loading ? "Mengirim..." : "Kirim tiket"}
@@ -165,7 +165,7 @@ export default function SupportClient() {
             <Ticket className="h-4 w-4 text-foreground" />
             <h2 className="font-black text-foreground">Tiket saya</h2>
             {tickets.length > 0 && (
-              <span className="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-black text-foreground">{tickets.length}</span>
+              <span className="bg-primary/20 px-2 py-0.5 text-[10px] font-black text-foreground">{tickets.length}</span>
             )}
           </div>
           {tickets.length === 0 ? (
@@ -185,7 +185,7 @@ export default function SupportClient() {
                         {t.ticketNo} · {new Date(t.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                       </p>
                     </div>
-                    <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold", s.color)}>
+                    <span className={cn("shrink-0 px-2.5 py-0.5 text-xs font-bold", s.color)}>
                       {s.label}
                     </span>
                   </div>

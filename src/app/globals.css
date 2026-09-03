@@ -275,6 +275,13 @@
     transform: translateY(-50%);
   }
 
+  /* Fades the bottom of a scroll area so a clipped list is legible as
+     "there is more" rather than "the list ends here". */
+  .cg-scrollfade {
+    mask-image: linear-gradient(to bottom, black calc(100% - 1.5rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1.5rem), transparent 100%);
+  }
+
   /* Rotating circular badge (hero). */
   .cg-spin {
     animation: cg-spin 18s linear infinite;

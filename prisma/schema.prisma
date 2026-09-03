@@ -717,8 +717,8 @@ model BrandingSettings {
   appName        String   @default("Hellens")
   logoUrl        String?
   faviconUrl     String?
-  primaryColor   String   @default("#2563eb")
-  secondaryColor String   @default("#7c3aed")
+  primaryColor   String   @default("#E4FF00")
+  secondaryColor String   @default("#0A0A0A")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

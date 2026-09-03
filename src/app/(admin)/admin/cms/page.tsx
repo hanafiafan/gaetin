@@ -78,7 +78,7 @@ export default function AdminCmsPage() {
       <div className="cg-card-strong overflow-hidden rounded-[2rem]">
         <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
-            <span className="mb-4 inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground">
+            <span className="mb-4 inline-flex items-center gap-1 border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground">
               <Sparkles className="h-3.5 w-3.5" />
               Owner CMS
             </span>
@@ -115,7 +115,7 @@ export default function AdminCmsPage() {
                 <div className="gradient-primary flex h-11 w-11 items-center justify-center rounded-2xl text-foreground">
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{m.status}</span>
+                <span className="border border-border px-2.5 py-1 text-xs text-muted-foreground">{m.status}</span>
               </div>
               <p className="mb-1 text-base font-bold text-foreground">{m.title}</p>
               <p className="text-sm leading-6 text-foreground">{m.desc}</p>

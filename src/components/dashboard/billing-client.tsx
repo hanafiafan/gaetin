@@ -68,7 +68,7 @@ const TX_STATUS: Record<string, { label: string; color: string }> = {
 function StatusBadge({ status, map }: { status: string; map: typeof STATUS_LABELS }) {
   const s = map[status] ?? { label: status, color: "bg-muted-foreground/15 text-muted-foreground" };
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", s.color)}>
+    <span className={cn("inline-flex items-center px-2.5 py-0.5 text-xs font-bold", s.color)}>
       {s.label}
     </span>
   );
@@ -198,16 +198,16 @@ export default function BillingClient() {
           <div className="flex rounded-full border border-border bg-card p-1 text-sm">
             <button
               onClick={() => setCycle("MONTHLY")}
-              className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "MONTHLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
+              className={cn("px-4 py-1.5 font-bold transition", cycle === "MONTHLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Bulanan
             </button>
             <button
               onClick={() => setCycle("YEARLY")}
-              className={cn("rounded-full px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
+              className={cn("px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Tahunan
-              {data && <span className="ml-2 rounded-full bg-success/20 px-1.5 py-0.5 text-[10px] font-black text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
+              {data && <span className="ml-2 bg-success/20 px-1.5 py-0.5 text-[10px] font-black text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
             </button>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function BillingClient() {
               >
                 {featured && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="gradient-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black text-foreground shadow-sm">
+                    <span className="gradient-primary inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black text-foreground shadow-sm">
                       <Sparkles className="h-3 w-3" /> Paling populer
                     </span>
                   </div>
@@ -271,7 +271,7 @@ export default function BillingClient() {
                   disabled={busy || current}
                   onClick={() => choose(p.id)}
                   className={cn(
-                    "mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-full text-sm font-bold transition",
+                    "mt-6 flex h-11 w-full items-center justify-center gap-2 text-sm font-bold transition",
                     current
                       ? "border border-border bg-muted text-muted-foreground cursor-not-allowed"
                       : featured
@@ -310,7 +310,7 @@ export default function BillingClient() {
             return (
               <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-success/30 bg-success/5" : "border-border bg-muted/50 hover:border-border")}>
                 {cheapest && (
-                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-success/20 px-2.5 py-0.5 text-[11px] font-black text-success">
+                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 bg-success/20 px-2.5 py-0.5 text-[11px] font-black text-success">
                     <TrendingUp className="h-3 w-3" /> Terbaik
                   </span>
                 )}
@@ -321,7 +321,7 @@ export default function BillingClient() {
                 <button
                   disabled={busy}
                   onClick={() => topup(pack.id)}
-                  className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-full border border-border bg-muted text-sm font-bold text-foreground transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
+                  className="mt-4 flex h-10 w-full items-center justify-center gap-2 border border-border bg-muted text-sm font-bold text-foreground transition hover:border-primary/40 hover:bg-primary/15 disabled:opacity-50"
                 >
                   <Wallet className="h-4 w-4" />
                   Beli

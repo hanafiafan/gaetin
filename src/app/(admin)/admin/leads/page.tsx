@@ -140,7 +140,7 @@ export default function AdminLeadsPage() {
                     ) : "-"}
                   </td>
                   <td className="p-3">
-                    {l.category ? <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{l.category}</span> : "-"}
+                    {l.category ? <span className="border border-border px-2 py-0.5 text-xs text-muted-foreground">{l.category}</span> : "-"}
                   </td>
                   <td className="p-3">
                     <span className="inline-flex items-center gap-1 text-muted-foreground"><Building2 className="h-3.5 w-3.5" />{l.workspace.name}</span>

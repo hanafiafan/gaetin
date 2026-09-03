@@ -67,7 +67,7 @@ function SaveButton({ pending, saved }: { pending: boolean; saved: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-foreground transition hover:bg-primary/90 disabled:opacity-50"
+      className="flex items-center gap-2 bg-primary px-5 py-2.5 text-sm font-bold text-foreground transition hover:bg-primary/90 disabled:opacity-50"
     >
       {saved ? (
         <><CheckCircle2 className="h-4 w-4" /> Tersimpan</>
@@ -116,7 +116,7 @@ export default function AdminIntegrationsClient({ settings }: Props) {
             <button
               type="button"
               onClick={() => setMidtransMode((m) => (m === "live" ? "sandbox" : "live"))}
-              className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition"
             >
               {midtransMode === "live" ? (
                 <><ToggleRight className="h-6 w-6 text-success" /><span className="text-success">Live</span></>

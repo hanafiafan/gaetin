@@ -93,7 +93,7 @@ export default function MobileNav({
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
-                              <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[9px] font-black uppercase text-warning">Bisnis</span>
+                              <span className="bg-warning/10 px-1.5 py-0.5 text-[9px] font-black uppercase text-warning">Bisnis</span>
                             </button>
                           );
                         }

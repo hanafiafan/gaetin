@@ -94,7 +94,7 @@ export default async function DashboardPage({
     <div className="space-y-5">
       {/* Setup guide banner — show until user has scraped at least once */}
       {!isExtensionSetupDone && (
-        <div className="overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/10 to-primary/5">
+        <div className="border-l-2 border-primary bg-muted">
           <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-foreground">
@@ -116,7 +116,7 @@ export default async function DashboardPage({
             </div>
             <Link
               href="/dashboard/setup"
-              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              className="flex h-10 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
             >
               Mulai Setup
               <ArrowRight className="h-4 w-4" />
@@ -149,14 +149,14 @@ export default async function DashboardPage({
           <div className="flex flex-col justify-center">
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-foreground">Ringkasan Workspace</span>
+                <span className="cg-kicker">Ringkasan Workspace</span>
                 {subscription && (
-                  <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+                  <span className="border border-border px-3 py-1 text-xs text-muted-foreground">
                     {planLabel} · {subscription.status === "TRIAL" ? `Trial ${trialDaysLeft ?? 0} hari` : subscription.status}
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="cg-display mt-4 text-[clamp(1.75rem,3.2vw,2.75rem)]">
                 Halo, {session.user.name.split(" ")[0]}. Mari gaet peluang berikutnya.
               </h1>
               <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
@@ -172,8 +172,8 @@ export default async function DashboardPage({
                     href={action.href}
                     className={
                       action.primary
-                        ? "flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-                        : "flex h-10 items-center gap-2 rounded-full border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                        ? "flex h-10 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+                        : "flex h-10 items-center gap-2 border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                     }
                   >
                     <Icon className="h-4 w-4" />
@@ -186,7 +186,7 @@ export default async function DashboardPage({
           <div className="rounded-2xl border border-border bg-muted/50 p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-bold text-foreground">Progress pengaturan</div>
+                <div className="cg-label">Progress pengaturan</div>
                 <div className="mt-1 text-xs text-muted-foreground">{doneSteps} dari {onboarding.length} langkah selesai</div>
               </div>
               {trialDaysLeft !== null && (
@@ -233,10 +233,10 @@ export default async function DashboardPage({
         <div className="cg-card rounded-2xl p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-bold text-foreground">Alur kerja hari ini</h2>
+              <h2 className="cg-display text-xl">Alur kerja hari ini</h2>
               <p className="mt-0.5 text-xs text-muted-foreground">Prioritas yang menggerakkan alur penjualan</p>
             </div>
-            <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+            <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Plus className="h-3.5 w-3.5" />
               Buat Tugas
             </Link>
@@ -266,7 +266,7 @@ export default async function DashboardPage({
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <div className="cg-card rounded-2xl p-6">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-base font-bold text-foreground">Lead terbaru</h2>
+            <h2 className="cg-display text-xl">Lead terbaru</h2>
             <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
           </div>
           <div className="mt-4 space-y-2">

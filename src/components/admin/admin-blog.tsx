@@ -85,7 +85,7 @@ export default function AdminBlog() {
             <option value="DRAFT">Draft</option>
             <option value="PUBLISHED">Publish</option>
           </select>
-          <button type="submit" disabled={!title.trim() || !content.trim()} className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50">
+          <button type="submit" disabled={!title.trim() || !content.trim()} className="flex h-10 items-center border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50">
             {editingId ? "Simpan" : "Buat"}
           </button>
           {editingId && (

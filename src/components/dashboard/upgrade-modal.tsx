@@ -66,14 +66,14 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
 
           <button
             onClick={() => { router.push("/dashboard/billing"); onClose(); }}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+            className="mt-4 flex w-full items-center justify-center gap-2 bg-primary py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             Upgrade Sekarang
             <ArrowRight className="h-4 w-4" />
           </button>
           <button
             onClick={onClose}
-            className="mt-2 w-full rounded-full py-2.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
+            className="mt-2 w-full py-2.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
           >
             Nanti saja
           </button>

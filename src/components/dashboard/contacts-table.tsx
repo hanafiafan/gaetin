@@ -157,7 +157,7 @@ export default function ContactsTable() {
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
             <button
               type="submit"
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25"
+              className="flex h-10 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25"
             >
               <Plus className="h-4 w-4" />
               Tambah kontak
@@ -209,13 +209,13 @@ export default function ContactsTable() {
               <div className="flex gap-2">
                 <button
                   onClick={bulkTag}
-                  className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                  className="flex h-8 items-center gap-1.5 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                 >
                   <Tag className="h-3.5 w-3.5" /> Label
                 </button>
                 <button
                   onClick={bulkDelete}
-                  className="flex h-8 items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/20"
+                  className="flex h-8 items-center gap-1.5 border border-destructive/20 bg-destructive/10 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/20"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Hapus
                 </button>
@@ -263,18 +263,18 @@ export default function ContactsTable() {
                   <td className="p-3 text-muted-foreground">{contact.city ?? "-"}</td>
                   <td className="p-3">
                     {contact.category ? (
-                      <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground/80">{contact.category}</span>
+                      <span className="bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground/80">{contact.category}</span>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}
                   </td>
                   <td className="p-3 text-center">
-                    <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", scoreClass(contact.score))}>
+                    <span className={cn("px-2.5 py-0.5 text-xs font-bold", scoreClass(contact.score))}>
                       {contact.score}
                     </span>
                   </td>
                   <td className="p-3">
-                    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold", WA_BADGE[contact.waStatus])}>
+                    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-bold", WA_BADGE[contact.waStatus])}>
                       {contact.waStatus === "ACTIVE" ? <CheckCircle2 className="h-3.5 w-3.5" /> : contact.waStatus === "INACTIVE" ? <XCircle className="h-3.5 w-3.5" /> : null}
                       {WA_LABEL[contact.waStatus]}
                     </span>
@@ -304,14 +304,14 @@ export default function ContactsTable() {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
+              className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
             >
               Sebelumnya
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
+              className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
             >
               Berikutnya
             </button>

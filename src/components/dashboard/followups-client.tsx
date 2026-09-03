@@ -149,7 +149,7 @@ export default function FollowUpsClient() {
           <button
             type="submit"
             disabled={!accountId || !name.trim() || !message.trim()}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-10 w-full items-center justify-center gap-2 border border-primary/30 bg-primary/15 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Simpan aturan
@@ -167,7 +167,7 @@ export default function FollowUpsClient() {
           <button
             onClick={runNow}
             disabled={running || quota?.remaining === 0}
-            className="flex h-9 items-center gap-1.5 rounded-full border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-50"
+            className="flex h-9 items-center gap-1.5 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-50"
           >
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
             {running ? "Memproses..." : "Jalankan"}
@@ -184,7 +184,7 @@ export default function FollowUpsClient() {
               <div>
                 <div className="flex items-center gap-2 font-bold text-foreground">
                   {r.name}
-                  <span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", r.isActive ? "bg-success/15 text-success" : "bg-muted-foreground/15 text-muted-foreground")}>
+                  <span className={cn("px-2 py-0.5 text-xs font-bold", r.isActive ? "bg-success/15 text-success" : "bg-muted-foreground/15 text-muted-foreground")}>
                     {r.isActive ? "Aktif" : "Nonaktif"}
                   </span>
                 </div>
@@ -195,7 +195,7 @@ export default function FollowUpsClient() {
               <div className="flex gap-2">
                 <button
                   onClick={() => toggle(r)}
-                  className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                  className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                 >
                   {r.isActive ? "Nonaktifkan" : "Aktifkan"}
                 </button>

@@ -112,7 +112,7 @@ export default function AdminContactsPage() {
                   <td className="p-3">
                     <div className="font-medium text-foreground">{c.name ?? "(tanpa nama)"}</div>
                     {c.email && <div className="text-xs text-muted-foreground">{c.email}</div>}
-                    {c.category && <span className="mt-1 inline-block rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{c.category}</span>}
+                    {c.category && <span className="mt-1 inline-block border border-border px-2 py-0.5 text-xs text-muted-foreground">{c.category}</span>}
                     {c.label && <span className="ml-1 inline-flex items-center gap-0.5 text-xs text-muted-foreground"><Tag className="h-3 w-3" />{c.label}</span>}
                   </td>
                   <td className="p-3">
@@ -121,7 +121,7 @@ export default function AdminContactsPage() {
                     </span>
                   </td>
                   <td className="p-3">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${WA_BADGE[c.waStatus] || WA_BADGE.UNKNOWN}`}>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium ${WA_BADGE[c.waStatus] || WA_BADGE.UNKNOWN}`}>
                       <MessageCircle className="h-3 w-3" />{c.waStatus}
                     </span>
                   </td>

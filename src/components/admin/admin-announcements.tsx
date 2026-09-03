@@ -57,7 +57,7 @@ export default function AdminAnnouncements() {
           <option value="WARNING">Peringatan</option>
           <option value="PROMO">Promo</option>
         </select>
-        <button type="submit" className="flex h-10 items-center rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25">
+        <button type="submit" className="flex h-10 items-center border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25">
           Tambah
         </button>
       </form>

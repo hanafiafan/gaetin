@@ -107,7 +107,7 @@ export default function TasksClient() {
           <button
             type="submit"
             disabled={!title.trim()}
-            className="flex h-10 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+            className="flex h-10 items-center gap-1.5 border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Tambah
@@ -122,7 +122,7 @@ export default function TasksClient() {
             key={f.key}
             onClick={() => setFilter(f.key)}
             className={cn(
-              "h-8 rounded-full px-3 text-xs font-bold transition",
+              "h-8 px-3 text-xs font-bold transition",
               filter === f.key
                 ? "bg-primary/20 text-foreground"
                 : "border border-border text-muted-foreground hover:border-primary/20 hover:text-foreground"
@@ -163,12 +163,12 @@ export default function TasksClient() {
                   <td className="p-3 text-muted-foreground">{t.contactName}</td>
                   <td className="p-3 text-muted-foreground">{new Date(t.dueDate).toLocaleDateString("id-ID")}</td>
                   <td className="p-3">
-                    <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", PRIORITY_COLOR[t.priority])}>
+                    <span className={cn("px-2.5 py-0.5 text-xs font-bold", PRIORITY_COLOR[t.priority])}>
                       {PRIORITY_LABEL[t.priority]}
                     </span>
                   </td>
                   <td className="p-3">
-                    <span className={cn("rounded-full px-2 py-0.5 text-xs font-bold",
+                    <span className={cn("px-2 py-0.5 text-xs font-bold",
                       t.status === "OVERDUE" ? "bg-destructive/15 text-destructive"
                         : t.status === "COMPLETED" ? "bg-success/15 text-success"
                           : "bg-muted text-muted-foreground"

@@ -26,7 +26,7 @@ function StatusBadge({ status }: { status: string }) {
         ? "bg-warning/15 text-warning"
         : "bg-muted-foreground/15 text-muted-foreground";
   return (
-    <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-bold", color)}>
+    <span className={cn("px-2.5 py-0.5 text-xs font-bold", color)}>
       {STATUS_LABEL[status] ?? status}
     </span>
   );
@@ -139,7 +139,7 @@ export default function WhatsAppAccounts() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-10 items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
+          className="flex h-10 items-center gap-2 border border-primary/30 bg-primary/15 px-4 text-sm font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-50"
         >
           Tambah nomor
         </button>
@@ -164,7 +164,7 @@ export default function WhatsAppAccounts() {
                 {a.status === "connected" ? (
                   <button
                     onClick={() => disconnect(a.id)}
-                    className="h-8 rounded-full border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-destructive/30 hover:text-destructive"
+                    className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-destructive/30 hover:text-destructive"
                   >
                     Putuskan
                   </button>
@@ -172,7 +172,7 @@ export default function WhatsAppAccounts() {
                   <button
                     onClick={() => connect(a.id)}
                     disabled={qr?.id === a.id}
-                    className="h-8 rounded-full border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-60"
+                    className="h-8 border border-primary/30 bg-primary/15 px-3 text-xs font-bold text-foreground transition hover:bg-primary/25 disabled:opacity-60"
                   >
                     Hubungkan
                   </button>
@@ -190,7 +190,7 @@ export default function WhatsAppAccounts() {
                     <p className="text-sm text-destructive">{qr.error ?? "Gagal mendapatkan QR."}</p>
                     <button
                       onClick={() => connect(a.id)}
-                      className="rounded-full bg-primary/20 px-4 py-1.5 text-xs font-bold text-foreground hover:bg-primary/30"
+                      className="bg-primary/20 px-4 py-1.5 text-xs font-bold text-foreground hover:bg-primary/30"
                     >
                       Coba lagi
                     </button>

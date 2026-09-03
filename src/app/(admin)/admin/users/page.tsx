@@ -5,7 +5,7 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-5">
       <div className="cg-card rounded-2xl p-6">
-        <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground"><Sparkles className="h-3.5 w-3.5" /> Identity Control</span>
+        <span className="mb-3 inline-flex items-center gap-1.5 border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground"><Sparkles className="h-3.5 w-3.5" /> Identity Control</span>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">User</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Cari user, kunci akun, atau jadikan super-admin.</p>
         <div className="mt-4 flex flex-wrap gap-2 text-sm">

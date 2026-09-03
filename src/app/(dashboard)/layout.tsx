@@ -33,6 +33,21 @@ function hexToHsl(hex: string): string | null {
   return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
 
+// Pilih warna teks yang kontras di atas warna brand. Tema memakai teks
+// near-black di atas kuning; kalau tenant memilih warna gelap, teks harus
+// jadi putih atau tidak terbaca.
+function readableForeground(hex: string): string | null {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return null;
+  const int = parseInt(m[1], 16);
+  const srgb = [(int >> 16) & 255, (int >> 8) & 255, int & 255].map((v) => {
+    const c = v / 255;
+    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  const luminance = 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+  return luminance > 0.45 ? "0 0% 4%" : "0 0% 100%";
+}
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await requireSession();
   const [branding, ownerCms, workspaceInfo] = await Promise.all([
@@ -49,12 +64,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }),
   ]);
   const appName = branding?.appName || "Hellens";
+  // White-label hanya menimpa --primary (+ turunannya). --secondary TIDAK
+  // ditimpa lagi: di tema ini artinya "panel hitam terbalik", bukan warna
+  // aksen, jadi menimpanya merusak design system.
   const primaryHsl = branding?.primaryColor ? hexToHsl(branding.primaryColor) : null;
-  const secondaryHsl = branding?.secondaryColor ? hexToHsl(branding.secondaryColor) : null;
-  const brandStyle = (primaryHsl || secondaryHsl
+  const primaryFg = branding?.primaryColor ? readableForeground(branding.primaryColor) : null;
+  const brandStyle = (primaryHsl
     ? {
-        ...(primaryHsl ? { "--primary": primaryHsl, "--ring": primaryHsl } : {}),
-        ...(secondaryHsl ? { "--secondary": secondaryHsl } : {}),
+        "--primary": primaryHsl,
+        "--ring": primaryHsl,
+        ...(primaryFg ? { "--primary-foreground": primaryFg } : {}),
       }
     : undefined) as React.CSSProperties | undefined;
   const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
