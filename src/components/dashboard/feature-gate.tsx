@@ -12,7 +12,6 @@ const ROUTE_FLAGS = [
   { prefix: "/dashboard/campaigns", flag: "campaigns" },
   { prefix: "/dashboard/crm", flag: "crm" },
   { prefix: "/dashboard/inbox", flag: "inbox" },
-  { prefix: "/dashboard/map", flag: "betaMapAnalysis" },
   { prefix: "/dashboard/billing", flag: "billing" },
 ];
 

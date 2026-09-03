@@ -45,10 +45,19 @@ export default function PageHero({
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
         </div>
         {rightSlot ?? (
-          <div className="grid gap-px bg-border">
-            {features?.map(({ icon: Icon, label }) => (
-              <div key={label} className="cg-label flex items-center gap-2.5 bg-background py-2.5">
-                <Icon className="h-4 w-4 shrink-0" /> {label}
+          <div className="border border-border">
+            {features?.map(({ icon: Icon, label }, i) => (
+              <div
+                key={label}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5",
+                  i > 0 && "border-t border-border",
+                )}
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-border bg-muted">
+                  <Icon className="h-3.5 w-3.5" />
+                </span>
+                <span className="cg-label">{label}</span>
               </div>
             ))}
           </div>

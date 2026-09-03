@@ -70,7 +70,7 @@ export default async function DashboardPage({
     { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, color: "text-foreground", bg: "bg-primary/10" },
     { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, color: "text-foreground", bg: "bg-muted" },
     { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, color: "text-warning", bg: "bg-warning/10" },
-    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, color: "text-success", bg: "bg-success/10" },
+    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, color: "text-success", bg: "bg-success/10", accent: true },
   ];
 
   const quickActions = [
@@ -224,7 +224,7 @@ export default async function DashboardPage({
       {/* KPI cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((c) => (
-          <StatCard key={c.label} label={c.label} value={c.value} detail={c.detail} icon={c.icon} color={c.color} bg={c.bg} />
+          <StatCard key={c.label} label={c.label} value={c.value} detail={c.detail} icon={c.icon} color={c.color} bg={c.bg} accent={c.accent} />
         ))}
       </div>
 
@@ -249,11 +249,13 @@ export default async function DashboardPage({
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition hover:border-primary/30 hover:bg-muted">
-                  <Icon className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
+                <Link key={item.label} href={item.href} className="group flex items-center gap-3 border border-border bg-card p-4 transition hover:border-foreground hover:bg-muted">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-border bg-muted transition group-hover:border-foreground group-hover:bg-background">
+                    <Icon className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+                  </span>
                   <div>
-                    <div className="text-2xl font-bold text-foreground transition group-hover:text-foreground">{item.value.toLocaleString("id-ID")}</div>
-                    <div className="text-xs text-muted-foreground">{item.label}</div>
+                    <div className="cg-display text-2xl">{item.value.toLocaleString("id-ID")}</div>
+                    <div className="cg-label text-muted-foreground">{item.label}</div>
                   </div>
                 </Link>
               );
@@ -276,8 +278,8 @@ export default async function DashboardPage({
               </div>
             ) : (
               recentLeads.map((lead, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
+                <div key={i} className="flex items-center gap-3 border border-border bg-card px-4 py-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-border bg-muted">
                     <Building2 className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="min-w-0 flex-1">

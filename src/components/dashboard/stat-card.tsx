@@ -22,7 +22,13 @@ export default function StatCard({ label, value, detail, icon: Icon, accent = fa
     >
       <div className="flex items-start justify-between gap-3">
         <div className={`cg-label ${accent ? "opacity-70" : "text-muted-foreground"}`}>{label}</div>
-        <Icon className="h-5 w-5 shrink-0" strokeWidth={1.75} />
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center border ${
+            accent ? "border-primary-foreground/30" : "border-border bg-muted"
+          }`}
+        >
+          <Icon className="h-4 w-4" strokeWidth={1.75} />
+        </span>
       </div>
       <div className="cg-display mt-8 text-4xl">{value}</div>
       {detail && (
