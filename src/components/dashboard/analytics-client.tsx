@@ -13,26 +13,9 @@ import {
   Line,
   Legend,
 } from "recharts";
-import { BarChart3, BarChart2, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
+import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
 import { CHART, CHART_TOOLTIP } from "@/lib/chart-theme";
-
-/** Recharts renders a blank canvas for an all-zero dataset — this makes that
- * state look like a designed empty panel instead of a broken chart. */
-function isAllZero(data: { [k: string]: unknown }[], keys: string[]) {
-  return data.length === 0 || data.every((row) => keys.every((k) => !row[k]));
-}
-
-function EmptyChart({ height, label }: { height: number; label: string }) {
-  return (
-    <div
-      style={{ height }}
-      className="flex flex-col items-center justify-center gap-2 border border-dashed border-border text-center"
-    >
-      <BarChart2 className="h-5 w-5 text-muted-foreground" />
-      <p className="text-xs text-muted-foreground">{label}</p>
-    </div>
-  );
-}
+import { isAllZero, EmptyChart } from "@/components/empty-chart";
 
 interface Summary {
   funnel: { stage: string; value: number }[];

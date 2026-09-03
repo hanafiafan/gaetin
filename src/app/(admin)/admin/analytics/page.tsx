@@ -11,6 +11,7 @@ import {
   MessageCircle, Radar, RefreshCw, Server, TrendingUp, Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isAllZero, EmptyChart } from "@/components/empty-chart";
 
 export const dynamic = "force-dynamic";
 
@@ -156,88 +157,115 @@ export default function AdminAnalyticsPage() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <div className={CHART_CARD}>
               <p className={CHART_TITLE}>Distribusi Paket</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={distributions.plans} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
-                    {distributions.plans.map((e) => (<Cell key={e.name} fill={PLAN_COLOR[e.name] ?? COLORS[0]} />))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="mt-2 flex flex-wrap justify-center gap-2">
-                {distributions.plans.map((p) => (
-                  <span key={p.name} className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: PLAN_COLOR[p.name] ?? COLORS[0] }} />
-                    {p.name} ({p.value})
-                  </span>
-                ))}
-              </div>
+              {isAllZero(distributions.plans, ["value"]) ? (
+                <EmptyChart height={200} label="Belum ada workspace." />
+              ) : (
+                <>
+                  {/* No inline label: with 1-2 slices its angle is degenerate and
+                      the text clips against the card edge. The legend below
+                      already names every segment, so the label was redundant. */}
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={distributions.plans} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value">
+                        {distributions.plans.map((e) => (<Cell key={e.name} fill={PLAN_COLOR[e.name] ?? COLORS[0]} />))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="mt-2 flex flex-wrap justify-center gap-2">
+                    {distributions.plans.map((p) => (
+                      <span key={p.name} className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: PLAN_COLOR[p.name] ?? COLORS[0] }} />
+                        {p.name} ({p.value})
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className={CHART_CARD}>
               <p className={CHART_TITLE}>Status WhatsApp Kontak</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={distributions.waStatus} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value">
-                    {distributions.waStatus.map((e) => (<Cell key={e.name} fill={WA_COLOR[e.name] ?? COLORS[2]} />))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="mt-2 flex flex-wrap justify-center gap-2">
-                {distributions.waStatus.map((w) => (
-                  <span key={w.name} className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: WA_COLOR[w.name] ?? COLORS[2] }} />
-                    {w.name} ({fmt(w.value)})
-                  </span>
-                ))}
-              </div>
+              {isAllZero(distributions.waStatus, ["value"]) ? (
+                <EmptyChart height={200} label="Belum ada nomor WhatsApp terhubung." />
+              ) : (
+                <>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={distributions.waStatus} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value">
+                        {distributions.waStatus.map((e) => (<Cell key={e.name} fill={WA_COLOR[e.name] ?? COLORS[2]} />))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="mt-2 flex flex-wrap justify-center gap-2">
+                    {distributions.waStatus.map((w) => (
+                      <span key={w.name} className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: WA_COLOR[w.name] ?? COLORS[2] }} />
+                        {w.name} ({fmt(w.value)})
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className={CHART_CARD}>
               <p className={CHART_TITLE}>Status Langganan</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={distributions.statuses} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke={CHART.grid} />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: CHART.axis }} />
-                  <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: CHART.axis }} width={70} />
-                  <Tooltip contentStyle={CHART_TOOLTIP} />
-                  <Bar dataKey="value" radius={0}>
-                    {distributions.statuses.map((e) => (<Cell key={e.name} fill={STATUS_COLOR[e.name] ?? COLORS[0]} />))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              {isAllZero(distributions.statuses, ["value"]) ? (
+                <EmptyChart height={200} label="Belum ada langganan." />
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={distributions.statuses} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={CHART.grid} />
+                    <XAxis type="number" tick={{ fontSize: 11, fill: CHART.axis }} />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: CHART.axis }} width={70} />
+                    <Tooltip contentStyle={CHART_TOOLTIP} />
+                    <Bar dataKey="value" radius={0}>
+                      {distributions.statuses.map((e) => (<Cell key={e.name} fill={STATUS_COLOR[e.name] ?? COLORS[0]} />))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className={CHART_CARD}>
               <p className={CHART_TITLE}>Status Scraper Jobs</p>
-              <ResponsiveContainer width="100%" height={180}>
-                <BarChart data={distributions.scraperStatus}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={CHART.grid} />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: CHART.axis }} />
-                  <YAxis tick={{ fontSize: 11, fill: CHART.axis }} />
-                  <Tooltip contentStyle={CHART_TOOLTIP} />
-                  <Bar dataKey="value" radius={0}>
-                    {distributions.scraperStatus.map((e) => (<Cell key={e.name} fill={STATUS_COLOR[e.name] ?? COLORS[0]} />))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              {isAllZero(distributions.scraperStatus, ["value"]) ? (
+                <EmptyChart height={180} label="Belum ada job scraping." />
+              ) : (
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={distributions.scraperStatus}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={CHART.grid} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: CHART.axis }} />
+                    <YAxis tick={{ fontSize: 11, fill: CHART.axis }} />
+                    <Tooltip contentStyle={CHART_TOOLTIP} />
+                    <Bar dataKey="value" radius={0}>
+                      {distributions.scraperStatus.map((e) => (<Cell key={e.name} fill={STATUS_COLOR[e.name] ?? COLORS[0]} />))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
             <div className={CHART_CARD}>
               <p className={CHART_TITLE}>Status Blast</p>
-              <ResponsiveContainer width="100%" height={180}>
-                <BarChart data={distributions.blastStatus}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={CHART.grid} />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: CHART.axis }} />
-                  <YAxis tick={{ fontSize: 11, fill: CHART.axis }} />
-                  <Tooltip contentStyle={CHART_TOOLTIP} />
-                  <Bar dataKey="value" radius={0}>
-                    {distributions.blastStatus.map((e) => (<Cell key={e.name} fill={STATUS_COLOR[e.name] ?? COLORS[0]} />))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              {isAllZero(distributions.blastStatus, ["value"]) ? (
+                <EmptyChart height={180} label="Belum ada blast." />
+              ) : (
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={distributions.blastStatus}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={CHART.grid} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: CHART.axis }} />
+                    <YAxis tick={{ fontSize: 11, fill: CHART.axis }} />
+                    <Tooltip contentStyle={CHART_TOOLTIP} />
+                    <Bar dataKey="value" radius={0}>
+                      {distributions.blastStatus.map((e) => (<Cell key={e.name} fill={STATUS_COLOR[e.name] ?? COLORS[0]} />))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
         </div>
