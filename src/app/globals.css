@@ -23,7 +23,7 @@
     --secondary: 0 0% 4%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 96%;
+    --muted: 0 0% 93%;
     --muted-foreground: 0 0% 40%;
     --accent: 66 100% 50%;
     --accent-foreground: 0 0% 4%;
@@ -49,8 +49,8 @@
     --kelola: 262 55% 42%;
     --kelola-foreground: 0 0% 100%;
 
-    --border: 0 0% 89%;
-    --input: 0 0% 89%;
+    --border: 0 0% 82%;
+    --input: 0 0% 82%;
     /* Black focus ring — a yellow ring on white is invisible. */
     --ring: 0 0% 4%;
     --radius: 0rem;
