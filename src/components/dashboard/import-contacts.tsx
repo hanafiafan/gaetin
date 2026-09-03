@@ -155,7 +155,7 @@ export default function ImportContacts() {
             <div className="overflow-x-auto rounded-xl border border-border">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-border bg-muted/50">
+                  <tr className="border-b border-border bg-muted">
                     {headers.map((h, i) => (
                       <th key={i} className="p-2 text-left text-muted-foreground">{h || `Kolom ${i + 1}`}</th>
                     ))}

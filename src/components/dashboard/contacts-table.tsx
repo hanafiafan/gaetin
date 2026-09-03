@@ -228,7 +228,7 @@ export default function ContactsTable() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] text-sm">
             <thead>
-              <tr className="border-y border-border bg-muted/50">
+              <tr className="border-y border-border bg-muted">
                 <th className="w-12 p-3">
                   <input
                     type="checkbox"

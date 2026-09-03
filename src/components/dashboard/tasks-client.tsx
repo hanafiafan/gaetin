@@ -137,7 +137,7 @@ export default function TasksClient() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/50">
+              <tr className="border-b border-border bg-muted">
                 <th className="w-10 p-3"></th>
                 <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Tugas</th>
                 <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Kontak</th>

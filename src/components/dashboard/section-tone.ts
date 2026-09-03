@@ -23,7 +23,12 @@ export const TONE_BORDER: Record<SectionTone, string> = {
 };
 
 export const TONE_TEXT: Record<SectionTone, string> = {
-  primary: "text-primary",
+  // Yellow is a fill color, never text-on-white (near-unreadable at this
+  // lightness) — the "Mulai" identity already shows up via solid-yellow
+  // badges/active-nav-state elsewhere, so its plain-text form falls back to
+  // foreground instead of repeating the same contrast bug those fills exist
+  // to avoid.
+  primary: "text-foreground",
   whatsapp: "text-whatsapp",
   email: "text-email",
   kelola: "text-kelola",

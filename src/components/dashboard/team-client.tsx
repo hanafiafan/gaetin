@@ -86,7 +86,7 @@ export default function TeamClient() {
       <div className="overflow-hidden rounded-xl border border-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-muted/50 text-left">
+            <tr className="border-b border-border bg-muted text-left">
               <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Nama</th>
               <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Email</th>
               <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Role</th>

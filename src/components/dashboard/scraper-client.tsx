@@ -876,7 +876,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[920px] text-sm">
                   <thead>
-                    <tr className="border-b border-border bg-muted/50 text-left text-xs uppercase">
+                    <tr className="border-b border-border bg-muted text-left text-xs uppercase">
                   <th className="w-10 p-3">
                     <input type="checkbox" checked={leads.length > 0 && selected.size === leads.length} onChange={toggleAll} aria-label="Pilih semua" className="accent-primary" />
                   </th>

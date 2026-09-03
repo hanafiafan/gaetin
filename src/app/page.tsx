@@ -401,8 +401,8 @@ export default function HomePage() {
       {/* ── Features ────────────────────────────────────────────────────── */}
       <section id="fitur" className="cg-section py-20">
         <div className="flex items-center justify-between gap-4 border-b border-foreground pb-4">
-          <h2 className="cg-display text-3xl sm:text-4xl">
-            Fitur <span className="text-primary">●</span>
+          <h2 className="cg-display flex items-center gap-3 text-3xl sm:text-4xl">
+            Fitur <span className="h-2.5 w-2.5 rounded-full bg-primary" />
           </h2>
           <Link href="/register" className="cg-label hidden items-center gap-2 text-foreground transition hover:text-muted-foreground sm:flex">
             Mulai gratis
