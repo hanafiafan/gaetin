@@ -110,7 +110,7 @@ export default function CrmBoard() {
           </div>
           <button
             onClick={openAdd}
-            className="flex h-10 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+            className="flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
           >
             <Plus className="h-4 w-4" />
             Tambah kontak ke pipeline
@@ -134,7 +134,7 @@ export default function CrmBoard() {
               <button
                 key={c.id}
                 onClick={() => addToBoard(c.id)}
-                className="border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
               >
                 {c.name ?? `+${c.phone}`}
               </button>
@@ -150,7 +150,7 @@ export default function CrmBoard() {
             key={col.id}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => onDrop(col)}
-            className="flex min-h-[22rem] w-72 shrink-0 flex-col border border-border bg-muted/40"
+            className="flex min-h-[22rem] w-72 shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-muted/40"
           >
             <div
               className="flex items-center gap-2 border-b-2 bg-background p-3"
@@ -166,7 +166,7 @@ export default function CrmBoard() {
                   key={card.id}
                   draggable
                   onDragStart={() => { dragged.current = card; }}
-                  className="cursor-grab border border-border bg-background p-3 text-sm shadow-none transition hover:border-foreground active:cursor-grabbing"
+                  className="cursor-grab rounded-lg border border-border bg-background p-3 text-sm shadow-none transition hover:border-foreground active:cursor-grabbing"
                 >
                   <div className="flex items-start gap-2">
                     <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
@@ -178,7 +178,7 @@ export default function CrmBoard() {
                 </div>
               ))}
               {col.cards.length === 0 && (
-                <div className="flex flex-1 items-center justify-center border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
                   Drop kartu ke stage ini.
                 </div>
               )}

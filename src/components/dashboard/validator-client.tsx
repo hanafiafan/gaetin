@@ -244,7 +244,7 @@ export default function ValidatorClient() {
                 Hentikan validasi
               </button>
             ) : (
-              <button onClick={start} className="flex h-10 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90">
+              <button onClick={start} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90">
                 <ShieldCheck className="h-4 w-4" />
                 Mulai validasi
               </button>

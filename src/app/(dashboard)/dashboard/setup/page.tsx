@@ -120,7 +120,7 @@ export default function SetupPage() {
                   className="flex flex-col items-center gap-1.5 min-w-0 flex-1"
                 >
                   <div
-                    className={`flex h-10 w-10 items-center justify-center border-2 transition ${ isDone ?"border-primary bg-primary text-primary-foreground"
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition ${ isDone ?"border-primary bg-primary text-primary-foreground"
                         : isActive
                           ? "border-primary bg-primary/15 text-foreground"
                           : "border-border bg-muted/50 text-muted-foreground"
@@ -179,7 +179,7 @@ export default function SetupPage() {
         {step < STEPS.length ? (
           <button
             onClick={() => setStep((p) => p + 1)}
-            className="flex h-10 items-center gap-2 bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+            className="flex h-10 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             {allChecked(step) ? "Lanjut" : "Lewati"}
             <ArrowRight className="h-4 w-4" />
@@ -187,7 +187,7 @@ export default function SetupPage() {
         ) : (
           <Link
             href="/dashboard"
-            className="flex h-10 items-center gap-2 bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+            className="flex h-10 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
           >
             Ke Dashboard
             <ArrowRight className="h-4 w-4" />
@@ -234,7 +234,7 @@ function StepInstall({
             <a
               href="/extension.zip"
               download
-              className="flex h-10 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
             >
               <Download className="h-4 w-4" />
               Download .ZIP
@@ -599,7 +599,7 @@ function StepFirstScrape() {
         </div>
         <Link
           href="/dashboard/scraper"
-          className="mt-4 flex h-10 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+          className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
         >
           Buka Scraper
           <ArrowRight className="h-4 w-4" />

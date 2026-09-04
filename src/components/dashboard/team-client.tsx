@@ -76,7 +76,7 @@ export default function TeamClient() {
             <option value="AGENT">Agent</option>
             <option value="ADMIN">Admin</option>
           </select>
-          <button type="submit" className="flex h-10 items-center bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90">
+          <button type="submit" className="flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90">
             Tambah anggota
           </button>
           {error && <span className="text-sm text-destructive">{error}</span>}

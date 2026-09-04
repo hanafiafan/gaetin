@@ -48,7 +48,7 @@ export default function AdminSidebar() {
         </div>
       </Link>
 
-      <div className="mt-5 bg-primary p-4 text-primary-foreground">
+      <div className="mt-5 rounded-lg bg-primary p-4 text-primary-foreground">
         <div className="flex items-center gap-3">
           <Sparkles className="h-5 w-5 shrink-0" />
           <div>
@@ -67,7 +67,7 @@ export default function AdminSidebar() {
               key={href}
               href={href}
               className={cn(
-                "group flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition",
+                "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition",
                 active
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -90,7 +90,7 @@ export default function AdminSidebar() {
         </p>
         <Link
           href="/admin/cms"
-          className="cg-label mt-4 flex h-10 w-full items-center justify-center border border-foreground transition hover:bg-foreground hover:text-background"
+          className="cg-label mt-4 flex h-10 w-full items-center justify-center rounded-lg border border-foreground transition hover:bg-foreground hover:text-background"
         >
           Buka CMS
         </Link>

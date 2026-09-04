@@ -139,7 +139,7 @@ export default function WhatsAppAccounts() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-10 items-center gap-2 bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+          className="flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
         >
           Tambah nomor
         </button>
@@ -172,7 +172,7 @@ export default function WhatsAppAccounts() {
                   <button
                     onClick={() => connect(a.id)}
                     disabled={qr?.id === a.id}
-                    className="h-8 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                    className="h-8 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                   >
                     Hubungkan
                   </button>

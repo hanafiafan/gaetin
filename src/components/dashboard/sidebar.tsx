@@ -57,7 +57,7 @@ export default function Sidebar({
         {isTrial && (
           <Link
             href="/dashboard/billing"
-            className="cg-label mt-4 flex items-center justify-between gap-2 border border-warning px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
+            className="cg-label mt-4 flex items-center justify-between gap-2 rounded-lg border border-warning px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
           >
             <span className="flex items-center gap-1.5">
               <Lock className="h-3 w-3" />
@@ -87,7 +87,7 @@ export default function Sidebar({
                           key={item.href}
                           type="button"
                           onClick={() => setLockedFeature(item.label)}
-                          className="group flex w-full items-center gap-3 px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-muted"
+                          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-muted"
                         >
                           <Icon className="h-4 w-4 shrink-0 opacity-40 transition-transform duration-200 group-hover:scale-110" />
                           <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -100,7 +100,7 @@ export default function Sidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`group flex items-center gap-3 px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
+                        className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
                           active
                             ? TONE_BG[group.tone]
                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -121,7 +121,7 @@ export default function Sidebar({
           <form action="/api/auth/logout" method="POST">
             <button
               type="submit"
-              className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-destructive"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-destructive"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span>Keluar (Logout)</span>
@@ -130,7 +130,7 @@ export default function Sidebar({
         </div>
 
         {isSuperAdmin && (
-          <div className="mt-2 shrink-0 border border-border p-3">
+          <div className="mt-2 shrink-0 rounded-xl border border-border p-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="cg-label">Owner CMS</p>
@@ -138,7 +138,7 @@ export default function Sidebar({
               </div>
               <Link
                 href="/admin/cms"
-                className="cg-label flex h-7 items-center justify-center border border-foreground px-3 transition hover:bg-foreground hover:text-background"
+                className="cg-label flex h-7 items-center justify-center rounded-lg border border-foreground px-3 transition hover:bg-foreground hover:text-background"
               >
                 Buka
               </Link>

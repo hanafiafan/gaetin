@@ -16,14 +16,14 @@ export interface StatCardProps {
 export default function StatCard({ label, value, detail, icon: Icon, accent = false }: StatCardProps) {
   return (
     <div
-      className={`flex flex-col justify-between border border-border p-6 ${
+      className={`flex flex-col justify-between rounded-xl border border-border p-6 ${
         accent ? "bg-primary text-primary-foreground" : "bg-background"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className={`cg-label ${accent ? "opacity-70" : "text-muted-foreground"}`}>{label}</div>
         <span
-          className={`flex h-9 w-9 shrink-0 items-center justify-center border ${
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${
             accent ? "border-primary-foreground/30" : "border-border bg-muted"
           }`}
         >

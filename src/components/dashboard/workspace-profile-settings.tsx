@@ -72,7 +72,7 @@ export default function WorkspaceProfileSettings() {
       <button
         onClick={save}
         disabled={status === "saving" || !name.trim()}
-        className="flex h-10 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+        className="flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
       >
         {status === "saving" && <Loader2 className="h-4 w-4 animate-spin" />}
         {status === "saved" && <CheckCircle2 className="h-4 w-4" />}

@@ -271,7 +271,7 @@ export default function BillingClient() {
                   disabled={busy || current}
                   onClick={() => choose(p.id)}
                   className={cn(
-                    "mt-6 flex h-11 w-full items-center justify-center gap-2 text-sm font-bold transition",
+                    "mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold transition",
                     current
                       ? "border border-border bg-muted text-muted-foreground cursor-not-allowed"
                       : featured

@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
           <div className="flex items-center gap-3 text-sm">
             <span className="hidden text-muted-foreground sm:inline">{session.user.name}</span>
-            <Link href="/dashboard" className="cg-label border border-foreground px-4 py-2.5 transition hover:bg-foreground hover:text-background">
+            <Link href="/dashboard" className="cg-label rounded-lg border border-foreground px-4 py-2.5 transition hover:bg-foreground hover:text-background">
               Ke dashboard
             </Link>
           </div>

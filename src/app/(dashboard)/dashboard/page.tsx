@@ -116,7 +116,7 @@ export default async function DashboardPage({
             </div>
             <Link
               href="/dashboard/setup"
-              className="flex h-10 shrink-0 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
             >
               Mulai Setup
               <ArrowRight className="h-4 w-4" />
@@ -172,7 +172,7 @@ export default async function DashboardPage({
                     href={action.href}
                     className={
                       action.primary
-                        ? "flex h-10 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+                        ? "flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
                         : "flex h-10 items-center gap-2 border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                     }
                   >

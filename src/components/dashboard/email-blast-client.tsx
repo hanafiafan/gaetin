@@ -128,7 +128,7 @@ export default function EmailBlastClient() {
           <button
             type="submit"
             disabled={creating || !name.trim() || !subject.trim() || !bodyText.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat email blast"}
@@ -162,7 +162,7 @@ export default function EmailBlastClient() {
                     {blast.status === "DRAFT" && (
                       <button
                         onClick={() => execute(blast.id)}
-                        className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
+                        className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>

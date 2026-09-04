@@ -90,7 +90,7 @@ export default function MobileNav({
                               key={item.href}
                               type="button"
                               onClick={() => setLockedFeature(item.label)}
-                              className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-warning/5"
+                              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-warning/5"
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -104,7 +104,7 @@ export default function MobileNav({
                             key={item.href}
                             href={item.href}
                             onClick={close}
-                            className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${
                               active
                                 ? TONE_BG[group.tone]
                                 : "text-muted-foreground hover:bg-muted hover:text-foreground"

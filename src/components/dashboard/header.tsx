@@ -55,7 +55,7 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
           {isSuperAdmin ? (
             <Link
               href="/admin"
-              className="cg-label hidden h-10 items-center gap-2 border border-foreground px-4 text-foreground transition hover:bg-foreground hover:text-background md:inline-flex"
+              className="cg-label hidden h-10 items-center gap-2 rounded-lg border border-foreground px-4 text-foreground transition hover:bg-foreground hover:text-background md:inline-flex"
             >
               <ShieldCheck className="h-4 w-4" />
               Admin
@@ -71,7 +71,7 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
           </button>
 
           <div className="flex cursor-pointer items-center gap-3 border border-border py-1 pl-1 pr-3 transition hover:border-foreground">
-            <div className="flex h-8 w-8 items-center justify-center bg-foreground text-xs font-bold text-background">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
               {getInitials(user?.name, user?.email)}
             </div>
             <div className="hidden min-w-0 text-left sm:block">

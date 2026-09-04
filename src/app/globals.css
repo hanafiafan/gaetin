@@ -53,7 +53,7 @@
     --input: 0 0% 74%;
     /* Black focus ring — a yellow ring on white is invisible. */
     --ring: 0 0% 4%;
-    --radius: 0rem;
+    --radius: 0.75rem;
 
     /* Charts: mono ramp + the yellow accent. */
     --chart-1: 66 100% 50%;
@@ -240,6 +240,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.18em;
+    border-radius: 9999px;
   }
 
   /* Kept as a flat alias so existing call sites stay correct.

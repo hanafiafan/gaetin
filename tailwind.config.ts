@@ -69,15 +69,20 @@ const config: Config = {
         },
       },
       // Sharp corners everywhere; only `rounded-full` stays round (icon buttons, badges).
+      // Restored to real values — the fully-sharp scale read as "kaku"
+      // (stiff/rigid) once seen across the whole app with real content.
+      // Every rounded-* class already present in ~30 pre-redesign components
+      // (they were only neutralized by this config, never stripped) picks
+      // this back up automatically, no component edits needed for those.
       borderRadius: {
         none: "0",
-        DEFAULT: "0",
-        sm: "0",
-        md: "0",
-        lg: "0",
-        xl: "0",
-        "2xl": "0",
-        "3xl": "0",
+        DEFAULT: "var(--radius)",
+        sm: "calc(var(--radius) - 4px)",
+        md: "calc(var(--radius) - 2px)",
+        lg: "var(--radius)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "calc(var(--radius) + 12px)",
         full: "9999px",
       },
       fontFamily: {

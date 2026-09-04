@@ -719,7 +719,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                       className={cn(
                         "inline-flex items-center gap-1.5 border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                         active
-                          ? "border-primary bg-primary text-primary-foreground"
+                          ? "border-primary rounded-lg bg-primary text-primary-foreground"
                           : "border-border text-muted-foreground hover:border-foreground hover:text-foreground",
                       )}
                       aria-pressed={active}
@@ -745,7 +745,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             )}
 
             <button
-              className="cg-label flex h-12 w-full items-center justify-center bg-primary text-primary-foreground transition hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted"
+              className="cg-label flex h-12 w-full items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted"
               onClick={start}
               disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim()) || (mode === "extension" && !regionInput.trim())}
             >
@@ -835,7 +835,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
                 </button>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-40">
+                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-40">
                   <Columns3 className="h-4 w-4" />
                   Simpan + pipeline
                 </button>

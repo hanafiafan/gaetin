@@ -177,7 +177,7 @@ export default function BlastClient() {
           <button
             type="submit"
             disabled={creating || !accountId || !name.trim() || !messageText.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
           >
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {creating ? "Membuat..." : "Buat blast"}
@@ -214,7 +214,7 @@ export default function BlastClient() {
                       <button
                         onClick={() => execute(blast.id)}
                         disabled={quota?.remaining === 0}
-                        className="flex h-8 items-center gap-1.5 bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+                        className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>

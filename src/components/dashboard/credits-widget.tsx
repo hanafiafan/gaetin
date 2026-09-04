@@ -19,14 +19,14 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
 
   if (variant === "compact") {
     return (
-      <div className="mx-3 mt-3 border border-border p-3">
+      <div className="mx-3 mt-3 rounded-xl border border-border p-3">
         <div className="flex items-center justify-between">
           <span className="cg-label text-muted-foreground">Kredit</span>
           <span className="cg-display text-lg">{credits.toLocaleString("id-ID")}</span>
         </div>
-        <div className="mt-2 h-1.5 bg-muted">
+        <div className="mt-2 h-1.5 rounded-full bg-muted">
           <div
-            className={`h-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
+            className={`h-full rounded-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
             style={{ width: `${creditPct}%` }}
           />
         </div>
@@ -35,7 +35,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
   }
 
   return (
-    <div className={`mt-5 border p-3 ${isLowCredits ? "border-warning" : "border-border"}`}>
+    <div className={`mt-5 rounded-xl border p-3 ${isLowCredits ? "border-warning" : "border-border"}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="cg-label text-muted-foreground">Kredit tersisa</span>
         <span className={`cg-label ${isTrial ? "text-muted-foreground" : ""}`}>
@@ -43,15 +43,15 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
         </span>
       </div>
       <div className="cg-display mt-2 text-3xl">{credits.toLocaleString("id-ID")}</div>
-      <div className="mt-2 h-1.5 bg-muted">
+      <div className="mt-2 h-1.5 rounded-full bg-muted">
         <div
-          className={`h-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
+          className={`h-full rounded-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
           style={{ width: `${creditPct}%` }}
         />
       </div>
       <Link
         href="/dashboard/billing"
-        className="cg-label mt-3 flex h-8 w-full items-center justify-center border border-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
+        className="cg-label mt-3 flex h-8 w-full items-center justify-center rounded-lg border border-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
       >
         {isLowCredits ? "Beli kredit" : "Kelola tagihan"}
       </Link>

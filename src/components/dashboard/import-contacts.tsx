@@ -176,7 +176,7 @@ export default function ImportContacts() {
             <button
               onClick={runImport}
               disabled={mapping.phone < 0 || importing}
-              className="flex h-10 items-center gap-2 bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+              className="flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
             >
               {importing ? "Mengimpor..." : "Impor kontak"}
             </button>

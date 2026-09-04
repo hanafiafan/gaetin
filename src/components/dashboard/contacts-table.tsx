@@ -157,7 +157,7 @@ export default function ContactsTable() {
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
             <button
               type="submit"
-              className="flex h-10 w-full items-center justify-center gap-2 bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
             >
               <Plus className="h-4 w-4" />
               Tambah kontak
