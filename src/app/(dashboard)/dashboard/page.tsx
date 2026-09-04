@@ -77,7 +77,7 @@ export default async function DashboardPage({
   const actionCards = [
     { href: "/dashboard/scraper", label: "Cari lead", desc: "Scraping otomatis dari Google Maps", icon: Target, tone: "primary" as const },
     { href: "/dashboard/contacts/import", label: "Import kontak", desc: "Upload database CSV/Excel lama", icon: Contact, tone: "email" as const },
-    { href: "/dashboard/blast", label: "Buat blast", desc: "Kirim pesan personal ke banyak kontak", icon: Send, tone: "whatsapp" as const },
+    { href: "/dashboard/campaigns", label: "Buat kampanye", desc: "Kirim pesan personal ke banyak kontak", icon: Send, tone: "whatsapp" as const },
     { href: "/dashboard/analytics", label: "Lihat laporan", desc: "Funnel, revenue, dan ROI kampanye", icon: BarChart3, tone: "kelola" as const },
   ];
 
@@ -85,7 +85,7 @@ export default async function DashboardPage({
     { label: "Setup ekstensi Chrome", done: leads > 0, href: "/dashboard/setup?step=1" },
     { label: "Hubungkan WhatsApp", done: accounts > 0, href: "/dashboard/setup?step=4" },
     { label: "Scraping & kontak pertama", done: contacts > 0, href: "/dashboard/setup?step=5" },
-    { label: "Jalankan blast/campaign", done: blasts + campaigns > 0, href: "/dashboard/blast" },
+    { label: "Jalankan kampanye pertama", done: blasts + campaigns > 0, href: "/dashboard/campaigns" },
   ];
 
   const isExtensionSetupDone = leads > 0;
@@ -291,8 +291,7 @@ export default async function DashboardPage({
           <div className="mt-4 space-y-2.5">
             {[
               { icon: ShieldCheck, label: "Nomor WA terhubung", value: accounts },
-              { icon: Send, label: "Blast dibuat", value: blasts },
-              { icon: Target, label: "Campaign dibuat", value: campaigns },
+              { icon: Send, label: "Kampanye dibuat", value: blasts + campaigns },
             ].map((item) => {
               const Icon = item.icon;
               return (

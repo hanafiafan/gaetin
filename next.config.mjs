@@ -19,6 +19,10 @@ const nextConfig = {
       // "Kelola Email" was folded back into Kontak as a filter toggle — redirect
       // the short-lived dedicated route instead of leaving it a dead link.
       { source: "/dashboard/email-contacts", destination: "/dashboard/contacts", permanent: false },
+      // Blast merged into Campaign — Campaign is a strict superset (adds
+      // scheduling + pause/resume over the same send pipeline). Data and API
+      // routes are untouched (see commit message), only the UI/nav is merged.
+      { source: "/dashboard/blast", destination: "/dashboard/campaigns", permanent: false },
     ];
   },
   experimental: {

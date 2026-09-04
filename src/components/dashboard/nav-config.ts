@@ -12,7 +12,6 @@ import {
   Megaphone,
   MessageSquareText,
   Search,
-  Send,
   Settings,
   ShieldCheck,
   Smartphone,
@@ -57,7 +56,6 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     tone: "whatsapp",
     items: [
       { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings", skipActiveHighlight: true },
-      { label: "Blast", href: "/dashboard/blast", icon: Send, flag: "blast", planFeature: "blast" },
       { label: "Kampanye", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
       { label: "Inbox", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
       { label: "Follow-up", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },

@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 
 const ROUTE_FLAGS = [
   { prefix: "/dashboard/scraper", flag: "scraper" },
-  { prefix: "/dashboard/blast", flag: "blast" },
   { prefix: "/dashboard/email-finder", flag: "emailFinder" },
   { prefix: "/dashboard/email-blast", flag: "emailBlast" },
   { prefix: "/dashboard/validator", flag: "validator" },

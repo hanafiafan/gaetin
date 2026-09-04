@@ -634,7 +634,7 @@ function StepDone() {
   const nextActions: { href: string; label: string; desc: string; icon: typeof Search; tone: SectionTone }[] = [
     { href: "/dashboard/scraper", label: "Scraper", desc: "Ambil lead baru dari Google Maps", icon: Search, tone: "primary" },
     { href: "/dashboard/email-finder", label: "Cari Email", desc: "Temukan email dari website lead", icon: Mail, tone: "email" },
-    { href: "/dashboard/blast", label: "WhatsApp Blast", desc: "Kirim pesan ke kontak tersimpan", icon: Send, tone: "whatsapp" },
+    { href: "/dashboard/campaigns", label: "Kampanye WhatsApp", desc: "Kirim pesan ke kontak tersimpan", icon: Send, tone: "whatsapp" },
   ];
   return (
     <div className="space-y-6">
