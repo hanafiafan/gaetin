@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;
   const query = sp.get("query")?.trim() ?? "";
   const waStatus = sp.get("waStatus") ?? "";
+  const hasEmail = sp.get("hasEmail") === "true";
   const page = Math.max(1, Number(sp.get("page") ?? "1"));
   const pageSize = Math.min(100, Math.max(1, Number(sp.get("pageSize") ?? "20")));
 
@@ -23,10 +24,14 @@ export async function GET(req: NextRequest) {
       { name: { contains: query, mode: "insensitive" } },
       { phone: { contains: query } },
       { label: { contains: query, mode: "insensitive" } },
+      { email: { contains: query, mode: "insensitive" } },
     ];
   }
   if (waStatus === "ACTIVE" || waStatus === "INACTIVE" || waStatus === "UNKNOWN") {
     where.waStatus = waStatus;
+  }
+  if (hasEmail) {
+    where.email = { not: null };
   }
 
   const [items, total] = await Promise.all([

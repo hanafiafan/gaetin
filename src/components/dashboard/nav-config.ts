@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Smartphone,
   SquareKanban,
+  Tag,
   UserSearch,
   Users,
 } from "lucide-react";
@@ -70,6 +71,7 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     tone: "email",
     items: [
       { label: "Cari Email", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
+      { label: "Kelola Email", href: "/dashboard/email-contacts", icon: Tag, flag: "emailFinder", planFeature: "emailBlast" },
       { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
     ],
   },
