@@ -28,6 +28,10 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
   UNKNOWN: "Belum dicek",
 };
 
+/** Cycled per row so the table reads as a set of tinted cards instead of a
+ * flat white grid — same idea as the reference's pastel consultation table. */
+const ROW_TINTS = ["bg-whatsapp/[0.09]", "bg-email/[0.09]", "bg-primary/[0.14]", "bg-kelola/[0.09]"];
+
 function scoreClass(score: number): string {
   if (score >= 75) return "bg-success/15 text-success";
   if (score >= 55) return "bg-warning/15 text-warning";
@@ -251,8 +255,8 @@ export default function ContactsTable({ emailOnly = false, tone = "primary" }: {
               </tr>
             </thead>
             <tbody>
-              {items.map((contact) => (
-                <tr key={contact.id} className="border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-card">
+              {items.map((contact, i) => (
+                <tr key={contact.id} className={cn("border-b border-border/50 last:border-0 transition-colors duration-150 hover:brightness-95", ROW_TINTS[i % ROW_TINTS.length])}>
                   <td className="p-3">
                     <input
                       type="checkbox"

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import StatCard from "@/components/dashboard/stat-card";
-import { TONE_BORDER, TONE_SOFT, TONE_TEXT, TONE_WASH } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_SOFT, TONE_WASH } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -74,11 +74,11 @@ export default async function DashboardPage({
     { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, accent: true },
   ];
 
-  const quickActions = [
-    { href: "/dashboard/scraper", label: "Cari lead", icon: Target, tone: "primary" as const, primary: true },
-    { href: "/dashboard/contacts/import", label: "Import kontak", icon: Contact, tone: "primary" as const, primary: false },
-    { href: "/dashboard/blast", label: "Buat blast", icon: Send, tone: "whatsapp" as const, primary: false },
-    { href: "/dashboard/analytics", label: "Lihat laporan", icon: BarChart3, tone: "kelola" as const, primary: false },
+  const actionCards = [
+    { href: "/dashboard/scraper", label: "Cari lead", desc: "Scraping otomatis dari Google Maps", icon: Target, tone: "primary" as const },
+    { href: "/dashboard/contacts/import", label: "Import kontak", desc: "Upload database CSV/Excel lama", icon: Contact, tone: "email" as const },
+    { href: "/dashboard/blast", label: "Buat blast", desc: "Kirim pesan personal ke banyak kontak", icon: Send, tone: "whatsapp" as const },
+    { href: "/dashboard/analytics", label: "Lihat laporan", desc: "Funnel, revenue, dan ROI kampanye", icon: BarChart3, tone: "kelola" as const },
   ];
 
   const onboarding = [
@@ -164,25 +164,6 @@ export default async function DashboardPage({
                 Pantau lead, kontak, percakapan, dan revenue dari satu ruang kerja operasional.
               </p>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              {quickActions.map((action) => {
-                const Icon = action.icon;
-                return (
-                  <Link
-                    key={action.href}
-                    href={action.href}
-                    className={
-                      action.primary
-                        ? "flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-                        : `flex h-10 items-center gap-2 rounded-lg border-2 px-5 text-sm font-bold transition hover:opacity-70 ${TONE_BORDER[action.tone]} ${TONE_TEXT[action.tone]}`
-                    }
-                  >
-                    <Icon className="h-4 w-4" />
-                    {action.label}
-                  </Link>
-                );
-              })}
-            </div>
           </div>
           <div className="rounded-2xl border border-border bg-muted/50 p-5">
             <div className="flex items-center justify-between gap-3">
@@ -220,6 +201,33 @@ export default async function DashboardPage({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Action cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {actionCards.map((action) => {
+          const Icon = action.icon;
+          return (
+            <Link
+              key={action.href}
+              href={action.href}
+              className={`group flex flex-col justify-between rounded-3xl p-5 transition hover:opacity-90 ${TONE_BG[action.tone]}`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/25">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25 transition group-hover:translate-x-0.5">
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              </div>
+              <div className="mt-8">
+                <p className="text-sm font-bold">{action.label}</p>
+                <p className="mt-1 text-xs opacity-80">{action.desc}</p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {/* KPI cards */}
