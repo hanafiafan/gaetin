@@ -19,7 +19,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
 
   if (variant === "compact") {
     return (
-      <div className="mx-3 mt-3 rounded-xl border border-border p-3">
+      <div className="mx-3 mt-3 rounded-xl border border-border bg-background p-3">
         <div className="flex items-center justify-between">
           <span className="cg-label text-muted-foreground">Kredit</span>
           <span className="cg-display text-lg">{credits.toLocaleString("id-ID")}</span>
@@ -35,7 +35,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
   }
 
   return (
-    <div className={`mt-5 rounded-xl border p-3 ${isLowCredits ? "border-warning" : "border-border"}`}>
+    <div className={`mt-5 rounded-xl border bg-background p-3 ${isLowCredits ? "border-warning" : "border-border"}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="cg-label text-muted-foreground">Kredit tersisa</span>
         <span className={`cg-label ${isTrial ? "text-muted-foreground" : ""}`}>

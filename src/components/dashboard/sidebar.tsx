@@ -6,7 +6,8 @@ import { useState } from "react";
 import { ArrowRight, Lock, LogOut } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
-import { TONE_BG, TONE_TEXT_DARK } from "@/components/dashboard/section-tone";
+import { TONE_TEXT } from "@/components/dashboard/section-tone";
+import { cn } from "@/lib/utils";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
 
@@ -45,9 +46,9 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className="cg-invert sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col border-r border-border px-4 py-5 lg:flex">
+      <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col bg-primary px-4 py-5 lg:flex">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7 shrink-0" />
+          <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
           <span className="cg-display text-2xl">{appName}</span>
         </Link>
 
@@ -57,7 +58,7 @@ export default function Sidebar({
         {isTrial && (
           <Link
             href="/dashboard/billing"
-            className="cg-label mt-4 flex items-center justify-between gap-2 rounded-lg border border-warning px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
+            className="cg-label mt-4 flex items-center justify-between gap-2 rounded-lg border border-warning bg-background px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
           >
             <span className="flex items-center gap-1.5">
               <Lock className="h-3 w-3" />
@@ -74,7 +75,7 @@ export default function Sidebar({
 
             return (
               <div key={group.label}>
-                <p className={`cg-label mb-1.5 transition-colors duration-200 ${TONE_TEXT_DARK[group.tone]}`}>{group.label}</p>
+                <p className="cg-label mb-1.5 text-foreground/55">{group.label}</p>
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
@@ -87,7 +88,7 @@ export default function Sidebar({
                           key={item.href}
                           type="button"
                           onClick={() => setLockedFeature(item.label)}
-                          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-muted"
+                          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-foreground/60 transition-colors duration-200 hover:bg-background/50"
                         >
                           <Icon className="h-4 w-4 shrink-0 opacity-40 transition-transform duration-200 group-hover:scale-110" />
                           <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -100,13 +101,14 @@ export default function Sidebar({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
+                        className={cn(
+                          "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200",
                           active
-                            ? TONE_BG[group.tone]
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`}
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
+                        )}
                       >
-                        <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                        <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110", active && TONE_TEXT[group.tone])} />
                         <span>{item.label}</span>
                       </Link>
                     );
@@ -117,11 +119,11 @@ export default function Sidebar({
           })}
         </nav>
 
-        <div className="mt-2 shrink-0 border-t border-border pt-3">
+        <div className="mt-2 shrink-0 border-t border-foreground/15 pt-3">
           <form action="/api/auth/logout" method="POST">
             <button
               type="submit"
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-destructive"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/70 transition hover:bg-background/40 hover:text-destructive"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span>Keluar (Logout)</span>
@@ -130,7 +132,7 @@ export default function Sidebar({
         </div>
 
         {isSuperAdmin && (
-          <div className="mt-2 shrink-0 rounded-xl border border-border p-3">
+          <div className="mt-2 shrink-0 rounded-xl border border-border bg-background p-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="cg-label">Owner CMS</p>

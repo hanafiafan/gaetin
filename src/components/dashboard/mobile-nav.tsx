@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { Lock, LogOut, Menu, Settings, X } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
-import { TONE_BG, TONE_TEXT_DARK } from "@/components/dashboard/section-tone";
+import { TONE_TEXT } from "@/components/dashboard/section-tone";
+import { cn } from "@/lib/utils";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
 
@@ -56,13 +57,13 @@ export default function MobileNav({
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={close} />
-          <div className="cg-invert absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-border">
+          <div className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto bg-primary">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-border px-4 py-4">
+            <div className="flex items-center justify-between border-b border-foreground/15 px-4 py-4">
               <span className="text-base font-black text-foreground">{appName}</span>
               <button
                 onClick={close}
-                className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground"
+                className="flex h-8 w-8 items-center justify-center rounded-xl text-foreground/60 hover:text-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -77,7 +78,7 @@ export default function MobileNav({
                 if (!items.length) return null;
                 return (
                   <div key={group.label}>
-                    <p className={`mb-1 px-2 text-[11px] font-bold uppercase transition-colors duration-200 ${TONE_TEXT_DARK[group.tone]}`}>{group.label}</p>
+                    <p className="mb-1 px-2 text-[11px] font-bold uppercase text-foreground/55">{group.label}</p>
                     <div className="space-y-0.5">
                       {items.map((item) => {
                         const Icon = item.icon;
@@ -90,7 +91,7 @@ export default function MobileNav({
                               key={item.href}
                               type="button"
                               onClick={() => setLockedFeature(item.label)}
-                              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:bg-warning/5"
+                              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/60 transition-colors duration-200 hover:bg-background/40"
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -104,13 +105,14 @@ export default function MobileNav({
                             key={item.href}
                             href={item.href}
                             onClick={close}
-                            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200 ${
+                            className={cn(
+                              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                               active
-                                ? TONE_BG[group.tone]
-                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                            }`}
+                                ? "bg-background text-foreground shadow-sm"
+                                : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
+                            )}
                           >
-                            <Icon className="h-4 w-4" />
+                            <Icon className={cn("h-4 w-4", active && TONE_TEXT[group.tone])} />
                             <span>{item.label}</span>
                           </Link>
                         );
@@ -122,12 +124,12 @@ export default function MobileNav({
             </nav>
 
             {/* Logout */}
-            <div className="shrink-0 border-t border-border p-3">
+            <div className="shrink-0 border-t border-foreground/15 p-3">
               {isSuperAdmin && (
                 <Link
                   href="/admin"
                   onClick={close}
-                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-primary/10"
+                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-background/40"
                 >
                   <Settings className="h-4 w-4" />
                   Admin Panel
@@ -136,7 +138,7 @@ export default function MobileNav({
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-destructive"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground/70 transition hover:bg-background/40 hover:text-destructive"
                 >
                   <LogOut className="h-4 w-4" />
                   Keluar
