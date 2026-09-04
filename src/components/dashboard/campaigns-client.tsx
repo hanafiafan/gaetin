@@ -126,7 +126,7 @@ export default function CampaignsClient() {
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
         {quota && (
-          <div className="rounded-xl border border-border bg-card p-3">
+          <div className="rounded-xl border border-border bg-whatsapp/5 p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                 <Gauge className="h-4 w-4 text-whatsapp" />

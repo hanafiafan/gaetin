@@ -126,7 +126,7 @@ export default function EmailFinderClient() {
             />
             <p className="mt-1 text-[11px] text-muted-foreground">*Biarkan kosong untuk semua data yang punya website tapi belum ada email.</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-3 text-center">
+          <div className="rounded-xl border border-border bg-email/5 p-3 text-center">
             <p className="text-2xl font-black text-foreground">{candidateCount ?? "…"}</p>
             <p className="text-xs text-muted-foreground">{SOURCE_LABEL[source]} siap dicari (maks 500/proses)</p>
           </div>

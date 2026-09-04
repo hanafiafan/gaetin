@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import StatCard from "@/components/dashboard/stat-card";
-import { TONE_SOFT } from "@/components/dashboard/section-tone";
+import { TONE_BORDER, TONE_SOFT, TONE_TEXT, TONE_WASH } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -68,17 +68,17 @@ export default async function DashboardPage({
   const isLowCredits = credits < 100;
 
   const statCards = [
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, color: "text-foreground", bg: "bg-primary/10" },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, color: "text-foreground", bg: "bg-muted" },
-    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, color: "text-warning", bg: "bg-warning/10" },
-    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, color: "text-success", bg: "bg-success/10", accent: true },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, tone: "primary" as const },
+    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, tone: "kelola" as const },
+    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, tone: "whatsapp" as const },
+    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, accent: true },
   ];
 
   const quickActions = [
-    { href: "/dashboard/scraper", label: "Cari lead", icon: Target, primary: true },
-    { href: "/dashboard/contacts/import", label: "Import kontak", icon: Contact, primary: false },
-    { href: "/dashboard/blast", label: "Buat blast", icon: Send, primary: false },
-    { href: "/dashboard/analytics", label: "Lihat laporan", icon: BarChart3, primary: false },
+    { href: "/dashboard/scraper", label: "Cari lead", icon: Target, tone: "primary" as const, primary: true },
+    { href: "/dashboard/contacts/import", label: "Import kontak", icon: Contact, tone: "primary" as const, primary: false },
+    { href: "/dashboard/blast", label: "Buat blast", icon: Send, tone: "whatsapp" as const, primary: false },
+    { href: "/dashboard/analytics", label: "Lihat laporan", icon: BarChart3, tone: "kelola" as const, primary: false },
   ];
 
   const onboarding = [
@@ -174,7 +174,7 @@ export default async function DashboardPage({
                     className={
                       action.primary
                         ? "flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-                        : "flex h-10 items-center gap-2 border border-border px-5 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                        : `flex h-10 items-center gap-2 rounded-lg border-2 px-5 text-sm font-bold transition hover:opacity-70 ${TONE_BORDER[action.tone]} ${TONE_TEXT[action.tone]}`
                     }
                   >
                     <Icon className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default async function DashboardPage({
       {/* KPI cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((c) => (
-          <StatCard key={c.label} label={c.label} value={c.value} detail={c.detail} icon={c.icon} color={c.color} bg={c.bg} accent={c.accent} />
+          <StatCard key={c.label} label={c.label} value={c.value} detail={c.detail} icon={c.icon} tone={c.tone} accent={c.accent} />
         ))}
       </div>
 
@@ -250,7 +250,7 @@ export default async function DashboardPage({
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition hover:border-foreground hover:bg-muted">
+                <Link key={item.label} href={item.href} className={`group flex items-center gap-3 rounded-xl border border-border p-4 transition hover:border-foreground ${TONE_WASH[item.tone]}`}>
                   <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition ${TONE_SOFT[item.tone]}`}>
                     <Icon className="h-4 w-4" />
                   </span>

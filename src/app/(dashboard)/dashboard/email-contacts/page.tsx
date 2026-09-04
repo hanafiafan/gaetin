@@ -21,7 +21,7 @@ export default function EmailContactsPage() {
           </div>
         }
       />
-      <ContactsTable emailOnly />
+      <ContactsTable emailOnly tone="email" />
     </div>
   );
 }
