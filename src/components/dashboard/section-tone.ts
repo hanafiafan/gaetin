@@ -48,3 +48,27 @@ export const TONE_SOFT: Record<SectionTone, string> = {
   kelola: "bg-kelola/10 text-kelola",
   akun: "bg-muted text-foreground",
 };
+
+/** Same idea as TONE_SOFT, but sized for a full-width section wash (PageHero
+ * background) rather than a small icon chip — a touch stronger so it reads
+ * as real color instead of disappearing next to the page's mostly-white body. */
+export const TONE_WASH: Record<SectionTone, string> = {
+  primary: "bg-primary/[0.08]",
+  whatsapp: "bg-whatsapp/[0.07]",
+  email: "bg-email/[0.07]",
+  kelola: "bg-kelola/[0.07]",
+  akun: "bg-muted/50",
+};
+
+/** TONE_TEXT tuned for white backgrounds; whatsapp/email/kelola's dark, saturated
+ * hues lose too much contrast read as plain text on a black surface (the sidebar).
+ * This is the same identity, lifted lighter so it stays legible there. Primary can
+ * go full yellow-on-black here — the illegible case TONE_TEXT.primary avoids is
+ * yellow-on-*white*, not yellow-on-black, which is the classic legible pairing. */
+export const TONE_TEXT_DARK: Record<SectionTone, string> = {
+  primary: "text-primary",
+  whatsapp: "text-[#4ade80]",
+  email: "text-[#60a5fa]",
+  kelola: "text-[#c084fc]",
+  akun: "text-foreground",
+};

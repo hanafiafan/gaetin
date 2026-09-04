@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Lock, LogOut, Menu, Settings, X } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
-import { TONE_BG, TONE_TEXT } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_TEXT_DARK } from "@/components/dashboard/section-tone";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
 
@@ -56,7 +56,7 @@ export default function MobileNav({
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={close} />
-          <div className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-border bg-card">
+          <div className="cg-invert absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-border">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border px-4 py-4">
               <span className="text-base font-black text-foreground">{appName}</span>
@@ -77,7 +77,7 @@ export default function MobileNav({
                 if (!items.length) return null;
                 return (
                   <div key={group.label}>
-                    <p className={`mb-1 px-2 text-[11px] font-bold uppercase transition-colors duration-200 ${TONE_TEXT[group.tone]}`}>{group.label}</p>
+                    <p className={`mb-1 px-2 text-[11px] font-bold uppercase transition-colors duration-200 ${TONE_TEXT_DARK[group.tone]}`}>{group.label}</p>
                     <div className="space-y-0.5">
                       {items.map((item) => {
                         const Icon = item.icon;

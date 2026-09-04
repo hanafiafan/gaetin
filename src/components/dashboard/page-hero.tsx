@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { TONE_BG, TONE_BORDER, TONE_SOFT, type SectionTone } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_BORDER, TONE_SOFT, TONE_WASH, type SectionTone } from "@/components/dashboard/section-tone";
 
 export type PageHeroTone = SectionTone;
 
@@ -41,7 +41,7 @@ export default function PageHero({
   className,
 }: PageHeroProps) {
   return (
-    <Card className={cn("rounded-none border-x-0 border-t-0 border-b-2 bg-transparent shadow-none transition-colors duration-300", TONE_BORDER[tone], className)}>
+    <Card className={cn("rounded-none border-x-0 border-t-0 border-b-2 shadow-none transition-colors duration-300", TONE_BORDER[tone], TONE_WASH[tone], className)}>
       <div className="grid gap-6 pb-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
         <div>
           <Badge className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300", TONE_BG[tone])}>

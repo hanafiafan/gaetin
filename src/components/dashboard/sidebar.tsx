@@ -6,7 +6,7 @@ import { useState } from "react";
 import { ArrowRight, Lock, LogOut } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
-import { TONE_BG, TONE_TEXT } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_TEXT_DARK } from "@/components/dashboard/section-tone";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
 
@@ -45,9 +45,9 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col border-r border-foreground bg-background px-4 py-5 lg:flex">
+      <aside className="cg-invert sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col border-r border-border px-4 py-5 lg:flex">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
+          <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7 shrink-0" />
           <span className="cg-display text-2xl">{appName}</span>
         </Link>
 
@@ -74,7 +74,7 @@ export default function Sidebar({
 
             return (
               <div key={group.label}>
-                <p className={`cg-label mb-1.5 transition-colors duration-200 ${TONE_TEXT[group.tone]}`}>{group.label}</p>
+                <p className={`cg-label mb-1.5 transition-colors duration-200 ${TONE_TEXT_DARK[group.tone]}`}>{group.label}</p>
                 <div className="space-y-1">
                   {items.map((item) => {
                     const Icon = item.icon;
