@@ -14,6 +14,13 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // "Kelola Email" was folded back into Kontak as a filter toggle — redirect
+      // the short-lived dedicated route instead of leaving it a dead link.
+      { source: "/dashboard/email-contacts", destination: "/dashboard/contacts", permanent: false },
+    ];
+  },
   experimental: {
     // Baileys & beberapa lib server-only tidak boleh dibundle ke client.
     serverComponentsExternalPackages: ["@whiskeysockets/baileys", "bullmq", "ioredis", "pino"],

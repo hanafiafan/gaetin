@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import StatCard from "@/components/dashboard/stat-card";
-import { TONE_BG, TONE_SOFT, TONE_WASH } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -237,40 +237,21 @@ export default async function DashboardPage({
         ))}
       </div>
 
-      {/* Alur kerja */}
-      <div className="grid gap-5">
-        <div className="cg-card rounded-2xl p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="cg-display text-xl">Alur kerja hari ini</h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">Prioritas yang menggerakkan alur penjualan</p>
-            </div>
-            <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
-              <Plus className="h-3.5 w-3.5" />
-              Buat Tugas
-            </Link>
-          </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            {[
-              { label: "Lead dikurasi", value: leads, href: "/dashboard/scraper", icon: Target, tone: "primary" as const },
-              { label: "Inbox terbuka", value: openConversations, href: "/dashboard/inbox", icon: MessageSquare, tone: "whatsapp" as const },
-              { label: "Tugas aktif", value: tasks, href: "/dashboard/tasks", icon: CheckCircle2, tone: "kelola" as const },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link key={item.label} href={item.href} className={`group flex items-center gap-3 rounded-xl border border-border p-4 transition hover:border-foreground ${TONE_WASH[item.tone]}`}>
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition ${TONE_SOFT[item.tone]}`}>
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <div className="cg-display text-2xl">{item.value.toLocaleString("id-ID")}</div>
-                    <div className="cg-label text-muted-foreground">{item.label}</div>
-                  </div>
-                </Link>
-              );
-            })}
+      {/* Tugas — satu-satunya metrik di sini yang belum tampil di KPI di atas */}
+      <div className="cg-card flex flex-wrap items-center justify-between gap-4 rounded-2xl p-6">
+        <div className="flex items-center gap-3">
+          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${TONE_SOFT.kelola}`}>
+            <CheckCircle2 className="h-5 w-5" />
+          </span>
+          <div>
+            <div className="cg-display text-2xl">{tasks.toLocaleString("id-ID")}</div>
+            <p className="cg-label text-muted-foreground">Tugas aktif hari ini</p>
           </div>
         </div>
+        <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+          <Plus className="h-3.5 w-3.5" />
+          Buat Tugas
+        </Link>
       </div>
 
       {/* Recent leads + workspace status */}
