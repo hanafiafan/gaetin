@@ -27,7 +27,7 @@ function blastPct(blast: Blast) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-primary/15 text-foreground",
+  RUNNING: "bg-whatsapp/15 text-whatsapp",
   DONE: "bg-success/15 text-success",
   FAILED: "bg-destructive/15 text-destructive",
   STOPPED: "bg-destructive/15 text-destructive",
@@ -122,13 +122,13 @@ export default function BlastClient() {
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Gauge className="h-4 w-4 text-foreground" />
+                <Gauge className="h-4 w-4 text-whatsapp" />
                 Kuota kirim harian
               </div>
               <span className="text-xs text-muted-foreground">{quota.planName}</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-muted">
-              <div className="h-1.5 rounded-full bg-primary" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
+              <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
               {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.
@@ -235,7 +235,7 @@ export default function BlastClient() {
                     <span>{pct}%</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-muted">
-                    <div className="h-1.5 rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+                    <div className="h-1.5 rounded-full bg-whatsapp transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               </div>

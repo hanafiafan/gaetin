@@ -20,7 +20,7 @@ function blastPct(blast: EmailBlast) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-primary/15 text-foreground",
+  RUNNING: "bg-email/15 text-email",
   COMPLETED: "bg-success/15 text-success",
   FAILED: "bg-destructive/15 text-destructive",
   STOPPED: "bg-destructive/15 text-destructive",
@@ -183,7 +183,7 @@ export default function EmailBlastClient() {
                     <span>{pct}%</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-muted">
-                    <div className="h-1.5 rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+                    <div className="h-1.5 rounded-full bg-email transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               </div>

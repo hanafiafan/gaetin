@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { TONE_BG, TONE_BORDER, TONE_TEXT, type SectionTone } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_BORDER, TONE_SOFT, type SectionTone } from "@/components/dashboard/section-tone";
 
 export type PageHeroTone = SectionTone;
 
@@ -62,8 +62,8 @@ export default function PageHero({
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted transition-colors duration-200 group-hover:border-current group-hover:bg-background",
-                    TONE_TEXT[tone],
+                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200",
+                    TONE_SOFT[tone],
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />

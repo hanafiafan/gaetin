@@ -108,7 +108,7 @@ export default function FollowUpsClient() {
                 <span className="text-xs text-muted-foreground">{quota.planName}</span>
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-muted">
-                <div className="h-1.5 rounded-full bg-primary" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
+                <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.

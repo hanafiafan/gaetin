@@ -256,7 +256,7 @@ export default function ValidatorClient() {
       <div className="cg-card rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="font-black text-foreground">Progress</h2>
-          <span className={cn("px-2.5 py-0.5 text-xs font-bold", running ? "bg-primary/15 text-foreground" : "bg-muted-foreground/15 text-muted-foreground")}>
+          <span className={cn("px-2.5 py-0.5 text-xs font-bold", running ? "bg-whatsapp/15 text-whatsapp" : "bg-muted-foreground/15 text-muted-foreground")}>
             {progress?.status ?? "idle"}
           </span>
         </div>
@@ -264,7 +264,7 @@ export default function ValidatorClient() {
           <>
             <div className="space-y-2">
               <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+                <div className="h-full rounded-full bg-whatsapp transition-all" style={{ width: `${pct}%` }} />
               </div>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>{progress.processed} / {progress.total} diproses</span>

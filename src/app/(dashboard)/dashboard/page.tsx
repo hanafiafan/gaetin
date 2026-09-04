@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import StatCard from "@/components/dashboard/stat-card";
+import { TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -243,15 +244,15 @@ export default async function DashboardPage({
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {[
-              { label: "Lead dikurasi", value: leads, href: "/dashboard/scraper", icon: Target },
-              { label: "Inbox terbuka", value: openConversations, href: "/dashboard/inbox", icon: MessageSquare },
-              { label: "Tugas aktif", value: tasks, href: "/dashboard/tasks", icon: CheckCircle2 },
+              { label: "Lead dikurasi", value: leads, href: "/dashboard/scraper", icon: Target, tone: "primary" as const },
+              { label: "Inbox terbuka", value: openConversations, href: "/dashboard/inbox", icon: MessageSquare, tone: "whatsapp" as const },
+              { label: "Tugas aktif", value: tasks, href: "/dashboard/tasks", icon: CheckCircle2, tone: "kelola" as const },
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <Link key={item.label} href={item.href} className="group flex items-center gap-3 border border-border bg-card p-4 transition hover:border-foreground hover:bg-muted">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-border bg-muted transition group-hover:border-foreground group-hover:bg-background">
-                    <Icon className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+                <Link key={item.label} href={item.href} className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition hover:border-foreground hover:bg-muted">
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition ${TONE_SOFT[item.tone]}`}>
+                    <Icon className="h-4 w-4" />
                   </span>
                   <div>
                     <div className="cg-display text-2xl">{item.value.toLocaleString("id-ID")}</div>
@@ -308,7 +309,7 @@ export default async function DashboardPage({
               return (
                 <div key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm transition hover:bg-muted">
                   <span className="flex items-center gap-2.5 font-medium text-foreground/80">
-                    <Icon className="h-4 w-4 text-foreground" />
+                    <Icon className="h-4 w-4 text-whatsapp" />
                     {item.label}
                   </span>
                   <strong className="text-base tabular-nums text-foreground">{item.value}</strong>

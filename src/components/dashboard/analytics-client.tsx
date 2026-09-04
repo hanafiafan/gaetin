@@ -61,8 +61,8 @@ export default function AnalyticsClient() {
 
   const kpiCards = [
     { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, color: "text-success", bg: "bg-success/10" },
-    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp, color: "text-foreground", bg: "bg-primary/10" },
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-foreground", bg: "bg-primary/10" },
+    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp, color: "text-kelola", bg: "bg-kelola/10" },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-kelola", bg: "bg-kelola/10" },
     { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target, color: "text-foreground", bg: "bg-muted" },
   ];
 

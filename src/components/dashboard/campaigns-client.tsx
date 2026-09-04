@@ -29,12 +29,12 @@ function campaignPct(c: Campaign) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  ACTIVE: "bg-primary/15 text-foreground",
+  ACTIVE: "bg-whatsapp/15 text-whatsapp",
   DONE: "bg-success/15 text-success",
   FAILED: "bg-destructive/15 text-destructive",
   PAUSED: "bg-warning/15 text-warning",
   DRAFT: "bg-muted-foreground/15 text-muted-foreground",
-  SCHEDULED: "bg-primary/ text-foreground",
+  SCHEDULED: "bg-whatsapp/15 text-whatsapp",
 };
 
 const SELECT_CLASS = "h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none";
@@ -129,13 +129,13 @@ export default function CampaignsClient() {
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Gauge className="h-4 w-4 text-foreground" />
+                <Gauge className="h-4 w-4 text-whatsapp" />
                 Kuota kirim harian
               </div>
               <span className="text-xs text-muted-foreground">{quota.planName}</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-muted">
-              <div className="h-1.5 rounded-full bg-primary" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
+              <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
               {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.
@@ -268,7 +268,7 @@ export default function CampaignsClient() {
                     <span>{pct}%</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-muted">
-                    <div className="h-1.5 rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+                    <div className="h-1.5 rounded-full bg-whatsapp transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               </div>

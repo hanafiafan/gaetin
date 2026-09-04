@@ -34,3 +34,17 @@ export const TONE_TEXT: Record<SectionTone, string> = {
   kelola: "text-kelola",
   akun: "text-foreground",
 };
+
+/** A light tint of the section color for icon boxes/badges in page bodies —
+ * everywhere defaulted to plain grey (bg-muted) regardless of which section
+ * it belonged to, which is a real source of pages reading as "polos" (plain)
+ * even after the header picked up its color. Primary keeps a genuine yellow
+ * tint here (unlike TONE_TEXT) because a background tint isn't a contrast
+ * problem the way solid yellow text is. */
+export const TONE_SOFT: Record<SectionTone, string> = {
+  primary: "bg-primary/15 text-foreground",
+  whatsapp: "bg-whatsapp/10 text-whatsapp",
+  email: "bg-email/10 text-email",
+  kelola: "bg-kelola/10 text-kelola",
+  akun: "bg-muted text-foreground",
+};

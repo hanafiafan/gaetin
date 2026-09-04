@@ -93,8 +93,8 @@ export default function CrmBoard() {
       <div className="cg-card rounded-2xl p-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-primary/10 p-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-foreground">
+            <div className="rounded-xl bg-kelola/10 p-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-kelola">
                 <BadgeDollarSign className="h-4 w-4" />
                 Revenue closing
               </div>
