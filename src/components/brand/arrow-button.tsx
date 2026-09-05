@@ -43,7 +43,7 @@ export default function ArrowButton({
   className = "",
   decorative = false,
 }: ArrowButtonProps) {
-  const classes = `inline-flex shrink-0 items-center justify-center rounded-full transition ${VARIANT[variant]} ${SIZE[size].box} ${className}`;
+  const classes = `cg-press inline-flex shrink-0 items-center justify-center rounded-full ${VARIANT[variant]} ${SIZE[size].box} ${className}`;
   const icon = <ArrowUpRight className={SIZE[size].icon} strokeWidth={2.5} />;
 
   if (decorative) {

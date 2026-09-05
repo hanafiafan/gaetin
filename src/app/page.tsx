@@ -387,7 +387,7 @@ export default function HomePage() {
                 </p>
                 <Link
                   href="#fitur"
-                  className="cg-label inline-flex shrink-0 items-center gap-2 bg-primary px-5 py-3.5 text-primary-foreground transition hover:bg-background hover:text-foreground"
+                  className="cg-label cg-press inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-5 py-3.5 text-primary-foreground hover:bg-background hover:text-foreground"
                 >
                   Lihat semua fitur
                   <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
@@ -410,7 +410,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => {
             const Icon = feature.icon;
             const skin =
@@ -424,7 +424,7 @@ export default function HomePage() {
             return (
               <article
                 key={feature.title}
-                className={`group relative flex min-h-[300px] flex-col justify-between border-b border-r border-border p-7 ${skin}`}
+                className={`cg-press group relative flex min-h-[300px] flex-col justify-between rounded-3xl p-7 ${skin}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <Icon className="h-7 w-7" strokeWidth={1.75} />
@@ -478,8 +478,8 @@ export default function HomePage() {
         </div>
 
         {/* The critical Google Maps checkbox */}
-        <div className="mt-12 grid gap-0 border border-foreground lg:grid-cols-2">
-          <div className="border-b border-foreground p-8 lg:border-b-0 lg:border-r lg:p-10">
+        <div className="cg-card mt-12 grid gap-0 overflow-hidden rounded-3xl lg:grid-cols-2">
+          <div className="border-b-2 border-foreground p-8 lg:border-b-0 lg:border-r-2 lg:p-10">
             <span className="cg-kicker">Langkah krusial #2</span>
             <h3 className="cg-display mt-5 text-3xl">Centang kotak ini di Google Maps</h3>
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
@@ -494,7 +494,7 @@ export default function HomePage() {
             </p>
             <Link
               href="/register"
-              className="cg-label mt-7 inline-flex items-center gap-2 bg-foreground px-5 py-3.5 text-background transition hover:bg-primary hover:text-primary-foreground"
+              className="cg-label cg-press mt-7 inline-flex items-center gap-2 rounded-lg bg-foreground px-5 py-3.5 text-background hover:bg-primary hover:text-primary-foreground"
             >
               <DownloadCloud className="h-4 w-4" />
               Mulai trial &amp; ikuti panduan
@@ -568,12 +568,12 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="mt-14 grid border-t border-foreground lg:grid-cols-3">
+        <div className="mt-14 grid gap-5 lg:grid-cols-3">
           {pricingPlans.map((plan) => (
             <article
               key={plan.name}
-              className={`flex flex-col border-b border-r border-border p-8 ${
-                plan.highlighted ? "bg-primary text-primary-foreground" : ""
+              className={`cg-press flex flex-col rounded-3xl p-8 ${
+                plan.highlighted ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
@@ -594,7 +594,7 @@ export default function HomePage() {
 
               <Link
                 href={plan.ctaHref}
-                className={`cg-label mt-7 flex items-center justify-between gap-2 px-5 py-4 transition ${
+                className={`cg-label cg-press mt-7 flex items-center justify-between gap-2 rounded-lg px-5 py-4 ${
                   plan.highlighted
                     ? "bg-primary-foreground text-primary hover:bg-background hover:text-foreground"
                     : "bg-primary text-primary-foreground hover:bg-foreground hover:text-background"
@@ -665,9 +665,9 @@ export default function HomePage() {
           <span className="cg-label text-muted-foreground">03 Klien</span>
         </div>
 
-        <div className="grid lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
           {testimonials.map((testimonial) => (
-            <article key={testimonial.name} className="flex flex-col justify-between border-b border-r border-border p-8">
+            <article key={testimonial.name} className="cg-press flex flex-col justify-between rounded-3xl bg-background p-8 text-foreground">
               <p className="text-lg leading-8 text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
               <div className="mt-10 flex items-center gap-3">
                 <img
@@ -726,7 +726,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="bg-foreground text-background">
+      <footer className="cg-invert">
         <div className="cg-section py-14">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
             <div>
@@ -740,7 +740,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/register"
-                className="cg-label mt-7 inline-flex items-center gap-2 bg-primary px-5 py-3.5 text-primary-foreground transition hover:bg-background hover:text-foreground"
+                className="cg-label cg-press mt-7 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3.5 text-primary-foreground hover:bg-background hover:text-foreground"
               >
                 Mulai gratis
                 <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />

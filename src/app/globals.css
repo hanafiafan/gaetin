@@ -265,7 +265,9 @@
   .cg-press {
     border: 2px solid hsl(var(--foreground));
     box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
-    transition: transform 150ms ease, box-shadow 150ms ease;
+    transition-property: transform, box-shadow, color, background-color, border-color;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
   }
   .cg-press:hover {
     transform: translate(-2px, -2px);
