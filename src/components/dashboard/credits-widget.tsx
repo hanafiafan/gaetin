@@ -10,6 +10,14 @@ interface CreditsWidgetProps {
   variant?: "full" | "compact";
 }
 
+function CreditsBar({ pct, low }: { pct: number; low: boolean }) {
+  return (
+    <div className="mt-2 h-1.5 rounded-full bg-muted">
+      <div className={`h-full rounded-full transition-all ${low ? "bg-warning" : "bg-primary"}`} style={{ width: `${pct}%` }} />
+    </div>
+  );
+}
+
 /** Shared across Sidebar (full) and MobileNav (compact) — was previously copy-pasted in both. */
 export default function CreditsWidget({ credits, plan, subscriptionStatus, variant = "full" }: CreditsWidgetProps) {
   const maxCredits = PLAN_CREDITS[plan] ?? 100;
@@ -24,12 +32,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
           <span className="cg-label text-muted-foreground">Kredit</span>
           <span className="cg-display text-lg">{credits.toLocaleString("id-ID")}</span>
         </div>
-        <div className="mt-2 h-1.5 rounded-full bg-muted">
-          <div
-            className={`h-full rounded-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
-            style={{ width: `${creditPct}%` }}
-          />
-        </div>
+        <CreditsBar pct={creditPct} low={isLowCredits} />
       </div>
     );
   }
@@ -43,12 +46,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
         </span>
       </div>
       <div className="cg-display mt-2 text-3xl">{credits.toLocaleString("id-ID")}</div>
-      <div className="mt-2 h-1.5 rounded-full bg-muted">
-        <div
-          className={`h-full rounded-full transition-all ${isLowCredits ? "bg-warning" : "bg-primary"}`}
-          style={{ width: `${creditPct}%` }}
-        />
-      </div>
+      <CreditsBar pct={creditPct} low={isLowCredits} />
       <Link
         href="/dashboard/billing"
         className="cg-label mt-3 flex h-8 w-full items-center justify-center rounded-lg border border-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
