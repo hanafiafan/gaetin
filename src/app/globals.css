@@ -199,26 +199,31 @@
   }
 
   /* ── Surfaces ───────────────────────────────────────────────────────────
-     Flat. No radius, no blur, no shadow — separation comes from hairlines
-     and solid fills only.                                                  */
+     Neobrutalism: thick black borders + hard offset shadows (no blur), on
+     top of the same yellow/black + per-section palette — not a new palette,
+     a new surface treatment. Rounded corners stay (a fully-sharp pass here
+     earlier read as "kaku"/stiff); the border+shadow pair carries the
+     brutalist identity instead of squared-off corners.                     */
 
   .cg-card {
-    border: 1px solid hsl(var(--border));
+    border: 2px solid hsl(var(--foreground));
     background: hsl(var(--card));
+    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
   }
 
   /* The inverted panel: solid black. */
   .cg-card-strong {
-    border: 1px solid hsl(var(--foreground));
+    border: 2px solid hsl(var(--foreground));
     background: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
+    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
   }
 
   .cg-pill {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    border: 1px solid hsl(var(--foreground));
+    border: 2px solid hsl(var(--foreground));
     background: transparent;
     color: hsl(var(--foreground));
     padding: 0.35rem 0.7rem;
@@ -233,6 +238,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    border: 2px solid hsl(var(--primary-foreground));
     background: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
     padding: 0.35rem 0.7rem;
@@ -241,6 +247,30 @@
     text-transform: uppercase;
     letter-spacing: 0.18em;
     border-radius: 9999px;
+  }
+
+  /* ── Interactive press ──────────────────────────────────────────────────
+     The tactile neobrutalism button: a hard shadow that grows on hover
+     (the element "lifts") and collapses to nothing on click (the element
+     "pushes in" flush with the surface). Apply to the controls users
+     actually click most — not decoration, an affordance. */
+  .cg-press {
+    border: 2px solid hsl(var(--foreground));
+    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+    transition: transform 150ms ease, box-shadow 150ms ease;
+  }
+  .cg-press:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px hsl(var(--foreground));
+  }
+  .cg-press:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px hsl(var(--foreground));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cg-press {
+      transition: none;
+    }
   }
 
   /* Kept as a flat alias so existing call sites stay correct.

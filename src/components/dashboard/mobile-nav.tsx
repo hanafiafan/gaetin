@@ -108,7 +108,7 @@ export default function MobileNav({
                             className={cn(
                               "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                               active
-                                ? "bg-background text-foreground shadow-sm"
+                                ? "cg-press bg-background text-foreground"
                                 : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
                             )}
                           >

@@ -89,6 +89,13 @@ const config: Config = {
         sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Impact", "sans-serif"],
       },
+      // Neobrutalism signature: hard-edged offset shadows (no blur), not soft
+      // drop shadows. Colored via --foreground so it stays black in this theme.
+      boxShadow: {
+        brutal: "4px 4px 0px 0px hsl(var(--foreground))",
+        "brutal-sm": "2px 2px 0px 0px hsl(var(--foreground))",
+        "brutal-lg": "6px 6px 0px 0px hsl(var(--foreground))",
+      },
       keyframes: {
         "fade-in": {
           "0%": { opacity: "0" },

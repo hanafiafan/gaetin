@@ -117,7 +117,7 @@ export default async function DashboardPage({
             </div>
             <Link
               href="/dashboard/setup"
-              className="flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              className="cg-press flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground"
             >
               Mulai Setup
               <ArrowRight className="h-4 w-4" />
@@ -211,7 +211,7 @@ export default async function DashboardPage({
             <Link
               key={action.href}
               href={action.href}
-              className={`group flex flex-col justify-between rounded-3xl p-5 transition hover:opacity-90 ${TONE_BG[action.tone]}`}
+              className={`cg-press group flex flex-col justify-between rounded-3xl p-5 ${TONE_BG[action.tone]}`}
             >
               <div className="flex items-center justify-between">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/25">

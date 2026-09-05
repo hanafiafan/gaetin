@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const PLAN_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
 const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };
@@ -27,7 +28,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
 
   if (variant === "compact") {
     return (
-      <div className="mx-3 mt-3 rounded-xl border border-border bg-background p-3">
+      <div className="cg-card mx-3 mt-3 rounded-xl p-3">
         <div className="flex items-center justify-between">
           <span className="cg-label text-muted-foreground">Kredit</span>
           <span className="cg-display text-lg">{credits.toLocaleString("id-ID")}</span>
@@ -38,7 +39,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
   }
 
   return (
-    <div className={`mt-5 rounded-xl border bg-background p-3 ${isLowCredits ? "border-warning" : "border-border"}`}>
+    <div className={cn("cg-card mt-5 rounded-xl p-3", isLowCredits && "border-warning")}>
       <div className="flex items-center justify-between gap-2">
         <span className="cg-label text-muted-foreground">Kredit tersisa</span>
         <span className={`cg-label ${isTrial ? "text-muted-foreground" : ""}`}>
@@ -49,7 +50,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
       <CreditsBar pct={creditPct} low={isLowCredits} />
       <Link
         href="/dashboard/billing"
-        className="cg-label mt-3 flex h-8 w-full items-center justify-center rounded-lg border border-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
+        className="cg-label cg-press mt-3 flex h-8 w-full items-center justify-center rounded-lg hover:bg-foreground hover:text-background"
       >
         {isLowCredits ? "Beli kredit" : "Kelola tagihan"}
       </Link>
