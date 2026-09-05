@@ -211,12 +211,20 @@
     box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
   }
 
-  /* The inverted panel: solid black. */
+  /* The inverted panel: solid black. Redefines --foreground/--muted-foreground/
+     --border for its subtree so children using those semantic classes (text-
+     foreground, text-muted-foreground, border-border) resolve correctly on a
+     dark fill instead of rendering black-on-black — the border/shadow below
+     are hardcoded rather than var()-based so this redefinition doesn't also
+     recolor the panel's own edge. */
   .cg-card-strong {
-    border: 2px solid hsl(var(--foreground));
+    --foreground: 0 0% 100%;
+    --muted-foreground: 0 0% 64%;
+    --border: 0 0% 24%;
+    border: 2px solid hsl(0 0% 4%);
     background: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+    box-shadow: 4px 4px 0px 0px hsl(0 0% 4%);
   }
 
   .cg-pill {

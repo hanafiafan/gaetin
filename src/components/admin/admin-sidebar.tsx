@@ -39,21 +39,21 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col border-r border-foreground bg-background px-4 py-5 md:flex">
+    <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col bg-primary px-4 py-5 md:flex">
       <Link href="/admin" className="flex items-center gap-2.5">
         <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
         <div className="min-w-0">
           <div className="cg-display text-2xl">Hellens</div>
-          <div className="cg-label truncate text-muted-foreground">Konsol Owner</div>
+          <div className="cg-label truncate text-foreground/55">Konsol Owner</div>
         </div>
       </Link>
 
-      <div className="mt-5 rounded-lg bg-primary p-4 text-primary-foreground">
+      <div className="cg-card mt-5 rounded-lg p-4">
         <div className="flex items-center gap-3">
-          <Sparkles className="h-5 w-5 shrink-0" />
+          <Sparkles className="h-5 w-5 shrink-0 text-primary" />
           <div>
             <p className="cg-label">Mode pemilik</p>
-            <p className="mt-1 text-[10px] opacity-70">Kontrol sistem aktif</p>
+            <p className="mt-1 text-[10px] text-muted-foreground">Kontrol sistem aktif</p>
           </div>
         </div>
       </div>
@@ -67,10 +67,10 @@ export default function AdminSidebar() {
               key={href}
               href={href}
               className={cn(
-                "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition",
+                "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                 active
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  ? "cg-press bg-background text-foreground"
+                  : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -80,7 +80,7 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <div className="mt-4 border border-border p-4">
+      <div className="cg-card mt-4 rounded-lg p-4">
         <div className="cg-label flex items-center gap-2">
           <BarChart3 className="h-4 w-4" />
           Laporan Penggunaan
@@ -90,7 +90,7 @@ export default function AdminSidebar() {
         </p>
         <Link
           href="/admin/cms"
-          className="cg-label mt-4 flex h-10 w-full items-center justify-center rounded-lg border border-foreground transition hover:bg-foreground hover:text-background"
+          className="cg-label cg-press mt-4 flex h-10 w-full items-center justify-center rounded-lg hover:bg-foreground hover:text-background"
         >
           Buka CMS
         </Link>

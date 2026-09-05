@@ -78,26 +78,26 @@ export default function AdminCmsPage() {
       <div className="cg-card-strong overflow-hidden rounded-[2rem]">
         <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
-            <span className="mb-4 inline-flex items-center gap-1 border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold text-foreground">
+            <span className="mb-4 inline-flex items-center gap-1 border border-primary/25 bg-primary/15 px-3 py-1 text-xs font-bold">
               <Sparkles className="h-3.5 w-3.5" />
               Owner CMS
             </span>
-            <h1 className="max-w-3xl text-3xl font-black text-foreground sm:text-4xl">
+            <h1 className="max-w-3xl text-3xl font-black sm:text-4xl">
               Pusat pengaturan Hellens untuk konten, fitur, pelanggan, dan keputusan produk.
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-foreground">
+            <p className="mt-4 max-w-2xl text-sm leading-7">
               CMS ini menjadi ruang internal untuk mengatur halaman, aset, media,
               kontrol fitur, paket, data client, dan laporan penggunaan tanpa perlu ubah kode.
             </p>
           </div>
-          <div className="rounded-3xl border border-border bg-muted p-5">
+          <div className="rounded-3xl border border-border bg-muted p-5 text-black">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <Database className="h-4 w-4 text-foreground" />
+              <Database className="h-4 w-4" />
               Data yang dikumpulkan
             </div>
             <div className="mt-3 space-y-2">
               {usageSignals.map((item) => (
-                <div key={item} className="rounded-2xl border border-border bg-background/70 px-3 py-2 text-xs text-foreground">
+                <div key={item} className="rounded-2xl border border-border bg-background/70 px-3 py-2 text-xs">
                   {item}
                 </div>
               ))}
