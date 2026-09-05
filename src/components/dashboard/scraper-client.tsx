@@ -460,7 +460,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
 
   return (
     <div className="space-y-5">
-      <div className={cn("grid gap-4 items-start", legacyOsmEnabled ? "xl:grid-cols-[minmax(0,1fr)_380px]" : "max-w-4xl")}>
+      <div className={cn("grid gap-4 items-start", legacyOsmEnabled && "xl:grid-cols-[minmax(0,1fr)_380px]")}>
         {legacyOsmEnabled && (
           mode === "manual" ? (
             <div className="cg-card overflow-hidden rounded-2xl">
