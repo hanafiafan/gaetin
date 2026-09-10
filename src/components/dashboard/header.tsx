@@ -38,7 +38,11 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
         <div className="flex min-w-0 items-center gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="cg-display truncate text-2xl text-foreground sm:text-3xl">{workspaceName}</h1>
+              {/* Bukan h1: nama workspace adalah chrome yang muncul di setiap
+                  halaman, jadi sebagai heading ia menggandakan h1 dan membuat
+                  pengguna pembaca layar mendengarnya lebih dulu di mana-mana.
+                  h1 yang sebenarnya adalah judul halaman di PageHero. */}
+              <div className="cg-display truncate text-2xl text-foreground sm:text-3xl">{workspaceName}</div>
               <span className="cg-highlight cg-label">{planName}</span>
             </div>
             <p className="cg-label mt-1 hidden text-muted-foreground sm:block">

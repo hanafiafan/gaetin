@@ -83,7 +83,9 @@ export default function TeamClient() {
         </form>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      {/* cg-card seperti form di atas dan panel aktivitas di bawah — dengan
+          garis tipis saja tabel ini terbaca belum jadi di antara keduanya. */}
+      <div className="cg-card overflow-hidden rounded-2xl">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted text-left">

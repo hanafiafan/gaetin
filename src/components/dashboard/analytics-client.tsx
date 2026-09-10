@@ -14,7 +14,7 @@ import {
   Legend,
 } from "recharts";
 import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
-import { CHART, CHART_TOOLTIP } from "@/lib/chart-theme";
+import { CHART, CHART_TOOLTIP, CHART_CURSOR_FILL, CHART_CURSOR_LINE, CHART_MAX_BAR } from "@/lib/chart-theme";
 import { isAllZero, EmptyChart } from "@/components/empty-chart";
 
 interface Summary {
@@ -94,8 +94,8 @@ export default function AnalyticsClient() {
               <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
                 <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-                <Bar dataKey="value" fill={CHART.accent} radius={0} />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: CHART_CURSOR_FILL }} />
+                <Bar dataKey="value" fill={CHART.accent} radius={0} maxBarSize={CHART_MAX_BAR} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -108,11 +108,11 @@ export default function AnalyticsClient() {
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={summary.sources}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={CHART.grid} />
                 <XAxis dataKey="source" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-                <Bar dataKey="count" fill={CHART.ink} radius={0} />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: CHART_CURSOR_FILL }} />
+                <Bar dataKey="count" fill={CHART.ink} radius={0} maxBarSize={CHART_MAX_BAR} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -127,10 +127,10 @@ export default function AnalyticsClient() {
         ) : (
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={trends.days}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={CHART.grid} />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} interval={4} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ stroke: "rgba(255,255,255,0.1)" }} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={CHART_CURSOR_LINE} />
               <Legend wrapperStyle={{ fontSize: "12px", color: CHART.axis }} />
               <Line type="monotone" dataKey="contacts" name="Kontak baru" stroke={CHART.accent} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.accent }} />
               <Line type="monotone" dataKey="messages" name="Pesan terkirim" stroke={CHART.ink} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: CHART.ink }} />

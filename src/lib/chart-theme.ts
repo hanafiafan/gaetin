@@ -41,3 +41,17 @@ export const CHART_TOOLTIP = {
 
 /** Shared axis tick style. */
 export const CHART_TICK = { fill: CHART.axis, fontSize: 11 } as const;
+
+/**
+ * Sorotan hover. Nilai sebelumnya rgba(255,255,255,…) — sisa dari tema gelap
+ * yang benar-benar tidak terlihat di atas kartu terang, jadi grafik terasa
+ * mati saat disentuh kursor.
+ */
+export const CHART_CURSOR_FILL = "rgba(10, 10, 10, 0.06)";
+export const CHART_CURSOR_LINE = { stroke: CHART.axis, strokeWidth: 1 } as const;
+
+/**
+ * Tanpa batas ini, grafik batang dengan satu kategori merentangkan batangnya
+ * selebar panel dan terbaca sebagai balok pekat, bukan grafik.
+ */
+export const CHART_MAX_BAR = 56;
