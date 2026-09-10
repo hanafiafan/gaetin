@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BadgeDollarSign, GripVertical, Plus, Trophy } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { TONE_PANEL } from "@/components/dashboard/section-tone";
 
 interface Card {
   id: string;
@@ -90,7 +92,8 @@ export default function CrmBoard() {
 
   return (
     <div className="space-y-4">
-      <div className="cg-card rounded-2xl p-4">
+      {/* Panel ringkasan — lihat TONE_PANEL di section-tone.ts */}
+      <div className={cn("cg-card rounded-2xl p-4", TONE_PANEL.kelola)}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-kelola/10 p-4">

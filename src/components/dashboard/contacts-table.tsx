@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TONE_WASH } from "@/components/dashboard/section-tone";
+import { TONE_PANEL, TONE_WASH } from "@/components/dashboard/section-tone";
 
 interface Contact {
   id: string;
@@ -131,7 +131,9 @@ export default function ContactsTable() {
     <div className="space-y-4">
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
         {/* Stats */}
-        <div className="cg-card rounded-2xl p-4">
+        {/* Panel ringkasan, bukan container data — diberi rona supaya tidak
+            terbaca sebagai bidang putih kosong di atas kanvas berwarna. */}
+        <div className={cn("cg-card rounded-2xl p-4", TONE_PANEL.primary)}>
           <div className="grid gap-3 sm:grid-cols-3">
             <div className={cn("rounded-xl p-4", TONE_WASH.primary)}>
               <p className="text-xs font-bold uppercase text-muted-foreground">{emailOnly ? "Kontak dengan email" : "Total database"}</p>
