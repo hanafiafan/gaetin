@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, Users, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TONE_PANEL, TONE_WASH } from "@/components/dashboard/section-tone";
+import MetricStrip from "@/components/dashboard/metric-strip";
 
 interface Contact {
   id: string;
@@ -129,59 +129,44 @@ export default function ContactsTable() {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        {/* Stats */}
-        {/* Panel ringkasan, bukan container data — diberi rona supaya tidak
-            terbaca sebagai bidang putih kosong di atas kanvas berwarna. */}
-        <div className={cn("cg-card rounded-2xl p-4", TONE_PANEL.primary)}>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className={cn("rounded-xl p-4", TONE_WASH.primary)}>
-              <p className="text-xs font-bold uppercase text-muted-foreground">{emailOnly ? "Kontak dengan email" : "Total database"}</p>
-              <p className="mt-1 text-2xl font-black text-foreground">{total.toLocaleString("id-ID")}</p>
-            </div>
-            <div className="rounded-xl bg-success/10 p-4">
-              <p className="text-xs font-bold uppercase text-success">Aktif di halaman ini</p>
-              <p className="mt-1 text-2xl font-black text-foreground">{summary.active}</p>
-            </div>
-            <div className="rounded-xl bg-warning/10 p-4">
-              <p className="text-xs font-bold uppercase text-warning">Belum dicek</p>
-              <p className="mt-1 text-2xl font-black text-foreground">{summary.unknown}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick add */}
-        <div className="cg-card rounded-2xl p-4">
+      {/* Metrik + form tambah dalam satu kartu, bukan dua kartu bersanding —
+          pola panel bersarang dari referensi. Sebagai dua kartu, strip metrik
+          ikut meregang mengikuti tinggi form di sebelahnya. */}
+      <MetricStrip
+        items={[
+          { label: emailOnly ? "Kontak dengan email" : "Total database", value: total.toLocaleString("id-ID"), icon: Users, accent: true },
+          { label: "Aktif di halaman ini", value: String(summary.active), icon: CheckCircle2 },
+          { label: "Belum dicek", value: String(summary.unknown), icon: Search },
+        ]}
+        aside={
           <form onSubmit={addContact} className="space-y-3">
             <div>
-              <p className="font-bold text-foreground">Tambah cepat</p>
+              <p className="font-semibold text-foreground">Tambah cepat</p>
               <p className="text-xs text-muted-foreground">Masukkan prospek manual tanpa keluar dari halaman.</p>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Nama (opsional)"
-                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-              />
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="08xxxxxxxxxx"
-                className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-              />
-            </div>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nama (opsional)"
+              className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+            />
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="08xxxxxxxxxx"
+              className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+            />
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
             <button
               type="submit"
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90"
             >
               <Plus className="h-4 w-4" />
               Tambah kontak
             </button>
           </form>
-        </div>
-      </div>
+        }
+      />
 
       <div className="cg-card rounded-2xl">
         <div className="space-y-3 p-4">

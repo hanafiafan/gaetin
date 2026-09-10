@@ -25,6 +25,7 @@ import {
   CHART_MAX_BAR,
 } from "@/lib/chart-theme";
 import { isAllZero, EmptyChart } from "@/components/empty-chart";
+import MetricStrip from "@/components/dashboard/metric-strip";
 
 interface Summary {
   funnel: { stage: string; value: number }[];
@@ -69,28 +70,15 @@ export default function AnalyticsClient() {
   const leads = summary.funnel.find((f) => f.stage === "Lead mentah")?.value ?? 0;
 
   const kpiCards = [
-    { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, color: "text-success", bg: "bg-success/10" },
-    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp, color: "text-kelola", bg: "bg-kelola/10" },
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users, color: "text-kelola", bg: "bg-kelola/10" },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target, color: "text-foreground", bg: "bg-muted" },
+    { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, accent: true },
+    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp },
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users },
+    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target },
   ];
 
   return (
     <div className="space-y-5">
-      {/* KPI cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {kpiCards.map((c) => (
-          <div key={c.label} className="cg-card rounded-2xl p-5">
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-xs font-semibold uppercase text-muted-foreground">{c.label}</p>
-              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
-                <c.icon className="h-4 w-4" />
-              </span>
-            </div>
-            <p className="mt-3 text-2xl font-black text-foreground">{c.value}</p>
-          </div>
-        ))}
-      </div>
+      <MetricStrip items={kpiCards} />
 
       {/* Charts row */}
       <div className="grid gap-5 lg:grid-cols-2">

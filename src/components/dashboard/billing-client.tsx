@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CREDIT_COSTS } from "@/config/plans";
 import StatusBadge from "@/components/dashboard/status-badge";
+import MetricStrip from "@/components/dashboard/metric-strip";
 
 const CREDIT_USAGE = [
   { label: "Simpan lead jadi kontak", detail: "Per lead baru yang disimpan", cost: CREDIT_COSTS.saveLead },
@@ -129,46 +130,47 @@ export default function BillingClient() {
         </div>
       )}
 
-      {/* Status cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="cg-card rounded-2xl p-5">
-          <p className="text-xs font-semibold uppercase text-muted-foreground">Paket aktif</p>
-          <p className="mt-2 text-2xl font-black text-foreground">{me ? planName(me.plan) : "—"}</p>
-        </div>
-        <div className="cg-card rounded-2xl p-5">
-          <p className="text-xs font-semibold uppercase text-muted-foreground">Status</p>
-          <div className="mt-2">
-            {me ? <StatusBadge status={me.status} /> : <span className="text-sm text-muted-foreground">—</span>}
-          </div>
-        </div>
-        <div className={cn("rounded-2xl border p-5 transition", isLow ? "border-warning/30 bg-warning/10" : "cg-card")}>
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">Saldo kredit</p>
-            {isLow && <Zap className="h-4 w-4 text-warning" />}
-          </div>
-          <p className={cn("mt-2 text-2xl font-black", isLow ? "text-warning" : "text-foreground")}>
-            {me ? me.credits.toLocaleString("id-ID") : "—"}
-          </p>
-          {me && (
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
-              <div
-                className={cn("h-full rounded-full transition-all", isLow ? "bg-warning" : "gradient-primary")}
-                style={{ width: `${creditPct}%` }}
-              />
-            </div>
-          )}
-        </div>
-        <div className="cg-card rounded-2xl p-5">
-          <p className="text-xs font-semibold uppercase text-muted-foreground">Berlaku sampai</p>
-          <p className="mt-2 text-lg font-black text-foreground">
-            {me?.currentPeriodEnd
+      {/* Satu strip metrik, bukan empat kartu — lihat MetricStrip. Saldo
+          kredit tetap membawa bar progresnya sendiri lewat panel aside. */}
+      <MetricStrip
+        items={[
+          { label: "Paket aktif", value: me ? planName(me.plan) : "—", icon: Sparkles },
+          {
+            label: "Berlaku sampai",
+            value: me?.currentPeriodEnd
               ? new Date(me.currentPeriodEnd).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
               : me?.trialEndsAt
-              ? new Date(me.trialEndsAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
-              : "—"}
-          </p>
+                ? new Date(me.trialEndsAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
+                : "—",
+            icon: CreditCard,
+          },
+        ]}
+        aside={
+          <div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Saldo kredit</p>
+              {isLow && <Zap className="h-4 w-4 text-warning" />}
+            </div>
+            <p className={cn("mt-4 text-3xl font-semibold tracking-tight", isLow ? "text-warning" : "text-primary")}>
+              {me ? me.credits.toLocaleString("id-ID") : "—"}
+            </p>
+            {me && (
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-foreground/10">
+                <div
+                  className={cn("h-full rounded-full transition-all", isLow ? "bg-warning" : "bg-primary")}
+                  style={{ width: `${creditPct}%` }}
+                />
+              </div>
+            )}
+          </div>
+        }
+      />
+
+      {me && (
+        <div className="-mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+          Status langganan: <StatusBadge status={me.status} />
         </div>
-      </div>
+      )}
 
       {/* Plan selector */}
       <div>

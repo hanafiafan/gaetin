@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BadgeDollarSign, GripVertical, Plus, Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { TONE_PANEL } from "@/components/dashboard/section-tone";
+import MetricStrip from "@/components/dashboard/metric-strip";
 
 interface Card {
   id: string;
@@ -92,34 +91,21 @@ export default function CrmBoard() {
 
   return (
     <div className="space-y-4">
-      {/* Panel ringkasan — lihat TONE_PANEL di section-tone.ts */}
-      <div className={cn("cg-card rounded-2xl p-4", TONE_PANEL.kelola)}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-kelola/10 p-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-kelola">
-                <BadgeDollarSign className="h-4 w-4" />
-                Revenue closing
-              </div>
-              <p className="mt-1 text-2xl font-black text-foreground">{formatIDR(revenue)}</p>
-            </div>
-            <div className="rounded-xl bg-success/10 p-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-success">
-                <Trophy className="h-4 w-4" />
-                Deal menang
-              </div>
-              <p className="mt-1 text-2xl font-black text-foreground">{wonCount}</p>
-            </div>
-          </div>
+      <MetricStrip
+        items={[
+          { label: "Revenue closing", value: formatIDR(revenue), icon: BadgeDollarSign, accent: true },
+          { label: "Deal menang", value: String(wonCount), icon: Trophy },
+        ]}
+        aside={
           <button
             onClick={openAdd}
-            className="flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
             Tambah kontak ke pipeline
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {adding && (
         <div className="cg-card rounded-2xl p-4">

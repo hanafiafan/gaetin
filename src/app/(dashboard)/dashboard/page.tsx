@@ -20,7 +20,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
-import StatCard from "@/components/dashboard/stat-card";
+import MetricStrip from "@/components/dashboard/metric-strip";
 import { TONE_EDGE, TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
@@ -88,11 +88,11 @@ export default async function DashboardPage({
       : (STATUS_LABEL[effectiveStatus ?? ""] ?? effectiveStatus);
   const isLowCredits = credits < 100;
 
-  const statCards = [
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), detail: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users, tone: "primary" as const },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), detail: "Menunggu kurasi & validasi", icon: Target, tone: "kelola" as const },
-    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), detail: "Butuh respons tim", icon: MessageSquare, tone: "whatsapp" as const },
-    { label: "Nilai closing", value: formatIDR(revenue), detail: "Deal berstatus menang", icon: TrendingUp, accent: true },
+  const metrics = [
+    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), hint: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users },
+    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), hint: "Menunggu kurasi & validasi", icon: Target },
+    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), hint: "Butuh respons tim", icon: MessageSquare },
+    { label: "Nilai closing", value: formatIDR(revenue), hint: "Deal berstatus menang", icon: TrendingUp, accent: true },
   ];
 
   const actionCards = [
@@ -257,12 +257,8 @@ export default async function DashboardPage({
         })}
       </div>
 
-      {/* KPI cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((c) => (
-          <StatCard key={c.label} label={c.label} value={c.value} detail={c.detail} icon={c.icon} tone={c.tone} accent={c.accent} />
-        ))}
-      </div>
+      {/* Satu strip metrik, bukan empat kartu terpisah — lihat MetricStrip. */}
+      <MetricStrip items={metrics} />
 
       {/* Tugas — satu-satunya metrik di sini yang belum tampil di KPI di atas */}
       <div className="cg-card flex flex-wrap items-center justify-between gap-4 rounded-2xl p-6">

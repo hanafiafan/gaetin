@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TabPills from "@/components/dashboard/tab-pills";
 
 interface Task {
   id: string;
@@ -121,34 +122,11 @@ export default function TasksClient() {
       {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
 
       <div className="flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
-          <button
-            key={f.key}
-            onClick={() => setFilter(f.key)}
-            aria-pressed={filter === f.key}
-            className={cn(
-              // Pil dengan jumlah, mengikuti tab di referensi. Versi lama
-              // memakai wash 20% yang praktis tidak terbaca di latar gelap,
-              // sehingga tab aktif tidak terlihat berbeda.
-              "flex h-9 items-center gap-2 rounded-full border px-4 text-sm transition",
-              filter === f.key
-                ? "border-primary bg-primary font-semibold text-primary-foreground"
-                : "border-border text-foreground/70 hover:border-foreground/30 hover:text-foreground",
-            )}
-          >
-            {f.label}
-            {counts[f.key] !== undefined && (
-              <span
-                className={cn(
-                  "rounded-full px-1.5 text-[11px] font-bold",
-                  filter === f.key ? "bg-primary-foreground/15" : "bg-foreground/10",
-                )}
-              >
-                {counts[f.key]}
-              </span>
-            )}
-          </button>
-        ))}
+        <TabPills
+          items={FILTERS.map((f) => ({ ...f, count: counts[f.key] }))}
+          value={filter}
+          onChange={setFilter}
+        />
       </div>
 
       <div className="cg-card overflow-hidden rounded-2xl">
