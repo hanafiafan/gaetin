@@ -18,6 +18,50 @@ export const CHART = {
   destructive: "#D32222",
 } as const;
 
+/**
+ * Palet untuk area kerja bertema gelap. Recharts merender atribut SVG, bukan
+ * kelas, sehingga ia tidak bisa membaca variabel CSS — palet ini harus
+ * dinyatakan literal dan mencerminkan token .cg-workspace di globals.css.
+ *
+ * Terpisah dari CHART karena konsol admin masih berlatar terang: memakai satu
+ * palet untuk keduanya membuat salah satunya tidak terbaca. Sebelumnya
+ * dashboard memakai CHART, sehingga batang #0A0A0A digambar di atas kartu
+ * near-black dan praktis tidak terlihat.
+ */
+export const CHART_DARK = {
+  accent: "#BBEF43",
+  ink: "#F3F5F7",
+  grid: "#2D3139",
+  axis: "#9AA0A9",
+  surface: "#1A1D24",
+  success: "#5FD39B",
+  warning: "#F5B547",
+  destructive: "#F07A7A",
+} as const;
+
+export const CHART_DARK_SERIES = [
+  CHART_DARK.accent,
+  "#7FB3FF",
+  CHART_DARK.success,
+  "#C6A0FF",
+  CHART_DARK.warning,
+  "#8A8F98",
+  CHART_DARK.destructive,
+  "#4F545C",
+] as const;
+
+/** Sorotan hover versi gelap — wash terang, kebalikan dari versi terang. */
+export const CHART_DARK_CURSOR_FILL = "rgba(243, 245, 247, 0.07)";
+export const CHART_DARK_CURSOR_LINE = { stroke: CHART_DARK.axis, strokeWidth: 1 } as const;
+
+export const CHART_DARK_TOOLTIP = {
+  background: CHART_DARK.surface,
+  border: `1px solid ${CHART_DARK.grid}`,
+  borderRadius: 12,
+  color: CHART_DARK.ink,
+  fontSize: 12,
+} as const;
+
 /** Categorical series ramp — accent first, then a light-to-dark mono spread. */
 export const CHART_SERIES = [
   CHART.accent,

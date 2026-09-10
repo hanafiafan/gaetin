@@ -62,34 +62,33 @@ export const TONE_EDGE: Record<SectionTone, string> = {
 };
 
 /* ── Tangga permukaan ───────────────────────────────────────────────────────
-   Empat tingkat, dari paling pekat ke paling terang. Kepekatan menandakan
-   seberapa jauh sesuatu dari tempat user bekerja, bukan sekadar hiasan:
+   Nilai-nilai ini disetel untuk tema gelap area kerja (lihat .cg-workspace di
+   globals.css). Semuanya berupa rona di atas dasar near-black, jadi angka
+   yang lebih besar berarti lebih terang, bukan lebih gelap:
 
-     WASH   pita hero          — banner, dibaca sekilas
-     CANVAS dasar halaman      — latar tempat semuanya berdiri
+     WASH   pita hero          — paling kuat, identitas seksi dari jauh
      PANEL  container pendukung — ringkasan, tips, sisi kanan
-     putih  container data     — tabel & form, teks padat, kontras maksimal
+     CANVAS dasar halaman      — rona paling tipis
+     CARD   permukaan kartu    — dipasang ke --card lewat SectionCanvas
 
-   Teks padat sengaja tetap di atas putih: mewarnai semuanya justru menurunkan
-   keterbacaan, kebalikan dari yang kita tuju. */
+   Kalau tema terang dipulihkan, seluruh angka di blok ini perlu dibalik. */
 
-/** Dasar halaman. Sebelumnya kanvas putih dan kartunya juga putih, jadi batas
- * tiap elemen hanya bergantung pada garis hitamnya. */
+/** Dasar halaman — rona paling tipis di atas near-black. */
 export const TONE_CANVAS: Record<SectionTone, string> = {
-  primary: "bg-primary/[0.10]",
-  whatsapp: "bg-whatsapp/[0.09]",
-  email: "bg-email/[0.09]",
-  kelola: "bg-kelola/[0.09]",
-  akun: "bg-muted/70",
+  primary: "bg-primary/[0.05]",
+  whatsapp: "bg-whatsapp/[0.05]",
+  email: "bg-email/[0.05]",
+  kelola: "bg-kelola/[0.05]",
+  akun: "bg-muted/25",
 };
 
-/** Container pendukung — lebih terang dari kanvas, jadi terbaca terangkat,
- * tapi tidak seputih container data sehingga hierarkinya tetap jelas. */
+/** Container pendukung — ronanya lebih kuat dari kanvas sehingga terbaca
+ * sebagai lapisan tersendiri, tapi masih di bawah pita hero. */
 export const TONE_PANEL: Record<SectionTone, string> = {
-  primary: "bg-primary/[0.05]",
-  whatsapp: "bg-whatsapp/[0.045]",
-  email: "bg-email/[0.045]",
-  kelola: "bg-kelola/[0.045]",
+  primary: "bg-primary/[0.08]",
+  whatsapp: "bg-whatsapp/[0.08]",
+  email: "bg-email/[0.08]",
+  kelola: "bg-kelola/[0.08]",
   akun: "bg-muted/40",
 };
 
@@ -100,23 +99,23 @@ export const TONE_PANEL: Record<SectionTone, string> = {
  * Card, apa pun yang memakai bg-card), tanpa perlu menyunting belasan halaman
  * satu per satu.
  *
- * Selalu lebih terang dari TONE_CANVAS supaya kartu tetap terbaca terangkat.
- * Input di dalamnya memakai bg-background yang tetap putih, jadi kolom isian
- * justru makin menonjol di atas kartu berona.
+ * Sedikit lebih terang dari dasar halaman supaya kartu terbaca terangkat.
+ * Input memakai bg-background yang lebih gelap, jadi kolom isian terbaca
+ * cekung di dalam kartunya.
  */
 export const TONE_CARD: Record<SectionTone, string> = {
-  primary: "66 100% 96%",
-  whatsapp: "142 45% 96.5%",
-  email: "217 70% 97%",
-  kelola: "262 50% 97%",
-  akun: "0 0% 97.5%",
+  primary: "78 14% 12%",
+  whatsapp: "142 14% 12%",
+  email: "214 18% 12.5%",
+  kelola: "265 16% 13%",
+  akun: "222 12% 12%",
 };
 
 /** Pita hero — tingkat paling pekat, menandai identitas seksi dari jauh. */
 export const TONE_WASH: Record<SectionTone, string> = {
-  primary: "bg-primary/[0.20]",
-  whatsapp: "bg-whatsapp/[0.18]",
-  email: "bg-email/[0.18]",
-  kelola: "bg-kelola/[0.18]",
-  akun: "bg-muted",
+  primary: "bg-primary/[0.14]",
+  whatsapp: "bg-whatsapp/[0.14]",
+  email: "bg-email/[0.14]",
+  kelola: "bg-kelola/[0.14]",
+  akun: "bg-muted/60",
 };

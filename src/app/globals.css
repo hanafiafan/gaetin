@@ -205,10 +205,13 @@
      earlier read as "kaku"/stiff); the border+shadow pair carries the
      brutalist identity instead of squared-off corners.                     */
 
+  /* Digerakkan variabel, bukan di-override oleh selektor tema yang lebih
+     spesifik. Menaikkan spesifisitas di sini akan mengalahkan utility Tailwind
+     seperti border-t-primary pada kartu aksi dan menghapus tepi warnanya. */
   .cg-card {
-    border: 2px solid hsl(var(--foreground));
+    border: var(--surface-border-width, 2px) solid hsl(var(--surface-border-color, var(--foreground)));
     background: hsl(var(--card));
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+    box-shadow: var(--surface-shadow, 4px 4px 0px 0px hsl(var(--foreground)));
   }
 
   /* The inverted panel: solid black. Redefines --foreground/--muted-foreground/
@@ -268,6 +271,118 @@
     background-color: hsl(var(--background));
   }
 
+  /* ── Workspace theme ────────────────────────────────────────────────────
+     Tema gelap khusus area kerja: near-black kebiruan, aksen lime, sudut
+     besar, tanpa border tebal maupun hard shadow. Sengaja dilingkup ke kelas
+     ini — bukan :root — supaya landing page tetap memakai identitas
+     Swiss-brutalist terangnya. Hampir seluruh dashboard memakai kelas
+     semantik, jadi menukar token di sini menjangkau semua halaman sekaligus. */
+  .cg-workspace {
+    --background: 222 16% 7%;
+    --foreground: 210 20% 96%;
+    --card: 222 15% 11%;
+    --card-foreground: 210 20% 96%;
+    --popover: 222 15% 13%;
+    --popover-foreground: 210 20% 96%;
+
+    /* Lime menggantikan kuning asam. Tetap membawa teks gelap. */
+    --primary: 78 84% 60%;
+    --primary-foreground: 222 30% 8%;
+
+    /* Panel terbalik di tema gelap berarti panel putih. */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 16% 7%;
+
+    --muted: 222 12% 18%;
+    --muted-foreground: 218 10% 64%;
+    --accent: 78 84% 60%;
+    --accent-foreground: 222 30% 8%;
+
+    /* Warna status dinaikkan lightness-nya; nilai lama disetel untuk latar
+       putih dan turun di bawah 3:1 di atas near-black. */
+    --destructive: 0 80% 68%;
+    --destructive-foreground: 222 30% 8%;
+    --success: 152 55% 58%;
+    --success-foreground: 222 30% 8%;
+    --warning: 38 92% 62%;
+    --warning-foreground: 222 30% 8%;
+
+    /* Identitas seksi, dicerahkan untuk latar gelap. */
+    --whatsapp: 142 58% 56%;
+    --whatsapp-foreground: 222 30% 8%;
+    --email: 214 90% 68%;
+    --email-foreground: 222 30% 8%;
+    --kelola: 265 80% 74%;
+    --kelola-foreground: 222 30% 8%;
+
+    --border: 220 12% 20%;
+    --input: 220 12% 20%;
+    --ring: 78 84% 60%;
+    --radius: 1.25rem;
+
+    /* Permukaan lunak menggantikan neobrutalism: garis rambut, tanpa offset
+       shadow. Border 2px tidak punya arti di atas near-black dan hard shadow
+       membuat tampilan ramai. */
+    --surface-border-width: 1px;
+    --surface-border-color: var(--border);
+    --surface-shadow: none;
+    --surface-shadow-hover: none;
+    --surface-shadow-active: none;
+    --surface-press-hover-transform: none;
+    --surface-press-active-transform: none;
+
+    --chart-1: 78 84% 60%;
+    --chart-2: 210 20% 96%;
+    --chart-3: 218 10% 64%;
+    --chart-4: 220 12% 34%;
+    --chart-5: 220 12% 24%;
+
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Permukaan lunak menggantikan neobrutalism: garis rambut, tanpa offset
+     shadow, radius besar. Border 2px hitam tidak punya arti di atas near-black
+     dan hard shadow membuat tampilan ramai. */
+  .cg-workspace :where(.cg-press):hover {
+    background: hsl(var(--foreground) / 0.06);
+  }
+
+  /* Referensinya memakai grotesk biasa berukuran besar, bukan display
+     terkondensasi huruf kapital semua. */
+  .cg-workspace :where(.cg-display) {
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  .cg-workspace :where(.cg-label) {
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+
+  .cg-workspace :where(.cg-kicker, .cg-pill) {
+    border-width: 1px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Di tema gelap, rail dan kanvas nyaris sewarna. Rail dibuat sedikit lebih
+     gelap dengan garis pemisah supaya tetap terbaca sebagai bidang tersendiri.
+     Dilingkup ke .cg-workspace agar rail konsol admin (yang masih berlatar
+     terang) tidak ikut berubah. */
+  .cg-workspace .cg-sidebar {
+    --card: 222 15% 13%;
+    --muted: 222 12% 20%;
+    --muted-foreground: 218 10% 62%;
+    --border: 220 12% 18%;
+    --warning: 38 92% 62%;
+    --destructive: 0 80% 68%;
+    background: hsl(222 18% 5%);
+    border-right: 1px solid hsl(220 12% 16%);
+  }
+
   /* ── Dashboard rail ─────────────────────────────────────────────────────
      The rail used to be a full-height slab of --primary, which handed the
      most visual weight on screen to the thing users look at least, and left
@@ -321,19 +436,19 @@
      "pushes in" flush with the surface). Apply to the controls users
      actually click most — not decoration, an affordance. */
   .cg-press {
-    border: 2px solid hsl(var(--foreground));
-    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+    border: var(--surface-border-width, 2px) solid hsl(var(--surface-border-color, var(--foreground)));
+    box-shadow: var(--surface-shadow, 4px 4px 0px 0px hsl(var(--foreground)));
     transition-property: transform, box-shadow, color, background-color, border-color;
     transition-duration: 150ms;
     transition-timing-function: ease;
   }
   .cg-press:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px hsl(var(--foreground));
+    transform: var(--surface-press-hover-transform, translate(-2px, -2px));
+    box-shadow: var(--surface-shadow-hover, 6px 6px 0px 0px hsl(var(--foreground)));
   }
   .cg-press:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px 0px hsl(var(--foreground));
+    transform: var(--surface-press-active-transform, translate(2px, 2px));
+    box-shadow: var(--surface-shadow-active, 0px 0px 0px 0px hsl(var(--foreground)));
   }
   @media (prefers-reduced-motion: reduce) {
     .cg-press {

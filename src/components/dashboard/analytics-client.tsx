@@ -14,7 +14,16 @@ import {
   Legend,
 } from "recharts";
 import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucide-react";
-import { CHART, CHART_TOOLTIP, CHART_CURSOR_FILL, CHART_CURSOR_LINE, CHART_MAX_BAR } from "@/lib/chart-theme";
+// Di-alias ke palet gelap: area kerja bertema gelap, sedangkan konsol admin
+// masih terang dan tetap memakai CHART biasa. Alias di satu tempat lebih aman
+// daripada menukar ~20 pemakaian satu per satu.
+import {
+  CHART_DARK as CHART,
+  CHART_DARK_TOOLTIP as CHART_TOOLTIP,
+  CHART_DARK_CURSOR_FILL as CHART_CURSOR_FILL,
+  CHART_DARK_CURSOR_LINE as CHART_CURSOR_LINE,
+  CHART_MAX_BAR,
+} from "@/lib/chart-theme";
 import { isAllZero, EmptyChart } from "@/components/empty-chart";
 
 interface Summary {

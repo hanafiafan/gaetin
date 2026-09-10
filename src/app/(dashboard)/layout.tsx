@@ -86,7 +86,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const planFeatures = PLANS[effectivePlanId]?.features ?? PLANS.STARTER.features;
 
   return (
-    <div className="cg-shell flex h-screen overflow-hidden bg-background text-foreground" style={brandStyle}>
+    <div className="cg-workspace cg-shell flex h-screen overflow-hidden bg-background text-foreground" style={brandStyle}>
       <Sidebar
         appName={appName}
         featureFlags={ownerCms.featureFlags}
