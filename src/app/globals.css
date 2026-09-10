@@ -257,6 +257,17 @@
     border-radius: 9999px;
   }
 
+  /* Kartu di dashboard kini berona per seksi (lihat TONE_CARD), dan kolom
+     isian memakai kelas bg-card yang sama — sehingga keduanya jadi warna
+     identik dan form terbaca rata. Kontrol form dikembalikan ke putih supaya
+     target yang bisa diketik menonjol dari kartu yang menampungnya. Satu
+     aturan di sini menggantikan penyuntingan ~100 tempat pemakaian.
+     Namanya sengaja bukan .cg-section — kelas itu sudah dipakai landing page
+     untuk membatasi lebar konten. */
+  .cg-app-surface :is(input, textarea, select).bg-card {
+    background-color: hsl(var(--background));
+  }
+
   /* ── Dashboard rail ─────────────────────────────────────────────────────
      The rail used to be a full-height slab of --primary, which handed the
      most visual weight on screen to the thing users look at least, and left

@@ -93,6 +93,25 @@ export const TONE_PANEL: Record<SectionTone, string> = {
   akun: "bg-muted/40",
 };
 
+/**
+ * Warna permukaan kartu, sebagai nilai HSL mentah karena dipasang ke variabel
+ * `--card` lewat SectionCanvas — bukan kelas Tailwind. Menyetel variabelnya
+ * membuat SETIAP kartu di seksi itu ikut berona sekaligus (cg-card, komponen
+ * Card, apa pun yang memakai bg-card), tanpa perlu menyunting belasan halaman
+ * satu per satu.
+ *
+ * Selalu lebih terang dari TONE_CANVAS supaya kartu tetap terbaca terangkat.
+ * Input di dalamnya memakai bg-background yang tetap putih, jadi kolom isian
+ * justru makin menonjol di atas kartu berona.
+ */
+export const TONE_CARD: Record<SectionTone, string> = {
+  primary: "66 100% 96%",
+  whatsapp: "142 45% 96.5%",
+  email: "217 70% 97%",
+  kelola: "262 50% 97%",
+  akun: "0 0% 97.5%",
+};
+
 /** Pita hero — tingkat paling pekat, menandai identitas seksi dari jauh. */
 export const TONE_WASH: Record<SectionTone, string> = {
   primary: "bg-primary/[0.20]",

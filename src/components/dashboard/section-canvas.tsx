@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { navGroups, isNavActive } from "@/components/dashboard/nav-config";
-import { TONE_CANVAS, type SectionTone } from "@/components/dashboard/section-tone";
+import { TONE_CANVAS, TONE_CARD, type SectionTone } from "@/components/dashboard/section-tone";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,8 +23,14 @@ function toneForPath(pathname: string): SectionTone {
 
 export default function SectionCanvas({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const tone = toneForPath(pathname);
   return (
-    <div className={cn("flex-1 transition-colors duration-300", TONE_CANVAS[toneForPath(pathname)])}>
+    <div
+      className={cn("cg-app-surface flex-1 transition-colors duration-300", TONE_CANVAS[tone])}
+      // Diwariskan ke seluruh subtree: setiap kartu ikut berona tanpa satu pun
+      // halaman perlu disunting. Lihat TONE_CARD di section-tone.ts.
+      style={{ "--card": TONE_CARD[tone] } as React.CSSProperties}
+    >
       {children}
     </div>
   );
