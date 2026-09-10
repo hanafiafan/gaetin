@@ -2,17 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { fail } from "@/lib/api";
+import { isManager } from "@/lib/auth/roles";
+
+/**
+ * Nama bisnis berasal dari listing Google Maps, yang bisa disetel orang lain.
+ * Excel/Sheets mengeksekusi sel yang diawali = + - @ sebagai formula, jadi
+ * listing bernama "=cmd|..." berubah jadi serangan saat file dibuka. Berlaku
+ * untuk CSV maupun xlsx.
+ */
+function guardFormula(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
 
 function csvCell(value: unknown): string {
-  if (value == null) return "";
-  const text = String(value);
+  const guarded = guardFormula(value);
+  if (guarded == null) return "";
+  const text = String(guarded);
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
-  if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  // Route ini hanya dibuka lewat navigasi <a href>, jadi respons JSON akan tampil sebagai halaman mentah.
+  if (!session) return NextResponse.redirect(new URL("/login", req.url), { status: 303 });
+  // Ekspor menarik seluruh database lead dalam satu file — itu aset inti
+  // workspace, bukan sesuatu yang boleh dibawa keluar oleh anggota biasa.
+  if (!isManager(session)) {
+    return NextResponse.redirect(new URL("/dashboard?error=export_forbidden", req.url), { status: 303 });
+  }
 
   const sp = req.nextUrl.searchParams;
   const scraperJobId = sp.get("scraperJobId") ?? undefined;
@@ -105,7 +123,7 @@ export async function GET(req: NextRequest) {
 
   if (format === "xlsx") {
     const xlsx = await import("xlsx");
-    const ws = xlsx.utils.aoa_to_sheet([header, ...rawRows]);
+    const ws = xlsx.utils.aoa_to_sheet([header, ...rawRows.map((r) => r.map(guardFormula))]);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, "Leads");
     const buffer = xlsx.write(wb, { type: "buffer", bookType: "xlsx" });

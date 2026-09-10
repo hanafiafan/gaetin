@@ -1,6 +1,7 @@
 import midtransClient from "midtrans-client";
 import { createHash } from "crypto";
 import { env } from "@/lib/env";
+import { secureEqual } from "@/lib/secure-compare";
 import { prisma } from "@/lib/db/prisma";
 
 async function resolveConfig(): Promise<{ isProduction: boolean; serverKey: string; clientKey: string }> {
@@ -77,5 +78,5 @@ export function verifyNotificationSignature(
 ): boolean {
   if (!serverKey || !signatureKey) return false;
   const expected = createHash("sha512").update(`${orderId}${statusCode}${grossAmount}${serverKey}`).digest("hex");
-  return signatureKey === expected;
+  return secureEqual(signatureKey, expected);
 }

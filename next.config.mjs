@@ -1,3 +1,25 @@
+const isProd = process.env.NODE_ENV === "production";
+
+// Next menyuntik script & style inline untuk hidrasi, jadi 'unsafe-inline' tidak
+// bisa dihindari tanpa nonce di seluruh app — nilai CSP ini ada pada directive
+// lain: object-src/base-uri menutup injeksi tag, form-action mencegah form
+// dibajak untuk mengirim data keluar. Pembayaran Midtrans berupa navigasi
+// halaman penuh (window.location), bukan Snap.js atau iframe, sehingga tidak
+// perlu di-allowlist di sini.
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  // ws: hanya untuk websocket hot-reload Next saat dev; produksi tidak punya itu.
+  `connect-src 'self' https:${isProd ? "" : " ws:"}`,
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,6 +32,10 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
+          { key: "Content-Security-Policy", value: csp },
+          ...(isProd
+            ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" }]
+            : []),
         ],
       },
     ];

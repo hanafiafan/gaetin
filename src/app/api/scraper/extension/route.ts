@@ -3,12 +3,16 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { normalizePhone } from "@/lib/utils";
 import { env } from "@/lib/env";
+import { getWorkspacePlan } from "@/lib/plans/limits";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, X-Extension-Token",
 };
+
+/** Sebuah sesi scraping berlangsung menit, bukan jam — 6 jam sudah sangat longgar. */
+const JOB_INGEST_WINDOW_MS = 6 * 60 * 60 * 1000;
 
 export async function OPTIONS() {
   return new NextResponse(null, { status: 200, headers: CORS });
@@ -25,11 +29,23 @@ export async function POST(req: Request) {
 
     const job = await prisma.scraperJob.findUnique({
       where: { id: jobId },
-      select: { id: true, workspaceId: true }
+      select: { id: true, workspaceId: true, status: true, createdAt: true }
     });
 
     if (!job) {
       return NextResponse.json({ error: "Job ID tidak ditemukan" }, { status: 404, headers: CORS });
+    }
+
+    // Token ekstensi adalah HMAC deterministik dari id job — tidak disimpan,
+    // jadi tidak bisa dicabut. Umur job-lah yang membatasinya: token berhenti
+    // berlaku begitu job selesai atau lewat batas waktu, sehingga token yang
+    // bocor tidak memberi akses tulis selamanya ke lead workspace ini.
+    const jobAgeMs = Date.now() - job.createdAt.getTime();
+    if (job.status !== "RUNNING" || jobAgeMs > JOB_INGEST_WINDOW_MS) {
+      return NextResponse.json(
+        { error: "Job sudah selesai atau kedaluwarsa" },
+        { status: 409, headers: CORS },
+      );
     }
 
     // Validasi Sesi Browser atau HMAC Token
@@ -55,11 +71,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token atau sesi tidak valid" }, { status: 401, headers: CORS });
     }
 
+    // Batas lead per job sebelumnya hanya diiklankan, tidak pernah ditegakkan:
+    // jalur ekstensi adalah satu-satunya mode yang aktif dan ia menerima array
+    // sepanjang apa pun. Sisa kuota dihitung dari yang sudah masuk agar batas
+    // berlaku untuk keseluruhan job, bukan per request.
+    const plan = await getWorkspacePlan(job.workspaceId);
+    const existingCount = await prisma.lead.count({ where: { scraperJobId: job.id } });
+    const remaining = Math.max(0, plan.limits.scraperMaxResultsPerJob - existingCount);
+    const accepted = leads.slice(0, remaining);
+    const rejected = leads.length - accepted.length;
+
     // Process leads
     let added = 0;
     let duplicates = 0;
 
-    for (const l of leads) {
+    for (const l of accepted) {
       const phone = l.phone ? normalizePhone(l.phone) : "";
       
       // Simple duplicate check within the same job to prevent inserting same place twice
@@ -120,9 +146,19 @@ export async function POST(req: Request) {
       data: updateData
     });
 
-    return NextResponse.json({ success: true, added }, { headers: CORS });
+    return NextResponse.json(
+      {
+        success: true,
+        added,
+        ...(rejected > 0
+          ? { rejected, limitReached: `Batas ${plan.limits.scraperMaxResultsPerJob} lead per job tercapai.` }
+          : {}),
+      },
+      { headers: CORS },
+    );
   } catch (error: any) {
     console.error("Extension API error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500, headers: CORS });
+    // Pesan error mentah membocorkan nama tabel/kolom Prisma ke pemanggil.
+    return NextResponse.json({ error: "Gagal memproses lead" }, { status: 500, headers: CORS });
   }
 }

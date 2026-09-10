@@ -13,9 +13,15 @@ function token(): string {
   return process.env.WA_GATEWAY_TOKEN ?? "";
 }
 
+// fetch tanpa timeout menunggu selamanya. Loop blast memanggil ini sekali per
+// penerima secara berurutan, jadi satu gateway yang menggantung membekukan
+// seluruh kampanye tanpa batas waktu, bukan sekadar memperlambatnya.
+const GATEWAY_TIMEOUT_MS = 20_000;
+
 async function gw(path: string, init?: RequestInit): Promise<Response> {
   return fetch(`${baseUrl()}${path}`, {
     ...init,
+    signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS),
     headers: {
       Authorization: `Bearer ${token()}`,
       "Content-Type": "application/json",

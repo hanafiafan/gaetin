@@ -26,9 +26,12 @@ export async function getSession(): Promise<Session | null> {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    include: { memberships: { include: { workspace: true }, take: 1 } },
+    include: { memberships: { include: { workspace: true }, orderBy: { createdAt: "asc" }, take: 1 } },
   });
   if (!user) return null;
+
+  // Lock/ban harus mematikan sesi yang sudah berjalan, bukan hanya menolak login berikutnya.
+  if (user.lockedUntil && user.lockedUntil > new Date()) return null;
 
   const membership = user.memberships[0];
   if (!membership) return null;

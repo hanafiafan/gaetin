@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { handleIncomingMessage } from "@/lib/inbox/service";
+import { secureEqual } from "@/lib/secure-compare";
 
 /**
  * Webhook yang dipanggil oleh WA Gateway (Railway) saat ada event:
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
   // siapapun bisa memalsukan event WhatsApp (lihat gateway/server.js pengirimnya).
   const secret = req.headers.get("x-webhook-secret") ?? "";
   const expected = process.env.WEBHOOK_SECRET ?? "";
-  if (!expected || secret !== expected) {
+  if (!expected || !secureEqual(secret, expected)) {
     return NextResponse.json({ ok: false, error: "Forbidden" }, { status: 403 });
   }
 
