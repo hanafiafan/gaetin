@@ -61,6 +61,21 @@ export const TONE_EDGE: Record<SectionTone, string> = {
   akun: "border-t-foreground",
 };
 
+/** Rona kanvas halaman. Sebelumnya badan halaman putih dan kartunya juga putih,
+ * jadi batas tiap elemen hanya terbaca dari garis hitamnya — dan warna seksi
+ * berhenti di header. Rona tipis di belakang membuat kartu putih terangkat
+ * sebagai permukaan tersendiri, sekaligus menandai seksi yang sedang dibuka.
+ * Sengaja sekitar setengah TONE_WASH supaya pita hero tetap terbaca di atasnya. */
+export const TONE_CANVAS: Record<SectionTone, string> = {
+  primary: "bg-primary/[0.04]",
+  whatsapp: "bg-whatsapp/[0.035]",
+  email: "bg-email/[0.035]",
+  kelola: "bg-kelola/[0.035]",
+  // Akun tidak punya hue sendiri, jadi ronanya abu. Ditahan lebih terang dari
+  // yang lain supaya panel ber-bg-muted di halaman ini tetap terbaca di atasnya.
+  akun: "bg-muted/25",
+};
+
 /** Same idea as TONE_SOFT, but sized for a full-width section wash (PageHero
  * background) rather than a small icon chip — a touch stronger so it reads
  * as real color instead of disappearing next to the page's mostly-white body. */

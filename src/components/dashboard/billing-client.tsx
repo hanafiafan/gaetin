@@ -236,7 +236,9 @@ export default function BillingClient() {
                     ? "border-primary/40 bg-primary/10"
                     : current
                     ? "border-primary/30 bg-card"
-                    : "border-border bg-muted/50 hover:border-border"
+                    // Putih, bukan bg-muted: kanvas halaman ini sudah berona
+                    // abu, jadi kartu abu akan menyatu dengan latarnya.
+                    : "border-border bg-background hover:border-foreground/30"
                 )}
               >
                 {featured && (

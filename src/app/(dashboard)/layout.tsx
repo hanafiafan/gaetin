@@ -6,6 +6,7 @@ import Header from "@/components/dashboard/header";
 import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
 import FeatureGate from "@/components/dashboard/feature-gate";
+import SectionCanvas from "@/components/dashboard/section-canvas";
 import { getOwnerCmsSettings } from "@/lib/owner-cms";
 import { PLANS, getEffectivePlanId, getEffectiveStatus, type PlanId } from "@/config/plans";
 
@@ -108,12 +109,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <FeatureGate featureFlags={ownerCms.featureFlags} />
         {session.impersonating && <ImpersonationBanner workspaceName={session.workspace.name} />}
         <Header user={session.user} workspace={session.workspace} isSuperAdmin={session.isSuperAdmin} />
-      <main className="relative z-10 flex-1 px-3 py-4 sm:px-5 lg:px-7">
-        <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">
-            <AnnouncementBanner />
-            {children}
-          </div>
-        </main>
+        <SectionCanvas>
+          <main className="relative z-10 flex-1 px-3 py-4 sm:px-5 lg:px-7">
+            <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">
+              <AnnouncementBanner />
+              {children}
+            </div>
+          </main>
+        </SectionCanvas>
       </div>
     </div>
   );

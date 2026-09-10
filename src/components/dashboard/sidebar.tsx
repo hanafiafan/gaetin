@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Lock, LogOut } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
@@ -34,6 +34,14 @@ export default function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const [lockedFeature, setLockedFeature] = useState<string | null>(null);
+
+  // Daftar menu lebih panjang dari layar pada laptop pendek, jadi item yang
+  // sedang aktif bisa berada di luar pandangan dan user kehilangan petunjuk
+  // posisinya. "nearest" hanya menggeser bila memang perlu.
+  const activeItemRef = useRef<HTMLAnchorElement>(null);
+  useEffect(() => {
+    activeItemRef.current?.scrollIntoView({ block: "nearest" });
+  }, [pathname]);
 
   const isTrialExpired = subscriptionStatus === "TRIAL_EXPIRED";
   const isTrial = subscriptionStatus === "TRIAL" || isTrialExpired;
@@ -101,6 +109,7 @@ export default function Sidebar({
                       <Link
                         key={item.href}
                         href={item.href}
+                        ref={active ? activeItemRef : undefined}
                         className={cn(
                           "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200",
                           active

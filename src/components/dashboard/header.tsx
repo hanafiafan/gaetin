@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Bell, Search, ShieldCheck } from "lucide-react";
+import { Bell, ShieldCheck } from "lucide-react";
+import HeaderSearch from "@/components/dashboard/header-search";
 
 type HeaderProps = {
   user?: {
@@ -46,10 +47,7 @@ export default function Header({ user, workspace, isSuperAdmin = false }: Header
           </div>
         </div>
 
-        <div className="hidden min-w-[280px] max-w-md flex-1 items-center border border-border px-4 py-2.5 text-sm text-muted-foreground xl:flex">
-          <Search className="mr-2 h-4 w-4" />
-          Cari kontak, campaign, template, atau workspace
-        </div>
+        <HeaderSearch />
 
         <div className="flex items-center gap-2">
           {isSuperAdmin ? (

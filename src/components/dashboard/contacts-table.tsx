@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TONE_WASH } from "@/components/dashboard/section-tone";
@@ -39,11 +40,15 @@ function scoreClass(score: number): string {
 }
 
 export default function ContactsTable() {
+  // Pencarian di header mengarah ke sini lewat ?q=, jadi nilai awalnya diambil
+  // dari URL — kalau tidak, user mengetik di header lalu mendarat di daftar
+  // yang tidak tersaring sama sekali.
+  const searchParams = useSearchParams();
   const [items, setItems] = useState<Contact[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const pageSize = 20;
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [waStatus, setWaStatus] = useState("");
   const [emailOnly, setEmailOnly] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
