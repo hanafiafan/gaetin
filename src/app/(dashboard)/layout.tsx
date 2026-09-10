@@ -1,8 +1,7 @@
 import { requireSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
-import Sidebar from "@/components/dashboard/sidebar";
+import WorkspaceNav from "@/components/dashboard/workspace-nav";
 import MobileNav from "@/components/dashboard/mobile-nav";
-import Header from "@/components/dashboard/header";
 import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
 import FeatureGate from "@/components/dashboard/feature-gate";
@@ -86,14 +85,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const planFeatures = PLANS[effectivePlanId]?.features ?? PLANS.STARTER.features;
 
   return (
-    <div className="cg-workspace cg-shell flex h-screen overflow-hidden bg-background text-foreground" style={brandStyle}>
-      <Sidebar
+    <div className="cg-workspace cg-shell flex h-screen flex-col overflow-hidden bg-background text-foreground" style={brandStyle}>
+      {/* Rail kiri diganti navigasi atas berbentuk pil, mengikuti referensi.
+          Di layar kecil bar ini menyusut jadi merek + akun saja; navigasinya
+          ditangani drawer MobileNav. */}
+      <WorkspaceNav
         appName={appName}
+        user={session.user}
+        workspaceName={session.workspace.name}
+        planName={PLANS[planId]?.name}
+        credits={workspaceInfo?.credits ?? 0}
         featureFlags={ownerCms.featureFlags}
         isSuperAdmin={session.isSuperAdmin}
-        credits={workspaceInfo?.credits ?? 0}
-        plan={workspaceInfo?.subscription?.plan ?? "STARTER"}
-        subscriptionStatus={status}
         planFeatures={planFeatures}
       />
       <MobileNav
@@ -108,7 +111,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <FeatureGate featureFlags={ownerCms.featureFlags} />
         {session.impersonating && <ImpersonationBanner workspaceName={session.workspace.name} />}
-        <Header user={session.user} workspace={session.workspace} isSuperAdmin={session.isSuperAdmin} />
         <SectionCanvas>
           <main className="relative z-10 flex-1 px-3 py-4 sm:px-5 lg:px-7">
             <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">

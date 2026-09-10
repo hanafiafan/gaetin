@@ -25,14 +25,14 @@ export default function HeaderSearch() {
         const term = q.trim();
         if (term) router.push(`/dashboard/contacts?q=${encodeURIComponent(term)}`);
       }}
-      className="hidden min-w-[280px] max-w-md flex-1 items-center gap-2 border border-border px-4 py-2.5 transition focus-within:border-foreground xl:flex"
+      className="hidden h-10 w-[220px] items-center gap-2 rounded-xl border border-border px-3.5 transition focus-within:border-foreground/40 xl:flex"
     >
       <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
       <input
         type="search"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Cari kontak — nama, nomor, email"
+        placeholder="Cari kontak…"
         aria-label="Cari kontak"
         className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
       />

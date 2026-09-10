@@ -1,8 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { TONE_BG, TONE_BORDER, TONE_SOFT, TONE_WASH, type SectionTone } from "@/components/dashboard/section-tone";
+import { TONE_BG, TONE_SOFT, type SectionTone } from "@/components/dashboard/section-tone";
 
 export type PageHeroTone = SectionTone;
 
@@ -41,15 +40,18 @@ export default function PageHero({
   className,
 }: PageHeroProps) {
   return (
-    <Card className={cn("rounded-none border-x-0 border-t-0 border-b-2 shadow-none transition-colors duration-300", TONE_BORDER[tone], TONE_WASH[tone], className)}>
-      <div className="grid gap-6 pb-7 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
-        <div>
-          <Badge className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300", TONE_BG[tone])}>
-            <KickerIcon className="h-3.5 w-3.5" /> {kicker}
-          </Badge>
-          <h1 className="cg-display mt-5 text-[clamp(2rem,4.5vw,3.25rem)]">{title}</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
-        </div>
+    /* Baris judul ringkas, bukan pita warna selebar layar. Referensinya menaruh
+       judul dan aksinya pada satu baris tipis lalu langsung masuk ke konten;
+       pita tinggi berwarna memakan ruang layar tanpa menambah informasi. */
+    <div className={cn("flex flex-col gap-5 pb-1 lg:flex-row lg:items-start lg:justify-between", className)}>
+      <div className="min-w-0">
+        <Badge className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider", TONE_BG[tone])}>
+          <KickerIcon className="h-3.5 w-3.5" /> {kicker}
+        </Badge>
+        <h1 className="cg-display mt-3 text-[clamp(1.75rem,3vw,2.5rem)]">{title}</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
+      </div>
+      <div className="shrink-0 lg:w-[320px]">
         {rightSlot ?? (
           <div className="overflow-hidden rounded-xl border border-border">
             {features?.map(({ icon: Icon, label }, i) => (
@@ -74,6 +76,6 @@ export default function PageHero({
           </div>
         )}
       </div>
-    </Card>
+    </div>
   );
 }
