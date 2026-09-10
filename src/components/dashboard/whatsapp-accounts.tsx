@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import StatusBadge from "@/components/dashboard/status-badge";
 
 interface Account {
   id: string;
@@ -10,26 +11,6 @@ interface Account {
   status: "connected" | "connecting" | "disconnected" | string;
   dailyLimit?: number;
   sentToday?: number;
-}
-
-const STATUS_LABEL: Record<string, string> = {
-  connected: "Terhubung",
-  connecting: "Menghubungkan",
-  disconnected: "Terputus",
-};
-
-function StatusBadge({ status }: { status: string }) {
-  const color =
-    status === "connected"
-      ? "bg-success/15 text-success"
-      : status === "connecting"
-        ? "bg-warning/15 text-warning"
-        : "bg-muted-foreground/15 text-muted-foreground";
-  return (
-    <span className={cn("px-2.5 py-0.5 text-xs font-bold", color)}>
-      {STATUS_LABEL[status] ?? status}
-    </span>
-  );
 }
 
 export default function WhatsAppAccounts() {

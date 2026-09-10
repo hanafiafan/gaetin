@@ -24,6 +24,7 @@ export default function TasksClient() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [contacts, setContacts] = useState<ContactLite[]>([]);
   const [filter, setFilter] = useState("all");
+  const [counts, setCounts] = useState<Record<string, number>>({});
   const [title, setTitle] = useState("");
   const [contactId, setContactId] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -33,7 +34,10 @@ export default function TasksClient() {
   async function loadTasks() {
     const r = await fetch(`/api/tasks?status=${filter}`);
     const j = await r.json();
-    if (j.success) setTasks(j.data);
+    if (j.success) {
+      setTasks(j.data);
+      setCounts(j.counts ?? {});
+    }
   }
   async function loadContacts() {
     const r = await fetch("/api/contacts?pageSize=100");
@@ -121,14 +125,28 @@ export default function TasksClient() {
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
+            aria-pressed={filter === f.key}
             className={cn(
-              "h-8 px-3 text-xs font-bold transition",
+              // Pil dengan jumlah, mengikuti tab di referensi. Versi lama
+              // memakai wash 20% yang praktis tidak terbaca di latar gelap,
+              // sehingga tab aktif tidak terlihat berbeda.
+              "flex h-9 items-center gap-2 rounded-full border px-4 text-sm transition",
               filter === f.key
-                ? "bg-primary/20 text-foreground"
-                : "border border-border text-muted-foreground hover:border-primary/20 hover:text-foreground"
+                ? "border-primary bg-primary font-semibold text-primary-foreground"
+                : "border-border text-foreground/70 hover:border-foreground/30 hover:text-foreground",
             )}
           >
             {f.label}
+            {counts[f.key] !== undefined && (
+              <span
+                className={cn(
+                  "rounded-full px-1.5 text-[11px] font-bold",
+                  filter === f.key ? "bg-primary-foreground/15" : "bg-foreground/10",
+                )}
+              >
+                {counts[f.key]}
+              </span>
+            )}
           </button>
         ))}
       </div>

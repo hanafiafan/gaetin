@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarClock, Gauge, Loader2, Pause, Play, RotateCcw, Send, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import StatusBadge from "@/components/dashboard/status-badge";
 
 interface Account { id: string; label: string; status: string }
 interface Template { id: string; name: string; body: string }
@@ -28,14 +29,6 @@ function campaignPct(c: Campaign) {
   return Math.round(((c.sentCount + c.failedCount) / c.totalRecipients) * 100);
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  ACTIVE: "bg-whatsapp/15 text-whatsapp",
-  DONE: "bg-success/15 text-success",
-  FAILED: "bg-destructive/15 text-destructive",
-  PAUSED: "bg-warning/15 text-warning",
-  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
-  SCHEDULED: "bg-whatsapp/15 text-whatsapp",
-};
 
 const SELECT_CLASS = "h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none";
 
@@ -221,14 +214,13 @@ export default function CampaignsClient() {
         <div className="space-y-3">
           {campaigns.map((campaign) => {
             const pct = campaignPct(campaign);
-            const sc = STATUS_COLOR[campaign.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={campaign.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold text-foreground">{campaign.name}</h3>
-                      <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", sc)}>{campaign.status}</span>
+                      <StatusBadge status={campaign.status} />
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {campaign.totalRecipients} penerima · {campaign.sentCount} terkirim · {campaign.failedCount} gagal

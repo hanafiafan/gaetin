@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CREDIT_COSTS } from "@/config/plans";
+import StatusBadge from "@/components/dashboard/status-badge";
 
 const CREDIT_USAGE = [
   { label: "Simpan lead jadi kontak", detail: "Per lead baru yang disimpan", cost: CREDIT_COSTS.saveLead },
@@ -52,28 +53,6 @@ const PLAN_FEATURES: Record<string, string[]> = {
     "Support prioritas VIP",
   ],
 };
-
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  ACTIVE: { label: "Aktif", color: "bg-success/15 text-success" },
-  TRIAL: { label: "Trial", color: "bg-warning/15 text-warning" },
-  EXPIRED: { label: "Kedaluwarsa", color: "bg-destructive/15 text-destructive" },
-  CANCELLED: { label: "Dibatalkan", color: "bg-muted-foreground/15 text-muted-foreground" },
-};
-const TX_STATUS: Record<string, { label: string; color: string }> = {
-  PAID: { label: "Lunas", color: "bg-success/15 text-success" },
-  PENDING: { label: "Menunggu", color: "bg-warning/15 text-warning" },
-  EXPIRED: { label: "Kedaluwarsa", color: "bg-destructive/15 text-destructive" },
-  FAILED: { label: "Gagal", color: "bg-destructive/15 text-destructive" },
-};
-
-function StatusBadge({ status, map }: { status: string; map: typeof STATUS_LABELS }) {
-  const s = map[status] ?? { label: status, color: "bg-muted-foreground/15 text-muted-foreground" };
-  return (
-    <span className={cn("inline-flex items-center px-2.5 py-0.5 text-xs font-bold", s.color)}>
-      {s.label}
-    </span>
-  );
-}
 
 export default function BillingClient() {
   const [me, setMe] = useState<Me | null>(null);
@@ -159,7 +138,7 @@ export default function BillingClient() {
         <div className="cg-card rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase text-muted-foreground">Status</p>
           <div className="mt-2">
-            {me ? <StatusBadge status={me.status} map={STATUS_LABELS} /> : <span className="text-sm text-muted-foreground">—</span>}
+            {me ? <StatusBadge status={me.status} /> : <span className="text-sm text-muted-foreground">—</span>}
           </div>
         </div>
         <div className={cn("rounded-2xl border p-5 transition", isLow ? "border-warning/30 bg-warning/10" : "cg-card")}>
@@ -404,7 +383,7 @@ export default function BillingClient() {
                       </td>
                       <td className="p-4 text-right font-bold text-foreground">{idr(t.grossAmount)}</td>
                       <td className="p-4">
-                        <StatusBadge status={t.status} map={TX_STATUS} />
+                        <StatusBadge status={t.status} />
                       </td>
                       <td className="p-4 text-right">
                         {t.status === "PENDING" && t.invoiceUrl && (

@@ -16,9 +16,13 @@ export async function GET(req: NextRequest) {
     take: 500,
   });
 
-  const now = Date.now();
+  // Terlambat dihitung per hari, bukan per detik. dueDate tersimpan pukul
+  // 00:00, jadi membandingkannya dengan Date.now() menandai tugas sebagai
+  // terlambat sejak pagi di hari jatuh temponya sendiri.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
   let data = rows.map((t) => {
-    const overdue = t.status !== "COMPLETED" && t.dueDate.getTime() < now;
+    const overdue = t.status !== "COMPLETED" && t.dueDate < startOfToday;
     return {
       id: t.id,
       title: t.title,
@@ -29,11 +33,20 @@ export async function GET(req: NextRequest) {
     };
   });
 
+  // Hitung sebelum menyaring: chip filter menampilkan jumlah tiap status, dan
+  // itu mustahil kalau klien hanya menerima daftar yang sudah tersaring.
+  const counts = {
+    all: data.length,
+    pending: data.filter((t) => t.status === "PENDING").length,
+    overdue: data.filter((t) => t.status === "OVERDUE").length,
+    completed: data.filter((t) => t.status === "COMPLETED").length,
+  };
+
   if (filter === "pending") data = data.filter((t) => t.status === "PENDING");
   else if (filter === "completed") data = data.filter((t) => t.status === "COMPLETED");
   else if (filter === "overdue") data = data.filter((t) => t.status === "OVERDUE");
 
-  return NextResponse.json({ success: true, data });
+  return NextResponse.json({ success: true, data, counts });
 }
 
 export async function POST(req: NextRequest) {

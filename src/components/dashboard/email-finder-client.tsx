@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2, Mail, Play, Send, StopCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import StatusBadge from "@/components/dashboard/status-badge";
 
 type Source = "LEAD" | "CONTACT";
 
@@ -23,13 +24,6 @@ function jobPct(job: FindJob) {
   return Math.round((job.processed / job.totalTargets) * 100);
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-email/15 text-email",
-  COMPLETED: "bg-success/15 text-success",
-  FAILED: "bg-destructive/15 text-destructive",
-  STOPPED: "bg-destructive/15 text-destructive",
-  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
-};
 
 const SOURCE_LABEL: Record<Source, string> = { LEAD: "Lead (hasil scraping)", CONTACT: "Kontak tersimpan" };
 
@@ -154,14 +148,13 @@ export default function EmailFinderClient() {
         <div className="space-y-3">
           {jobs.map((job) => {
             const pct = jobPct(job);
-            const sc = STATUS_COLOR[job.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={job.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold text-foreground">{SOURCE_LABEL[job.source]}</h3>
-                      <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", sc)}>{job.status}</span>
+                      <StatusBadge status={job.status} />
                     </div>
                     {job.label && <p className="mt-0.5 text-xs text-muted-foreground">Filter: {job.label}</p>}
                     <p className="mt-1 text-sm text-muted-foreground">

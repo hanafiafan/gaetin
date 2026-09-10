@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Mail, Play, StopCircle, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import StatusBadge from "@/components/dashboard/status-badge";
 
 interface EmailBlast {
   id: string;
@@ -19,13 +20,6 @@ function blastPct(blast: EmailBlast) {
   return Math.round(((blast.sentCount + blast.failedCount) / blast.totalRecipients) * 100);
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  RUNNING: "bg-email/15 text-email",
-  COMPLETED: "bg-success/15 text-success",
-  FAILED: "bg-destructive/15 text-destructive",
-  STOPPED: "bg-destructive/15 text-destructive",
-  DRAFT: "bg-muted-foreground/15 text-muted-foreground",
-};
 
 export default function EmailBlastClient() {
   const [blasts, setBlasts] = useState<EmailBlast[]>([]);
@@ -144,14 +138,13 @@ export default function EmailBlastClient() {
         <div className="space-y-3">
           {blasts.map((blast) => {
             const pct = blastPct(blast);
-            const sc = STATUS_COLOR[blast.status] ?? "bg-muted-foreground/15 text-muted-foreground";
             return (
               <div key={blast.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold text-foreground">{blast.name}</h3>
-                      <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", sc)}>{blast.status}</span>
+                      <StatusBadge status={blast.status} />
                     </div>
                     <p className="mt-1 truncate text-xs text-muted-foreground">{blast.subject}</p>
                     <p className="mt-1 text-sm text-muted-foreground">

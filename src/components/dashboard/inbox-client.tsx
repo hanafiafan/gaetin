@@ -22,6 +22,15 @@ interface Thread {
   messages: Msg[];
 }
 
+/** Label status percakapan. Daftar di kiri sebelumnya menampilkan nilai enum
+ * mentah ("OPEN", "PENDING"), sementara dropdown di panel kanan sudah memakai
+ * bahasa Indonesia — dua tampilan berbeda untuk data yang sama. */
+const STATUS_LABEL: Record<string, string> = {
+  OPEN: "Baru",
+  PENDING: "Ditangani",
+  RESOLVED: "Selesai",
+};
+
 export default function InboxClient() {
   const [convos, setConvos] = useState<Convo[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -113,7 +122,7 @@ export default function InboxClient() {
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-foreground">{c.name ?? `+${c.phone}`}</p>
-                <p className="truncate text-xs text-muted-foreground">+{c.phone} · {c.status}</p>
+                <p className="truncate text-xs text-muted-foreground">+{c.phone} · {STATUS_LABEL[c.status] ?? c.status}</p>
               </div>
             </div>
             {c.unreadCount > 0 && (
@@ -150,9 +159,9 @@ export default function InboxClient() {
                 onChange={(e) => setStatus(e.target.value)}
                 className="h-9 rounded-xl border border-border bg-card px-2 text-xs text-foreground"
               >
-                <option value="OPEN">Baru</option>
-                <option value="PENDING">Ditangani</option>
-                <option value="RESOLVED">Selesai</option>
+                <option value="OPEN">{STATUS_LABEL.OPEN}</option>
+                <option value="PENDING">{STATUS_LABEL.PENDING}</option>
+                <option value="RESOLVED">{STATUS_LABEL.RESOLVED}</option>
               </select>
             </div>
 

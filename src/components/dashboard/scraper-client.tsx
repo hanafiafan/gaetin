@@ -717,10 +717,13 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                       onClick={() => toggleDataField(field.value)}
                       title={field.description}
                       className={cn(
-                        "inline-flex items-center gap-1.5 border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                        // rounded-full di kelas dasar, bukan hanya di state
+                        // aktif — sebelumnya chip berubah dari kotak jadi
+                        // membulat setiap kali dipilih.
+                        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                         active
-                          ? "border-primary rounded-lg bg-primary text-primary-foreground"
-                          : "border-border text-muted-foreground hover:border-foreground hover:text-foreground",
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border text-foreground/70 hover:border-foreground/30 hover:text-foreground",
                       )}
                       aria-pressed={active}
                     >
