@@ -1,9 +1,13 @@
 import { prisma } from "@/lib/db/prisma";
 import { getMessagingProvider } from "@/lib/messaging/provider";
-import { deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
 import { CREDIT_COSTS } from "@/config/plans";
 
 export interface ValidationJob {
+  /** Job disimpan di satu Map global lintas-tenant, jadi pemiliknya harus ikut
+   * tersimpan — tanpa ini id job saja sudah cukup untuk membaca progres atau
+   * menghentikan validasi milik workspace lain. */
+  workspaceId: string;
   total: number;
   processed: number;
   active: number;
@@ -21,13 +25,16 @@ function delay(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-export function getValidation(id: string): ValidationJob | null {
-  return jobs.get(id) ?? null;
+// workspaceId wajib pada kedua fungsi ini supaya pemanggil tidak bisa lupa
+// memeriksanya — pengecekan di route mudah terlewat saat menambah endpoint baru.
+export function getValidation(id: string, workspaceId: string): ValidationJob | null {
+  const j = jobs.get(id);
+  return j && j.workspaceId === workspaceId ? j : null;
 }
 
-export function stopValidation(id: string): void {
+export function stopValidation(id: string, workspaceId: string): void {
   const j = jobs.get(id);
-  if (j) j.status = "stopped";
+  if (j && j.workspaceId === workspaceId) j.status = "stopped";
 }
 
 export async function runValidation(
@@ -37,6 +44,7 @@ export async function runValidation(
   contactIds: string[],
 ): Promise<void> {
   const job: ValidationJob = {
+    workspaceId,
     total: contactIds.length,
     processed: 0,
     active: 0,
@@ -74,6 +82,9 @@ export async function runValidation(
       if (ok) job.active += 1;
       else job.inactive += 1;
     } catch {
+      // Kredit sudah dipotong sebelum percobaan ini. Tanpa pengembalian, gateway
+      // yang mati menghabiskan seluruh saldo pelanggan tanpa memvalidasi apa pun.
+      await addCredits(workspaceId, CREDIT_COSTS.validateNumber, "REFUND_VALIDATE").catch(() => undefined);
       job.unverified += 1;
     }
     job.processed += 1;

@@ -20,11 +20,18 @@ export interface PlanFeatures {
 
 export interface PlanLimits {
   scraperJobsPerMonth: number;
-  scraperMaxRadiusKm: number;
   scraperMaxResultsPerJob: number;
   saveLeadBatchLimit: number;
   campaignDailyLimit: number;
 }
+
+/**
+ * Batas radius untuk mode peta. Bukan lagi pembeda paket: mode peta ada di
+ * balik flag `legacyOsmScraper` yang mati secara default, sehingga tidak ada
+ * satu pun pelanggan yang bisa mencapainya. Tetap dibatasi karena radius besar
+ * membangkitkan grid titik yang sangat banyak.
+ */
+export const MAX_SCRAPER_RADIUS_KM = 25;
 
 export interface Plan {
   id: PlanId;
@@ -73,7 +80,6 @@ export const PLANS: Record<PlanId, Plan> = {
     },
     limits: {
       scraperJobsPerMonth: 20,
-      scraperMaxRadiusKm: 5,
       scraperMaxResultsPerJob: 100,
       saveLeadBatchLimit: 100,
       campaignDailyLimit: 100,
@@ -83,12 +89,16 @@ export const PLANS: Record<PlanId, Plan> = {
     id: "GROWTH",
     name: "Bisnis",
     monthlyPrice: 199_000,
-    monthlyCredits: 2_000,
+    // Jatah dinaikkan dari 2.000: angka lama disusun saat mengirim pesan tidak
+    // memakai kredit. Sebulan wajar (800 lead disimpan + 800 divalidasi +
+    // 1.500 pesan + 200 email = 3.300) kini muat dengan sisa ruang, dan harga
+    // per kredit jatuh ke ~Rp40 sehingga berlangganan jelas lebih murah
+    // daripada top-up (~Rp80-100) — sebelumnya keduanya sama persis.
+    monthlyCredits: 5_000,
     contactQuota: null,
     features: { ...ALL_FEATURES },
     limits: {
       scraperJobsPerMonth: 250,
-      scraperMaxRadiusKm: 15,
       scraperMaxResultsPerJob: 500,
       saveLeadBatchLimit: 500,
       campaignDailyLimit: 1_000,
@@ -98,12 +108,12 @@ export const PLANS: Record<PlanId, Plan> = {
     id: "PRO",
     name: "Pro",
     monthlyPrice: 499_000,
-    monthlyCredits: 6_000,
+    // 3x jatah Bisnis pada 2,5x harga — diskon volume yang terlihat jelas.
+    monthlyCredits: 15_000,
     contactQuota: null,
     features: { ...ALL_FEATURES, whiteLabel: true, prioritySupport: true },
     limits: {
       scraperJobsPerMonth: 1_000,
-      scraperMaxRadiusKm: 20,
       scraperMaxResultsPerJob: 1_500,
       saveLeadBatchLimit: 1_000,
       campaignDailyLimit: 5_000,
@@ -133,9 +143,15 @@ export const TOPUP_PACKS: TopupPack[] = [
 ];
 
 // Biaya kredit per aksi.
+// Scraping sendiri sengaja gratis: OSM/Overpass tanpa biaya, dan mode
+// Google Places memakai API key pelanggan (BYOK) sehingga mereka sudah
+// membayar ke Google langsung — kredit baru dipotong saat lead disimpan.
 export const CREDIT_COSTS = {
   saveLead: 1, // per lead disimpan jadi kontak
   validateNumber: 1, // per nomor divalidasi
+  sendWhatsApp: 1, // per pesan WhatsApp terkirim (kampanye & blast)
+  sendEmail: 1, // per email terkirim (email blast)
+  findEmail: 2, // per email yang berhasil ditemukan (bukan per percobaan)
 };
 
 export const TRIAL_CREDITS = 100;
@@ -143,8 +159,29 @@ export const TRIAL_CREDITS = 100;
 /**
  * Plan yang menentukan fitur mana yang terbuka. Trial aktif pakai fitur plan
  * asli (dibatasi kredit, bukan fitur) supaya blast/CRM/inbox — nilai jual
- * utama — bisa dicoba; trial yang sudah habis turun ke Starter.
+ * utama — bisa dicoba; status apa pun di luar TRIAL/ACTIVE turun ke Starter.
  */
 export function getEffectivePlanId(plan: PlanId, status: string): PlanId {
-  return status === "TRIAL_EXPIRED" ? "STARTER" : plan;
+  return status === "TRIAL" || status === "ACTIVE" ? plan : "STARTER";
+}
+
+export interface SubscriptionDates {
+  trialEndsAt?: Date | null;
+  currentPeriodEnd?: Date | null;
+}
+
+/**
+ * Status efektif dihitung dari tanggal, bukan dibaca mentah dari kolom status.
+ * Tidak ada satu pun proses yang menulis TRIAL_EXPIRED/EXPIRED — kolom itu hanya
+ * diubah saat aktivasi dan oleh admin — sehingga trial dan langganan yang sudah
+ * lewat tanggal tetap terbaca aktif selamanya bila tidak diturunkan di sini.
+ */
+export function getEffectiveStatus(
+  status: string,
+  dates: SubscriptionDates,
+  now: Date = new Date(),
+): string {
+  if (status === "TRIAL" && dates.trialEndsAt && dates.trialEndsAt <= now) return "TRIAL_EXPIRED";
+  if (status === "ACTIVE" && dates.currentPeriodEnd && dates.currentPeriodEnd <= now) return "EXPIRED";
+  return status;
 }

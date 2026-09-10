@@ -4,6 +4,8 @@ import { renderMessage } from "@/lib/messaging/text";
 import { getAccountDailyCounter } from "@/lib/messaging/account-limit";
 import { getDailyMessagingQuota } from "@/lib/messaging/quota";
 import { isOnDnc } from "@/lib/contacts/dnc";
+import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { CREDIT_COSTS } from "@/config/plans";
 
 function delay(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -80,7 +82,24 @@ export async function runBlast(blastId: string): Promise<void> {
         phone: m.contact.phone,
       });
 
+      // Kredit dipotong sebelum kirim; saldo habis menghentikan blast (bukan
+      // menandai sisa penerima gagal) supaya bisa dilanjutkan setelah top-up.
+      try {
+        await deductCredits(blast.workspaceId, CREDIT_COSTS.sendWhatsApp, "SEND_WHATSAPP");
+      } catch (e) {
+        if (e instanceof InsufficientCreditsError) {
+          await prisma.blast.update({ where: { id: blastId }, data: { status: "STOPPED" } });
+          break;
+        }
+        throw e;
+      }
+
       const res = await provider.sendMessage(accountId, m.contact.phone, { text });
+      if (!res.ok) {
+        await addCredits(blast.workspaceId, CREDIT_COSTS.sendWhatsApp, "REFUND_SEND_WHATSAPP").catch(
+          () => undefined,
+        );
+      }
       if (res.ok) {
         await prisma.blastMessage.update({
           where: { id: m.id },

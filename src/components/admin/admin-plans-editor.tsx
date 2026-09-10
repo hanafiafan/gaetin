@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 interface PlanLimits {
   scraperJobsPerMonth: number;
-  scraperMaxRadiusKm: number;
   scraperMaxResultsPerJob: number;
   saveLeadBatchLimit: number;
   campaignDailyLimit: number;
@@ -87,10 +86,6 @@ export default function AdminPlansEditor() {
               <div>
                 <label className={LABEL_CLASS}>Job scraper/bln</label>
                 <input type="number" value={p.limits.scraperJobsPerMonth} onChange={(e) => updateLimit(p.id, "scraperJobsPerMonth", e.target.value)} className={INPUT_CLASS} />
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>Radius maks. km</label>
-                <input type="number" value={p.limits.scraperMaxRadiusKm} onChange={(e) => updateLimit(p.id, "scraperMaxRadiusKm", e.target.value)} className={INPUT_CLASS} />
               </div>
               <div>
                 <label className={LABEL_CLASS}>Hasil/job</label>

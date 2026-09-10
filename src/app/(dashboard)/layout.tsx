@@ -7,7 +7,7 @@ import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
 import FeatureGate from "@/components/dashboard/feature-gate";
 import { getOwnerCmsSettings } from "@/lib/owner-cms";
-import { PLANS, getEffectivePlanId, type PlanId } from "@/config/plans";
+import { PLANS, getEffectivePlanId, getEffectiveStatus, type PlanId } from "@/config/plans";
 
 // Konversi hex (#RRGGBB) ke string HSL "H S% L%" untuk override CSS var Tailwind.
 function hexToHsl(hex: string): string | null {
@@ -59,7 +59,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       where: { id: session.workspace.id },
       select: {
         credits: true,
-        subscription: { select: { plan: true, status: true, trialEndsAt: true } },
+        subscription: { select: { plan: true, status: true, trialEndsAt: true, currentPeriodEnd: true } },
       },
     }),
   ]);
@@ -77,7 +77,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
       }
     : undefined) as React.CSSProperties | undefined;
   const planId = (workspaceInfo?.subscription?.plan ?? "STARTER") as PlanId;
-  const status = workspaceInfo?.subscription?.status ?? "TRIAL";
+  const status = getEffectiveStatus(workspaceInfo?.subscription?.status ?? "TRIAL", {
+    trialEndsAt: workspaceInfo?.subscription?.trialEndsAt,
+    currentPeriodEnd: workspaceInfo?.subscription?.currentPeriodEnd,
+  });
   const effectivePlanId = getEffectivePlanId(planId, status);
   const planFeatures = PLANS[effectivePlanId]?.features ?? PLANS.STARTER.features;
 

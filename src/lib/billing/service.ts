@@ -84,13 +84,29 @@ export async function handlePaidTransaction(orderId: string): Promise<void> {
   const tx = await prisma.transaction.findUnique({ where: { orderId } });
   if (!tx || tx.status === "PAID") return;
 
-  if (tx.kind === "TOPUP") {
-    await addCredits(tx.workspaceId, tx.credits, "TOPUP");
-  } else if (tx.plan) {
-    await activateSubscription(tx.workspaceId, tx.plan, tx.billingCycle ?? "MONTHLY");
-  }
+  // Klaim baris ini lebih dulu, lewat compare-and-swap pada status. Midtrans
+  // mengirim ulang notifikasi, dan memberi kredit sebelum menandai PAID membuat
+  // dua pengiriman bersamaan sama-sama lolos guard di atas lalu memberi kredit
+  // dua kali. Hanya satu updateMany yang bisa menang.
+  const claimed = await prisma.transaction.updateMany({
+    where: { orderId, status: tx.status },
+    data: { status: "PAID", paidAt: new Date() },
+  });
+  if (claimed.count === 0) return;
 
-  // Tandai PAID hanya setelah kredit/langganan berhasil diberikan, supaya kalau baris di atas
-  // gagal, webhook Midtrans akan retry (bukan diblokir permanen oleh guard status==="PAID" di atas).
-  await prisma.transaction.update({ where: { id: tx.id }, data: { status: "PAID", paidAt: new Date() } });
+  try {
+    if (tx.kind === "TOPUP") {
+      await addCredits(tx.workspaceId, tx.credits, "TOPUP");
+    } else if (tx.plan) {
+      await activateSubscription(tx.workspaceId, tx.plan, tx.billingCycle ?? "MONTHLY");
+    }
+  } catch (err) {
+    // Kembalikan status semula supaya retry Midtrans berikutnya mencoba lagi —
+    // tanpa ini transaksi tertandai lunas padahal kreditnya tidak pernah masuk.
+    await prisma.transaction.updateMany({
+      where: { orderId, status: "PAID" },
+      data: { status: tx.status, paidAt: null },
+    });
+    throw err;
+  }
 }

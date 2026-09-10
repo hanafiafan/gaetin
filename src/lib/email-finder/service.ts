@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { scrapeEmailFromWebsite } from "@/lib/enrichment/email-scraper";
+import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { CREDIT_COSTS } from "@/config/plans";
 
 export type EmailFindSource = "LEAD" | "CONTACT";
 const MAX_TARGETS_PER_JOB = 500;
@@ -65,6 +67,7 @@ export async function createAndRunEmailFindJob(
 
   void runEmailFindJob(
     job.id,
+    workspaceId,
     source,
     targets.map((t) => t.id),
   ).catch(() => undefined);
@@ -72,7 +75,12 @@ export async function createAndRunEmailFindJob(
   return { id: job.id, totalTargets: targets.length };
 }
 
-async function runEmailFindJob(jobId: string, source: EmailFindSource, targetIds: string[]): Promise<void> {
+async function runEmailFindJob(
+  jobId: string,
+  workspaceId: string,
+  source: EmailFindSource,
+  targetIds: string[],
+): Promise<void> {
   let processed = 0;
   let found = 0;
   try {
@@ -86,8 +94,24 @@ async function runEmailFindJob(jobId: string, source: EmailFindSource, targetIds
 
       const email = await scrapeEmailFromWebsite(w.website!);
       if (email) {
-        if (source === "LEAD") await prisma.lead.update({ where: { id: w.id }, data: { email } });
-        else await prisma.contact.update({ where: { id: w.id }, data: { email } });
+        // Ditagih hanya saat ketemu, bukan per percobaan — pelanggan membayar
+        // hasil. Saldo habis menghentikan job, bukan menggagalkannya.
+        try {
+          await deductCredits(workspaceId, CREDIT_COSTS.findEmail, "FIND_EMAIL");
+        } catch (e) {
+          if (e instanceof InsufficientCreditsError) {
+            await prisma.emailFindJob.update({ where: { id: jobId }, data: { status: "STOPPED" } });
+            return;
+          }
+          throw e;
+        }
+        try {
+          if (source === "LEAD") await prisma.lead.update({ where: { id: w.id }, data: { email } });
+          else await prisma.contact.update({ where: { id: w.id }, data: { email } });
+        } catch (e) {
+          await addCredits(workspaceId, CREDIT_COSTS.findEmail, "REFUND_FIND_EMAIL").catch(() => undefined);
+          throw e;
+        }
         found += 1;
       }
       processed += 1;

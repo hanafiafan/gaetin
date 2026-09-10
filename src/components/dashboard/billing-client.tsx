@@ -13,6 +13,16 @@ import {
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CREDIT_COSTS } from "@/config/plans";
+
+const CREDIT_USAGE = [
+  { label: "Simpan lead jadi kontak", detail: "Per lead baru yang disimpan", cost: CREDIT_COSTS.saveLead },
+  { label: "Validasi nomor WhatsApp", detail: "Per nomor dicek terdaftar", cost: CREDIT_COSTS.validateNumber },
+  { label: "Kirim pesan WhatsApp", detail: "Per pesan terkirim di kampanye & blast", cost: CREDIT_COSTS.sendWhatsApp },
+  { label: "Kirim email blast", detail: "Per email terkirim", cost: CREDIT_COSTS.sendEmail },
+  { label: "Cari email", detail: "Hanya saat email berhasil ditemukan", cost: CREDIT_COSTS.findEmail },
+  { label: "Scraping Google Maps", detail: "Tidak memakai kredit", cost: 0 },
+];
 
 interface Plan { id: string; name: string; monthlyPrice: number; monthlyCredits: number }
 interface Pack { id: string; credits: number; price: number }
@@ -24,29 +34,20 @@ function idr(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
 }
 
-const PLAN_MAX_CREDITS: Record<string, number> = { STARTER: 100, GROWTH: 2000, PRO: 6000 };
 const PLAN_FEATURES: Record<string, string[]> = {
   STARTER: [
-    "100 kredit trial",
-    "20 scraper jobs/bulan",
-    "Radius scraping 5 km",
-    "100 lead per job",
-    "CRM pipeline & Inbox",
-    "Blast & kampanye pesan",
+    "Scraping Google Maps",
+    "Ekspor CSV & Excel",
+    "Simpan lead jadi kontak",
   ],
   GROWTH: [
-    "2.000 kredit/bulan",
-    "250 scraper jobs/bulan",
-    "Radius scraping 15 km",
-    "500 lead per job",
+    "Semua fitur WhatsApp & CRM",
+    "Validasi nomor WhatsApp",
     "Follow-up otomatis",
     "Bantuan prioritas",
   ],
   PRO: [
-    "6.000 kredit/bulan",
-    "1.000 scraper jobs/bulan",
-    "Radius scraping 20 km",
-    "1.500 lead per job",
+    "Semua fitur Bisnis",
     "White-label & branding",
     "Support prioritas VIP",
   ],
@@ -124,7 +125,9 @@ export default function BillingClient() {
   const price = (p: Plan) =>
     !data ? 0 : cycle === "MONTHLY" ? p.monthlyPrice : Math.round(p.monthlyPrice * 12 * (1 - data.yearlyDiscount));
   const planName = (id: string) => data?.plans.find((p) => p.id === id)?.name ?? id;
-  const maxCredits = me ? (PLAN_MAX_CREDITS[me.plan] ?? 100) : 100;
+  // Diambil dari paket yang dimuat, bukan salinan hardcode — kalau tidak,
+  // penyebut bar ini mengabaikan override jatah kredit dari Owner CMS.
+  const maxCredits = data?.plans.find((p) => p.id === me?.plan)?.monthlyCredits ?? 100;
   const creditPct = me ? Math.min(100, Math.round((me.credits / maxCredits) * 100)) : 0;
   const isTrial = me?.status === "TRIAL";
   const isLow = me ? me.credits < 50 : false;
@@ -213,11 +216,17 @@ export default function BillingClient() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          {(data?.plans ?? [{id:"STARTER",name:"Starter",monthlyPrice:0,monthlyCredits:100},{id:"GROWTH",name:"Bisnis",monthlyPrice:199000,monthlyCredits:2000},{id:"PRO",name:"Pro",monthlyPrice:499000,monthlyCredits:6000}]).map((p) => {
+          {(data?.plans ?? []).map((p) => {
             const current = me?.plan === p.id;
             const amount = data ? price(p) : p.monthlyPrice;
             const featured = p.id === "GROWTH";
-            const features = PLAN_FEATURES[p.id] ?? [];
+            // Angka kuota diturunkan dari paket yang dimuat; hanya poin
+            // kualitatif yang ditulis tangan, supaya keduanya tidak bisa
+            // saling bertentangan seperti sebelumnya.
+            const features = [
+              `${p.monthlyCredits.toLocaleString("id-ID")} kredit${p.id === "STARTER" ? " trial" : "/bulan"}`,
+              ...(PLAN_FEATURES[p.id] ?? []),
+            ];
             return (
               <div
                 key={p.id}
@@ -291,6 +300,30 @@ export default function BillingClient() {
           <Shield className="h-3.5 w-3.5" />
           Pembayaran diamankan oleh Midtrans. Tidak perlu kartu kredit untuk paket Starter.
         </p>
+      </div>
+
+      {/* Biaya kredit per aksi — dibaca dari CREDIT_COSTS supaya angka di sini
+          tidak bisa melenceng dari yang benar-benar dipotong sistem. */}
+      <div>
+        <div className="mb-5">
+          <h2 className="text-lg font-black text-foreground">Apa yang memakai kredit</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Kredit hanya terpotong saat sebuah aksi berhasil. Scraping sendiri gratis.
+          </p>
+        </div>
+        <div className="cg-card grid gap-px overflow-hidden rounded-2xl bg-border sm:grid-cols-2">
+          {CREDIT_USAGE.map((u) => (
+            <div key={u.label} className="flex items-baseline justify-between gap-4 bg-background px-5 py-4">
+              <div>
+                <p className="text-sm font-bold text-foreground">{u.label}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{u.detail}</p>
+              </div>
+              <span className="shrink-0 text-sm font-black text-foreground">
+                {u.cost === 0 ? "Gratis" : `${u.cost} kredit`}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Top-up */}

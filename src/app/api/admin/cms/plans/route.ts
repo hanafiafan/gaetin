@@ -19,7 +19,6 @@ const PlanSchema = z.object({
   monthlyCredits: z.number().int().min(0),
   limits: z.object({
     scraperJobsPerMonth: z.number().int().min(1),
-    scraperMaxRadiusKm: z.number().int().min(1).max(50),
     scraperMaxResultsPerJob: z.number().int().min(10).max(10_000),
     saveLeadBatchLimit: z.number().int().min(1).max(5_000),
     campaignDailyLimit: z.number().int().min(1).max(100_000),

@@ -42,19 +42,19 @@ export async function deductCredits(
 ): Promise<number> {
   if (amount <= 0) return getBalance(workspaceId);
   return prisma.$transaction(async (tx) => {
-    const ws = await tx.workspace.findUnique({
-      where: { id: workspaceId },
-      select: { credits: true },
-    });
-    if (!ws || ws.credits < amount) throw new InsufficientCreditsError();
-    const upd = await tx.workspace.update({
-      where: { id: workspaceId },
-      data: { credits: { decrement: amount } },
-      select: { credits: true },
-    });
+    // Cek saldo dan pemotongan harus satu pernyataan. Sebagai baca-lalu-tulis di
+    // READ COMMITTED, dua request bersamaan sama-sama membaca saldo lama, sama-sama
+    // lolos cek, lalu sama-sama memotong — saldo bisa jatuh di bawah nol.
+    const rows = await tx.$queryRaw<{ credits: number }[]>`
+      UPDATE "Workspace" SET credits = credits - ${amount}
+      WHERE id = ${workspaceId} AND credits >= ${amount}
+      RETURNING credits`;
+    if (rows.length === 0) throw new InsufficientCreditsError();
+
+    const balance = rows[0].credits;
     await tx.creditLedger.create({
-      data: { workspaceId, amount: -amount, reason, balanceAfter: upd.credits },
+      data: { workspaceId, amount: -amount, reason, balanceAfter: balance },
     });
-    return upd.credits;
+    return balance;
   });
 }

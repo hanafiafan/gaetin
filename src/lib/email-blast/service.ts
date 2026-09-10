@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/db/prisma";
 import { sendEmail, isEmailConfigured } from "@/lib/email/service";
 import { renderMessage } from "@/lib/messaging/text";
+import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { CREDIT_COSTS } from "@/config/plans";
 
 function delay(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -52,7 +54,24 @@ export async function runEmailBlast(emailBlastId: string): Promise<void> {
       const subject = renderMessage(blast.subject, vars);
       const bodyHtml = renderMessage(blast.bodyText ?? "", vars).replace(/\n/g, "<br/>");
 
+      // Kredit dipotong sebelum kirim; saldo habis menghentikan blast supaya
+      // sisa penerima tetap PENDING dan bisa dilanjutkan setelah top-up.
+      try {
+        await deductCredits(blast.workspaceId, CREDIT_COSTS.sendEmail, "SEND_EMAIL");
+      } catch (e) {
+        if (e instanceof InsufficientCreditsError) {
+          await prisma.emailBlast.update({ where: { id: emailBlastId }, data: { status: "STOPPED" } });
+          break;
+        }
+        throw e;
+      }
+
       const res = await sendEmail({ to: m.contact.email, subject, html: bodyHtml });
+      if (!res.ok) {
+        await addCredits(blast.workspaceId, CREDIT_COSTS.sendEmail, "REFUND_SEND_EMAIL").catch(
+          () => undefined,
+        );
+      }
       if (res.ok) {
         await prisma.emailBlastMessage.update({
           where: { id: m.id },

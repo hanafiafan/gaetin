@@ -149,7 +149,7 @@ const pricingPlans = [
     cta: "Pilih Paket Bisnis",
     ctaHref: "/register",
     features: [
-      { label: "2.000 kredit/bulan", included: true },
+      { label: "5.000 kredit/bulan", included: true },
       { label: "Scraping Google Maps", included: true },
       { label: "Ekspor CSV & Excel", included: true },
       { label: "WhatsApp multi-nomor", included: true },
@@ -169,14 +169,13 @@ const pricingPlans = [
     cta: "Pilih Paket Pro",
     ctaHref: "/register",
     features: [
-      { label: "6.000 kredit/bulan", included: true },
-      { label: "Radius scraping 20km", included: true },
+      { label: "15.000 kredit/bulan", included: true },
       { label: "1.500 lead per job", included: true },
       { label: "Semua fitur Bisnis", included: true },
       { label: "White-label & Branding", included: true },
       { label: "Support Prioritas VIP", included: true },
       { label: "1.000 scraper jobs/bulan", included: true },
-      { label: "Akses API (segera hadir)", included: true },
+      { label: "Akses API (segera hadir)", included: false },
     ],
   },
 ];

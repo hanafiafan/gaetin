@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { computeScore } from "@/lib/leads/scoring";
-import { deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
 import { addContactToFirstPipelineStage } from "@/lib/crm/pipeline";
 import { getWorkspacePlan } from "@/lib/plans/limits";
 import { CREDIT_COSTS } from "@/config/plans";
@@ -75,22 +75,30 @@ export async function POST(req: NextRequest) {
       throw e;
     }
 
-    const c = await prisma.contact.create({
-      data: {
-        workspaceId,
-        name: l.businessName,
-        phone: l.phone,
-        email: l.email,
-        website: l.website,
-        address: l.address,
-        city: l.city,
-        category: l.category,
-        latitude: l.latitude,
-        longitude: l.longitude,
-        source: "SCRAPER",
-        score: computeScore(l),
-      },
-    });
+    let c;
+    try {
+      c = await prisma.contact.create({
+        data: {
+          workspaceId,
+          name: l.businessName,
+          phone: l.phone,
+          email: l.email,
+          website: l.website,
+          address: l.address,
+          city: l.city,
+          category: l.category,
+          latitude: l.latitude,
+          longitude: l.longitude,
+          source: "SCRAPER",
+          score: computeScore(l),
+        },
+      });
+    } catch (e) {
+      // Kredit dipotong sebelum baris ini; kembalikan agar kontak yang gagal
+      // dibuat tidak tetap menagih pelanggan.
+      await addCredits(workspaceId, CREDIT_COSTS.saveLead, "REFUND_SAVE_LEAD").catch(() => undefined);
+      throw e;
+    }
     await prisma.lead.update({ where: { id: l.id }, data: { saved: true, contactId: c.id } });
     if (parsed.data.addToPipeline) {
       const pipeline = await addContactToFirstPipelineStage(workspaceId, c.id);

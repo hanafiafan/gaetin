@@ -1,5 +1,6 @@
 import { requireSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
+import { getEffectiveStatus } from "@/config/plans";
 import {
   ArrowRight,
   BarChart3,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import StatCard from "@/components/dashboard/stat-card";
-import { TONE_BG, TONE_SOFT } from "@/components/dashboard/section-tone";
+import { TONE_EDGE, TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -29,7 +30,7 @@ function formatIDR(n: number): string {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams?: { feature?: string };
+  searchParams?: { feature?: string; error?: string };
 }) {
   const session = await requireSession();
   const workspaceId = session.workspace.id;
@@ -65,6 +66,26 @@ export default async function DashboardPage({
 
   const PLAN_LABEL: Record<string, string> = { STARTER: "Starter", GROWTH: "Bisnis", PRO: "Pro" };
   const planLabel = PLAN_LABEL[subscription?.plan ?? "STARTER"] ?? subscription?.plan ?? "Starter";
+
+  // Badge harus memakai status efektif, bukan kolom mentah — kalau tidak, paket
+  // yang sudah lewat tanggal tetap tertulis "ACTIVE" padahal fiturnya terkunci.
+  const STATUS_LABEL: Record<string, string> = {
+    ACTIVE: "Aktif",
+    EXPIRED: "Kedaluwarsa",
+    TRIAL_EXPIRED: "Trial berakhir",
+    BLOCKED: "Diblokir",
+    CANCELLED: "Dibatalkan",
+  };
+  const effectiveStatus = subscription
+    ? getEffectiveStatus(subscription.status, {
+        trialEndsAt: subscription.trialEndsAt,
+        currentPeriodEnd: subscription.currentPeriodEnd,
+      })
+    : null;
+  const statusLabel =
+    effectiveStatus === "TRIAL"
+      ? `Trial ${trialDaysLeft ?? 0} hari`
+      : (STATUS_LABEL[effectiveStatus ?? ""] ?? effectiveStatus);
   const isLowCredits = credits < 100;
 
   const statCards = [
@@ -144,6 +165,12 @@ export default async function DashboardPage({
         </div>
       )}
 
+      {searchParams?.error === "export_forbidden" && (
+        <div className="rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning">
+          Ekspor data lead hanya bisa dilakukan oleh Owner atau Admin workspace.
+        </div>
+      )}
+
       {/* Hero */}
       <div className="cg-card overflow-hidden rounded-3xl">
         <div className="grid gap-6 p-6 lg:grid-cols-[2fr_1fr]">
@@ -153,7 +180,7 @@ export default async function DashboardPage({
                 <span className="cg-kicker">Ringkasan Workspace</span>
                 {subscription && (
                   <span className="border border-border px-3 py-1 text-xs text-muted-foreground">
-                    {planLabel} · {subscription.status === "TRIAL" ? `Trial ${trialDaysLeft ?? 0} hari` : subscription.status}
+                    {planLabel} · {statusLabel}
                   </span>
                 )}
               </div>
@@ -211,19 +238,19 @@ export default async function DashboardPage({
             <Link
               key={action.href}
               href={action.href}
-              className={`cg-press group flex flex-col justify-between rounded-3xl p-5 ${TONE_BG[action.tone]}`}
+              className={`cg-card cg-press group flex flex-col justify-between rounded-3xl border-t-[6px] p-5 ${TONE_EDGE[action.tone]}`}
             >
               <div className="flex items-center justify-between">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/25">
+                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${TONE_SOFT[action.tone]}`}>
                   <Icon className="h-4 w-4" />
                 </span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/25 transition group-hover:translate-x-0.5">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-foreground transition group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </div>
               <div className="mt-8">
-                <p className="text-sm font-bold">{action.label}</p>
-                <p className="mt-1 text-xs opacity-80">{action.desc}</p>
+                <p className="text-sm font-bold text-foreground">{action.label}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{action.desc}</p>
               </div>
             </Link>
           );

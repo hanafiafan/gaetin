@@ -6,6 +6,7 @@ import { ScraperStartSchema } from "@/lib/validators/scraper";
 import { generateGrid } from "@/lib/geo";
 import { runScraperJob } from "@/lib/scraper/service";
 import { getWorkspacePlan, monthStart } from "@/lib/plans/limits";
+import { MAX_SCRAPER_RADIUS_KM } from "@/config/plans";
 import { fail } from "@/lib/api";
 import { env } from "@/lib/env";
 
@@ -27,13 +28,10 @@ export async function POST(req: NextRequest) {
 
   const d = parsed.data;
   const plan = await getWorkspacePlan(session.workspace.id);
-  if (d.mode === "map" && d.radiusKm != null && d.radiusKm > plan.limits.scraperMaxRadiusKm) {
-    return fail(
-      "PLAN_LIMIT",
-      `Radius paket ${plan.name} maksimal ${plan.limits.scraperMaxRadiusKm} km.`,
-      403,
-      { radiusKm: [`Maksimal ${plan.limits.scraperMaxRadiusKm} km untuk paket ini`] },
-    );
+  if (d.mode === "map" && d.radiusKm != null && d.radiusKm > MAX_SCRAPER_RADIUS_KM) {
+    return fail("VAL_001", `Radius maksimal ${MAX_SCRAPER_RADIUS_KM} km.`, 400, {
+      radiusKm: [`Maksimal ${MAX_SCRAPER_RADIUS_KM} km`],
+    });
   }
 
   const jobsThisMonth = await prisma.scraperJob.count({

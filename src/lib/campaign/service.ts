@@ -4,6 +4,8 @@ import { renderMessage } from "@/lib/messaging/text";
 import { getAccountDailyCounter } from "@/lib/messaging/account-limit";
 import { getDailyMessagingQuota } from "@/lib/messaging/quota";
 import { isOnDnc } from "@/lib/contacts/dnc";
+import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { CREDIT_COSTS } from "@/config/plans";
 
 function delay(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -74,7 +76,24 @@ export async function runCampaign(campaignId: string): Promise<void> {
         phone: m.contact.phone,
       });
 
+      // Kredit dipotong sebelum kirim; saldo habis mem-pause kampanye (bukan
+      // menandai sisa penerima gagal) supaya bisa dilanjutkan setelah top-up.
+      try {
+        await deductCredits(c.workspaceId, CREDIT_COSTS.sendWhatsApp, "SEND_WHATSAPP");
+      } catch (e) {
+        if (e instanceof InsufficientCreditsError) {
+          await prisma.campaign.update({ where: { id: campaignId }, data: { status: "PAUSED" } });
+          break;
+        }
+        throw e;
+      }
+
       const res = await provider.sendMessage(c.accountId, m.contact.phone, { text });
+      if (!res.ok) {
+        await addCredits(c.workspaceId, CREDIT_COSTS.sendWhatsApp, "REFUND_SEND_WHATSAPP").catch(
+          () => undefined,
+        );
+      }
       if (res.ok) {
         await prisma.campaignMessage.update({
           where: { id: m.id },
