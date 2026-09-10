@@ -49,6 +49,18 @@ export const TONE_SOFT: Record<SectionTone, string> = {
   akun: "bg-muted text-foreground",
 };
 
+/** Action-card treatment: the section color reduced to a top edge over a
+ * normal card, instead of flooding the whole tile. A row of four saturated
+ * fills gave every card identical weight, so nothing read as the place to
+ * start — and it left three more competing yellows next to the real CTA. */
+export const TONE_EDGE: Record<SectionTone, string> = {
+  primary: "border-t-primary",
+  whatsapp: "border-t-whatsapp",
+  email: "border-t-email",
+  kelola: "border-t-kelola",
+  akun: "border-t-foreground",
+};
+
 /** Same idea as TONE_SOFT, but sized for a full-width section wash (PageHero
  * background) rather than a small icon chip — a touch stronger so it reads
  * as real color instead of disappearing next to the page's mostly-white body. */

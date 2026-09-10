@@ -313,7 +313,7 @@ function StepMaps({
       <div className="overflow-hidden rounded-2xl border border-border bg-muted">
         {/* Maps top bar */}
         <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15">
             <MapPin className="h-3.5 w-3.5 text-foreground" />
           </div>
           <div className="flex-1 border border-border bg-muted px-3 py-1.5 text-xs text-muted-foreground">
@@ -332,7 +332,7 @@ function StepMaps({
           {/* THE CHECKBOX — highlighted */}
           <div className="mb-4 rounded-xl border-2 border-destructive/60 bg-destructive/5 px-3 py-2.5 shadow-[0_0_18px_rgba(239,68,68,0.25)]">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/">
+              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 border-primary/50 bg-primary/15">
                 <Check className="h-2.5 w-2.5 text-foreground" />
               </div>
               <span className="text-sm font-medium text-foreground">

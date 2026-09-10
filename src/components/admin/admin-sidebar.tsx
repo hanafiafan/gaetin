@@ -39,9 +39,9 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col bg-primary px-4 py-5 md:flex">
+    <aside className="cg-sidebar sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col px-4 py-5 md:flex">
       <Link href="/admin" className="flex items-center gap-2.5">
-        <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
+        <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7 shrink-0" />
         <div className="min-w-0">
           <div className="cg-display text-2xl">Hellens</div>
           <div className="cg-label truncate text-foreground/55">Konsol Owner</div>
@@ -69,8 +69,8 @@ export default function AdminSidebar() {
               className={cn(
                 "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                 active
-                  ? "cg-press bg-background text-foreground"
-                  : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
+                  ? "cg-nav-active"
+                  : "text-foreground/75 hover:bg-foreground/10 hover:text-foreground",
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -90,7 +90,7 @@ export default function AdminSidebar() {
         </p>
         <Link
           href="/admin/cms"
-          className="cg-label cg-press mt-4 flex h-10 w-full items-center justify-center rounded-lg hover:bg-foreground hover:text-background"
+          className="cg-label cg-press mt-4 flex h-10 w-full items-center justify-center rounded-lg hover:bg-primary hover:text-primary-foreground"
         >
           Buka CMS
         </Link>

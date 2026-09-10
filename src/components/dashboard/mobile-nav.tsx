@@ -57,7 +57,7 @@ export default function MobileNav({
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={close} />
-          <div className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto bg-primary">
+          <div className="cg-sidebar absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-foreground/15 px-4 py-4">
               <span className="text-base font-black text-foreground">{appName}</span>
@@ -91,7 +91,7 @@ export default function MobileNav({
                               key={item.href}
                               type="button"
                               onClick={() => setLockedFeature(item.label)}
-                              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/60 transition-colors duration-200 hover:bg-background/40"
+                              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/60 transition-colors duration-200 hover:bg-foreground/10"
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -108,8 +108,8 @@ export default function MobileNav({
                             className={cn(
                               "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                               active
-                                ? "cg-press bg-background text-foreground"
-                                : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
+                                ? "cg-nav-active"
+                                : "text-foreground/75 hover:bg-foreground/10 hover:text-foreground",
                             )}
                           >
                             <Icon className={cn("h-4 w-4", active && TONE_TEXT[group.tone])} />
@@ -129,7 +129,7 @@ export default function MobileNav({
                 <Link
                   href="/admin"
                   onClick={close}
-                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-background/40"
+                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-foreground/10"
                 >
                   <Settings className="h-4 w-4" />
                   Admin Panel
@@ -138,7 +138,7 @@ export default function MobileNav({
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground/70 transition hover:bg-background/40 hover:text-destructive"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground/70 transition hover:bg-foreground/10 hover:text-destructive"
                 >
                   <LogOut className="h-4 w-4" />
                   Keluar

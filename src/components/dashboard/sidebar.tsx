@@ -46,9 +46,9 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className="sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col bg-primary px-4 py-5 lg:flex">
+      <aside className="cg-sidebar sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col px-4 py-5 lg:flex">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7 shrink-0" />
+          <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7 shrink-0" />
           <span className="cg-display text-2xl">{appName}</span>
         </Link>
 
@@ -58,7 +58,7 @@ export default function Sidebar({
         {isTrial && (
           <Link
             href="/dashboard/billing"
-            className="cg-label mt-4 flex items-center justify-between gap-2 rounded-lg border border-warning bg-background px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
+            className="cg-label mt-4 flex items-center justify-between gap-2 rounded-lg border border-warning/40 bg-warning/10 px-3 py-2.5 text-warning transition hover:bg-warning hover:text-warning-foreground"
           >
             <span className="flex items-center gap-1.5">
               <Lock className="h-3 w-3" />
@@ -88,7 +88,7 @@ export default function Sidebar({
                           key={item.href}
                           type="button"
                           onClick={() => setLockedFeature(item.label)}
-                          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-foreground/60 transition-colors duration-200 hover:bg-background/50"
+                          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-foreground/60 transition-colors duration-200 hover:bg-foreground/10"
                         >
                           <Icon className="h-4 w-4 shrink-0 opacity-40 transition-transform duration-200 group-hover:scale-110" />
                           <span className="flex-1 text-left opacity-50">{item.label}</span>
@@ -104,8 +104,8 @@ export default function Sidebar({
                         className={cn(
                           "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200",
                           active
-                            ? "cg-press bg-background text-foreground"
-                            : "text-foreground/70 hover:bg-background/40 hover:text-foreground",
+                            ? "cg-nav-active"
+                            : "text-foreground/75 hover:bg-foreground/10 hover:text-foreground",
                         )}
                       >
                         <Icon className={cn("h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110", active && TONE_TEXT[group.tone])} />
@@ -123,7 +123,7 @@ export default function Sidebar({
           <form action="/api/auth/logout" method="POST">
             <button
               type="submit"
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/70 transition hover:bg-background/40 hover:text-destructive"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/70 transition hover:bg-foreground/10 hover:text-destructive"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span>Keluar (Logout)</span>
@@ -132,7 +132,7 @@ export default function Sidebar({
         </div>
 
         {isSuperAdmin && (
-          <div className="mt-2 shrink-0 rounded-xl border border-border bg-background p-3">
+          <div className="mt-2 shrink-0 rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="cg-label">Owner CMS</p>
@@ -140,7 +140,7 @@ export default function Sidebar({
               </div>
               <Link
                 href="/admin/cms"
-                className="cg-label cg-press flex h-7 items-center justify-center rounded-lg px-3 hover:bg-foreground hover:text-background"
+                className="cg-label cg-press flex h-7 items-center justify-center rounded-lg px-3 hover:bg-primary hover:text-primary-foreground"
               >
                 Buka
               </Link>

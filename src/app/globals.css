@@ -257,6 +257,53 @@
     border-radius: 9999px;
   }
 
+  /* ── Dashboard rail ─────────────────────────────────────────────────────
+     The rail used to be a full-height slab of --primary, which handed the
+     most visual weight on screen to the thing users look at least, and left
+     yellow meaning five different things at once (chrome, section identity,
+     CTA, action card, stat tile) — so the one real CTA never stood out.
+     Charcoal instead, with yellow demoted to the active item only. Its 11px
+     group labels also sat at 4.3:1 on yellow (foreground/55), under the 4.5:1
+     AA floor; on charcoal the same token measures 6.2:1. */
+  .cg-sidebar {
+    --foreground: 0 0% 100%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 100%;
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 68%;
+    --border: 0 0% 24%;
+    /* Warning/destructive are tuned for white ground (38%/45% lightness) and
+       drop under 3:1 on charcoal, so the rail carries lighter variants. */
+    --warning: 38 96% 62%;
+    --warning-foreground: 0 0% 4%;
+    --destructive: 0 85% 68%;
+    background: hsl(0 0% 7%);
+    color: hsl(var(--foreground));
+  }
+
+  /* Hard black borders and offset shadows are invisible on charcoal — panels
+     in the rail read by fill and hairline instead. */
+  .cg-sidebar .cg-card,
+  .cg-sidebar .cg-press {
+    border: 1px solid hsl(var(--border));
+    box-shadow: none;
+  }
+  .cg-sidebar .cg-press:hover,
+  .cg-sidebar .cg-press:active {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* The active item is the one place yellow survives in the rail. Resetting
+     --foreground locally lets the section-tone icon classes (which resolve to
+     text-foreground for the neutral groups) land near-black on the yellow
+     chip instead of white-on-yellow. */
+  .cg-nav-active {
+    --foreground: 0 0% 4%;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
   /* ── Interactive press ──────────────────────────────────────────────────
      The tactile neobrutalism button: a hard shadow that grows on hover
      (the element "lifts") and collapses to nothing on click (the element

@@ -50,7 +50,7 @@ export default function CreditsWidget({ credits, plan, subscriptionStatus, varia
       <CreditsBar pct={creditPct} low={isLowCredits} />
       <Link
         href="/dashboard/billing"
-        className="cg-label cg-press mt-3 flex h-8 w-full items-center justify-center rounded-lg hover:bg-foreground hover:text-background"
+        className="cg-label cg-press mt-3 flex h-8 w-full items-center justify-center rounded-lg hover:bg-primary hover:text-primary-foreground"
       >
         {isLowCredits ? "Beli kredit" : "Kelola tagihan"}
       </Link>
