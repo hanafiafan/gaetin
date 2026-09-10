@@ -13,9 +13,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ==================== AUTH & USER ====================
@@ -335,6 +334,7 @@ model BlastMessage {
   blast   Blast   @relation(fields: [blastId], references: [id], onDelete: Cascade)
   contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
+  @@unique([blastId, contactId])
   @@index([blastId, status])
 }
 
@@ -467,6 +467,7 @@ model CampaignMessage {
   campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   contact  Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
+  @@unique([campaignId, contactId])
   @@index([campaignId, status])
 }
 

@@ -2,11 +2,11 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
-    ports:
-      - "5434:5432"
+    # Tidak ada `ports:` — hanya service `app` yang perlu database, dan itu lewat
+    # jaringan internal compose. Mem-publish port ini membuka Postgres ke internet.
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD wajib diisi di .env}
       POSTGRES_DB: hellens_scraper
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -24,7 +24,7 @@ services:
     environment:
       NODE_ENV: production
       # Override agar menunjuk ke service compose (mengalahkan nilai di .env).
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-password}@db:5432/hellens_scraper?schema=public
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:?DB_PASSWORD wajib diisi di .env}@db:5432/hellens_scraper?schema=public
       WA_SESSION_DIR: ./wa-sessions
     depends_on:
       db:
