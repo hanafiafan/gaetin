@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Bell, Lock, LogOut, ShieldCheck, Zap } from "lucide-react";
+import { Bell, ChevronDown, Lock, LogOut, ShieldCheck, Zap } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
 import { cn } from "@/lib/utils";
@@ -16,8 +16,13 @@ import HeaderSearch from "@/components/dashboard/header-search";
  * Referensinya memakai lima pil datar di puncak layar, sementara app ini punya
  * 19 tujuan dalam 5 grup. Memaksa 19 pil ke satu baris tidak akan terbaca,
  * jadi bentuknya dipetakan bertingkat: baris pertama memilih grup, baris kedua
- * menampilkan isi grup yang sedang aktif. Semua tujuan tetap terjangkau dalam
- * dua klik dan siluetnya sama dengan referensi.
+ * menampilkan isi grup yang sedang aktif.
+ *
+ * Tiap pil grup juga membuka dropdown isinya. Tanpa itu, pindah ke menu di
+ * grup lain memakan dua klik — beban kecil yang menumpuk untuk pemakaian
+ * harian, dan itulah kelemahan nyata bentuk ini dibanding rail lama yang
+ * menampilkan 19 menu sekaligus. Dropdown mengembalikan akses satu aksi tanpa
+ * mengorbankan siluet referensi.
  */
 
 type Props = {
@@ -78,6 +83,10 @@ export default function WorkspaceNav({
             <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
           </Link>
 
+          {/* Tiap grup membuka menunya saat disentuh kursor. Tanpa ini pindah
+              ke menu di grup lain butuh dua klik — beban yang menumpuk untuk
+              pemakaian harian, sementara pemula tetap terbantu karena isi tiap
+              grup terlihat sebelum memilih. */}
           <nav
             aria-label="Bagian utama"
             className="hidden items-center gap-1 rounded-full border border-border p-1 lg:flex"
@@ -85,19 +94,59 @@ export default function WorkspaceNav({
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
               return (
-                <Link
-                  key={g.label}
-                  href={g.items[0].href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
-                    active
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground",
-                  )}
-                >
-                  {g.label}
-                </Link>
+                <div key={g.label} className="group/nav relative">
+                  <Link
+                    href={g.items[0].href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex items-center gap-1 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground",
+                    )}
+                  >
+                    {g.label}
+                    <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                  </Link>
+
+                  <div className="invisible absolute left-0 top-full z-40 pt-2 opacity-0 transition group-hover/nav:visible group-hover/nav:opacity-100 group-focus-within/nav:visible group-focus-within/nav:opacity-100">
+                    <div className="min-w-[220px] rounded-2xl border border-border bg-popover p-1.5 shadow-2xl">
+                      {g.items.map((item) => {
+                        const Icon = item.icon;
+                        const itemActive = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
+                        if (isLocked(item)) {
+                          return (
+                            <button
+                              key={item.href}
+                              type="button"
+                              onClick={() => setLocked(item.label)}
+                              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-foreground/45 transition hover:bg-foreground/5"
+                            >
+                              <Icon className="h-4 w-4" />
+                              <span className="flex-1 text-left">{item.label}</span>
+                              <Lock className="h-3 w-3 text-warning" />
+                            </button>
+                          );
+                        }
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                              "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition",
+                              itemActive
+                                ? "bg-primary/15 font-semibold text-foreground"
+                                : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
+                            )}
+                          >
+                            <Icon className="h-4 w-4" />
+                            {item.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </nav>

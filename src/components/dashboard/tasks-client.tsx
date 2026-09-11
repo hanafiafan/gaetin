@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TabPills from "@/components/dashboard/tab-pills";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface Task {
   id: string;
@@ -184,7 +185,13 @@ export default function TasksClient() {
               ))}
               {tasks.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-muted-foreground">Belum ada tugas.</td>
+                  <td colSpan={7} className="p-6">
+                    <EmptyState
+                      title="Belum ada tugas"
+                      hint="Catat pengingat follow-up dari form di atas, atau mulai dari kontak yang perlu dihubungi."
+                      action={{ href: "/dashboard/contacts", label: "Lihat kontak" }}
+                    />
+                  </td>
                 </tr>
               )}
             </tbody>

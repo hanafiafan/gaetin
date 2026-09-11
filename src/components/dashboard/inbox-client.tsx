@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Inbox, Send, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface Convo {
   id: string;
@@ -105,7 +106,13 @@ export default function InboxClient() {
           <p className="mt-1 text-xs text-muted-foreground">{convos.length} thread tersedia</p>
         </div>
         {convos.length === 0 && (
-          <p className="p-4 text-sm text-muted-foreground">Belum ada percakapan masuk.</p>
+          <div className="p-4">
+            <EmptyState
+              title="Belum ada percakapan masuk"
+              hint="Balasan dari kontak muncul di sini setelah nomor WhatsApp tersambung dan kampanye pertama terkirim."
+              action={{ href: "/dashboard/campaigns", label: "Buat kampanye" }}
+            />
+          </div>
         )}
         {convos.map((c) => (
           <button

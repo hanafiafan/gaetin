@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Gauge, Loader2, Play, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface Account { id: string; label: string; status: string }
 interface Rule {
@@ -176,9 +177,11 @@ export default function FollowUpsClient() {
 
         <div className="space-y-2">
           {rules.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              Belum ada aturan follow-up.
-            </div>
+            <EmptyState
+              title="Belum ada aturan follow-up"
+              hint="Aturan follow-up mengirim pesan susulan otomatis ke kontak yang belum membalas, tanpa perlu kamu pantau."
+              action={{ href: "/dashboard/contacts", label: "Lihat kontak dulu" }}
+            />
           ) : rules.map((r) => (
             <div key={r.id} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>

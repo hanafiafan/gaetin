@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CalendarClock, Gauge, Loader2, Pause, Play, RotateCcw, Send, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface Account { id: string; label: string; status: string }
 interface Template { id: string; name: string; body: string }
@@ -267,9 +268,11 @@ export default function CampaignsClient() {
             );
           })}
           {campaigns.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-              Belum ada kampanye. Buat campaign pertama dari panel di kiri.
-            </div>
+            <EmptyState
+              title="Belum ada kampanye"
+              hint="Rancang kampanye pertama dari panel di kiri. Butuh kontak dulu? Ambil lead dari Scraper."
+              action={{ href: "/dashboard/scraper", label: "Cari lead" }}
+            />
           )}
         </div>
       </div>

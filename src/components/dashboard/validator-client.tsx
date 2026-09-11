@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CheckCircle2, Loader2, Search, ShieldCheck, Square, SquareCheckBig, StopCircle, XCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Search, ShieldCheck, Square, SquareCheckBig, StopCircle, XCircle , Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface Account {
   id: string;
@@ -148,9 +149,12 @@ export default function ValidatorClient() {
         </div>
 
         {connectedAccounts.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-            Belum ada nomor WhatsApp terhubung. Hubungkan dulu di Pengaturan.
-          </div>
+          <EmptyState
+            icon={Smartphone}
+            title="Belum ada nomor WhatsApp terhubung"
+            hint="Validasi nomor memerlukan satu nomor WhatsApp aktif untuk melakukan pengecekan."
+            action={{ href: "/dashboard/settings", label: "Sambungkan WhatsApp" }}
+          />
         ) : (
           <>
             <div className="space-y-1.5">
