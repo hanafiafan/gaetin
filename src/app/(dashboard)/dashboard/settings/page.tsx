@@ -13,17 +13,11 @@ export default function SettingsPage() {
         kickerIcon={Sparkles}
         title="Pengaturan"
         description="Konfigurasi koneksi WhatsApp, profil workspace, dan pengaturan akun Anda."
-        features={[
-          { icon: Smartphone, label: "Akun WhatsApp" },
-          { icon: Building2, label: "Profil workspace" },
-          { icon: UserCircle, label: "Akun & keamanan" },
-          { icon: Chrome, label: "Ekstensi Chrome" },
-        ]}
       />
 
       <div className="grid gap-6">
         {/* WhatsApp */}
-        <div className="cg-card rounded-3xl p-6 sm:p-8">
+        <div className="cg-card rounded-xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
               <Smartphone className="h-6 w-6 text-foreground" /> Koneksi WhatsApp
@@ -32,13 +26,13 @@ export default function SettingsPage() {
               Hubungkan satu atau lebih nomor WhatsApp. Tiap nomor punya batas kirim harian sendiri.
             </p>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-6">
             <WhatsAppAccounts />
           </div>
         </div>
 
         {/* Workspace profile */}
-        <div className="cg-card rounded-3xl p-6 sm:p-8">
+        <div className="cg-card rounded-xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
               <Building2 className="h-6 w-6 text-foreground" /> Profil Workspace
@@ -47,13 +41,13 @@ export default function SettingsPage() {
               Nama dan informasi workspace Anda.
             </p>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-6">
             <WorkspaceProfileSettings />
           </div>
         </div>
 
         {/* Account & security */}
-        <div className="cg-card rounded-3xl p-6 sm:p-8">
+        <div className="cg-card rounded-xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
               <UserCircle className="h-6 w-6 text-foreground" /> Akun & Keamanan
@@ -62,13 +56,13 @@ export default function SettingsPage() {
               Perbarui nama, zona waktu, dan password akun Anda.
             </p>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-6">
             <AccountSettings />
           </div>
         </div>
 
         {/* Chrome extension */}
-        <div className="cg-card rounded-3xl p-6 sm:p-8">
+        <div className="cg-card rounded-xl p-6 sm:p-8">
           <div className="mb-6 max-w-2xl">
             <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
               <Chrome className="h-6 w-6 text-foreground" /> Ekstensi Chrome
@@ -77,7 +71,7 @@ export default function SettingsPage() {
               Ekstensi yang menjalankan scraping otomatis dari Google Maps di browser Anda.
             </p>
           </div>
-          <div className="flex flex-col items-start gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col items-start gap-4 rounded-xl border border-primary/20 bg-primary/5 p-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-bold text-foreground">Ekstensi Hellens untuk Chrome</p>
               <p className="mt-0.5 text-xs text-muted-foreground">

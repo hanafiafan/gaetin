@@ -13,11 +13,6 @@ export default async function EmailBlastPage() {
         kickerIcon={Sparkles}
         title="Email Blast"
         description="Kirim email personal ke kontak yang punya alamat email, dengan personalisasi dan progress yang mudah dipantau."
-        features={[
-          { icon: Mail, label: "Target otomatis ke kontak yang punya email" },
-          { icon: Wand2, label: "Mendukung personalisasi dan spintax" },
-          { icon: ShieldCheck, label: "Perlu provider email aktif di Admin > Integrasi" },
-        ]}
       />
       <EmailBlastClient />
     </div>

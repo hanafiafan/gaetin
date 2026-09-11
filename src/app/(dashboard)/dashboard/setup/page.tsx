@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
 import { TONE_TEXT, type SectionTone } from "@/components/dashboard/section-tone";
+import PageHero from "@/components/dashboard/page-hero";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
@@ -94,17 +95,12 @@ export default function SetupPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      {/* Header */}
-      <div className="border-b border-foreground pb-6">
-        <span className="cg-kicker">
-          <Sparkles className="h-3.5 w-3.5" />
-          Panduan Setup
-        </span>
-        <h1 className="cg-display mt-4 text-4xl">Setup Ekstensi Hellens</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Ikuti {STEPS.length} langkah ini dari install ekstensi sampai siap kirim WhatsApp/email pertamamu.
-        </p>
-      </div>
+      <PageHero
+        kicker="Panduan Setup"
+        kickerIcon={Sparkles}
+        title="Setup Ekstensi Hellens"
+        description={`Ikuti ${STEPS.length} langkah ini dari install ekstensi sampai siap kirim WhatsApp/email pertamamu.`}
+      />
 
       {/* Step progress */}
       <div className="border border-border p-4">
@@ -154,7 +150,7 @@ export default function SetupPage() {
       </div>
 
       {/* Step content */}
-      <div className="cg-card rounded-2xl p-6">
+      <div className="cg-card rounded-xl p-6">
         {step === 1 && <StepInstall onCheck={(i) => toggle(1, i)} checked={checked[1]} />}
         {step === 2 && <StepMaps onCheck={(i) => toggle(2, i)} checked={checked[2]} />}
         {step === 3 && <StepPermissions onCheck={(i) => toggle(3, i)} checked={checked[3]} />}
@@ -212,7 +208,7 @@ function StepInstall({
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-foreground">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-foreground">
           <Chrome className="h-6 w-6" />
         </div>
         <div>
@@ -224,7 +220,7 @@ function StepInstall({
       </div>
 
       {/* Download card */}
-      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+      <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="font-bold text-foreground">Ekstensi Hellens untuk Chrome</p>
@@ -298,7 +294,7 @@ function StepMaps({
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-warning/15 text-warning">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-warning/15 text-warning">
           <Map className="h-6 w-6" />
         </div>
         <div>
@@ -310,7 +306,7 @@ function StepMaps({
       </div>
 
       {/* Visual mockup */}
-      <div className="overflow-hidden rounded-2xl border border-border bg-muted">
+      <div className="overflow-hidden rounded-xl border border-border bg-muted">
         {/* Maps top bar */}
         <div className="flex items-center gap-3 border-b border-border bg-muted px-4 py-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15">
@@ -432,7 +428,7 @@ function StepPermissions({
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-muted text-foreground">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
           <Shield className="h-6 w-6" />
         </div>
         <div>
@@ -446,7 +442,7 @@ function StepPermissions({
       {/* Permission cards */}
       <div className="grid gap-4 sm:grid-cols-2">
         {/* Popup permission */}
-        <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/15 text-foreground">
               <Monitor className="h-4 w-4" />
@@ -472,7 +468,7 @@ function StepPermissions({
         </div>
 
         {/* Location permission */}
-        <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success/15 text-success">
               <MapPin className="h-4 w-4" />
@@ -540,7 +536,7 @@ function StepWhatsApp() {
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-whatsapp/15 text-whatsapp">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-whatsapp/15 text-whatsapp">
           <Smartphone className="h-6 w-6" />
         </div>
         <div>
@@ -550,7 +546,7 @@ function StepWhatsApp() {
           </p>
         </div>
       </div>
-      <div className="rounded-2xl border border-border bg-card p-4">
+      <div className="rounded-xl border border-border bg-card p-4">
         <WhatsAppAccounts />
       </div>
       <p className="text-xs text-muted-foreground">
@@ -569,7 +565,7 @@ function StepFirstScrape() {
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-foreground">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-foreground">
           <Search className="h-6 w-6" />
         </div>
         <div>
@@ -580,7 +576,7 @@ function StepFirstScrape() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+      <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
         <p className="mb-4 text-sm font-bold text-foreground">Cara menjalankan scraping:</p>
         <div className="space-y-3">
           {[

@@ -13,11 +13,6 @@ export default async function CampaignsPage() {
         kickerIcon={Sparkles}
         title="Kampanye"
         description="Rencanakan outreach terjadwal, pilih template, pause/resume saat dibutuhkan, dan pantau progress pengiriman."
-        features={[
-          { icon: CalendarClock, label: "Jadwalkan campaign minimal 5 menit ke depan" },
-          { icon: PauseCircle, label: "Pause dan lanjutkan progress" },
-          { icon: Megaphone, label: "Cocok untuk follow-up promo dan edukasi" },
-        ]}
       />
       <CampaignsClient />
     </div>

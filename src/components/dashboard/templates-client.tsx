@@ -49,7 +49,7 @@ export default function TemplatesClient() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-2xl p-5">
+      <div className="cg-card rounded-xl p-5">
         <form onSubmit={create} className="space-y-3">
           <div>
             <h2 className="font-black text-foreground">Template baru</h2>
@@ -88,7 +88,7 @@ export default function TemplatesClient() {
         </form>
       </div>
 
-      <div className="cg-card rounded-2xl p-5">
+      <div className="cg-card rounded-xl p-5">
         <div className="mb-4">
           <h2 className="font-black text-foreground">Library template</h2>
           <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>

@@ -21,11 +21,11 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div
-        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
+        className="relative z-10 w-full max-w-sm overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between p-6 pb-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-warning/15 text-warning">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/15 text-warning">
             <Lock className="h-6 w-6" />
           </div>
           <button
@@ -51,7 +51,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
             ))}
           </div>
 
-          <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 p-4">
+          <div className="mt-5 rounded-xl border border-primary/25 bg-primary/5 p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-bold text-foreground">Paket Bisnis</p>

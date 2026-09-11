@@ -13,11 +13,6 @@ export default async function InboxPage() {
         kickerIcon={Sparkles}
         title="Inbox"
         description="Balasan WhatsApp masuk di sini. Balas cepat, ubah status percakapan, dan jaga momentum closing."
-        features={[
-          { icon: MessageSquare, label: "Percakapan dua arah" },
-          { icon: UserCheck, label: "Status open, pending, resolved" },
-          { icon: Headphones, label: "Cocok untuk sales dan customer support" },
-        ]}
       />
       <InboxClient />
     </div>

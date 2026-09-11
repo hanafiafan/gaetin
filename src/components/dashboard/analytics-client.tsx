@@ -18,10 +18,10 @@ import { BarChart3, Loader2, TrendingUp, Users, Target, DollarSign } from "lucid
 // masih terang dan tetap memakai CHART biasa. Alias di satu tempat lebih aman
 // daripada menukar ~20 pemakaian satu per satu.
 import {
-  CHART_DARK as CHART,
-  CHART_DARK_TOOLTIP as CHART_TOOLTIP,
-  CHART_DARK_CURSOR_FILL as CHART_CURSOR_FILL,
-  CHART_DARK_CURSOR_LINE as CHART_CURSOR_LINE,
+  CHART_SHEET as CHART,
+  CHART_SHEET_TOOLTIP as CHART_TOOLTIP,
+  CHART_SHEET_CURSOR_FILL as CHART_CURSOR_FILL,
+  CHART_SHEET_CURSOR_LINE as CHART_CURSOR_LINE,
   CHART_MAX_BAR,
 } from "@/lib/chart-theme";
 import { isAllZero, EmptyChart } from "@/components/empty-chart";
@@ -82,7 +82,7 @@ export default function AnalyticsClient() {
 
       {/* Charts row */}
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="cg-card rounded-2xl p-5">
+        <div className="cg-card rounded-xl p-5">
           <h2 className="mb-4 text-sm font-bold text-foreground">Funnel konversi</h2>
           {isAllZero(summary.funnel, ["value"]) ? (
             <EmptyChart height={240} label="Belum ada data funnel." />
@@ -98,7 +98,7 @@ export default function AnalyticsClient() {
           )}
         </div>
 
-        <div className="cg-card rounded-2xl p-5">
+        <div className="cg-card rounded-xl p-5">
           <h2 className="mb-4 text-sm font-bold text-foreground">Sumber lead</h2>
           {isAllZero(summary.sources, ["count"]) ? (
             <EmptyChart height={240} label="Belum ada sumber lead." />
@@ -117,7 +117,7 @@ export default function AnalyticsClient() {
       </div>
 
       {/* Trends */}
-      <div className="cg-card rounded-2xl p-5">
+      <div className="cg-card rounded-xl p-5">
         <h2 className="mb-4 text-sm font-bold text-foreground">Tren 30 hari</h2>
         {isAllZero(trends.days, ["contacts", "messages"]) ? (
           <EmptyChart height={260} label="Belum ada aktivitas dalam 30 hari terakhir." />
@@ -137,7 +137,7 @@ export default function AnalyticsClient() {
       </div>
 
       {/* ROI per campaign */}
-      <div className="cg-card rounded-2xl p-5">
+      <div className="cg-card rounded-xl p-5">
         <div className="mb-4 flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-foreground" />
           <h2 className="text-sm font-bold text-foreground">ROI per kampanye</h2>

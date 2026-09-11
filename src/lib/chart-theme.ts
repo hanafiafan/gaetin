@@ -19,46 +19,47 @@ export const CHART = {
 } as const;
 
 /**
- * Palet untuk area kerja bertema gelap. Recharts merender atribut SVG, bukan
- * kelas, sehingga ia tidak bisa membaca variabel CSS — palet ini harus
- * dinyatakan literal dan mencerminkan token .cg-workspace di globals.css.
+ * Palet untuk lembar terang di area kerja (.cg-sheet). Recharts merender
+ * atribut SVG, bukan kelas, sehingga ia tidak bisa membaca variabel CSS —
+ * palet ini harus dinyatakan literal dan mencerminkan token .cg-sheet.
  *
- * Terpisah dari CHART karena konsol admin masih berlatar terang: memakai satu
- * palet untuk keduanya membuat salah satunya tidak terbaca. Sebelumnya
- * dashboard memakai CHART, sehingga batang #0A0A0A digambar di atas kartu
- * near-black dan praktis tidak terlihat.
+ * Terpisah dari CHART karena konsol admin masih memakai identitas
+ * Swiss-brutalist-nya (kuning asam, sudut siku, border hitam), sementara
+ * lembar ini bertema lime dengan garis rambut.
+ *
+ * Aksennya lime GELAP, bukan lime cerah yang dipakai tombol: #BBEF43 di atas
+ * putih hanya ~1.5:1, jadi batang dan garisnya nyaris hilang.
  */
-export const CHART_DARK = {
-  accent: "#BBEF43",
-  ink: "#F3F5F7",
-  grid: "#2D3139",
-  axis: "#9AA0A9",
-  surface: "#1A1D24",
-  success: "#5FD39B",
-  warning: "#F5B547",
-  destructive: "#F07A7A",
+export const CHART_SHEET = {
+  accent: "#7FA524",
+  ink: "#141821",
+  grid: "#D7DAE0",
+  axis: "#5C636E",
+  surface: "#FFFFFF",
+  success: "#1F7D4F",
+  warning: "#A86A08",
+  destructive: "#C93B3B",
 } as const;
 
-export const CHART_DARK_SERIES = [
-  CHART_DARK.accent,
-  "#7FB3FF",
-  CHART_DARK.success,
-  "#C6A0FF",
-  CHART_DARK.warning,
-  "#8A8F98",
-  CHART_DARK.destructive,
-  "#4F545C",
+export const CHART_SHEET_SERIES = [
+  CHART_SHEET.accent,
+  "#2563C9",
+  CHART_SHEET.success,
+  "#7040C0",
+  CHART_SHEET.warning,
+  "#5C636E",
+  CHART_SHEET.destructive,
+  "#9AA0A9",
 ] as const;
 
-/** Sorotan hover versi gelap — wash terang, kebalikan dari versi terang. */
-export const CHART_DARK_CURSOR_FILL = "rgba(243, 245, 247, 0.07)";
-export const CHART_DARK_CURSOR_LINE = { stroke: CHART_DARK.axis, strokeWidth: 1 } as const;
+export const CHART_SHEET_CURSOR_FILL = "rgba(20, 24, 33, 0.06)";
+export const CHART_SHEET_CURSOR_LINE = { stroke: CHART_SHEET.axis, strokeWidth: 1 } as const;
 
-export const CHART_DARK_TOOLTIP = {
-  background: CHART_DARK.surface,
-  border: `1px solid ${CHART_DARK.grid}`,
-  borderRadius: 12,
-  color: CHART_DARK.ink,
+export const CHART_SHEET_TOOLTIP = {
+  background: CHART_SHEET.surface,
+  border: `1px solid ${CHART_SHEET.grid}`,
+  borderRadius: 8,
+  color: CHART_SHEET.ink,
   fontSize: 12,
 } as const;
 

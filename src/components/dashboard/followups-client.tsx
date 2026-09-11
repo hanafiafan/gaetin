@@ -92,7 +92,7 @@ export default function FollowUpsClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <form onSubmit={create} className="space-y-3">
           <div>
             <h2 className="font-black text-foreground">Aturan follow-up baru</h2>
@@ -159,7 +159,7 @@ export default function FollowUpsClient() {
         </form>
       </div>
 
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="font-black text-foreground">Aturan aktif</h2>
@@ -183,7 +183,7 @@ export default function FollowUpsClient() {
               action={{ href: "/dashboard/contacts", label: "Lihat kontak dulu" }}
             />
           ) : rules.map((r) => (
-            <div key={r.id} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div key={r.id} className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2 font-bold text-foreground">
                   {r.name}

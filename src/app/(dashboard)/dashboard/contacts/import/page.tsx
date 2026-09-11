@@ -1,18 +1,27 @@
 import Link from "next/link";
+import { ArrowLeft, Upload } from "lucide-react";
+import PageHero from "@/components/dashboard/page-hero";
 import ImportContacts from "@/components/dashboard/import-contacts";
 
 export default function ImportPage() {
   return (
     <div className="max-w-3xl space-y-6">
-      <div className="border-b border-foreground pb-6">
-        <Link href="/dashboard/contacts" className="cg-label text-muted-foreground transition hover:text-foreground">
-          ← Kembali ke Kontak
-        </Link>
-        <h1 className="cg-display mt-4 text-4xl">Impor Kontak</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Unggah file CSV atau Excel, cocokkan kolom, lalu impor. Nomor diduplikasi otomatis disaring.
-        </p>
-      </div>
+      <PageHero
+        kicker="Impor Data"
+        kickerIcon={Upload}
+        title="Impor Kontak"
+        description="Unggah file CSV atau Excel, cocokkan kolom, lalu impor. Nomor duplikat disaring otomatis."
+        tone="kelola"
+        rightSlot={
+          <Link
+            href="/dashboard/contacts"
+            className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium text-foreground/80 transition hover:border-foreground/30 hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Kembali ke Kontak
+          </Link>
+        }
+      />
       <ImportContacts />
     </div>
   );

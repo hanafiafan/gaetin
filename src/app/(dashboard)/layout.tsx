@@ -111,14 +111,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <FeatureGate featureFlags={ownerCms.featureFlags} />
         {session.impersonating && <ImpersonationBanner workspaceName={session.workspace.name} />}
-        <SectionCanvas>
-          <main className="relative z-10 flex-1 px-3 py-4 sm:px-5 lg:px-7">
-            <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">
-              <AnnouncementBanner />
-              {children}
-            </div>
-          </main>
-        </SectionCanvas>
+        {/* Padding di luar lembar, bukan di dalam: kanvas gelap harus terlihat
+            membingkai lembar terang, itu yang membuat polanya terbaca. */}
+        <div className="flex flex-1 flex-col px-2 pt-3 sm:px-4 lg:px-6">
+          <SectionCanvas>
+            <main className="relative z-10 flex-1 px-3 py-5 sm:px-5 lg:px-8 lg:py-7">
+              <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">
+                <AnnouncementBanner />
+                {children}
+              </div>
+            </main>
+          </SectionCanvas>
+        </div>
       </div>
     </div>
   );

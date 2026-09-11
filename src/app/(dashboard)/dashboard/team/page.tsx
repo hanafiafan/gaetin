@@ -11,11 +11,6 @@ export default function TeamPage() {
         kickerIcon={Sparkles}
         title="Tim"
         description="Kelola anggota workspace dan perannya. Hanya Owner/Admin yang bisa menambah atau mengubah."
-        features={[
-          { icon: Users2, label: "Multi-user workspace" },
-          { icon: ShieldCheck, label: "Role Owner/Admin/Agent" },
-          { icon: UserPlus, label: "Undang anggota tim" },
-        ]}
       />
       <TeamClient />
     </div>

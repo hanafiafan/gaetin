@@ -13,11 +13,6 @@ export default async function ValidatorPage() {
         kickerIcon={Sparkles}
         title="Validasi Nomor"
         description="Cek nomor aktif WhatsApp sebelum outreach untuk menghemat kredit dan menjaga delivery rate."
-        features={[
-          { icon: ShieldCheck, label: "Deteksi aktif/tidak aktif" },
-          { icon: Gauge, label: "Progress real-time" },
-          { icon: WalletCards, label: "Menggunakan kredit validasi" },
-        ]}
       />
       <ValidatorClient />
     </div>

@@ -113,168 +113,97 @@ export default function CampaignsClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-2xl p-5 space-y-4">
-        <div>
-          <h2 className="font-black text-foreground">Rancang kampanye</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Gunakan template, targetkan segmen, dan jadwalkan pengiriman.</p>
+      {/* Daftar sebagai tabel, bukan tumpukan kartu. Dua kampanye sebagai kartu
+          setinggi 150px menyisakan setengah layar kosong; referensinya menaruh
+          daftar seperti ini dalam tabel padat berkolom tetap sehingga jumlah
+          barisnya bisa dibaca sekilas. */}
+      <div className="cg-card flex flex-col overflow-hidden rounded-xl">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+          <div>
+            <h2 className="font-semibold text-foreground">Daftar kampanye</h2>
+            <p className="text-sm text-muted-foreground">{campaigns.length} kampanye dibuat</p>
+          </div>
         </div>
-        {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
-        {quota && (
-          <div className="rounded-xl border border-border bg-whatsapp/5 p-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Gauge className="h-4 w-4 text-whatsapp" />
-                Kuota kirim harian
-              </div>
-              <span className="text-xs text-muted-foreground">{quota.planName}</span>
-            </div>
-            <div className="mt-2 h-1.5 rounded-full bg-muted">
-              <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.
-            </p>
-          </div>
-        )}
-        <form onSubmit={create} className="space-y-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nama kampanye"
-            className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-          />
-          <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
-            <option value="">Pilih nomor WhatsApp...</option>
-            {connected.map((a) => (<option key={a.id} value={a.id}>{a.label}</option>))}
-          </select>
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-            <select value={scope} onChange={(e) => setScope(e.target.value as "activeWa" | "all")} className={SELECT_CLASS}>
-              <option value="activeWa">Hanya aktif WA</option>
-              <option value="all">Semua kontak</option>
-            </select>
-            <input
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="Filter label (opsional)"
-              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-            />
-          </div>
-          {templates.length > 0 && (
-            <select
-              onChange={(e) => {
-                const t = templates.find((x) => x.id === e.target.value);
-                if (t) setMessage(t.body);
-              }}
-              defaultValue=""
-              className={SELECT_CLASS}
-            >
-              <option value="">Pakai template... (opsional)</option>
-              {templates.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
-            </select>
-          )}
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={6}
-            placeholder="Halo {{nama}}, kami ingin mengabarkan..."
-            className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-          />
-          <div className="space-y-1.5">
-            <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-              <CalendarClock className="h-4 w-4 text-foreground" />
-              Jadwalkan (opsional)
-            </label>
-            <input
-              type="datetime-local"
-              value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
-              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none"
-            />
-          </div>
-          <div className="rounded-xl border border-border bg-card p-3 text-xs leading-5 text-muted-foreground">
-            <Wand2 className="mr-1 inline h-3.5 w-3.5 text-foreground" />
-            Kosongkan jadwal untuk membuat draft yang bisa dijalankan manual.
-          </div>
-          <button
-            type="submit"
-            disabled={creating || !accountId || !name.trim() || !message.trim()}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
-          >
-            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {creating ? "Membuat..." : "Buat kampanye"}
-          </button>
-          {connected.length === 0 && <p className="text-xs text-destructive">Hubungkan nomor WhatsApp dulu di Pengaturan.</p>}
-        </form>
-      </div>
 
-      <div className="cg-card rounded-2xl p-5 space-y-4">
-        <div>
-          <h2 className="font-black text-foreground">Daftar kampanye</h2>
-          <p className="text-sm text-muted-foreground">{campaigns.length} kampanye dibuat</p>
-        </div>
-        <div className="space-y-3">
-          {campaigns.map((campaign) => {
-            const pct = campaignPct(campaign);
-            return (
-              <div key={campaign.id} className="rounded-2xl border border-border bg-card p-4">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="truncate font-bold text-foreground">{campaign.name}</h3>
-                      <StatusBadge status={campaign.status} />
-                    </div>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {campaign.totalRecipients} penerima · {campaign.sentCount} terkirim · {campaign.failedCount} gagal
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    {(campaign.status === "DRAFT" || campaign.status === "SCHEDULED") && (
-                      <button
-                        onClick={() => act(campaign.id, "execute")}
-                        disabled={quota?.remaining === 0}
-                        className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
-                      >
-                        <Play className="h-3 w-3" /> Jalankan
-                      </button>
-                    )}
-                    {campaign.status === "ACTIVE" && (
-                      <button
-                        onClick={() => act(campaign.id, "pause")}
-                        className="flex h-8 items-center gap-1.5 border border-warning/30 bg-warning/15 px-3 text-xs font-bold text-warning transition hover:bg-warning/25"
-                      >
-                        <Pause className="h-3 w-3" /> Jeda
-                      </button>
-                    )}
-                    {campaign.status === "PAUSED" && (
-                      <button
-                        onClick={() => act(campaign.id, "resume")}
-                        className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
-                      >
-                        <RotateCcw className="h-3 w-3" /> Lanjutkan
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <div className="mb-1 flex justify-between text-xs text-muted-foreground">
-                    <span>Progress</span>
-                    <span>{pct}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-muted">
-                    <div className="h-1.5 rounded-full bg-whatsapp transition-all" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-          {campaigns.length === 0 && (
+        {campaigns.length === 0 ? (
+          <div className="p-5">
             <EmptyState
               title="Belum ada kampanye"
               hint="Rancang kampanye pertama dari panel di kiri. Butuh kontak dulu? Ambil lead dari Scraper."
               action={{ href: "/dashboard/scraper", label: "Cari lead" }}
             />
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[680px] text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted/60 text-left">
+                  <th className="px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Kampanye</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Penerima</th>
+                  <th className="w-[200px] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Progress</th>
+                  <th className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {campaigns.map((campaign) => {
+                  const pct = campaignPct(campaign);
+                  return (
+                    <tr key={campaign.id} className="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+                      <td className="px-5 py-3">
+                        <p className="font-semibold text-foreground">{campaign.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {campaign.sentCount} terkirim · {campaign.failedCount} gagal
+                        </p>
+                      </td>
+                      <td className="px-3 py-3">
+                        <StatusBadge status={campaign.status} />
+                      </td>
+                      <td className="px-3 py-3 tabular-nums text-foreground/80">{campaign.totalRecipients}</td>
+                      <td className="px-3 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 flex-1 rounded-full bg-muted">
+                            <div className="h-1.5 rounded-full bg-whatsapp transition-all" style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="w-9 shrink-0 text-right text-xs tabular-nums text-muted-foreground">{pct}%</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex justify-end gap-2">
+                          {(campaign.status === "DRAFT" || campaign.status === "SCHEDULED") && (
+                            <button
+                              onClick={() => act(campaign.id, "execute")}
+                              disabled={quota?.remaining === 0}
+                              className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+                            >
+                              <Play className="h-3 w-3" /> Jalankan
+                            </button>
+                          )}
+                          {campaign.status === "ACTIVE" && (
+                            <button
+                              onClick={() => act(campaign.id, "pause")}
+                              className="flex h-8 items-center gap-1.5 rounded-lg border border-warning/30 bg-warning/15 px-3 text-xs font-bold text-warning transition hover:bg-warning/25"
+                            >
+                              <Pause className="h-3 w-3" /> Jeda
+                            </button>
+                          )}
+                          {campaign.status === "PAUSED" && (
+                            <button
+                              onClick={() => act(campaign.id, "resume")}
+                              className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
+                            >
+                              <RotateCcw className="h-3 w-3" /> Lanjutkan
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -148,7 +148,7 @@ export default async function DashboardPage({
       )}
 
       {isLowCredits && (
-        <div className="flex items-center gap-3 rounded-2xl border border-warning/30 bg-warning/10 px-5 py-3.5">
+        <div className="flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 px-5 py-3.5">
           <AlertTriangle className="h-4 w-4 shrink-0 text-warning" />
           <span className="flex-1 text-sm font-medium text-warning">
             Kredit hampir habis ({credits} tersisa). Beli kredit tambahan agar scraping dan validasi tidak terhenti.
@@ -160,75 +160,78 @@ export default async function DashboardPage({
       )}
 
       {searchParams?.feature === "disabled" && (
-        <div className="rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning">
+        <div className="rounded-xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning">
           Fitur tersebut sedang dinonaktifkan oleh pemilik sistem melalui Owner CMS.
         </div>
       )}
 
       {searchParams?.error === "export_forbidden" && (
-        <div className="rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning">
+        <div className="rounded-xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning">
           Ekspor data lead hanya bisa dilakukan oleh Owner atau Admin workspace.
         </div>
       )}
 
-      {/* Hero */}
-      <div className="cg-card overflow-hidden rounded-3xl">
-        <div className="grid gap-6 p-6 lg:grid-cols-[2fr_1fr]">
-          <div className="flex flex-col justify-center">
-            <div>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="cg-kicker">Ringkasan Workspace</span>
-                {subscription && (
-                  <span className="border border-border px-3 py-1 text-xs text-muted-foreground">
-                    {planLabel} · {statusLabel}
-                  </span>
-                )}
-              </div>
-              <h1 className="cg-display mt-4 text-[clamp(1.75rem,3.2vw,2.75rem)]">
-                Halo, {session.user.name.split(" ")[0]}. Mari gaet peluang berikutnya.
-              </h1>
-              <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">
-                Pantau lead, kontak, percakapan, dan revenue dari satu ruang kerja operasional.
-              </p>
+      {/* Baris judul ringkas. Versi sebelumnya adalah hero setinggi 450px berisi
+          satu kalimat sambutan — layar pertama habis sebelum satu pun angka
+          terlihat. Referensinya membuka halaman dengan judul lalu langsung
+          angka. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            Ringkasan Workspace
+          </span>
+          <h1 className="cg-display mt-2 text-[clamp(1.5rem,2.4vw,2rem)]">
+            Halo, {session.user.name.split(" ")[0]}. Mari gaet peluang berikutnya.
+          </h1>
+        </div>
+        {subscription && (
+          <span className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
+            {planLabel} · {statusLabel}
+            {trialDaysLeft !== null ? ` · Trial ${trialDaysLeft} hari` : ""}
+          </span>
+        )}
+      </div>
+
+      {/* Angka workspace, dengan progress pengaturan sebagai kartu gelap
+          bersarang di kanannya — pola panel-dalam-panel dari referensi. */}
+      <MetricStrip
+        items={metrics}
+        asideDark
+        aside={
+          <>
+            <div className="cg-label">Progress pengaturan</div>
+            <div className="mt-1 text-xs text-muted-foreground">
+              {doneSteps} dari {onboarding.length} langkah selesai
             </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-muted/50 p-5">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="cg-label">Progress pengaturan</div>
-                <div className="mt-1 text-xs text-muted-foreground">{doneSteps} dari {onboarding.length} langkah selesai</div>
-              </div>
-              {trialDaysLeft !== null && (
-                <span className="rounded-xl bg-primary/10 px-3 py-1.5 text-xs font-bold text-foreground">
-                  Trial {trialDaysLeft} hari
-                </span>
-              )}
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
+              <div
+                className="h-full rounded-full bg-primary transition-all duration-500"
+                style={{ width: `${(doneSteps / onboarding.length) * 100}%` }}
+              />
             </div>
-            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-foreground/[0.06]">
-              <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${(doneSteps / onboarding.length) * 100}%` }} />
-            </div>
-            <div className="mt-5 space-y-2.5">
+            <div className="mt-4 space-y-1.5">
               {onboarding.map((step) => (
                 <Link
                   key={step.label}
                   href={step.href}
-                  className="group flex items-center justify-between rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground/80 transition hover:border-primary/20 hover:bg-muted"
+                  className="group flex items-center justify-between rounded-lg px-2.5 py-2 text-sm font-medium text-foreground/80 transition hover:bg-foreground/[0.07] hover:text-foreground"
                 >
                   <span className="flex items-center gap-2.5">
                     {step.done ? (
-                      <CheckCircle2 className="h-4 w-4 text-foreground" />
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
                     ) : (
                       <Clock3 className="h-4 w-4 text-muted-foreground" />
                     )}
                     {step.label}
                   </span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
                 </Link>
               ))}
             </div>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Action cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -241,7 +244,7 @@ export default async function DashboardPage({
               // Tepi atas 6px warna-warni adalah sisa konsep lama: empat garis
               // berbeda berjajar membuat baris ini berteriak tanpa menambah
               // arti. Warnanya kini hanya di chip ikon, kartunya rata.
-              className="cg-card group flex flex-col gap-6 rounded-3xl p-5 transition hover:border-foreground/25"
+              className="cg-card group flex flex-col gap-5 rounded-xl p-4 transition hover:border-foreground/25"
             >
               <div className="flex items-center justify-between">
                 <span className={`flex h-10 w-10 items-center justify-center rounded-full ${TONE_SOFT[action.tone]}`}>
@@ -260,11 +263,8 @@ export default async function DashboardPage({
         })}
       </div>
 
-      {/* Satu strip metrik, bukan empat kartu terpisah — lihat MetricStrip. */}
-      <MetricStrip items={metrics} />
-
       {/* Tugas — satu-satunya metrik di sini yang belum tampil di KPI di atas */}
-      <div className="cg-card flex flex-wrap items-center justify-between gap-4 rounded-2xl p-6">
+      <div className="cg-card flex flex-wrap items-center justify-between gap-4 rounded-xl p-5">
         <div className="flex items-center gap-3">
           <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${TONE_SOFT.kelola}`}>
             <CheckCircle2 className="h-5 w-5" />
@@ -282,7 +282,7 @@ export default async function DashboardPage({
 
       {/* Recent leads + workspace status */}
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
-        <div className="cg-card rounded-2xl p-6">
+        <div className="cg-card rounded-xl p-5">
           <div className="flex items-center justify-between gap-3">
             <h2 className="cg-display text-xl">Lead terbaru</h2>
             <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
@@ -312,7 +312,7 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        <div className="cg-card rounded-2xl p-6">
+        <div className="cg-card rounded-xl p-5">
           <h2 className="text-base font-bold text-foreground">Kondisi workspace</h2>
           <div className="mt-4 space-y-2.5">
             {[

@@ -11,11 +11,6 @@ export default function TasksPage() {
         kickerIcon={Sparkles}
         title="Tugas"
         description="Catat pengingat follow-up manual, prioritaskan kontak penting, dan tandai pekerjaan sales yang selesai."
-        features={[
-          { icon: CheckSquare, label: "Tugas per kontak" },
-          { icon: CalendarCheck, label: "Due date dan overdue" },
-          { icon: UserRoundCheck, label: "Follow-up manual" },
-        ]}
       />
       <TasksClient />
     </div>

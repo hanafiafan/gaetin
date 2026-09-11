@@ -24,22 +24,27 @@ export interface Metric {
 export default function MetricStrip({
   items,
   aside,
+  /** Jadikan panel kanan kartu gelap di dalam lembar terang — pola
+   * master-detail referensi. Lihat .cg-onyx di globals.css. */
+  asideDark = false,
   className,
 }: {
   items: Metric[];
   aside?: React.ReactNode;
+  asideDark?: boolean;
   className?: string;
 }) {
   return (
-    <div className={cn("cg-card grid gap-px overflow-hidden rounded-3xl bg-border", aside && "lg:grid-cols-[1fr_auto]", className)}>
+    <div className={cn("cg-card grid gap-px overflow-hidden rounded-xl bg-border", aside && "lg:grid-cols-[1fr_auto]", className)}>
       <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         {items.map((m) => {
           const Icon = m.icon;
           return (
-            // gap tetap, bukan justify-between: sel di grid ini diregangkan
-            // mengikuti tinggi panel aside, dan justify-between mendorong
-            // angkanya jauh ke bawah sampai terputus dari labelnya.
-            <div key={m.label} className="flex flex-col gap-5 bg-card p-5">
+            // Sel diregangkan mengikuti tinggi panel aside. justify-between
+            // mendorong angkanya jauh dari labelnya; rata-atas menyisakan
+            // kolom kosong tinggi di bawahnya. Rata-tengah dengan gap tetap
+            // menjaga label dan angka tetap satu kesatuan.
+            <div key={m.label} className="flex flex-col justify-center gap-4 bg-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{m.label}</p>
                 {Icon && (
@@ -64,7 +69,7 @@ export default function MetricStrip({
         })}
       </div>
 
-      {aside && <div className="bg-card p-5 lg:w-[320px]">{aside}</div>}
+      {aside && <div className={cn("p-5 lg:w-[340px]", asideDark ? "cg-onyx" : "bg-card")}>{aside}</div>}
     </div>
   );
 }

@@ -11,11 +11,6 @@ export default function TemplatesPage() {
         kickerIcon={Sparkles}
         title="Template Pesan"
         description="Simpan pesan yang sering dipakai untuk blast, campaign, dan follow-up."
-        features={[
-          { icon: Braces, label: "Personalisasi {{nama}}" },
-          { icon: Wand2, label: "Spintax {a|b}" },
-          { icon: FileText, label: "Reusable copy library" },
-        ]}
       />
       <TemplatesClient />
     </div>

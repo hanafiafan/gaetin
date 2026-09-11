@@ -11,11 +11,6 @@ export default function SupportPage() {
         kickerIcon={Sparkles}
         title="Bantuan"
         description="Lihat FAQ, dokumentasi ringkas, atau kirim tiket bila butuh bantuan."
-        features={[
-          { icon: HelpCircle, label: "FAQ produk" },
-          { icon: LifeBuoy, label: "Tiket support" },
-          { icon: MessageCircleQuestion, label: "Panduan fitur" },
-        ]}
       />
       <SupportClient />
     </div>

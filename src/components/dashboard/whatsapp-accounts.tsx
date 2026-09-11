@@ -132,7 +132,7 @@ export default function WhatsAppAccounts() {
 
       <div className="space-y-3">
         {accounts.map((a) => (
-          <div key={a.id} className="cg-card rounded-2xl p-4">
+          <div key={a.id} className="cg-card rounded-xl p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="font-bold text-foreground">{a.label}</p>

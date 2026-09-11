@@ -90,7 +90,7 @@ export default function EmailFinderClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
           <h2 className="font-black text-foreground">Mulai pencarian baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Pilih sumber data, lalu jalankan — proses berjalan di latar belakang.</p>
@@ -141,7 +141,7 @@ export default function EmailFinderClient() {
         </form>
       </div>
 
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
           <h2 className="font-black text-foreground">Riwayat pencarian</h2>
           <p className="text-sm text-muted-foreground">{jobs.length} proses dijalankan</p>
@@ -150,7 +150,7 @@ export default function EmailFinderClient() {
           {jobs.map((job) => {
             const pct = jobPct(job);
             return (
-              <div key={job.id} className="rounded-2xl border border-border bg-card p-4">
+              <div key={job.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">

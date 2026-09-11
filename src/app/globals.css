@@ -180,6 +180,87 @@
     color: hsl(var(--foreground));
   }
 
+  /* ── Sheet & onyx ───────────────────────────────────────────────────────
+     Tanda tangan referensi yang selama ini belum dibawa: kerangka aplikasi
+     gelap (bar navigasi + kanvas), lalu isi halaman duduk di atas SATU panel
+     terang besar, dan di dalam panel itu bagian yang ditonjolkan justru kartu
+     gelap. Enam putaran sebelumnya semuanya gelap-di-atas-gelap, jadi tidak
+     pernah ada hierarki yang terbaca.
+
+     Dibuat sebagai skin token seperti .cg-invert di atas: seluruh dashboard
+     memakai kelas semantik, jadi menukar token di sini membalik ke-18 menu
+     sekaligus tanpa menyentuh markup halaman. */
+  .cg-sheet {
+    --background: 220 16% 95%;
+    --foreground: 222 32% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 32% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 32% 11%;
+
+    /* Lime tetap lime dan tetap membawa teks gelap — satu aksen di kedua
+       lapisan, sesuai referensi. */
+    --muted: 220 16% 91%;
+    --muted-foreground: 220 9% 40%;
+
+    /* Terbalik di lapisan terang berarti panel gelap. */
+    --secondary: 222 20% 12%;
+    --secondary-foreground: 210 20% 97%;
+
+    /* Nilai status di .cg-workspace dinaikkan lightness-nya untuk near-black;
+       di atas putih nilai-nilai itu turun di bawah 4.5:1, jadi diturunkan
+       lagi di sini. */
+    --destructive: 0 72% 45%;
+    --success: 152 62% 30%;
+    --warning: 32 90% 36%;
+    --whatsapp: 142 62% 28%;
+    --email: 214 85% 44%;
+    --kelola: 265 58% 48%;
+
+    --border: 220 13% 86%;
+    --input: 220 13% 86%;
+    --surface-border-color: var(--border);
+
+    --chart-1: 78 62% 42%;
+    --chart-2: 222 32% 18%;
+    --chart-3: 220 9% 52%;
+    --chart-4: 220 13% 72%;
+    --chart-5: 220 13% 84%;
+
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Kartu gelap bersarang di dalam .cg-sheet — sisi "detail" pada pola
+     master-detail referensi. Mengembalikan token gelap untuk subtree-nya. */
+  .cg-onyx {
+    --background: 222 20% 9%;
+    --foreground: 210 20% 97%;
+    --card: 222 16% 14%;
+    --card-foreground: 210 20% 97%;
+    --popover: 222 16% 17%;
+    --popover-foreground: 210 20% 97%;
+    --muted: 222 12% 20%;
+    --muted-foreground: 218 10% 66%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 16% 8%;
+    --destructive: 0 80% 68%;
+    --success: 152 55% 58%;
+    --warning: 38 92% 62%;
+    --whatsapp: 142 58% 56%;
+    --email: 214 90% 68%;
+    --kelola: 265 80% 74%;
+    --border: 220 10% 24%;
+    --input: 220 10% 24%;
+    --chart-1: 78 84% 60%;
+    --chart-2: 210 20% 96%;
+    --chart-3: 218 10% 64%;
+    --chart-4: 220 12% 34%;
+    --chart-5: 220 12% 24%;
+    background: hsl(var(--card));
+    color: hsl(var(--foreground));
+  }
+
   .cg-tint {
     --background: 0 0% 96%;
     --muted: 0 0% 91%;
@@ -278,12 +359,15 @@
      Swiss-brutalist terangnya. Hampir seluruh dashboard memakai kelas
      semantik, jadi menukar token di sini menjangkau semua halaman sekaligus. */
   .cg-workspace {
-    --background: 222 16% 7%;
-    --foreground: 210 20% 96%;
-    --card: 222 15% 11%;
-    --card-foreground: 210 20% 96%;
-    --popover: 222 15% 13%;
-    --popover-foreground: 210 20% 96%;
+    /* Kontras antar lapisan sengaja dilebarkan. Versi sebelumnya menaruh
+       kartu di 11% tepat di atas latar 7% — selisih 4% tidak terbaca sebagai
+       lapisan terpisah, sehingga seluruh halaman tampak rata hitam. */
+    --background: 225 18% 5%;
+    --foreground: 210 20% 97%;
+    --card: 222 14% 12%;
+    --card-foreground: 210 20% 97%;
+    --popover: 222 14% 15%;
+    --popover-foreground: 210 20% 97%;
 
     /* Lime menggantikan kuning asam. Tetap membawa teks gelap. */
     --primary: 78 84% 60%;
@@ -293,7 +377,7 @@
     --secondary: 210 20% 96%;
     --secondary-foreground: 222 16% 7%;
 
-    --muted: 222 12% 18%;
+    --muted: 222 12% 19%;
     --muted-foreground: 218 10% 64%;
     --accent: 78 84% 60%;
     --accent-foreground: 222 30% 8%;
@@ -315,10 +399,14 @@
     --kelola: 265 80% 74%;
     --kelola-foreground: 222 30% 8%;
 
-    --border: 220 12% 20%;
-    --input: 220 12% 20%;
+    --border: 220 10% 22%;
+    --input: 220 10% 22%;
     --ring: 78 84% 60%;
-    --radius: 1.25rem;
+    /* Referensinya bersudut rapat. 1.25rem membuat setiap input, tombol, dan
+       kartu jadi gelembung — itu yang bikin tampilan terbaca "mainan" alih-alih
+       alat kerja. Skala radius Tailwind seluruhnya diturunkan dari variabel
+       ini, jadi satu angka merapatkan semua sudut di ke-18 menu. */
+    --radius: 0.5rem;
 
     /* Permukaan lunak menggantikan neobrutalism: garis rambut, tanpa offset
        shadow. Border 2px tidak punya arti di atas near-black dan hard shadow
@@ -379,8 +467,8 @@
     --border: 220 12% 18%;
     --warning: 38 92% 62%;
     --destructive: 0 80% 68%;
-    background: hsl(222 18% 5%);
-    border-right: 1px solid hsl(220 12% 16%);
+    background: hsl(225 20% 4%);
+    border-right: 1px solid hsl(220 10% 18%);
   }
 
   /* ── Dashboard rail ─────────────────────────────────────────────────────

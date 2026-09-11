@@ -463,7 +463,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       <div className={cn("grid gap-4 items-start", legacyOsmEnabled && "xl:grid-cols-[minmax(0,1fr)_380px]")}>
         {legacyOsmEnabled && (
           mode === "manual" ? (
-            <div className="cg-card overflow-hidden rounded-2xl">
+            <div className="cg-card overflow-hidden rounded-xl">
               <div className="p-0">
                 <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border bg-card px-4 py-3 gap-3">
                   <div>
@@ -485,7 +485,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             </div>
           ) : mode === "auto" ? (
-            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-2xl">
+            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-xl">
               <div className="p-6 max-w-md text-center">
                 <Radar className="h-12 w-12 mx-auto text-foreground/40 mb-4" />
                 <h3 className="text-lg font-bold text-foreground">Otomatis Wilayah</h3>
@@ -495,7 +495,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             </div>
           ) : (
-            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-2xl">
+            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-xl">
               <div className="p-6 max-w-md text-center">
                 <h3 className="text-lg font-bold text-foreground">Mode Ekstensi</h3>
                 <p className="text-sm text-muted-foreground mt-2">Pencarian dilakukan otomatis di tab Google Maps yang dibuka oleh sistem.</p>
@@ -505,7 +505,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
         )}
         
         {mode === "extension" && activeJobId && jobStatus === "RUNNING" ? (
-            <div className="cg-card rounded-2xl border-primary/30 bg-primary/[0.03]">
+            <div className="cg-card rounded-xl border-primary/30 bg-primary/[0.03]">
               <div className="p-5">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-primary/10">
@@ -536,7 +536,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             </div>
           ) : (
-            <div className="cg-card rounded-2xl">
+            <div className="cg-card rounded-xl">
           <div className="space-y-5 p-5">
 
             {legacyOsmEnabled && (
@@ -770,7 +770,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       </div>
 
       {savedJobs.length > 0 && (
-        <div className="cg-card rounded-2xl">
+        <div className="cg-card rounded-xl">
           <div className="p-4">
             <div className="mb-3 flex items-center gap-2">
               <h2 className="text-sm font-bold text-foreground">Riwayat scraping</h2>
@@ -813,7 +813,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       )}
 
       {selectedJobId && (
-        <div className="cg-card rounded-2xl">
+        <div className="cg-card rounded-xl">
           <div className="space-y-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">

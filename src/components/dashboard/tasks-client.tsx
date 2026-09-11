@@ -87,7 +87,7 @@ export default function TasksClient() {
 
   return (
     <div className="space-y-5">
-      <div className="cg-card rounded-2xl p-4">
+      <div className="cg-card rounded-xl p-4">
         <form onSubmit={create} className="grid gap-3 lg:grid-cols-[1fr_220px_160px_140px_auto]">
           <input
             value={title}
@@ -130,7 +130,7 @@ export default function TasksClient() {
         />
       </div>
 
-      <div className="cg-card overflow-hidden rounded-2xl">
+      <div className="cg-card overflow-hidden rounded-xl">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
             <thead>

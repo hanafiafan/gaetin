@@ -99,7 +99,7 @@ export default function CrmBoard() {
         aside={
           <button
             onClick={openAdd}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
             Tambah kontak ke pipeline
@@ -108,7 +108,7 @@ export default function CrmBoard() {
       />
 
       {adding && (
-        <div className="cg-card rounded-2xl p-4">
+        <div className="cg-card rounded-xl p-4">
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-bold text-foreground">Pilih kontak (masuk kolom pertama)</span>
             <button
@@ -133,7 +133,7 @@ export default function CrmBoard() {
         </div>
       )}
 
-      <div className="cg-scrollfade-x flex gap-4 overflow-x-auto border-t border-foreground pt-4 pb-2">
+      <div className="cg-scrollfade-x flex gap-4 overflow-x-auto pb-2">
         {columns.map((col) => (
           <div
             key={col.id}

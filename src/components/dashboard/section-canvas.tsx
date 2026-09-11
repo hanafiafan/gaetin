@@ -1,18 +1,25 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import { navGroups, isNavActive } from "@/components/dashboard/nav-config";
-import { TONE_CANVAS, TONE_CARD, type SectionTone } from "@/components/dashboard/section-tone";
-import { cn } from "@/lib/utils";
+import { type SectionTone } from "@/components/dashboard/section-tone";
 
 /**
- * Memberi warna kanvas halaman sesuai seksi yang sedang dibuka.
+ * Lembar terang tempat isi halaman duduk.
  *
- * Tone diturunkan dari navGroups, bukan dari peta rute tersendiri, supaya
- * warna halaman selalu cocok dengan item nav yang membawa user ke sana —
- * satu tempat saja yang perlu diubah saat menambah menu.
+ * Dulu komponen ini mewarnai kanvas DAN kartu tiap halaman sesuai seksinya.
+ * Hasilnya keruh: hijau zaitun, ungu kelabu, kuning lumpur — dan kontras
+ * antara kartu dan latarnya nyaris hilang karena keduanya sama-sama gelap
+ * dan sama-sama berona.
+ *
+ * Sekarang komponen ini membawa pola inti referensi yang selama enam putaran
+ * tidak pernah dikerjakan: kerangka aplikasi tetap gelap (bar navigasi dan
+ * kanvas di sekelilingnya), lalu SATU lembar terang besar menampung seluruh
+ * isi halaman, dan bagian yang ditonjolkan justru kartu gelap di dalamnya
+ * (lihat .cg-onyx). Itulah yang memberi hierarki; versi gelap-di-atas-gelap
+ * sebelumnya tidak punya.
+ *
+ * Warnanya sendiri seluruhnya dari token .cg-sheet di globals.css, jadi
+ * ke-18 menu ikut berubah tanpa markup halaman disentuh.
  */
-function toneForPath(pathname: string): SectionTone {
+export function toneForPath(pathname: string): SectionTone {
   for (const group of navGroups) {
     for (const item of group.items) {
       if (isNavActive(pathname, item.href) && !item.skipActiveHighlight) return group.tone;
@@ -22,15 +29,8 @@ function toneForPath(pathname: string): SectionTone {
 }
 
 export default function SectionCanvas({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const tone = toneForPath(pathname);
   return (
-    <div
-      className={cn("cg-app-surface flex-1 transition-colors duration-300", TONE_CANVAS[tone])}
-      // Diwariskan ke seluruh subtree: setiap kartu ikut berona tanpa satu pun
-      // halaman perlu disunting. Lihat TONE_CARD di section-tone.ts.
-      style={{ "--card": TONE_CARD[tone] } as React.CSSProperties}
-    >
+    <div className="cg-app-surface cg-sheet flex-1 rounded-t-[20px] border border-b-0 border-white/10 lg:rounded-t-[28px]">
       {children}
     </div>
   );

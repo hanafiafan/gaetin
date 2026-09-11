@@ -31,7 +31,6 @@ const WA_LABEL: Record<Contact["waStatus"], string> = {
 
 /** Cycled per row so the table reads as a set of tinted cards instead of a
  * flat white grid — same idea as the reference's pastel consultation table. */
-const ROW_TINTS = ["bg-whatsapp/[0.09]", "bg-email/[0.09]", "bg-primary/[0.14]", "bg-kelola/[0.09]"];
 
 function scoreClass(score: number): string {
   if (score >= 75) return "bg-success/15 text-success";
@@ -159,7 +158,7 @@ export default function ContactsTable() {
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
             <button
               type="submit"
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90"
             >
               <Plus className="h-4 w-4" />
               Tambah kontak
@@ -168,7 +167,7 @@ export default function ContactsTable() {
         }
       />
 
-      <div className="cg-card rounded-2xl">
+      <div className="cg-card rounded-xl">
         <div className="space-y-3 p-4">
           {/* Search + filter */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -255,8 +254,8 @@ export default function ContactsTable() {
               </tr>
             </thead>
             <tbody>
-              {items.map((contact, i) => (
-                <tr key={contact.id} className={cn("border-b border-border/50 last:border-0 transition-colors duration-150 hover:brightness-95", ROW_TINTS[i % ROW_TINTS.length])}>
+              {items.map((contact) => (
+                <tr key={contact.id} className="border-b border-border last:border-0 transition-colors hover:bg-muted/70">
                   <td className="p-3">
                     <input
                       type="checkbox"

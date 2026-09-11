@@ -91,7 +91,7 @@ export default function SupportClient() {
           {FAQ.map((f, i) => (
             <div
               key={f.q}
-              className={cn("rounded-2xl border transition", openFaq === i ? "border-primary/25 bg-primary/[0.06]" : "border-border bg-card hover:border-border")}
+              className={cn("rounded-xl border transition", openFaq === i ? "border-primary/25 bg-primary/[0.06]" : "border-border bg-card hover:border-border")}
             >
               <button
                 type="button"
@@ -115,7 +115,7 @@ export default function SupportClient() {
 
       {/* Ticket form + list */}
       <div className="space-y-5">
-        <div className="cg-card rounded-2xl p-5">
+        <div className="cg-card rounded-xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <LifeBuoy className="h-4 w-4 text-foreground" />
             <h2 className="font-black text-foreground">Kirim tiket bantuan</h2>
@@ -169,7 +169,7 @@ export default function SupportClient() {
             )}
           </div>
           {tickets.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
               Belum ada tiket. Kirim tiket jika perlu bantuan.
             </div>
           ) : (
@@ -177,7 +177,7 @@ export default function SupportClient() {
               {tickets.map((t) => {
                 const s = STATUS_MAP[t.status] ?? { label: t.status, color: "bg-muted-foreground/15 text-muted-foreground" };
                 return (
-                  <div key={t.id} className="cg-card flex items-center justify-between gap-3 rounded-2xl px-4 py-3">
+                  <div key={t.id} className="cg-card flex items-center justify-between gap-3 rounded-xl px-4 py-3">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold text-foreground">{t.subject}</p>
                       <p className="flex items-center gap-1 text-xs text-muted-foreground">

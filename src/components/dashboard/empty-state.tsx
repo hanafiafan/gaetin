@@ -30,7 +30,7 @@ export default function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border px-6 py-10 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border px-6 py-10 text-center",
         className,
       )}
     >
@@ -46,7 +46,7 @@ export default function EmptyState({
       {action && (
         <Link
           href={action.href}
-          className="mt-1 inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          className="mt-1 inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
         >
           {action.label}
           <ArrowRight className="h-4 w-4" />

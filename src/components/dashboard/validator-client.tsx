@@ -142,7 +142,7 @@ export default function ValidatorClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-foreground" />
           <h2 className="font-black text-foreground">Sesi validasi</h2>
@@ -257,7 +257,7 @@ export default function ValidatorClient() {
         )}
       </div>
 
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="font-black text-foreground">Progress</h2>
           <span className={cn("px-2.5 py-0.5 text-xs font-bold", running ? "bg-whatsapp/15 text-whatsapp" : "bg-muted-foreground/15 text-muted-foreground")}>

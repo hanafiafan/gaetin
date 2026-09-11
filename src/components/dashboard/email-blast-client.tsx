@@ -79,7 +79,7 @@ export default function EmailBlastClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
           <h2 className="font-black text-foreground">Buat email blast baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Target otomatis ke kontak yang punya email. Tulis subjek dan isi pesan personal.</p>
@@ -131,7 +131,7 @@ export default function EmailBlastClient() {
         </form>
       </div>
 
-      <div className="cg-card rounded-2xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
           <h2 className="font-black text-foreground">Riwayat email blast</h2>
           <p className="text-sm text-muted-foreground">{blasts.length} email blast dibuat</p>
@@ -140,7 +140,7 @@ export default function EmailBlastClient() {
           {blasts.map((blast) => {
             const pct = blastPct(blast);
             return (
-              <div key={blast.id} className="rounded-2xl border border-border bg-card p-4">
+              <div key={blast.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">

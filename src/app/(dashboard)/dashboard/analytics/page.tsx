@@ -11,11 +11,6 @@ export default function AnalyticsPage() {
         kickerIcon={Sparkles}
         title="Analitik"
         description="Funnel konversi, sumber lead, tren pengiriman, dan ROI per kampanye."
-        features={[
-          { icon: BarChart3, label: "KPI revenue dan funnel" },
-          { icon: LineChart, label: "Tren 30 hari" },
-          { icon: PieChart, label: "Sumber lead dan ROI" },
-        ]}
       />
       <AnalyticsClient />
     </div>

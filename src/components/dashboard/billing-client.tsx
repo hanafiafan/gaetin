@@ -116,7 +116,7 @@ export default function BillingClient() {
     <div className="space-y-7">
       {/* Trial banner */}
       {isTrial && (
-        <div className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4">
+        <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning/10 px-5 py-4">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
           <div>
             <p className="font-bold text-warning text-sm">Anda sedang dalam masa trial</p>
@@ -212,7 +212,7 @@ export default function BillingClient() {
               <div
                 key={p.id}
                 className={cn(
-                  "relative flex flex-col rounded-3xl border p-6 transition",
+                  "relative flex flex-col rounded-xl border p-6 transition",
                   featured
                     ? "border-primary/40 bg-primary/10"
                     : current
@@ -294,7 +294,7 @@ export default function BillingClient() {
             Kredit hanya terpotong saat sebuah aksi berhasil. Scraping sendiri gratis.
           </p>
         </div>
-        <div className="cg-card grid gap-px overflow-hidden rounded-2xl bg-border sm:grid-cols-2">
+        <div className="cg-card grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-2">
           {CREDIT_USAGE.map((u) => (
             <div key={u.label} className="flex items-baseline justify-between gap-4 bg-background px-5 py-4">
               <div>
@@ -324,7 +324,7 @@ export default function BillingClient() {
             const ppc = Math.round(pack.price / pack.credits);
             const cheapest = i === (data?.topupPacks?.length ?? 3) - 1;
             return (
-              <div key={pack.id} className={cn("relative rounded-2xl border p-5 transition", cheapest ? "border-success/30 bg-success/5" : "border-border bg-muted/50 hover:border-border")}>
+              <div key={pack.id} className={cn("relative rounded-xl border p-5 transition", cheapest ? "border-success/30 bg-success/5" : "border-border bg-muted/50 hover:border-border")}>
                 {cheapest && (
                   <span className="absolute -top-3 right-4 inline-flex items-center gap-1 bg-success/20 px-2.5 py-0.5 text-[11px] font-black text-success">
                     <TrendingUp className="h-3 w-3" /> Terbaik
@@ -354,7 +354,7 @@ export default function BillingClient() {
           <h2 className="text-lg font-black text-foreground">Riwayat transaksi</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">Semua pembayaran dan top-up kredit tercatat di sini.</p>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

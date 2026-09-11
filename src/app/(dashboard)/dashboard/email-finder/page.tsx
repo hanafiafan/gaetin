@@ -13,11 +13,6 @@ export default async function EmailFinderPage() {
         kickerIcon={Sparkles}
         title="Cari Email"
         description="Kunjungi website lead atau kontak yang belum punya email, temukan alamat emailnya secara otomatis di latar belakang."
-        features={[
-          { icon: Globe2, label: "Cek beranda + halaman kontak umum" },
-          { icon: Zap, label: "Jalan di latar belakang, tidak perlu tunggu" },
-          { icon: Search, label: "Dari hasil scraping atau kontak tersimpan" },
-        ]}
       />
       <EmailFinderClient />
     </div>

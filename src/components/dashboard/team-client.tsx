@@ -65,7 +65,7 @@ export default function TeamClient() {
   return (
     <div className="space-y-6">
       {isManager && (
-        <form onSubmit={addMember} className="cg-card flex flex-wrap items-center gap-2 rounded-2xl p-4">
+        <form onSubmit={addMember} className="cg-card flex flex-wrap items-center gap-2 rounded-xl p-4">
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +85,7 @@ export default function TeamClient() {
 
       {/* cg-card seperti form di atas dan panel aktivitas di bawah — dengan
           garis tipis saja tabel ini terbaca belum jadi di antara keduanya. */}
-      <div className="cg-card overflow-hidden rounded-2xl">
+      <div className="cg-card overflow-hidden rounded-xl">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted text-left">
@@ -125,7 +125,7 @@ export default function TeamClient() {
 
       <div>
         <h2 className="mb-2 font-bold text-foreground">Aktivitas terbaru</h2>
-        <div className="cg-card space-y-1 rounded-2xl p-4 text-sm">
+        <div className="cg-card space-y-1 rounded-xl p-4 text-sm">
           {logs.length === 0 && <p className="text-muted-foreground">Belum ada aktivitas tercatat.</p>}
           {logs.map((l) => (
             <div key={l.id} className="flex justify-between border-b border-border/50 py-1.5 last:border-0">

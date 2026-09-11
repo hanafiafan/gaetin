@@ -11,11 +11,6 @@ export default function BillingPage() {
         kickerIcon={Sparkles}
         title="Langganan & Kredit"
         description="Kelola paket, saldo kredit, dan top-up. Pembayaran via Midtrans (VA, e-wallet, QRIS)."
-        features={[
-          { icon: CreditCard, label: "Subscription bulanan/tahunan" },
-          { icon: Coins, label: "Kredit untuk pemakaian variabel" },
-          { icon: Receipt, label: "Riwayat transaksi" },
-        ]}
       />
       <BillingClient />
     </div>

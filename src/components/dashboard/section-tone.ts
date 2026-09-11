@@ -6,22 +6,6 @@
  */
 export type SectionTone = "primary" | "whatsapp" | "email" | "kelola" | "akun";
 
-export const TONE_BG: Record<SectionTone, string> = {
-  primary: "bg-primary text-primary-foreground",
-  whatsapp: "bg-whatsapp text-whatsapp-foreground",
-  email: "bg-email text-email-foreground",
-  kelola: "bg-kelola text-kelola-foreground",
-  akun: "bg-foreground text-background",
-};
-
-export const TONE_BORDER: Record<SectionTone, string> = {
-  primary: "border-foreground",
-  whatsapp: "border-whatsapp",
-  email: "border-email",
-  kelola: "border-kelola",
-  akun: "border-foreground",
-};
-
 export const TONE_TEXT: Record<SectionTone, string> = {
   // Yellow is a fill color, never text-on-white (near-unreadable at this
   // lightness) — the "Mulai" identity already shows up via solid-yellow
@@ -49,73 +33,19 @@ export const TONE_SOFT: Record<SectionTone, string> = {
   akun: "bg-muted text-foreground",
 };
 
-/** Action-card treatment: the section color reduced to a top edge over a
- * normal card, instead of flooding the whole tile. A row of four saturated
- * fills gave every card identical weight, so nothing read as the place to
- * start — and it left three more competing yellows next to the real CTA. */
-export const TONE_EDGE: Record<SectionTone, string> = {
-  primary: "border-t-primary",
-  whatsapp: "border-t-whatsapp",
-  email: "border-t-email",
-  kelola: "border-t-kelola",
-  akun: "border-t-foreground",
+/** Titik kecil penanda seksi di judul halaman. Menggantikan wash selebar
+ * bidang: identitas seksi tetap terbaca tanpa mewarnai seluruh permukaan,
+ * yang membuat kartu dan latar sama-sama keruh. */
+export const TONE_DOT: Record<SectionTone, string> = {
+  primary: "bg-primary",
+  whatsapp: "bg-whatsapp",
+  email: "bg-email",
+  kelola: "bg-kelola",
+  akun: "bg-muted-foreground",
 };
 
-/* ── Tangga permukaan ───────────────────────────────────────────────────────
-   Nilai-nilai ini disetel untuk tema gelap area kerja (lihat .cg-workspace di
-   globals.css). Semuanya berupa rona di atas dasar near-black, jadi angka
-   yang lebih besar berarti lebih terang, bukan lebih gelap:
-
-     WASH   pita hero          — paling kuat, identitas seksi dari jauh
-     PANEL  container pendukung — ringkasan, tips, sisi kanan
-     CANVAS dasar halaman      — rona paling tipis
-     CARD   permukaan kartu    — dipasang ke --card lewat SectionCanvas
-
-   Kalau tema terang dipulihkan, seluruh angka di blok ini perlu dibalik. */
-
-/** Dasar halaman — rona paling tipis di atas near-black. */
-export const TONE_CANVAS: Record<SectionTone, string> = {
-  primary: "bg-primary/[0.05]",
-  whatsapp: "bg-whatsapp/[0.05]",
-  email: "bg-email/[0.05]",
-  kelola: "bg-kelola/[0.05]",
-  akun: "bg-muted/25",
-};
-
-/** Container pendukung — ronanya lebih kuat dari kanvas sehingga terbaca
- * sebagai lapisan tersendiri, tapi masih di bawah pita hero. */
-export const TONE_PANEL: Record<SectionTone, string> = {
-  primary: "bg-primary/[0.08]",
-  whatsapp: "bg-whatsapp/[0.08]",
-  email: "bg-email/[0.08]",
-  kelola: "bg-kelola/[0.08]",
-  akun: "bg-muted/40",
-};
-
-/**
- * Warna permukaan kartu, sebagai nilai HSL mentah karena dipasang ke variabel
- * `--card` lewat SectionCanvas — bukan kelas Tailwind. Menyetel variabelnya
- * membuat SETIAP kartu di seksi itu ikut berona sekaligus (cg-card, komponen
- * Card, apa pun yang memakai bg-card), tanpa perlu menyunting belasan halaman
- * satu per satu.
- *
- * Sedikit lebih terang dari dasar halaman supaya kartu terbaca terangkat.
- * Input memakai bg-background yang lebih gelap, jadi kolom isian terbaca
- * cekung di dalam kartunya.
- */
-export const TONE_CARD: Record<SectionTone, string> = {
-  primary: "78 14% 12%",
-  whatsapp: "142 14% 12%",
-  email: "214 18% 12.5%",
-  kelola: "265 16% 13%",
-  akun: "222 12% 12%",
-};
-
-/** Pita hero — tingkat paling pekat, menandai identitas seksi dari jauh. */
-export const TONE_WASH: Record<SectionTone, string> = {
-  primary: "bg-primary/[0.14]",
-  whatsapp: "bg-whatsapp/[0.14]",
-  email: "bg-email/[0.14]",
-  kelola: "bg-kelola/[0.14]",
-  akun: "bg-muted/60",
-};
+/* Empat peta permukaan berona (CANVAS, PANEL, CARD, WASH) dihapus di sini.
+   Semuanya menaruh rona seksi di seluruh bidang; hasilnya kartu dan latar
+   sama-sama keruh dan tidak ada lapisan yang terbaca. Referensinya memakai
+   permukaan netral dengan satu aksen, dan identitas seksi cukup lewat
+   TONE_DOT / TONE_SOFT / TONE_TEXT di atas. */

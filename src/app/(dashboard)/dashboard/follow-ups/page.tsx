@@ -13,11 +13,6 @@ export default async function FollowUpsPage() {
         kickerIcon={Sparkles}
         title="Follow-up Otomatis"
         description="Buat aturan tindak lanjut untuk kontak yang belum membalas. Rangkaian berhenti saat kontak membalas."
-        features={[
-          { icon: Repeat, label: "No-reply follow-up" },
-          { icon: Bot, label: "Otomasi berbasis aturan" },
-          { icon: Clock, label: "Cron-ready untuk produksi" },
-        ]}
       />
       <FollowUpsClient />
     </div>

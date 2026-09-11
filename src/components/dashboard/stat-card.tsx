@@ -1,13 +1,15 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TONE_SOFT, TONE_WASH, type SectionTone } from "@/components/dashboard/section-tone";
+import { TONE_SOFT, type SectionTone } from "@/components/dashboard/section-tone";
 
 export interface StatCardProps {
   label: string;
   value: string;
   detail?: string;
   icon: LucideIcon;
-  /** Tints the tile and icon chip with a section color instead of plain white/grey. */
+  /** Mewarnai chip ikonnya saja. Dulu ronanya membanjiri seluruh ubin —
+   * empat ubin berdampingan jadi empat warna berbeda dan tidak ada yang
+   * menonjol. Referensinya: permukaan netral, warna hanya pada penanda. */
   tone?: SectionTone;
   /** Marks the single most important metric. Reads as a yellow edge + solid
    * yellow icon chip rather than a fully-yellow tile, so it still leads the
@@ -21,7 +23,7 @@ export default function StatCard({ label, value, detail, icon: Icon, tone, accen
     <div
       className={cn(
         "flex flex-col justify-between rounded-xl border border-border p-6 transition-colors duration-200",
-        accent ? "border-t-[6px] border-t-primary bg-primary/[0.10]" : tone ? TONE_WASH[tone] : "bg-background",
+        accent ? "border-t-[3px] border-t-primary bg-card" : "bg-card",
       )}
     >
       <div className="flex items-start justify-between gap-3">

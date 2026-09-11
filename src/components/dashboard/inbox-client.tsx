@@ -95,7 +95,7 @@ export default function InboxClient() {
   }
 
   return (
-    <div className="cg-card grid min-h-[640px] overflow-hidden rounded-2xl lg:grid-cols-[340px_1fr]">
+    <div className="cg-card grid min-h-[640px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
       {/* Conversation list */}
       <div className="overflow-y-auto border-r border-border">
         <div className="sticky top-0 z-10 border-b border-border bg-background p-4">
@@ -146,7 +146,7 @@ export default function InboxClient() {
         {!thread ? (
           <div className="flex flex-1 items-center justify-center p-8 text-center">
             <div>
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-whatsapp/10 text-whatsapp">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-whatsapp/10 text-whatsapp">
                 <Inbox className="h-7 w-7" />
               </div>
               <p className="mt-3 text-sm text-muted-foreground">Pilih percakapan untuk melihat riwayat dan membalas.</p>
@@ -180,7 +180,7 @@ export default function InboxClient() {
                 >
                   <div
                     className={cn(
-                      "max-w-[75%] rounded-2xl px-3 py-2 text-sm",
+                      "max-w-[75%] rounded-xl px-3 py-2 text-sm",
                       m.direction === "OUTBOUND"
                         ? "rounded-br-sm bg-primary text-primary-foreground"
                         : "rounded-bl-sm border border-border bg-muted text-foreground"

@@ -116,7 +116,7 @@ export default function WorkspaceNav({
                       openGroup === g.label ? "visible opacity-100" : "invisible opacity-0",
                     )}
                   >
-                    <div className="min-w-[220px] rounded-2xl border border-border bg-popover p-1.5 shadow-2xl">
+                    <div className="min-w-[220px] rounded-xl border border-border bg-popover p-1.5 shadow-2xl">
                       {g.items.map((item) => {
                         const Icon = item.icon;
                         const itemActive = isNavActive(pathname, item.href) && !item.skipActiveHighlight;

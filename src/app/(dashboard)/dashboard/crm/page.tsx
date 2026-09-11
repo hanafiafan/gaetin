@@ -13,11 +13,6 @@ export default async function CrmPage() {
         kickerIcon={Sparkles}
         title="CRM Pipeline"
         description="Kelola peluang dari lead baru sampai closing. Geser kartu antar stage dan catat nilai deal untuk ROI."
-        features={[
-          { icon: KanbanSquare, label: "Kanban pipeline untuk follow-up harian" },
-          { icon: BadgeDollarSign, label: "Closed Won otomatis masuk revenue" },
-          { icon: Workflow, label: "Hubungkan aktivitas sales dan campaign" },
-        ]}
       />
       <CrmBoard />
     </div>
