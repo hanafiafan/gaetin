@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
 import WorkspaceProfileSettings from "@/components/dashboard/workspace-profile-settings";
 import AccountSettings from "@/components/dashboard/account-settings";
@@ -16,21 +17,25 @@ function SettingsSection({
   icon: Icon,
   title,
   description,
+  /** Hanya seksi pertama yang membawa warna area — satu aksen per halaman,
+   * sama seperti halaman lain. Empat garis warna berjajar terbaca berulang. */
+  accent = false,
   children,
 }: {
   icon: LucideIcon;
   title: string;
   description: string;
+  accent?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <section className="cg-card overflow-hidden rounded-xl">
-      <header className="cg-tone-bar relative flex items-start gap-3 border-b border-border bg-muted/40 px-5 py-4 pl-6">
+    <section className={cn("cg-card overflow-hidden rounded-xl", accent && "cg-tone-top")}>
+      <header className="flex items-start gap-3 border-b border-border bg-muted/40 px-5 py-4">
         <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06] text-foreground/70">
           <Icon className="h-4 w-4" />
         </span>
         <div className="min-w-0">
-          <h2 className="font-semibold text-foreground">{title}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
           <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
         </div>
       </header>
@@ -48,6 +53,7 @@ export default function SettingsPage() {
       />
 
       <SettingsSection
+        accent
         icon={Smartphone}
         title="Koneksi WhatsApp"
         description="Hubungkan satu atau lebih nomor WhatsApp. Tiap nomor punya batas kirim harian sendiri."

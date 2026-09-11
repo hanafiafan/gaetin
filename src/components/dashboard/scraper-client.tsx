@@ -471,7 +471,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       <div className={cn("grid gap-4 items-start", legacyOsmEnabled && "xl:grid-cols-[minmax(0,1fr)_380px]")}>
         {legacyOsmEnabled && (
           mode === "manual" ? (
-            <div className="cg-card overflow-hidden rounded-xl">
+            <div className="cg-card cg-tone-top overflow-hidden rounded-xl">
               <div className="p-0">
                 <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border bg-card px-4 py-3 gap-3">
                   <div>
@@ -496,7 +496,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-xl">
               <div className="p-6 max-w-md text-center">
                 <Radar className="h-12 w-12 mx-auto text-foreground/40 mb-4" />
-                <h3 className="text-lg font-bold text-foreground">Otomatis Wilayah</h3>
+                <h3 className="text-lg font-semibold text-foreground">Otomatis Wilayah</h3>
                 <p className="text-sm text-muted-foreground mt-2">
                   Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
                 </p>
@@ -505,7 +505,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           ) : (
             <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-xl">
               <div className="p-6 max-w-md text-center">
-                <h3 className="text-lg font-bold text-foreground">Mode Ekstensi</h3>
+                <h3 className="text-lg font-semibold text-foreground">Mode Ekstensi</h3>
                 <p className="text-sm text-muted-foreground mt-2">Pencarian dilakukan otomatis di tab Google Maps yang dibuka oleh sistem.</p>
               </div>
             </div>
@@ -790,7 +790,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
         <div className="cg-card rounded-xl">
           <div className="p-4">
             <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-sm font-bold text-foreground">Pencarian sebelumnya</h2>
+              <h2 className="text-lg font-semibold text-foreground">Pencarian sebelumnya</h2>
               <span className="bg-primary/15 px-2 py-0.5 text-xs font-bold text-foreground">{savedJobs.length}</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -834,7 +834,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           <div className="space-y-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <h2 className="text-base font-bold text-foreground">Bisnis yang ditemukan</h2>
+                <h2 className="text-lg font-semibold text-foreground">Bisnis yang ditemukan</h2>
                 <span className="bg-primary/15 px-2 py-0.5 text-xs font-bold tabular-nums text-foreground">
                   {leads.length}
                 </span>
@@ -900,10 +900,10 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <th className="w-10 p-3">
                     <input type="checkbox" checked={leads.length > 0 && selected.size === leads.length} onChange={toggleAll} aria-label="Pilih semua" className="accent-primary" />
                   </th>
-                  <th className="p-3 font-bold text-muted-foreground">Bisnis</th>
-                  <th className="p-3 font-bold text-muted-foreground">No. WA</th>
-                  <th className="hidden p-3 md:table-cell font-bold text-muted-foreground">Rating</th>
-                  <th className="p-3 text-right font-bold text-muted-foreground">Aksi</th>
+                  <th className="p-3 font-semibold text-muted-foreground">Bisnis</th>
+                  <th className="p-3 font-semibold text-muted-foreground">No. WA</th>
+                  <th className="hidden p-3 md:table-cell font-semibold text-muted-foreground">Rating</th>
+                  <th className="p-3 text-right font-semibold text-muted-foreground">Tindakan</th>
                 </tr>
               </thead>
               <tbody>

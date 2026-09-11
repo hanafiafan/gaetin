@@ -85,10 +85,10 @@ export default function SupportClient() {
       {/* Satu kartu berisi daftar yang dipisah garis rambut, bukan enam kartu
           melayang dengan celah di antaranya — FAQ adalah satu daftar, bukan
           enam benda terpisah. */}
-      <div className="cg-card overflow-hidden rounded-xl">
-        <div className="cg-tone-bar relative flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3.5 pl-6">
+      <div className="cg-card cg-tone-top overflow-hidden rounded-xl">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3.5">
           <HelpCircle className="h-4 w-4 text-foreground/70" />
-          <h2 className="font-semibold text-foreground">Pertanyaan umum</h2>
+          <h2 className="text-lg font-semibold text-foreground">Pertanyaan umum</h2>
         </div>
         {FAQ.map((f, i) => (
           <div key={f.q} className={cn("border-b border-border last:border-0", openFaq === i && "bg-muted/40")}>
@@ -114,7 +114,7 @@ export default function SupportClient() {
         <div className="cg-card rounded-xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <LifeBuoy className="h-4 w-4 text-foreground" />
-            <h2 className="font-semibold text-foreground">Kirim pertanyaan ke kami</h2>
+            <h2 className="text-lg font-semibold text-foreground">Kirim pertanyaan ke kami</h2>
           </div>
 
           {sent && (
@@ -159,7 +159,7 @@ export default function SupportClient() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Ticket className="h-4 w-4 text-foreground" />
-            <h2 className="font-semibold text-foreground">Pertanyaan yang sudah kamu kirim</h2>
+            <h2 className="text-lg font-semibold text-foreground">Pertanyaan yang sudah kamu kirim</h2>
             {tickets.length > 0 && (
               <span className="bg-primary/20 px-2 py-0.5 text-xs font-semibold text-foreground">{tickets.length}</span>
             )}

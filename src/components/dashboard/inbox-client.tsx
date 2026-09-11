@@ -95,7 +95,7 @@ export default function InboxClient() {
   }
 
   return (
-    <div className="cg-card grid min-h-[640px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
+    <div className="cg-card cg-tone-top grid min-h-[640px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
       {/* Conversation list */}
       <div className="overflow-y-auto border-r border-border">
         <div className="sticky top-0 z-10 border-b border-border bg-background p-4">

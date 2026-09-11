@@ -92,7 +92,7 @@ export default function AnalyticsClient() {
       {/* Charts row */}
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="cg-card rounded-xl p-5">
-          <h2 className="mb-4 text-sm font-bold text-foreground">Dari kontak sampai pembeli</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Dari kontak sampai pembeli</h2>
           {isAllZero(summary.funnel, ["value"]) ? (
             <EmptyChart height={240} label="Belum ada datanya." />
           ) : (
@@ -108,7 +108,7 @@ export default function AnalyticsClient() {
         </div>
 
         <div className="cg-card rounded-xl p-5">
-          <h2 className="mb-4 text-sm font-bold text-foreground">Kontak datang dari mana</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Kontak datang dari mana</h2>
           {isAllZero(summary.sources, ["count"]) ? (
             <EmptyChart height={240} label="Belum ada datanya." />
           ) : (
@@ -127,7 +127,7 @@ export default function AnalyticsClient() {
 
       {/* Trends */}
       <div className="cg-card rounded-xl p-5">
-        <h2 className="mb-4 text-sm font-bold text-foreground">Perkembangan 30 hari terakhir</h2>
+        <h2 className="mb-4 text-lg font-semibold text-foreground">Perkembangan 30 hari terakhir</h2>
         {isAllZero(trends.days, ["contacts", "messages"]) ? (
           <EmptyChart height={260} label="Belum ada aktivitas dalam 30 hari terakhir." />
         ) : (
@@ -149,7 +149,7 @@ export default function AnalyticsClient() {
       <div className="cg-card rounded-xl p-5">
         <div className="mb-4 flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-foreground" />
-          <h2 className="text-sm font-bold text-foreground">Hasil tiap pengiriman</h2>
+          <h2 className="text-lg font-semibold text-foreground">Hasil tiap pengiriman</h2>
         </div>
         {summary.byCampaign.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
@@ -160,8 +160,8 @@ export default function AnalyticsClient() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="p-4 text-left text-xs font-bold uppercase text-muted-foreground">Kampanye</th>
-                  <th className="p-4 text-right text-xs font-bold uppercase text-muted-foreground">Revenue</th>
+                  <th className="p-4 text-left text-xs font-semibold uppercase text-muted-foreground">Nama pengiriman</th>
+                  <th className="p-4 text-right text-xs font-semibold uppercase text-muted-foreground">Uang masuk</th>
                 </tr>
               </thead>
               <tbody>

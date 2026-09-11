@@ -90,9 +90,9 @@ export default function EmailFinderClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
-      <div className="cg-card rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Mulai pencarian baru</h2>
+          <h2 className="text-lg font-semibold text-foreground">Mulai pencarian baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Pilih sumber data, lalu jalankan — proses berjalan di latar belakang.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -143,7 +143,7 @@ export default function EmailFinderClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Riwayat pencarian</h2>
+          <h2 className="text-lg font-semibold text-foreground">Riwayat pencarian</h2>
           <p className="text-sm text-muted-foreground">{jobs.length} proses dijalankan</p>
         </div>
         <div className="space-y-3">
@@ -154,7 +154,7 @@ export default function EmailFinderClient() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="truncate font-bold text-foreground">{SOURCE_LABEL[job.source]}</h3>
+                      <h3 className="truncate font-semibold text-foreground">{SOURCE_LABEL[job.source]}</h3>
                       <StatusBadge status={job.status} />
                     </div>
                     {job.label && <p className="mt-0.5 text-xs text-muted-foreground">Filter: {job.label}</p>}

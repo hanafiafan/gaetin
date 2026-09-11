@@ -203,7 +203,7 @@ export default async function DashboardPage({
       {/* Bisnis yang baru ditemukan */}
       <div className="cg-card rounded-xl p-5">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="cg-display text-xl">Bisnis yang baru ditemukan</h2>
+            <h2 className="text-lg font-semibold text-foreground">Bisnis yang baru ditemukan</h2>
             <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
           </div>
           <div className="mt-4 space-y-2">

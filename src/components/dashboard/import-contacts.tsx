@@ -129,7 +129,7 @@ export default function ImportContacts() {
       {headers.length > 0 && !summary && (
         <>
           <div>
-            <h3 className="mb-3 text-sm font-bold text-foreground">Cocokkan kolom</h3>
+            <h3 className="mb-3 font-semibold text-foreground">Cocokkan kolom</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               {FIELDS.map((f) => (
                 <div key={f.key} className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function ImportContacts() {
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-bold text-foreground">Pratinjau ({Math.min(10, records.length)} dari {records.length} baris)</h3>
+            <h3 className="mb-2 font-semibold text-foreground">Pratinjau ({Math.min(10, records.length)} dari {records.length} baris)</h3>
             <div className="overflow-x-auto rounded-xl border border-border">
               <table className="w-full text-xs">
                 <thead>
@@ -191,7 +191,7 @@ export default function ImportContacts() {
         <div className="cg-card rounded-xl p-5 space-y-3">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-success" />
-            <h3 className="font-bold text-foreground">Ringkasan impor</h3>
+            <h3 className="font-semibold text-foreground">Ringkasan impor</h3>
           </div>
           <ul className="space-y-1 text-sm">
             <li className="text-foreground/80">Total baris: <strong className="text-foreground">{summary.total}</strong></li>

@@ -87,7 +87,7 @@ export default function TasksClient() {
 
   return (
     <div className="space-y-5">
-      <div className="cg-card rounded-xl p-4">
+      <div className="cg-card cg-tone-top rounded-xl p-4">
         <form onSubmit={create} className="grid gap-3 lg:grid-cols-[1fr_220px_160px_140px_auto]">
           <input
             value={title}
@@ -136,11 +136,11 @@ export default function TasksClient() {
             <thead>
               <tr className="border-b border-border bg-muted">
                 <th className="w-10 p-3"></th>
-                <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Tugas</th>
-                <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Kontak</th>
-                <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Jatuh tempo</th>
-                <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Prioritas</th>
-                <th className="p-3 text-left text-xs font-bold uppercase text-muted-foreground">Status</th>
+                <th className="p-3 text-left text-xs font-semibold uppercase text-muted-foreground">Tugas</th>
+                <th className="p-3 text-left text-xs font-semibold uppercase text-muted-foreground">Kontak</th>
+                <th className="p-3 text-left text-xs font-semibold uppercase text-muted-foreground">Jatuh tempo</th>
+                <th className="p-3 text-left text-xs font-semibold uppercase text-muted-foreground">Prioritas</th>
+                <th className="p-3 text-left text-xs font-semibold uppercase text-muted-foreground">Status</th>
                 <th className="p-3"></th>
               </tr>
             </thead>

@@ -79,9 +79,9 @@ export default function EmailBlastClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Kirim email baru</h2>
+          <h2 className="text-lg font-semibold text-foreground">Kirim email baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Target otomatis ke kontak yang punya email. Tulis subjek dan isi pesan personal.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -133,7 +133,7 @@ export default function EmailBlastClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Email yang pernah dikirim</h2>
+          <h2 className="text-lg font-semibold text-foreground">Email yang pernah dikirim</h2>
           <p className="text-sm text-muted-foreground">{blasts.length} email blast dibuat</p>
         </div>
         <div className="space-y-3">
@@ -144,7 +144,7 @@ export default function EmailBlastClient() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="truncate font-bold text-foreground">{blast.name}</h3>
+                      <h3 className="truncate font-semibold text-foreground">{blast.name}</h3>
                       <StatusBadge status={blast.status} />
                     </div>
                     <p className="mt-1 truncate text-xs text-muted-foreground">{blast.subject}</p>

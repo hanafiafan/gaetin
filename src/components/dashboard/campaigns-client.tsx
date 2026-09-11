@@ -113,9 +113,9 @@ export default function CampaignsClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Buat pengiriman baru</h2>
+          <h2 className="text-lg font-semibold text-foreground">Buat pengiriman baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Pilih contoh pesan, tentukan siapa yang dikirimi, lalu atur waktunya.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -212,10 +212,10 @@ export default function CampaignsClient() {
           daftar seperti ini dalam tabel padat berkolom tetap sehingga jumlah
           barisnya bisa dibaca sekilas. */}
       <div className="cg-card flex flex-col overflow-hidden rounded-xl">
-        <div className="cg-tone-bar relative flex items-center justify-between gap-3 border-b border-border px-5 py-4 pl-6">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
           <div>
-            <h2 className="font-semibold text-foreground">Pengiriman yang sudah dibuat</h2>
-            <p className="text-sm text-muted-foreground">{campaigns.length} kampanye dibuat</p>
+            <h2 className="text-lg font-semibold text-foreground">Pengiriman yang sudah dibuat</h2>
+            <p className="text-sm text-muted-foreground">{campaigns.length} pengiriman tercatat</p>
           </div>
         </div>
 
@@ -232,11 +232,11 @@ export default function CampaignsClient() {
             <table className="w-full min-w-[680px] text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/60 text-left">
-                  <th className="px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Kampanye</th>
+                  <th className="px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Nama pengiriman</th>
                   <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</th>
-                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Penerima</th>
-                  <th className="w-[200px] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Progress</th>
-                  <th className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">Aksi</th>
+                  <th className="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Jumlah penerima</th>
+                  <th className="w-[200px] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Kemajuan</th>
+                  <th className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tindakan</th>
                 </tr>
               </thead>
               <tbody>

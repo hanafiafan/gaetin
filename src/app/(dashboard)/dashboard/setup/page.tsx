@@ -210,7 +210,7 @@ function StepInstall({
           <Chrome className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Pasang alat Hellens di Chrome</h2>
+          <h2 className="text-lg font-semibold text-foreground">Pasang alat Hellens di Chrome</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Alat inilah yang nanti bekerja di browser kamu dan mengambil data bisnis dari Google Maps.
           </p>
@@ -296,7 +296,7 @@ function StepMaps({
           <Map className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Konfigurasi Google Maps</h2>
+          <h2 className="text-lg font-semibold text-foreground">Konfigurasi Google Maps</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Ada satu pengaturan wajib di Google Maps yang <strong className="text-foreground">harus</strong> diaktifkan agar scraping berjalan.
           </p>
@@ -430,7 +430,7 @@ function StepPermissions({
           <Shield className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Aktifkan Izin Browser</h2>
+          <h2 className="text-lg font-semibold text-foreground">Aktifkan Izin Browser</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Chrome perlu izin popup dan lokasi agar ekstensi Hellens bisa bekerja dengan optimal di Google Maps.
           </p>
@@ -538,7 +538,7 @@ function StepWhatsApp() {
           <Smartphone className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Sambungkan Nomor WhatsApp</h2>
+          <h2 className="text-lg font-semibold text-foreground">Sambungkan Nomor WhatsApp</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Scan QR dengan WhatsApp di ponselmu. Nomor ini yang akan mengirim Blast, Kampanye, dan Follow-up nanti.
           </p>
@@ -567,7 +567,7 @@ function StepFirstScrape() {
           <Search className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Coba Cari Bisnis Pertamamu</h2>
+          <h2 className="text-lg font-semibold text-foreground">Coba Cari Bisnis Pertamamu</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Semua sudah siap. Buka menu Scraper untuk mulai mengambil lead dari Google Maps.
           </p>
@@ -636,7 +636,7 @@ function StepDone() {
         <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-foreground ring-4 ring-primary/10">
           <Check className="h-8 w-8" />
         </div>
-        <h2 className="text-2xl font-bold text-foreground">Setup Selesai!</h2>
+        <h2 className="text-lg font-semibold text-foreground">Setup Selesai!</h2>
         <p className="mt-2 text-muted-foreground">
           Ekstensi terpasang, WhatsApp tersambung. Mau lanjut ke mana dulu?
         </p>

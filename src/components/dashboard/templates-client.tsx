@@ -49,10 +49,10 @@ export default function TemplatesClient() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card rounded-xl p-5">
+      <div className="cg-card cg-tone-top rounded-xl p-5">
         <form onSubmit={create} className="space-y-3">
           <div>
-            <h2 className="font-semibold text-foreground">Buat contoh pesan baru</h2>
+            <h2 className="text-lg font-semibold text-foreground">Buat contoh pesan baru</h2>
             <p className="mt-1 text-sm text-muted-foreground">Tulis sekali, pakai berkali-kali saat mengirim pesan.</p>
           </div>
           {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -90,7 +90,7 @@ export default function TemplatesClient() {
 
       <div className="cg-card rounded-xl p-5">
         <div className="mb-4">
-          <h2 className="font-semibold text-foreground">Contoh pesan tersimpan</h2>
+          <h2 className="text-lg font-semibold text-foreground">Contoh pesan tersimpan</h2>
           <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>
         </div>
         {items.length === 0 ? (

@@ -37,7 +37,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
         </div>
 
         <div className="px-6 pb-6">
-          <h2 className="text-xl font-semibold text-foreground">{feature} butuh paket Bisnis</h2>
+          <h2 className="text-lg font-semibold text-foreground">{feature} butuh paket Bisnis</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Paket Starter hanya mencakup scraping Google Maps dan ekspor CSV. Upgrade ke Bisnis untuk membuka fitur ini.
           </p>

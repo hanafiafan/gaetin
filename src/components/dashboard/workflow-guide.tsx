@@ -31,7 +31,7 @@ export default function WorkflowGuide({ steps }: { steps: WorkflowStep[] }) {
   const currentIndex = steps.findIndex((s) => !s.done);
 
   return (
-    <section className="cg-card cg-tone-top overflow-hidden rounded-xl">
+    <section className="cg-card overflow-hidden rounded-xl">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/40 px-5 py-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Cara kerja Hellens</h2>
@@ -51,15 +51,15 @@ export default function WorkflowGuide({ steps }: { steps: WorkflowStep[] }) {
             <li
               key={step.title}
               className={cn(
-                "flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center",
-                isCurrent && "bg-primary/[0.07]",
+                "flex flex-col gap-3 px-5 py-4 transition-colors sm:flex-row sm:items-center",
+                isCurrent ? "bg-primary/[0.09]" : step.done ? "bg-muted/30" : "",
               )}
             >
               <span
                 className={cn(
                   "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base font-bold",
                   step.done
-                    ? "bg-success text-success-foreground"
+                    ? "bg-success/15 text-success"
                     : isCurrent
                       ? "bg-primary text-primary-foreground"
                       : "bg-foreground/[0.07] text-muted-foreground",
@@ -69,32 +69,35 @@ export default function WorkflowGuide({ steps }: { steps: WorkflowStep[] }) {
               </span>
 
               <div className="min-w-0 flex-1 sm:ml-4">
-                <p className="flex flex-wrap items-center gap-2 font-semibold text-foreground">
-                  {step.title}
-                  {step.done && (
-                    <span className="rounded bg-success/15 px-2 py-0.5 text-xs font-bold uppercase text-success">
-                      Selesai
-                    </span>
-                  )}
+                <p className="flex flex-wrap items-center gap-2 font-semibold">
+                  {/* Badge "Selesai" dihapus: centang hijau di kiri sudah
+                      menyatakan hal yang sama, dan empat badge berjajar
+                      membuat satu badge yang benar-benar penting ikut
+                      tenggelam. */}
+                  <span className={step.done ? "text-muted-foreground" : "text-foreground"}>{step.title}</span>
                   {isCurrent && (
                     <span className="rounded bg-primary px-2 py-0.5 text-xs font-bold uppercase text-primary-foreground">
                       Giliran ini
                     </span>
                   )}
                 </p>
-                <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                {!step.done && (
+                  <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                )}
               </div>
 
               <Link
                 href={step.href}
                 className={cn(
-                  "flex h-11 shrink-0 items-center justify-center gap-2 rounded-lg px-5 font-semibold transition",
+                  "flex h-11 shrink-0 items-center justify-center gap-2 rounded-lg font-semibold transition",
                   isCurrent
-                    ? "bg-primary text-primary-foreground hover:opacity-90"
-                    : "border border-border text-foreground/80 hover:border-foreground/30 hover:text-foreground",
+                    ? "bg-primary px-5 text-primary-foreground hover:opacity-90"
+                    : step.done
+                      ? "px-2 text-sm text-muted-foreground hover:text-foreground"
+                      : "border border-border px-5 text-foreground/80 hover:border-foreground/30 hover:text-foreground",
                 )}
               >
-                {step.done ? "Buka lagi" : step.cta}
+                {step.done ? "Buka" : step.cta}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </li>

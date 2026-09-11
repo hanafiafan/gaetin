@@ -261,23 +261,15 @@
     color: hsl(var(--foreground));
   }
 
-  /* Pita warna area di tepi atas kartu, dan garis warna di kepala panel.
-     Warnanya dari --tone yang dipasang SectionCanvas sesuai halaman, jadi
-     komponennya tidak perlu tahu sedang berada di area mana.
+  /* Pita warna area di tepi atas kartu. Warnanya dari --tone yang dipasang
+     SectionCanvas sesuai halaman, jadi komponennya tidak perlu tahu sedang
+     berada di area mana. Dipasang di SATU kartu teratas tiap halaman —
+     memberi pita ke semua kartu mengembalikan masalah yang sama.
 
      Percobaan pertama dan kedua untuk "bikin lebih berwarna" membanjiri
      bidangnya — baris tabel berpelangi dan wash selebar kartu — dan keduanya
      membuat permukaan keruh. Di sini warnanya dibatasi 3px di tepi, cukup
      untuk membedakan area sekali lihat tanpa mengganggu isinya. */
-  .cg-tone-bar::before {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    width: 3px;
-    background: hsl(var(--tone, var(--primary)));
-  }
-
   .cg-tint {
     --background: 0 0% 96%;
     --muted: 0 0% 91%;

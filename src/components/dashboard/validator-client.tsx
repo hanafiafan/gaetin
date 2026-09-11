@@ -152,10 +152,10 @@ export default function ValidatorClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="cg-card rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-foreground" />
-          <h2 className="font-semibold text-foreground">Pengecekan nomor</h2>
+          <h2 className="text-lg font-semibold text-foreground">Pengecekan nomor</h2>
         </div>
 
         {connectedAccounts.length === 0 ? (
@@ -269,7 +269,7 @@ export default function ValidatorClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="font-semibold text-foreground">Kemajuan</h2>
+          <h2 className="text-lg font-semibold text-foreground">Kemajuan</h2>
           {/* Sebelumnya menampilkan status mentah apa adanya: "idle", "running",
               "stopped" — istilah internal berbahasa Inggris di layar yang
               seluruhnya berbahasa Indonesia. Jenis bug yang sama dengan enum

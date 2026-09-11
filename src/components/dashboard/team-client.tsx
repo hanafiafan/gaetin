@@ -74,7 +74,7 @@ export default function TeamClient() {
   return (
     <div className="space-y-6">
       {isManager && (
-        <form onSubmit={addMember} className="cg-card flex flex-wrap items-center gap-2 rounded-xl p-4">
+        <form onSubmit={addMember} className="cg-card cg-tone-top flex flex-wrap items-center gap-2 rounded-xl p-4">
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -98,9 +98,9 @@ export default function TeamClient() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted text-left">
-              <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Nama</th>
-              <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Email</th>
-              <th className="p-3 text-xs font-bold uppercase text-muted-foreground">Role</th>
+              <th className="p-3 text-xs font-semibold uppercase text-muted-foreground">Nama</th>
+              <th className="p-3 text-xs font-semibold uppercase text-muted-foreground">Email</th>
+              <th className="p-3 text-xs font-semibold uppercase text-muted-foreground">Peran</th>
               <th className="p-3" />
             </tr>
           </thead>
@@ -133,7 +133,7 @@ export default function TeamClient() {
       </div>
 
       <div>
-        <h2 className="mb-2 font-bold text-foreground">Aktivitas terbaru</h2>
+        <h2 className="mb-2 text-lg font-semibold text-foreground">Aktivitas terbaru</h2>
         <div className="cg-card space-y-1 rounded-xl p-4 text-sm">
           {logs.length === 0 && <p className="text-muted-foreground">Belum ada aktivitas tercatat.</p>}
           {logs.map((l) => (
