@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2, Mail, Play, StopCircle, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface EmailBlast {
   id: string;
@@ -183,9 +184,11 @@ export default function EmailBlastClient() {
             );
           })}
           {blasts.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-              Belum ada email blast. Buat pesan pertama dari panel di kiri.
-            </div>
+            <EmptyState
+              title="Belum ada email blast"
+              hint="Email blast mengirim ke kontak yang punya alamat email. Butuh alamatnya dulu? Jalankan Cari Email."
+              action={{ href: "/dashboard/email-finder", label: "Cari email kontak" }}
+            />
           )}
         </div>
       </div>

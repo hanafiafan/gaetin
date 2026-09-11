@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Loader2, Mail, Play, Send, StopCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
+import EmptyState from "@/components/dashboard/empty-state";
 
 type Source = "LEAD" | "CONTACT";
 
@@ -193,10 +194,12 @@ export default function EmailFinderClient() {
             );
           })}
           {jobs.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-              <Play className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
-              Belum ada pencarian. Mulai dari panel kiri.
-            </div>
+            <EmptyState
+              icon={Play}
+              title="Belum ada pencarian"
+              hint="Cari Email menelusuri website kontak untuk menemukan alamat email. Butuh kontak yang punya website dulu."
+              action={{ href: "/dashboard/contacts", label: "Lihat kontak" }}
+            />
           )}
         </div>
       </div>

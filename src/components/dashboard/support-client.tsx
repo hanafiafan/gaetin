@@ -15,7 +15,7 @@ interface TicketItem {
 const FAQ = [
   {
     q: "Apa itu kredit dan kapan terpotong?",
-    a: "Kredit terpotong saat menyimpan lead jadi kontak dan saat validasi nomor. Tiap paket memberi jatah kredit bulanan; bisa top-up kapan saja di menu Tagihan.",
+    a: "Kredit terpotong saat menyimpan lead jadi kontak, validasi nomor, mengirim pesan WhatsApp, mengirim email blast, dan saat pencarian email berhasil menemukan alamat. Scraping sendiri tidak memakai kredit. Daftar biaya lengkapnya ada di menu Tagihan.",
   },
   {
     q: "Kenapa blast saya gagal terkirim?",
@@ -35,7 +35,7 @@ const FAQ = [
   },
   {
     q: "Berapa lama kredit kadaluwarsa?",
-    a: "Kredit tidak kadaluwarsa. Kredit bulanan dari paket akan ter-reset setiap siklus billing, tapi saldo yang tersisa dari top-up manual tidak hangus.",
+    a: "Kredit tidak kadaluwarsa dan tidak di-reset. Jatah dari paket diberikan sekali saat pembayaran, lalu bertambah setiap kali kamu memperpanjang atau top-up — sisa saldo lama tetap terbawa.",
   },
 ];
 

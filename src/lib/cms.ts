@@ -20,7 +20,7 @@ export const DEFAULT_LANDING: LandingContent = {
     { title: "Follow-up Otomatis", desc: "Kejar lead yang belum balas; berhenti sendiri saat mereka membalas." },
   ],
   faq: [
-    { q: "Apa itu kredit?", a: "Kredit dipakai saat menyimpan lead jadi kontak dan validasi nomor. Tiap paket memberi jatah kredit bulanan, dan bisa top-up kapan saja." },
+    { q: "Apa itu kredit?", a: "Kredit dipakai saat menyimpan lead jadi kontak, validasi nomor, mengirim pesan WhatsApp atau email, dan saat pencarian email menemukan alamat. Scraping sendiri gratis. Tiap paket memberi jatah kredit, dan bisa top-up kapan saja." },
     { q: "Metode pembayaran apa saja?", a: "Pembayaran via Midtrans: transfer/virtual account, e-wallet, dan QRIS." },
     { q: "Apakah nomor WhatsApp saya aman?", a: "Pakai nomor bisnis khusus dan ikuti batas kirim harian. Sistem punya pengaman anti-spam." },
     { q: "Bisa coba dulu?", a: "Bisa. Daftar gratis dan dapat kredit trial untuk mencoba scraping dan fitur inti." },

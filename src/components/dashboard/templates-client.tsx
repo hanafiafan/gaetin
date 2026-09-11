@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Eye, Plus, Trash2 } from "lucide-react";
 import { renderMessage } from "@/lib/messaging/text";
+import EmptyState from "@/components/dashboard/empty-state";
 
 interface Template {
   id: string;
@@ -93,9 +94,11 @@ export default function TemplatesClient() {
           <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>
         </div>
         {items.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            Belum ada template. Buat template pertama dari panel di kiri.
-          </div>
+          <EmptyState
+            title="Belum ada template"
+            hint="Template menyimpan pesan yang sering dipakai supaya tidak perlu diketik ulang tiap kampanye. Buat yang pertama dari panel di kiri."
+            action={{ href: "/dashboard/campaigns", label: "Lihat kampanye" }}
+          />
         ) : (
           <div className="space-y-3">
             {items.map((t) => (
