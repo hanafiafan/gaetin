@@ -19,6 +19,15 @@ interface Log {
 
 const SELECT_CLASS = "h-8 rounded-lg border border-border bg-card px-2 text-xs text-foreground";
 
+/** Nilai enum Prisma bocor ke layar sebagai "OWNER". Sisa kelas bug yang sama
+ * dengan status kampanye dan percakapan; peta kecilnya di sini karena role
+ * bukan status dan tidak masuk StatusBadge. */
+const ROLE_LABEL: Record<string, string> = {
+  OWNER: "Owner",
+  ADMIN: "Admin",
+  AGENT: "Agent",
+};
+
 export default function TeamClient() {
   const [members, setMembers] = useState<Member[]>([]);
   const [logs, setLogs] = useState<Log[]>([]);
@@ -107,7 +116,7 @@ export default function TeamClient() {
                       <option value="AGENT">Agent</option>
                     </select>
                   ) : (
-                    <span className="text-foreground/80">{m.role}</span>
+                    <span className="text-foreground/80">{ROLE_LABEL[m.role] ?? m.role}</span>
                   )}
                 </td>
                 <td className="p-3 text-right">
