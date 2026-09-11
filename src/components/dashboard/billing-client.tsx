@@ -18,12 +18,12 @@ import StatusBadge from "@/components/dashboard/status-badge";
 import MetricStrip from "@/components/dashboard/metric-strip";
 
 const CREDIT_USAGE = [
-  { label: "Simpan lead jadi kontak", detail: "Per lead baru yang disimpan", cost: CREDIT_COSTS.saveLead },
-  { label: "Validasi nomor WhatsApp", detail: "Per nomor dicek terdaftar", cost: CREDIT_COSTS.validateNumber },
-  { label: "Kirim pesan WhatsApp", detail: "Per pesan terkirim di kampanye & blast", cost: CREDIT_COSTS.sendWhatsApp },
-  { label: "Kirim email blast", detail: "Per email terkirim", cost: CREDIT_COSTS.sendEmail },
-  { label: "Cari email", detail: "Hanya saat email berhasil ditemukan", cost: CREDIT_COSTS.findEmail },
-  { label: "Scraping Google Maps", detail: "Tidak memakai kredit", cost: 0 },
+  { label: "Menyimpan bisnis jadi kontak", detail: "Dihitung per kontak baru", cost: CREDIT_COSTS.saveLead },
+  { label: "Mengecek nomor WhatsApp", detail: "Dihitung per nomor yang dicek", cost: CREDIT_COSTS.validateNumber },
+  { label: "Mengirim pesan WhatsApp", detail: "Dihitung per pesan yang berhasil terkirim", cost: CREDIT_COSTS.sendWhatsApp },
+  { label: "Mengirim email", detail: "Dihitung per email yang berhasil terkirim", cost: CREDIT_COSTS.sendEmail },
+  { label: "Mencari alamat email", detail: "Hanya dihitung kalau emailnya ketemu", cost: CREDIT_COSTS.findEmail },
+  { label: "Mencari bisnis di Google Maps", detail: "Gratis, tidak memakai kredit", cost: 0 },
 ];
 
 interface Plan { id: string; name: string; monthlyPrice: number; monthlyCredits: number }
@@ -38,20 +38,20 @@ function idr(n: number) {
 
 const PLAN_FEATURES: Record<string, string[]> = {
   STARTER: [
-    "Scraping Google Maps",
-    "Ekspor CSV & Excel",
-    "Simpan lead jadi kontak",
+    "Cari bisnis di Google Maps",
+    "Unduh daftarnya ke Excel",
+    "Simpan jadi daftar kontak",
   ],
   GROWTH: [
-    "Semua fitur WhatsApp & CRM",
-    "Validasi nomor WhatsApp",
-    "Follow-up otomatis",
-    "Bantuan prioritas",
+    "Semua fitur WhatsApp & Peluang Penjualan",
+    "Cek nomor WhatsApp aktif",
+    "Pesan susulan otomatis",
+    "Bantuan didahulukan",
   ],
   PRO: [
-    "Semua fitur Bisnis",
-    "White-label & branding",
-    "Support prioritas VIP",
+    "Semua yang ada di paket Bisnis",
+    "Pakai logo dan warna bisnismu sendiri",
+    "Bantuan khusus dan paling cepat",
   ],
 };
 
@@ -177,7 +177,7 @@ export default function BillingClient() {
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Pilih paket</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">Upgrade atau downgrade kapan saja. Bayar via VA, e-wallet, atau QRIS.</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Bisa naik atau turun paket kapan saja. Bayar lewat transfer bank, e-wallet, atau QRIS.</p>
           </div>
           <div className="flex rounded-full border border-border bg-card p-1 text-sm">
             <button
@@ -281,7 +281,7 @@ export default function BillingClient() {
 
         <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
           <Shield className="h-3.5 w-3.5" />
-          Pembayaran diamankan oleh Midtrans. Tidak perlu kartu kredit untuk paket Starter.
+          Pembayaran diamankan oleh Midtrans. Paket Starter tidak perlu kartu kredit.
         </p>
       </div>
 
@@ -289,9 +289,9 @@ export default function BillingClient() {
           tidak bisa melenceng dari yang benar-benar dipotong sistem. */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-semibold text-foreground">Apa yang memakai kredit</h2>
+          <h2 className="text-lg font-semibold text-foreground">Kredit dipakai untuk apa saja</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Kredit hanya terpotong saat sebuah aksi berhasil. Scraping sendiri gratis.
+            Kredit hanya berkurang kalau tindakannya berhasil. Mencari bisnis di Maps tidak memakai kredit sama sekali.
           </p>
         </div>
         <div className="cg-card grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-2">

@@ -28,38 +28,38 @@ const STEPS = [
   {
     id: 1,
     icon: Chrome,
-    title: "Install Ekstensi Chrome",
-    subtitle: "Download & aktifkan ekstensi Hellens",
+    title: "Pasang alat Hellens di Chrome",
+    subtitle: "Unduh lalu aktifkan",
   },
   {
     id: 2,
     icon: Map,
-    title: "Konfigurasi Google Maps",
-    subtitle: "Aktifkan mode update otomatis",
+    title: "Atur Google Maps",
+    subtitle: "Nyalakan pembaruan otomatis",
   },
   {
     id: 3,
     icon: Shield,
-    title: "Izin Browser",
-    subtitle: "Aktifkan popup & lokasi",
+    title: "Beri izin ke browser",
+    subtitle: "Izinkan jendela baru & lokasi",
   },
   {
     id: 4,
     icon: Smartphone,
-    title: "Sambung WhatsApp",
-    subtitle: "Hubungkan nomor pengirim",
+    title: "Sambungkan WhatsApp",
+    subtitle: "Nomor yang dipakai mengirim",
   },
   {
     id: 5,
     icon: Search,
-    title: "Scraping Pertama",
-    subtitle: "Jalankan job pertamamu",
+    title: "Coba cari bisnis",
+    subtitle: "Pencarian pertamamu",
   },
   {
     id: 6,
     icon: Zap,
     title: "Selesai!",
-    subtitle: "Siap outreach",
+    subtitle: "Siap mengirim pesan",
   },
 ];
 
@@ -98,7 +98,7 @@ export default function SetupPage() {
       <PageHero
         kicker="Mulai"
         title="Pasang Ekstensi"
-        description={`Ikuti ${STEPS.length} langkah ini dari install ekstensi sampai siap kirim WhatsApp/email pertamamu.`}
+        description={`Ikuti ${STEPS.length} langkah ini, sekitar 10 menit. Setelah selesai kamu sudah bisa mengirim pesan pertama.`}
       />
 
       {/* Step progress */}
@@ -211,9 +211,9 @@ function StepInstall({
           <Chrome className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Install Ekstensi Chrome</h2>
+          <h2 className="text-xl font-bold text-foreground">Pasang alat Hellens di Chrome</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Ekstensi ini yang akan berjalan di browser kamu dan melakukan scraping otomatis dari Google Maps.
+            Alat inilah yang nanti bekerja di browser kamu dan mengambil data bisnis dari Google Maps.
           </p>
         </div>
       </div>
@@ -240,7 +240,7 @@ function StepInstall({
 
       {/* Install instructions */}
       <div>
-        <p className="mb-3 text-sm font-semibold text-foreground/80">Cara Install:</p>
+        <p className="mb-3 text-sm font-semibold text-foreground/80">Cara memasangnya:</p>
 
         <div className="rounded-xl border border-primary/20 bg-card p-4">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-foreground">File .ZIP & Load Unpacked</p>
