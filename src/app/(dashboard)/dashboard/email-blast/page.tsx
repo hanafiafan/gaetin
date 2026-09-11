@@ -8,8 +8,6 @@ export default async function EmailBlastPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="email"
-        kicker="Email"
         title="Kirim Email Massal"
         description="Kirim email ke banyak kontak sekaligus. Nama dan kota tiap penerima bisa disisipkan otomatis."
       />

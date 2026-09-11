@@ -8,8 +8,6 @@ export default async function ValidatorPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="whatsapp"
-        kicker="WhatsApp"
         title="Cek Nomor WhatsApp"
         description="Periksa dulu nomor mana yang benar-benar aktif di WhatsApp, supaya pesanmu tidak terbuang ke nomor mati."
       />

@@ -117,6 +117,28 @@ export default function WorkspaceNav({
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
               const open = openGroup === g.label;
+
+              // Grup berisi satu tujuan jadi tautan langsung. Dropdown yang
+              // isinya cuma satu pilihan menambah satu klik tanpa menambah
+              // satu pun keputusan.
+              if (g.items.length === 1) {
+                return (
+                  <Link
+                    key={g.label}
+                    href={g.items[0].href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex h-11 items-center whitespace-nowrap rounded-md px-4 font-medium transition",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
+                    )}
+                  >
+                    {g.label}
+                  </Link>
+                );
+              }
+
               return (
                 <div key={g.label} className="relative">
                   <button

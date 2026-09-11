@@ -8,8 +8,6 @@ export default async function FollowUpsPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="whatsapp"
-        kicker="WhatsApp"
         title="Pesan Susulan"
         description="Kalau kontak belum membalas setelah beberapa hari, sistem mengirim pesan susulan otomatis. Berhenti sendiri begitu dibalas."
       />

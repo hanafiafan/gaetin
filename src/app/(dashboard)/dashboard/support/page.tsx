@@ -6,8 +6,6 @@ export default function SupportPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="akun"
-        kicker="Akun"
         title="Bantuan"
         description="Jawaban atas pertanyaan yang sering ditanyakan. Belum terjawab? Kirim keluhanmu di sini."
       />

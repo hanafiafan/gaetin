@@ -6,8 +6,6 @@ export default function TasksPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="kelola"
-        kicker="Kelola"
         title="Daftar Tugas"
         description="Catat pekerjaan yang harus kamu kerjakan beserta tenggatnya, supaya tidak ada calon pembeli yang terlupa."
       />

@@ -96,7 +96,6 @@ export default function SetupPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHero
-        kicker="Mulai"
         title="Pasang Ekstensi"
         description={`Ikuti ${STEPS.length} langkah ini, sekitar 10 menit. Setelah selesai kamu sudah bisa mengirim pesan pertama.`}
       />
@@ -627,9 +626,9 @@ function StepDone() {
   // is about to land in is already visible here — same wayfinding system
   // as the rest of the dashboard, not just a plain link list.
   const nextActions: { href: string; label: string; desc: string; icon: typeof Search; tone: SectionTone }[] = [
-    { href: "/dashboard/scraper", label: "Scraper", desc: "Ambil lead baru dari Google Maps", icon: Search, tone: "primary" },
-    { href: "/dashboard/email-finder", label: "Cari Email", desc: "Temukan email dari website lead", icon: Mail, tone: "email" },
-    { href: "/dashboard/campaigns", label: "Kampanye WhatsApp", desc: "Kirim pesan ke kontak tersimpan", icon: Send, tone: "whatsapp" },
+    { href: "/dashboard/scraper", label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis baru", icon: Search, tone: "email" },
+    { href: "/dashboard/email-finder", label: "Temukan Alamat Email", desc: "Cari email dari website bisnis", icon: Mail, tone: "email" },
+    { href: "/dashboard/campaigns", label: "Kirim Pesan WhatsApp", desc: "Kirim ke kontak yang sudah tersimpan", icon: Send, tone: "whatsapp" },
   ];
   return (
     <div className="space-y-6">

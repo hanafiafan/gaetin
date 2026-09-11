@@ -10,8 +10,6 @@ export default async function ScraperPage() {
   return (
     <div className="space-y-6">
       <PageHero
-        tone="primary"
-        kicker="Mulai"
         title="Cari Bisnis di Maps"
         description={
           legacyOsmEnabled

@@ -155,14 +155,14 @@ export default function ValidatorClient() {
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-foreground" />
-          <h2 className="font-semibold text-foreground">Sesi validasi</h2>
+          <h2 className="font-semibold text-foreground">Pengecekan nomor</h2>
         </div>
 
         {connectedAccounts.length === 0 ? (
           <EmptyState
             icon={Smartphone}
             title="Belum ada nomor WhatsApp terhubung"
-            hint="Validasi nomor memerlukan satu nomor WhatsApp aktif untuk melakukan pengecekan."
+            hint="Pengecekan butuh satu nomor WhatsApp yang aktif dulu."
             action={{ href: "/dashboard/settings", label: "Sambungkan WhatsApp" }}
           />
         ) : (
@@ -269,7 +269,7 @@ export default function ValidatorClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="font-semibold text-foreground">Progress</h2>
+          <h2 className="font-semibold text-foreground">Kemajuan</h2>
           {/* Sebelumnya menampilkan status mentah apa adanya: "idle", "running",
               "stopped" — istilah internal berbahasa Inggris di layar yang
               seluruhnya berbahasa Indonesia. Jenis bug yang sama dengan enum
@@ -306,7 +306,7 @@ export default function ValidatorClient() {
           </>
         ) : (
           <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-            Belum ada sesi berjalan. Cakupan saat ini: {SCOPE_LABEL[scope]}.
+            Belum ada pengecekan berjalan. Status sekarang: {SCOPE_LABEL[scope]}.
           </div>
         )}
         {running && (

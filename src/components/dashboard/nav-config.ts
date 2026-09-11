@@ -50,34 +50,33 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     tone: "primary",
     items: [
       { label: "Ringkasan", desc: "Angka penting dan langkah berikutnya", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Pasang Ekstensi", desc: "Panduan pasang alat di browser Chrome", href: "/dashboard/setup", icon: Chrome },
-      { label: "Daftar Kontak", desc: "Semua calon pembeli yang sudah tersimpan", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
-      { label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis dari Google Maps", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
     ],
   },
   {
-    label: "WhatsApp",
+    label: "Cari Calon Pembeli",
+    tone: "email",
+    items: [
+      { label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis dari Google Maps", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
+      { label: "Daftar Kontak", desc: "Semua calon pembeli yang sudah tersimpan", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
+      { label: "Cek Nomor WhatsApp", desc: "Pastikan nomor aktif sebelum dikirimi", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
+      { label: "Temukan Alamat Email", desc: "Cari email dari website bisnis", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
+    ],
+  },
+  {
+    label: "Kirim Pesan",
     tone: "whatsapp",
     items: [
-      { label: "Kirim Pesan Massal", desc: "Kirim satu pesan ke banyak kontak sekaligus", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
-      { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
+      { label: "Kirim Pesan WhatsApp", desc: "Satu pesan ke banyak kontak sekaligus", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
+      { label: "Kirim Email Massal", desc: "Satu email ke banyak kontak sekaligus", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
       { label: "Pesan Susulan", desc: "Kirim otomatis kalau belum dibalas", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
-      { label: "Cek Nomor WhatsApp", desc: "Pastikan nomor aktif sebelum dikirimi", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
       { label: "Contoh Pesan", desc: "Simpan pesan yang sering dipakai", href: "/dashboard/templates", icon: FileText, flag: "templates" },
     ],
   },
   {
-    label: "Email",
-    tone: "email",
-    items: [
-      { label: "Temukan Alamat Email", desc: "Cari email dari website bisnis", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
-      { label: "Kirim Email Massal", desc: "Kirim email ke banyak kontak sekaligus", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
-    ],
-  },
-  {
-    label: "Kelola",
+    label: "Balas & Catat",
     tone: "kelola",
     items: [
+      { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
       { label: "Peluang Penjualan", desc: "Lacak calon pembeli sampai jadi closing", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
       { label: "Daftar Tugas", desc: "Catatan pekerjaan yang harus dikerjakan", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
       { label: "Laporan", desc: "Hasil penjualan dan performa pengiriman", href: "/dashboard/analytics", icon: BarChart3, flag: "analytics" },
@@ -97,6 +96,36 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     ],
   },
 ];
+
+/**
+ * Halaman yang TIDAK punya tempat di menu, beserta area tempatnya bernaung.
+ *
+ * "Pasang Ekstensi" dipakai sekali seumur pemakaian lalu tidak pernah dibuka
+ * lagi, jadi ia tidak layak menempati ruang menu permanen; jalan masuknya dari
+ * langkah 1 panduan alur di Ringkasan dan dari Pengaturan. "Impor Kontak"
+ * memang selalu dibuka lewat tombol di halaman Daftar Kontak.
+ */
+export const offNavSections: Record<string, { group: string; tone: SectionTone }> = {
+  "/dashboard/setup": { group: "Mulai", tone: "primary" },
+  "/dashboard/contacts/import": { group: "Cari Calon Pembeli", tone: "email" },
+};
+
+/** Area tempat sebuah halaman berada — dipakai kepala halaman supaya judulnya
+ * selalu cocok dengan menu yang membawanya ke sana, tanpa tiap halaman perlu
+ * menuliskannya ulang. */
+export function sectionForPath(pathname: string): { group: string; tone: SectionTone } {
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      if (isNavActive(pathname, item.href) && !item.skipActiveHighlight) {
+        return { group: group.label, tone: group.tone };
+      }
+    }
+  }
+  for (const [href, section] of Object.entries(offNavSections)) {
+    if (isNavActive(pathname, href)) return section;
+  }
+  return { group: navGroups[0].label, tone: navGroups[0].tone };
+}
 
 export function isNavActive(pathname: string, href: string) {
   if (href === "/dashboard") return pathname === href;

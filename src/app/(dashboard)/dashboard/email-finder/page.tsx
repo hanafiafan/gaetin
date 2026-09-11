@@ -8,8 +8,6 @@ export default async function EmailFinderPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="email"
-        kicker="Email"
         title="Temukan Alamat Email"
         description="Sistem membuka website tiap bisnis dan mencari alamat emailnya untukmu. Berjalan sendiri di latar belakang."
       />

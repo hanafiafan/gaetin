@@ -6,8 +6,6 @@ export default function BillingPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="akun"
-        kicker="Akun"
         title="Tagihan & Kredit"
         description="Lihat paket langganan dan sisa kreditmu. Bisa bayar lewat transfer bank, e-wallet, atau QRIS."
       />

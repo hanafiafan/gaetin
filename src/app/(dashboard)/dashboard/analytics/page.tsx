@@ -6,8 +6,6 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="kelola"
-        kicker="Kelola"
         title="Laporan"
         description="Lihat berapa kontak yang masuk, berapa yang membalas, dan berapa yang akhirnya membeli."
       />

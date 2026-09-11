@@ -8,9 +8,7 @@ export default async function CampaignsPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="whatsapp"
-        kicker="WhatsApp"
-        title="Kirim Pesan Massal"
+        title="Kirim Pesan WhatsApp"
         description="Kirim satu pesan WhatsApp ke banyak kontak sekaligus. Bisa dijadwalkan, dihentikan, dan dilanjutkan kapan saja."
       />
       <CampaignsClient />

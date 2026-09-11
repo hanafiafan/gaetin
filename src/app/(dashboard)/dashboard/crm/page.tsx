@@ -8,8 +8,6 @@ export default async function CrmPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="kelola"
-        kicker="Kelola"
         title="Peluang Penjualan"
         description="Pantau calon pembeli dari baru kenal sampai jadi beli. Geser kartunya saat statusnya berubah."
       />

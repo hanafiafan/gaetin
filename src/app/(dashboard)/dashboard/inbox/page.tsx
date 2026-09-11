@@ -8,8 +8,6 @@ export default async function InboxPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="whatsapp"
-        kicker="WhatsApp"
         title="Pesan Masuk"
         description="Balasan dari calon pembeli masuk ke sini. Balas langsung tanpa pindah aplikasi."
       />

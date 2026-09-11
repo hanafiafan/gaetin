@@ -6,8 +6,6 @@ export default function TemplatesPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="whatsapp"
-        kicker="WhatsApp"
         title="Contoh Pesan"
         description="Simpan pesan yang sering kamu pakai, supaya tidak perlu mengetik ulang tiap kali mengirim."
       />

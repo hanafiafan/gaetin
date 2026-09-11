@@ -7,8 +7,6 @@ export default function ContactsPage() {
   return (
     <div className="space-y-5">
       <PageHero
-        tone="primary"
-        kicker="Mulai"
         title="Daftar Kontak"
         description="Semua calon pembeli yang sudah kamu simpan. Bisa dicari, diberi label, dan dipilih untuk dikirimi pesan."
         rightSlot={
