@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import MetricStrip from "@/components/dashboard/metric-strip";
-import { TONE_EDGE, TONE_SOFT } from "@/components/dashboard/section-tone";
+import { TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -238,18 +238,21 @@ export default async function DashboardPage({
             <Link
               key={action.href}
               href={action.href}
-              className={`cg-card cg-press group flex flex-col justify-between rounded-3xl border-t-[6px] p-5 ${TONE_EDGE[action.tone]}`}
+              // Tepi atas 6px warna-warni adalah sisa konsep lama: empat garis
+              // berbeda berjajar membuat baris ini berteriak tanpa menambah
+              // arti. Warnanya kini hanya di chip ikon, kartunya rata.
+              className="cg-card group flex flex-col gap-6 rounded-3xl p-5 transition hover:border-foreground/25"
             >
               <div className="flex items-center justify-between">
-                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${TONE_SOFT[action.tone]}`}>
+                <span className={`flex h-10 w-10 items-center justify-center rounded-full ${TONE_SOFT[action.tone]}`}>
                   <Icon className="h-4 w-4" />
                 </span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-foreground transition group-hover:translate-x-0.5">
-                  <ArrowRight className="h-3.5 w-3.5" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/[0.06] text-foreground/70 transition group-hover:bg-primary group-hover:text-primary-foreground">
+                  <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
-              <div className="mt-8">
-                <p className="text-sm font-bold text-foreground">{action.label}</p>
+              <div>
+                <p className="text-sm font-semibold text-foreground">{action.label}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{action.desc}</p>
               </div>
             </Link>

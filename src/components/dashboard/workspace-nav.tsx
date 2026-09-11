@@ -14,15 +14,12 @@ import HeaderSearch from "@/components/dashboard/header-search";
  * Navigasi atas berbentuk pil, menggantikan rail kiri.
  *
  * Referensinya memakai lima pil datar di puncak layar, sementara app ini punya
- * 19 tujuan dalam 5 grup. Memaksa 19 pil ke satu baris tidak akan terbaca,
- * jadi bentuknya dipetakan bertingkat: baris pertama memilih grup, baris kedua
- * menampilkan isi grup yang sedang aktif.
+ * 19 tujuan dalam 5 grup. Satu baris pil grup, masing-masing membuka isinya
+ * saat disentuh kursor — semua tujuan tetap satu aksi, seperti rail lama yang
+ * menampilkan 19 menu sekaligus, tapi dengan siluet referensi.
  *
- * Tiap pil grup juga membuka dropdown isinya. Tanpa itu, pindah ke menu di
- * grup lain memakan dua klik — beban kecil yang menumpuk untuk pemakaian
- * harian, dan itulah kelemahan nyata bentuk ini dibanding rail lama yang
- * menampilkan 19 menu sekaligus. Dropdown mengembalikan akses satu aksi tanpa
- * mengorbankan siluet referensi.
+ * Sempat ada baris kedua berisi menu grup aktif. Setelah dropdown ada, baris
+ * itu mengulang informasi yang sama dan panelnya saling menimpa, jadi dihapus.
  */
 
 type Props = {
@@ -61,6 +58,10 @@ export default function WorkspaceNav({
 }: Props) {
   const pathname = usePathname();
   const [locked, setLocked] = useState<string | null>(null);
+  // Panel dropdown lebih lebar dari pil pemicunya, jadi kotak hover-nya
+  // menutupi pil di sebelahnya dan dua panel bisa terbuka bersamaan.
+  // Satu state memastikan hanya satu yang terbuka.
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   const visible = navGroups
     .map((g) => ({ ...g, items: g.items.filter((i) => !i.flag || featureFlags?.[i.flag] !== false) }))
@@ -76,17 +77,12 @@ export default function WorkspaceNav({
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        {/* Baris 1 — merek, pemilih grup, aksi akun */}
         <div className="mx-auto flex min-h-[68px] max-w-[1600px] flex-wrap items-center gap-3 px-3 sm:px-5 lg:px-7">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
             <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
             <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
           </Link>
 
-          {/* Tiap grup membuka menunya saat disentuh kursor. Tanpa ini pindah
-              ke menu di grup lain butuh dua klik — beban yang menumpuk untuk
-              pemakaian harian, sementara pemula tetap terbantu karena isi tiap
-              grup terlihat sebelum memilih. */}
           <nav
             aria-label="Bagian utama"
             className="hidden items-center gap-1 rounded-full border border-border p-1 lg:flex"
@@ -94,7 +90,12 @@ export default function WorkspaceNav({
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
               return (
-                <div key={g.label} className="group/nav relative">
+                <div
+                  key={g.label}
+                  className="relative"
+                  onMouseEnter={() => setOpenGroup(g.label)}
+                  onMouseLeave={() => setOpenGroup(null)}
+                >
                   <Link
                     href={g.items[0].href}
                     aria-current={active ? "page" : undefined}
@@ -109,7 +110,12 @@ export default function WorkspaceNav({
                     <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                   </Link>
 
-                  <div className="invisible absolute left-0 top-full z-40 pt-2 opacity-0 transition group-hover/nav:visible group-hover/nav:opacity-100 group-focus-within/nav:visible group-focus-within/nav:opacity-100">
+                  <div
+                    className={cn(
+                      "absolute left-0 top-full z-40 pt-2 transition",
+                      openGroup === g.label ? "visible opacity-100" : "invisible opacity-0",
+                    )}
+                  >
                     <div className="min-w-[220px] rounded-2xl border border-border bg-popover p-1.5 shadow-2xl">
                       {g.items.map((item) => {
                         const Icon = item.icon;
@@ -119,7 +125,7 @@ export default function WorkspaceNav({
                             <button
                               key={item.href}
                               type="button"
-                              onClick={() => setLocked(item.label)}
+                                        onClick={() => { setLocked(item.label); setOpenGroup(null); }}
                               className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-foreground/45 transition hover:bg-foreground/5"
                             >
                               <Icon className="h-4 w-4" />
@@ -132,6 +138,7 @@ export default function WorkspaceNav({
                           <Link
                             key={item.href}
                             href={item.href}
+                            onClick={() => setOpenGroup(null)}
                             className={cn(
                               "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition",
                               itemActive
@@ -197,47 +204,6 @@ export default function WorkspaceNav({
           </div>
         </div>
 
-        {/* Baris 2 — isi grup aktif */}
-        {activeGroup && activeGroup.items.length > 1 && (
-          <div className="mx-auto hidden max-w-[1600px] px-3 pb-3 sm:px-5 lg:block lg:px-7">
-            <nav aria-label={`Menu ${activeGroup.label}`} className="flex flex-wrap items-center gap-1.5">
-              {activeGroup.items.map((item) => {
-                const Icon = item.icon;
-                const active = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
-                if (isLocked(item)) {
-                  return (
-                    <button
-                      key={item.href}
-                      type="button"
-                      onClick={() => setLocked(item.label)}
-                      className="flex items-center gap-2 rounded-full border border-border px-3.5 py-1.5 text-sm text-foreground/45 transition hover:text-foreground/70"
-                    >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                      <Lock className="h-3 w-3 text-warning" />
-                    </button>
-                  );
-                }
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition",
-                      active
-                        ? "border-primary/60 bg-primary/15 font-semibold text-foreground"
-                        : "border-border text-foreground/70 hover:border-foreground/25 hover:text-foreground",
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
       </header>
 
       <UpgradeModal feature={locked} onClose={() => setLocked(null)} />
