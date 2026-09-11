@@ -36,6 +36,13 @@ import { cn } from "@/lib/utils";
 const DEFAULT_CENTER = { lat: -6.2088, lng: 106.8456 }; // Jakarta
 const DEFAULT_FIELDS: DataField[] = ["phone", "address", "website", "category", "coordinates"];
 
+/* Enam kolom pertama di DATA_FIELDS adalah yang dipakai untuk menghubungi dan
+   menyaring calon pembeli. Sepuluh sisanya — Plus Code, Fasilitas, Opsi
+   Layanan, Ulasan, Foto, Deskripsi, dan seterusnya — jarang menentukan apa pun
+   di alur penjualan, tapi ikut menuntut keputusan setiap kali halaman dibuka.
+   Kolomnya tetap ada, pilihannya yang disembunyikan sampai diminta. */
+const PRIMARY_FIELD_COUNT = 6;
+
 type DataField =
   | "phone"
   | "address"
@@ -122,6 +129,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
   const [maxLeads, setMaxLeads] = useState("100");
   const [color, setColor] = useState("#2563eb");
   const [dataFields, setDataFields] = useState<Set<DataField>>(new Set(DEFAULT_FIELDS));
+  const [showAllFields, setShowAllFields] = useState(false);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
   const [currentJob, setCurrentJob] = useState<Job | null>(null);
   const [savedJobs, setSavedJobs] = useState<Job[]>([]);
@@ -704,10 +712,10 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
                 <label className="text-sm font-medium">Data yang diambil</label>
-                <span className="text-xs text-muted-foreground">{dataFields.size} / {DATA_FIELDS.length} aktif</span>
+                <span className="text-xs text-muted-foreground">{dataFields.size} dipilih</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {DATA_FIELDS.map((field) => {
+                {(showAllFields ? DATA_FIELDS : DATA_FIELDS.slice(0, PRIMARY_FIELD_COUNT)).map((field) => {
                   const Icon = field.icon;
                   const active = dataFields.has(field.value);
                   return (
@@ -733,6 +741,15 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   );
                 })}
               </div>
+              <button
+                type="button"
+                onClick={() => setShowAllFields((v) => !v)}
+                className="text-sm font-semibold text-foreground/70 underline-offset-4 transition hover:text-foreground hover:underline"
+              >
+                {showAllFields
+                  ? "Sembunyikan data tambahan"
+                  : `Tampilkan ${DATA_FIELDS.length - PRIMARY_FIELD_COUNT} data tambahan`}
+              </button>
             </div>
 
             {mode === "manual" && (

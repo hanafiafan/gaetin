@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BadgeDollarSign, GripVertical, Plus, Trophy } from "lucide-react";
 import MetricStrip from "@/components/dashboard/metric-strip";
+import { isWonColumn, STAGE_LABEL } from "@/lib/crm/stages";
 
 interface Card {
   id: string;
@@ -52,8 +53,8 @@ export default function CrmBoard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ columnId: col.id }),
     });
-    if (/won|menang/i.test(col.name)) {
-      const v = window.prompt(`Nilai deal untuk ${card.name ?? "kontak"} (Rp):`, "0");
+    if (isWonColumn(col.name)) {
+      const v = window.prompt(`Berapa nilai penjualannya untuk ${card.name ?? "kontak ini"}? (Rp)`, "0");
       if (v !== null) {
         await fetch("/api/deals", {
           method: "POST",
@@ -93,8 +94,8 @@ export default function CrmBoard() {
     <div className="space-y-4">
       <MetricStrip
         items={[
-          { label: "Revenue closing", value: formatIDR(revenue), icon: BadgeDollarSign, accent: true },
-          { label: "Deal menang", value: String(wonCount), icon: Trophy },
+          { label: "Uang masuk", value: formatIDR(revenue), icon: BadgeDollarSign, accent: true },
+          { label: "Penjualan jadi", value: String(wonCount), icon: Trophy },
         ]}
         aside={
           <button
@@ -102,7 +103,7 @@ export default function CrmBoard() {
             className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
-            Tambah kontak ke pipeline
+            Tambahkan kontak ke sini
           </button>
         }
       />
@@ -110,7 +111,7 @@ export default function CrmBoard() {
       {adding && (
         <div className="cg-card rounded-xl p-4">
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">Pilih kontak (masuk kolom pertama)</span>
+            <span className="text-sm font-bold text-foreground">Pilih kontak — akan masuk ke kolom pertama</span>
             <button
               onClick={() => setAdding(false)}
               className="text-xs font-bold text-muted-foreground hover:text-foreground"
@@ -146,7 +147,7 @@ export default function CrmBoard() {
               style={{ borderBottomColor: col.color ?? "#888" }}
             >
               <span className="h-2 w-2 shrink-0" style={{ backgroundColor: col.color ?? "#888" }} />
-              <span className="cg-label">{col.name}</span>
+              <span className="cg-label">{STAGE_LABEL[col.name] ?? col.name}</span>
               <span className="ml-auto cg-label text-muted-foreground">{col.cards.length}</span>
             </div>
             <div className="flex flex-1 flex-col space-y-2 p-3">
@@ -168,7 +169,7 @@ export default function CrmBoard() {
               ))}
               {col.cards.length === 0 && (
                 <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-                  Drop kartu ke stage ini.
+                  Geser kartu ke sini.
                 </div>
               )}
             </div>

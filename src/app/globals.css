@@ -261,6 +261,23 @@
     color: hsl(var(--foreground));
   }
 
+  /* Pita warna area di tepi atas kartu, dan garis warna di kepala panel.
+     Warnanya dari --tone yang dipasang SectionCanvas sesuai halaman, jadi
+     komponennya tidak perlu tahu sedang berada di area mana.
+
+     Percobaan pertama dan kedua untuk "bikin lebih berwarna" membanjiri
+     bidangnya — baris tabel berpelangi dan wash selebar kartu — dan keduanya
+     membuat permukaan keruh. Di sini warnanya dibatasi 3px di tepi, cukup
+     untuk membedakan area sekali lihat tanpa mengganggu isinya. */
+  .cg-tone-bar::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 3px;
+    background: hsl(var(--tone, var(--primary)));
+  }
+
   .cg-tint {
     --background: 0 0% 96%;
     --muted: 0 0% 91%;
@@ -301,6 +318,13 @@
      dark fill instead of rendering black-on-black — the border/shadow below
      are hardcoded rather than var()-based so this redefinition doesn't also
      recolor the panel's own edge. */
+  /* Ditulis SETELAH .cg-card dengan sengaja: .cg-card memakai properti border
+     ringkas, jadi kalau aturan ini ada di atasnya, border-top-nya ditimpa
+     kembali jadi 1px dan pita warnanya tidak pernah muncul. */
+  .cg-tone-top {
+    border-top: 3px solid hsl(var(--tone, var(--primary)));
+  }
+
   .cg-card-strong {
     --foreground: 0 0% 100%;
     --muted-foreground: 0 0% 64%;

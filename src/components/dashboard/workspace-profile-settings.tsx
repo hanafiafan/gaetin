@@ -50,10 +50,10 @@ export default function WorkspaceProfileSettings() {
             placeholder="Nama bisnis Anda"
             className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
-          <p className="text-xs text-muted-foreground">Nama ini ditampilkan di header dan notifikasi.</p>
+          <p className="text-xs text-muted-foreground">Nama ini muncul di pojok kanan atas layarmu.</p>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-muted-foreground">Slug (ID unik)</label>
+          <label className="text-xs font-bold text-muted-foreground">Alamat unik workspace</label>
           <input
             value={slug}
             disabled

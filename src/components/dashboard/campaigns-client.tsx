@@ -212,7 +212,7 @@ export default function CampaignsClient() {
           daftar seperti ini dalam tabel padat berkolom tetap sehingga jumlah
           barisnya bisa dibaca sekilas. */}
       <div className="cg-card flex flex-col overflow-hidden rounded-xl">
-        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+        <div className="cg-tone-bar relative flex items-center justify-between gap-3 border-b border-border px-5 py-4 pl-6">
           <div>
             <h2 className="font-semibold text-foreground">Pengiriman yang sudah dibuat</h2>
             <p className="text-sm text-muted-foreground">{campaigns.length} kampanye dibuat</p>

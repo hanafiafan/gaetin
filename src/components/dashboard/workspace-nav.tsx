@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Bell, ChevronDown, Lock, LogOut, ShieldCheck, Zap } from "lucide-react";
+import { ChevronDown, Lock, LogOut, ShieldCheck, Zap } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
 import { cn } from "@/lib/utils";
@@ -225,10 +225,11 @@ export default function WorkspaceNav({
               </Link>
             )}
 
-            <button type="button" className={cn(ICON_BTN, "relative")} title="Notifikasi">
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
-            </button>
+            {/* Lonceng notifikasi dihapus. Tidak punya onClick, tidak punya
+                endpoint, dan titik "ada notifikasi baru" menyala permanen —
+                kontrol yang tampak hidup tapi mati adalah hal pertama yang
+                dicoba pengguna baru. Sama seperti kolom pencarian yang dulu
+                cuma <div> berbentuk kolom pencarian. */}
 
             <form action="/api/auth/logout" method="POST" className="contents">
               <button type="submit" className={ICON_BTN} title="Keluar dari akun">

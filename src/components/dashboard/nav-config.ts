@@ -59,7 +59,6 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     label: "WhatsApp",
     tone: "whatsapp",
     items: [
-      { label: "Sambungkan Nomor", desc: "Hubungkan nomor WhatsApp untuk mengirim", href: "/dashboard/settings", icon: Smartphone, flag: "settings", skipActiveHighlight: true },
       { label: "Kirim Pesan Massal", desc: "Kirim satu pesan ke banyak kontak sekaligus", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
       { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
       { label: "Pesan Susulan", desc: "Kirim otomatis kalau belum dibalas", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
@@ -91,7 +90,10 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
       { label: "Tagihan & Kredit", desc: "Paket langganan dan sisa kredit", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
       { label: "Anggota Tim", desc: "Tambah rekan kerja ke workspace ini", href: "/dashboard/team", icon: Bot, flag: "team" },
       { label: "Bantuan", desc: "Pertanyaan umum dan kirim keluhan", href: "/dashboard/support", icon: Headphones, flag: "support" },
-      { label: "Pengaturan", desc: "Nomor WhatsApp, profil, dan keamanan", href: "/dashboard/settings", icon: Settings, flag: "settings" },
+      // Dulu ada dua tujuan menuju halaman ini: "Sambungkan Nomor" di grup
+      // WhatsApp dan "Pengaturan" di sini. Satu halaman dengan dua nama di dua
+      // tempat justru membuat orang ragu keduanya sama atau beda.
+      { label: "Pengaturan", desc: "Sambungkan nomor WhatsApp, profil, dan keamanan", href: "/dashboard/settings", icon: Settings, flag: "settings" },
     ],
   },
 ];

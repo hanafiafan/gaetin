@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
+import { DEFAULT_PIPELINE_COLUMNS } from "@/lib/crm/pipeline";
 import { RegisterSchema } from "@/lib/validators/auth";
 import { hashPassword } from "@/lib/auth/password";
 import { signToken } from "@/lib/auth/jwt";
@@ -63,15 +64,9 @@ export async function POST(req: NextRequest) {
         pipelines: {
           create: {
             name: "Sales Pipeline",
-            columns: {
-              create: [
-                { name: "Lead Baru", order: 0, color: "#3b82f6" },
-                { name: "Dihubungi", order: 1, color: "#f59e0b" },
-                { name: "Negosiasi", order: 2, color: "#8b5cf6" },
-                { name: "Closed Won", order: 3, color: "#22c55e" },
-                { name: "Closed Lost", order: 4, color: "#ef4444" },
-              ],
-            },
+            // Dulu daftar kolomnya disalin di sini, jadi ada dua sumber
+            // kebenaran yang bisa berbeda diam-diam.
+            columns: { create: DEFAULT_PIPELINE_COLUMNS },
           },
         },
       },

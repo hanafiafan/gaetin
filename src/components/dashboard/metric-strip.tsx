@@ -35,7 +35,7 @@ export default function MetricStrip({
   className?: string;
 }) {
   return (
-    <div className={cn("cg-card grid gap-px overflow-hidden rounded-xl bg-border", aside && "lg:grid-cols-[1fr_auto]", className)}>
+    <div className={cn("cg-card cg-tone-top grid gap-px overflow-hidden rounded-xl bg-border", aside && "lg:grid-cols-[1fr_auto]", className)}>
       <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         {items.map((m) => {
           const Icon = m.icon;

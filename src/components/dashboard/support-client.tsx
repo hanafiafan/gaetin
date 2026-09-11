@@ -86,7 +86,7 @@ export default function SupportClient() {
           melayang dengan celah di antaranya — FAQ adalah satu daftar, bukan
           enam benda terpisah. */}
       <div className="cg-card overflow-hidden rounded-xl">
-        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3.5">
+        <div className="cg-tone-bar relative flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3.5 pl-6">
           <HelpCircle className="h-4 w-4 text-foreground/70" />
           <h2 className="font-semibold text-foreground">Pertanyaan umum</h2>
         </div>

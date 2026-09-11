@@ -114,7 +114,7 @@ export default function WhatsAppAccounts() {
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          placeholder="Label nomor (mis. CS 1, Sales)"
+          placeholder="Beri nama nomor ini, misalnya Nomor CS"
           className="h-10 max-w-xs flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
         />
         <button

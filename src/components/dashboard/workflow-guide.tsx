@@ -31,7 +31,7 @@ export default function WorkflowGuide({ steps }: { steps: WorkflowStep[] }) {
   const currentIndex = steps.findIndex((s) => !s.done);
 
   return (
-    <section className="cg-card overflow-hidden rounded-xl">
+    <section className="cg-card cg-tone-top overflow-hidden rounded-xl">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/40 px-5 py-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Cara kerja Hellens</h2>

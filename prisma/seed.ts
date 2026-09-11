@@ -50,11 +50,11 @@ async function main() {
         name: "Sales Pipeline",
         columns: {
           create: [
-            { name: "Lead Baru", order: 0, color: "#3b82f6" },
-            { name: "Dihubungi", order: 1, color: "#f59e0b" },
-            { name: "Negosiasi", order: 2, color: "#8b5cf6" },
-            { name: "Closed Won", order: 3, color: "#22c55e" },
-            { name: "Closed Lost", order: 4, color: "#ef4444" },
+      { name: "Calon Baru", order: 0, color: "#3b82f6" },
+      { name: "Sudah Dihubungi", order: 1, color: "#f59e0b" },
+      { name: "Sedang Menawar", order: 2, color: "#8b5cf6" },
+      { name: "Jadi Beli", order: 3, color: "#22c55e" },
+      { name: "Batal", order: 4, color: "#ef4444" },
           ],
         },
       },

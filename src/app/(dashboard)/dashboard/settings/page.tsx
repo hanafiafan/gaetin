@@ -25,7 +25,7 @@ function SettingsSection({
 }) {
   return (
     <section className="cg-card overflow-hidden rounded-xl">
-      <header className="flex items-start gap-3 border-b border-border bg-muted/40 px-5 py-4">
+      <header className="cg-tone-bar relative flex items-start gap-3 border-b border-border bg-muted/40 px-5 py-4 pl-6">
         <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06] text-foreground/70">
           <Icon className="h-4 w-4" />
         </span>
@@ -76,7 +76,7 @@ export default function SettingsPage() {
       <SettingsSection
         icon={Chrome}
         title="Ekstensi Chrome"
-        description="Ekstensi yang menjalankan scraping otomatis dari Google Maps di browser Anda."
+        description="Alat yang mengambil data bisnis dari Google Maps lewat browser Chrome-mu."
       >
         <div className="flex flex-col items-start gap-4 rounded-lg border border-primary/25 bg-primary/[0.07] p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

@@ -44,6 +44,27 @@ export const TONE_DOT: Record<SectionTone, string> = {
   akun: "bg-muted-foreground",
 };
 
+/**
+ * Pita tipis di tepi atas kartu — cara kartu membawa warna areanya.
+ *
+ * Ini percobaan KETIGA untuk "bikin lebih berwarna", dan dua yang pertama
+ * gagal karena alasan yang sama: warnanya membanjiri bidang. Baris berpelangi
+ * di tabel kontak dan wash selebar kartu sama-sama membuat permukaan keruh dan
+ * menghilangkan hierarki.
+ *
+ * Yang dipakai sekarang: permukaan tetap putih netral, warnanya hanya 3px di
+ * tepi atas. Cukup untuk membedakan area sekali lihat, tidak cukup untuk
+ * merusak keterbacaan isinya. Karena posisinya selalu sama di setiap kartu,
+ * variasi warnanya tetap terbaca sebagai satu sistem.
+ */
+export const TONE_TOP: Record<SectionTone, string> = {
+  primary: "border-t-[3px] border-t-primary",
+  whatsapp: "border-t-[3px] border-t-whatsapp",
+  email: "border-t-[3px] border-t-email",
+  kelola: "border-t-[3px] border-t-kelola",
+  akun: "border-t-[3px] border-t-foreground/35",
+};
+
 /* Empat peta permukaan berona (CANVAS, PANEL, CARD, WASH) dihapus di sini.
    Semuanya menaruh rona seksi di seluruh bidang; hasilnya kartu dan latar
    sama-sama keruh dan tidak ada lapisan yang terbaca. Referensinya memakai

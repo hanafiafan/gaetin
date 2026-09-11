@@ -2,24 +2,16 @@ import { requireSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import { getEffectiveStatus } from "@/config/plans";
 import {
-  ArrowRight,
-  BarChart3,
+  AlertTriangle,
   Building2,
   CheckCircle2,
-  Contact,
   MessageSquare,
-  Plus,
-  Send,
-  ShieldCheck,
-  Target,
   TrendingUp,
   Users,
-  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import MetricStrip from "@/components/dashboard/metric-strip";
 import WorkflowGuide from "@/components/dashboard/workflow-guide";
-import { TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -53,8 +45,6 @@ export default async function DashboardPage({
   ]);
 
   const revenue = Number(wonAgg._sum.value ?? 0);
-  const totalPipeline = contacts + leads;
-  const contactConversion = totalPipeline > 0 ? Math.round((contacts / totalPipeline) * 100) : 0;
   const credits = workspace?.credits ?? 0;
 
   const trialDaysLeft =
@@ -88,17 +78,11 @@ export default async function DashboardPage({
 
   const metrics = [
     { label: "Kontak tersimpan", value: contacts.toLocaleString("id-ID"), hint: "Calon pembeli yang sudah masuk daftarmu", icon: Users },
-    { label: "Hasil pencarian", value: leads.toLocaleString("id-ID"), hint: "Dari Google Maps, belum disimpan jadi kontak", icon: Target },
+    { label: "Tugas hari ini", value: tasks.toLocaleString("id-ID"), hint: "Pekerjaan yang belum kamu selesaikan", icon: CheckCircle2 },
     { label: "Belum dibalas", value: openConversations.toLocaleString("id-ID"), hint: "Pesan masuk yang menunggu jawabanmu", icon: MessageSquare },
     { label: "Uang masuk", value: formatIDR(revenue), hint: "Total dari penjualan yang sudah jadi", icon: TrendingUp, accent: true },
   ];
 
-  const actionCards = [
-    { href: "/dashboard/scraper", label: "Cari bisnis di Maps", desc: "Ambil nama dan nomor dari Google Maps", icon: Target, tone: "primary" as const },
-    { href: "/dashboard/contacts/import", label: "Unggah kontak lama", desc: "Punya daftar di Excel? Masukkan ke sini", icon: Contact, tone: "email" as const },
-    { href: "/dashboard/campaigns", label: "Kirim pesan massal", desc: "Satu pesan ke banyak kontak sekaligus", icon: Send, tone: "whatsapp" as const },
-    { href: "/dashboard/analytics", label: "Lihat laporan", desc: "Berapa yang membalas dan yang membeli", icon: BarChart3, tone: "kelola" as const },
-  ];
 
   // Alur kerja sebenarnya, bukan daftar pemasangan. Urutannya persis cara
   // aplikasi ini dipakai sehari-hari, dan tiap langkah "selesai" ditentukan
@@ -141,7 +125,6 @@ export default async function DashboardPage({
     },
   ];
 
-  const isExtensionSetupDone = leads > 0;
 
   return (
     <div className="space-y-5">
@@ -206,56 +189,19 @@ export default async function DashboardPage({
           sisanya jelas sudah atau belum. */}
       <WorkflowGuide steps={workflow} />
 
-      {/* Action cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {actionCards.map((action) => {
-          const Icon = action.icon;
-          return (
-            <Link
-              key={action.href}
-              href={action.href}
-              // Tepi atas 6px warna-warni adalah sisa konsep lama: empat garis
-              // berbeda berjajar membuat baris ini berteriak tanpa menambah
-              // arti. Warnanya kini hanya di chip ikon, kartunya rata.
-              className="cg-card group flex flex-col gap-5 rounded-xl p-4 transition hover:border-foreground/25"
-            >
-              <div className="flex items-center justify-between">
-                <span className={`flex h-10 w-10 items-center justify-center rounded-full ${TONE_SOFT[action.tone]}`}>
-                  <Icon className="h-4 w-4" />
-                </span>
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/[0.06] text-foreground/70 transition group-hover:bg-primary group-hover:text-primary-foreground">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{action.label}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{action.desc}</p>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+      {/* Tiga blok dihapus di sini, semuanya mengulang isi layar yang sama:
 
-      {/* Tugas — satu-satunya metrik di sini yang belum tampil di KPI di atas */}
-      <div className="cg-card flex flex-wrap items-center justify-between gap-4 rounded-xl p-5">
-        <div className="flex items-center gap-3">
-          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${TONE_SOFT.kelola}`}>
-            <CheckCircle2 className="h-5 w-5" />
-          </span>
-          <div>
-            <div className="cg-display text-2xl">{tasks.toLocaleString("id-ID")}</div>
-            <p className="cg-label text-muted-foreground">Tugas aktif hari ini</p>
-          </div>
-        </div>
-        <Link href="/dashboard/tasks" className="flex h-10 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
-          <Plus className="h-3.5 w-3.5" />
-          Buat Tugas
-        </Link>
-      </div>
+          - Empat "kartu aksi" (Cari bisnis, Unggah kontak, Kirim pesan, Lihat
+            laporan). Tiga di antaranya sudah jadi langkah di panduan alur tepat
+            di atasnya, dan keempatnya sudah ada di menu.
+          - Strip "Tugas aktif hari ini" — satu angka dan satu tombol memakan
+            satu baris penuh. Angkanya dipindah ke strip metrik di atas.
+          - Panel "Kondisi workspace" — isinya "Nomor WA terhubung" dan
+            "Kampanye dibuat", yaitu langkah 2 dan 4 dari panduan alur yang
+            ditulis ulang sebagai angka. */}
 
-      {/* Recent leads + workspace status */}
-      <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
-        <div className="cg-card rounded-xl p-5">
+      {/* Bisnis yang baru ditemukan */}
+      <div className="cg-card rounded-xl p-5">
           <div className="flex items-center justify-between gap-3">
             <h2 className="cg-display text-xl">Bisnis yang baru ditemukan</h2>
             <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
@@ -263,7 +209,7 @@ export default async function DashboardPage({
           <div className="mt-4 space-y-2">
             {recentLeads.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                Belum ada lead. <Link href="/dashboard/scraper" className="text-foreground hover:underline">Mulai cari sekarang.</Link>
+                Belum ada bisnis yang ditemukan. <Link href="/dashboard/scraper" className="text-foreground hover:underline">Mulai cari sekarang.</Link>
               </div>
             ) : (
               recentLeads.map((lead, i) => (
@@ -282,28 +228,6 @@ export default async function DashboardPage({
                 </div>
               ))
             )}
-          </div>
-        </div>
-
-        <div className="cg-card rounded-xl p-5">
-          <h2 className="text-base font-bold text-foreground">Kondisi workspace</h2>
-          <div className="mt-4 space-y-2.5">
-            {[
-              { icon: ShieldCheck, label: "Nomor WA terhubung", value: accounts },
-              { icon: Send, label: "Kampanye dibuat", value: blasts + campaigns },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm transition hover:bg-muted">
-                  <span className="flex items-center gap-2.5 font-medium text-foreground/80">
-                    <Icon className="h-4 w-4 text-whatsapp" />
-                    {item.label}
-                  </span>
-                  <strong className="text-base tabular-nums text-foreground">{item.value}</strong>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
     </div>
