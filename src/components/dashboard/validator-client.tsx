@@ -45,6 +45,16 @@ const WA_COLOR: Record<Contact["waStatus"], string> = {
   UNKNOWN: "bg-muted-foreground/15 text-muted-foreground",
 };
 
+/** Status sesi validasi hanya ada di memori proses, bukan di database, jadi
+ * petanya tinggal di sini — bukan di StatusBadge yang melayani enum Prisma. */
+const VALIDATOR_STATUS: Record<string, string> = {
+  idle: "Menunggu",
+  running: "Berjalan",
+  stopped: "Dihentikan",
+  done: "Selesai",
+  completed: "Selesai",
+};
+
 export default function ValidatorClient() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountId, setAccountId] = useState("");
@@ -260,8 +270,12 @@ export default function ValidatorClient() {
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="font-semibold text-foreground">Progress</h2>
-          <span className={cn("px-2.5 py-0.5 text-xs font-bold", running ? "bg-whatsapp/15 text-whatsapp" : "bg-muted-foreground/15 text-muted-foreground")}>
-            {progress?.status ?? "idle"}
+          {/* Sebelumnya menampilkan status mentah apa adanya: "idle", "running",
+              "stopped" — istilah internal berbahasa Inggris di layar yang
+              seluruhnya berbahasa Indonesia. Jenis bug yang sama dengan enum
+              database yang bocor di Kampanye dan Inbox. */}
+          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", running ? "bg-whatsapp/15 text-whatsapp" : "bg-muted-foreground/15 text-muted-foreground")}>
+            {VALIDATOR_STATUS[progress?.status ?? "idle"] ?? "Menunggu"}
           </span>
         </div>
         {progress ? (
