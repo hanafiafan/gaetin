@@ -164,7 +164,7 @@ export default function InboxClient() {
               <select
                 value={thread.conversation.status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="h-9 rounded-xl border border-border bg-card px-2 text-xs text-foreground"
+                className="h-10 rounded-lg border border-border bg-card px-2.5 text-sm text-foreground"
               >
                 <option value="OPEN">{STATUS_LABEL.OPEN}</option>
                 <option value="PENDING">{STATUS_LABEL.PENDING}</option>
@@ -187,7 +187,7 @@ export default function InboxClient() {
                     )}
                   >
                     {m.content}
-                    <p className={cn("mt-1 text-[10px]", m.direction === "OUTBOUND" ? "text-foreground/60" : "text-muted-foreground")}>
+                    <p className={cn("mt-1 text-xs", m.direction === "OUTBOUND" ? "text-foreground/60" : "text-muted-foreground")}>
                       {new Date(m.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>

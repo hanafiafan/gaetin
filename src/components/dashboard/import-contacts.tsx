@@ -140,7 +140,7 @@ export default function ImportContacts() {
                   <select
                     value={mapping[f.key]}
                     onChange={(e) => setMapping((m) => ({ ...m, [f.key]: Number(e.target.value) }))}
-                    className="h-9 flex-1 rounded-xl border border-border bg-card px-2 text-sm text-foreground"
+                    className="h-10 flex-1 rounded-lg border border-border bg-card px-2.5 text-sm text-foreground"
                   >
                     <option value={-1}>— tidak ada —</option>
                     {headers.map((h, i) => (<option key={i} value={i}>{h || `Kolom ${i + 1}`}</option>))}
@@ -202,7 +202,7 @@ export default function ImportContacts() {
           </ul>
           <Link
             href="/dashboard/contacts"
-            className="inline-flex h-9 items-center border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+            className="inline-flex h-10 items-center border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
           >
             Lihat kontak
           </Link>

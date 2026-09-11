@@ -44,6 +44,15 @@ function formatIDR(n: number) {
 
 const CHART_TOOLTIP_STYLE = CHART_TOOLTIP;
 
+/* Nilai enum LeadSource tampil mentah sebagai "SCRAPER"/"IMPORT" di sumbu
+   grafik. Kebocoran yang sama dengan status kampanye dan peran anggota tim. */
+const SOURCE_LABEL: Record<string, string> = {
+  SCRAPER: "Google Maps",
+  IMPORT: "Unggahan Excel",
+  MANUAL: "Diketik sendiri",
+  INBOUND: "Menghubungi duluan",
+};
+
 export default function AnalyticsClient() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [trends, setTrends] = useState<Trends | null>(null);
@@ -66,14 +75,14 @@ export default function AnalyticsClient() {
     );
   }
 
-  const contacts = summary.funnel.find((f) => f.stage === "Kontak")?.value ?? 0;
-  const leads = summary.funnel.find((f) => f.stage === "Lead mentah")?.value ?? 0;
+  const contacts = summary.funnel.find((f) => f.stage === "Disimpan jadi kontak")?.value ?? 0;
+  const leads = summary.funnel.find((f) => f.stage === "Hasil pencarian")?.value ?? 0;
 
   const kpiCards = [
-    { label: "Revenue (closing)", value: formatIDR(summary.revenue), icon: DollarSign, accent: true },
-    { label: "Deal menang", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp },
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), icon: Users },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), icon: Target },
+    { label: "Uang masuk", value: formatIDR(summary.revenue), icon: DollarSign, accent: true },
+    { label: "Penjualan jadi", value: summary.wonCount.toLocaleString("id-ID"), icon: TrendingUp },
+    { label: "Kontak tersimpan", value: contacts.toLocaleString("id-ID"), icon: Users },
+    { label: "Belum disimpan", value: leads.toLocaleString("id-ID"), icon: Target },
   ];
 
   return (
@@ -83,9 +92,9 @@ export default function AnalyticsClient() {
       {/* Charts row */}
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="cg-card rounded-xl p-5">
-          <h2 className="mb-4 text-sm font-bold text-foreground">Funnel konversi</h2>
+          <h2 className="mb-4 text-sm font-bold text-foreground">Dari kontak sampai pembeli</h2>
           {isAllZero(summary.funnel, ["value"]) ? (
-            <EmptyChart height={240} label="Belum ada data funnel." />
+            <EmptyChart height={240} label="Belum ada datanya." />
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
@@ -99,14 +108,14 @@ export default function AnalyticsClient() {
         </div>
 
         <div className="cg-card rounded-xl p-5">
-          <h2 className="mb-4 text-sm font-bold text-foreground">Sumber lead</h2>
+          <h2 className="mb-4 text-sm font-bold text-foreground">Kontak datang dari mana</h2>
           {isAllZero(summary.sources, ["count"]) ? (
-            <EmptyChart height={240} label="Belum ada sumber lead." />
+            <EmptyChart height={240} label="Belum ada datanya." />
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={summary.sources}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={CHART.grid} />
-                <XAxis dataKey="source" tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="source" tickFormatter={(v: string) => SOURCE_LABEL[v] ?? v} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: CHART_CURSOR_FILL }} />
                 <Bar dataKey="count" fill={CHART.ink} radius={0} maxBarSize={CHART_MAX_BAR} />
@@ -118,7 +127,7 @@ export default function AnalyticsClient() {
 
       {/* Trends */}
       <div className="cg-card rounded-xl p-5">
-        <h2 className="mb-4 text-sm font-bold text-foreground">Tren 30 hari</h2>
+        <h2 className="mb-4 text-sm font-bold text-foreground">Perkembangan 30 hari terakhir</h2>
         {isAllZero(trends.days, ["contacts", "messages"]) ? (
           <EmptyChart height={260} label="Belum ada aktivitas dalam 30 hari terakhir." />
         ) : (
@@ -140,7 +149,7 @@ export default function AnalyticsClient() {
       <div className="cg-card rounded-xl p-5">
         <div className="mb-4 flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-foreground" />
-          <h2 className="text-sm font-bold text-foreground">ROI per kampanye</h2>
+          <h2 className="text-sm font-bold text-foreground">Hasil tiap pengiriman</h2>
         </div>
         {summary.byCampaign.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">

@@ -44,10 +44,9 @@ export default function SettingsPage() {
     <div className="max-w-5xl space-y-5">
       <PageHero
         tone="akun"
-        kicker="Workspace Settings"
-        kickerIcon={Sparkles}
+        kicker="Akun"
         title="Pengaturan"
-        description="Konfigurasi koneksi WhatsApp, profil workspace, dan pengaturan akun Anda."
+        description="Sambungkan nomor WhatsApp, ubah nama workspace, dan atur keamanan akunmu."
       />
 
       <SettingsSection

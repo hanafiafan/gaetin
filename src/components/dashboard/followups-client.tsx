@@ -168,7 +168,7 @@ export default function FollowUpsClient() {
           <button
             onClick={runNow}
             disabled={running || quota?.remaining === 0}
-            className="flex h-9 items-center gap-1.5 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-50"
+            className="flex h-10 items-center gap-1.5 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-50"
           >
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
             {running ? "Memproses..." : "Jalankan"}
@@ -198,13 +198,13 @@ export default function FollowUpsClient() {
               <div className="flex gap-2">
                 <button
                   onClick={() => toggle(r)}
-                  className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                  className="h-10 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                 >
                   {r.isActive ? "Nonaktifkan" : "Aktifkan"}
                 </button>
                 <button
                   onClick={() => remove(r.id)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

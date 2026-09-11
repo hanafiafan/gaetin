@@ -81,7 +81,7 @@ export default function EmailBlastClient() {
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Buat email blast baru</h2>
+          <h2 className="font-semibold text-foreground">Kirim email baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Target otomatis ke kontak yang punya email. Tulis subjek dan isi pesan personal.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -89,7 +89,7 @@ export default function EmailBlastClient() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Nama email blast"
+            placeholder="Beri nama pengiriman ini"
             className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <input
@@ -105,7 +105,7 @@ export default function EmailBlastClient() {
               placeholder="Filter label / tag (opsional, contoh: vip)"
               className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
-            <p className="mt-1 text-[11px] text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               *Biarkan <strong>kosong</strong> untuk mengirim ke semua kontak yang punya email.
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function EmailBlastClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Riwayat email blast</h2>
+          <h2 className="font-semibold text-foreground">Email yang pernah dikirim</h2>
           <p className="text-sm text-muted-foreground">{blasts.length} email blast dibuat</p>
         </div>
         <div className="space-y-3">
@@ -156,7 +156,7 @@ export default function EmailBlastClient() {
                     {blast.status === "DRAFT" && (
                       <button
                         onClick={() => execute(blast.id)}
-                        className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
+                        className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                       >
                         <Play className="h-3 w-3" /> Kirim
                       </button>
@@ -164,7 +164,7 @@ export default function EmailBlastClient() {
                     {blast.status === "RUNNING" && (
                       <button
                         onClick={() => stop(blast.id)}
-                        className="flex h-8 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
+                        className="flex h-10 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>
@@ -185,7 +185,7 @@ export default function EmailBlastClient() {
           })}
           {blasts.length === 0 && (
             <EmptyState
-              title="Belum ada email blast"
+              title="Belum pernah kirim email"
               hint="Email blast mengirim ke kontak yang punya alamat email. Butuh alamatnya dulu? Jalankan Cari Email."
               action={{ href: "/dashboard/email-finder", label: "Cari email kontak" }}
             />

@@ -96,9 +96,8 @@ export default function SetupPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHero
-        kicker="Panduan Setup"
-        kickerIcon={Sparkles}
-        title="Setup Ekstensi Hellens"
+        kicker="Mulai"
+        title="Pasang Ekstensi"
         description={`Ikuti ${STEPS.length} langkah ini dari install ekstensi sampai siap kirim WhatsApp/email pertamamu.`}
       />
 
@@ -129,7 +128,7 @@ export default function SetupPage() {
                     )}
                   </div>
                   <span
-                    className={`hidden text-center text-[10px] font-semibold leading-tight sm:block ${
+                    className={`hidden text-center text-xs font-semibold leading-tight sm:block ${
                       isActive ? "text-foreground" : isDone ? "text-foreground/70" : "text-muted-foreground"
                     }`}
                   >
@@ -315,14 +314,14 @@ function StepMaps({
           <div className="flex-1 border border-border bg-muted px-3 py-1.5 text-xs text-muted-foreground">
             kafe jakarta pusat
           </div>
-          <span className="text-[10px] text-muted-foreground">× 📍</span>
+          <span className="text-xs text-muted-foreground">× 📍</span>
         </div>
 
         {/* Results panel */}
         <div className="p-4">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-semibold text-foreground/80">Hasil · 50+</p>
-            <span className="text-[10px] text-muted-foreground">ℹ</span>
+            <span className="text-xs text-muted-foreground">ℹ</span>
           </div>
 
           {/* THE CHECKBOX — highlighted */}
@@ -339,7 +338,7 @@ function StepMaps({
               <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-destructive">
                 Wajib aktif!
               </span>
-              <span className="text-[10px] text-muted-foreground">Tanpa ini scraping tidak bisa berjalan</span>
+              <span className="text-xs text-muted-foreground">Tanpa ini pencarian tidak bisa jalan</span>
             </div>
           </div>
 
@@ -365,7 +364,7 @@ function StepMaps({
             { text: "Centang kotak \"Perbarui hasil saat peta digeser\"", action: "Ada di bagian atas daftar hasil pencarian" },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/20 text-[10px] font-semibold text-warning">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/20 text-xs font-semibold text-warning">
                 {i + 1}
               </span>
               <div>
@@ -569,7 +568,7 @@ function StepFirstScrape() {
           <Search className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Jalankan Scraping Pertamamu</h2>
+          <h2 className="text-xl font-bold text-foreground">Coba Cari Bisnis Pertamamu</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Semua sudah siap. Buka menu Scraper untuk mulai mengambil lead dari Google Maps.
           </p>
@@ -577,7 +576,7 @@ function StepFirstScrape() {
       </div>
 
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
-        <p className="mb-4 text-sm font-bold text-foreground">Cara menjalankan scraping:</p>
+        <p className="mb-4 text-sm font-bold text-foreground">Cara mencarinya:</p>
         <div className="space-y-3">
           {[
             { step: "1", text: "Klik menu Scraper di sidebar kiri" },

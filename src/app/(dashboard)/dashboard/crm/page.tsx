@@ -9,10 +9,9 @@ export default async function CrmPage() {
     <div className="space-y-5">
       <PageHero
         tone="kelola"
-        kicker="Sales Pipeline"
-        kickerIcon={Sparkles}
-        title="CRM Pipeline"
-        description="Kelola peluang dari lead baru sampai closing. Geser kartu antar stage dan catat nilai deal untuk ROI."
+        kicker="Kelola"
+        title="Peluang Penjualan"
+        description="Pantau calon pembeli dari baru kenal sampai jadi beli. Geser kartunya saat statusnya berubah."
       />
       <CrmBoard />
     </div>

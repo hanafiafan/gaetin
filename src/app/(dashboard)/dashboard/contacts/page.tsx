@@ -8,27 +8,26 @@ export default function ContactsPage() {
     <div className="space-y-5">
       <PageHero
         tone="primary"
-        kicker="Contact Intelligence"
-        kickerIcon={Sparkles}
-        title="Kontak & Lead"
-        description="Kelola database prospek, validasi nomor, beri label, dan siapkan segmen untuk campaign berikutnya."
+        kicker="Mulai"
+        title="Daftar Kontak"
+        description="Semua calon pembeli yang sudah kamu simpan. Bisa dicari, diberi label, dan dipilih untuk dikirimi pesan."
         rightSlot={
           <div className="flex flex-wrap content-start gap-2">
-            <Link href="/dashboard/scraper" className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+            <Link href="/dashboard/scraper" className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Users className="h-4 w-4" />
-              Ambil lead
+              Cari bisnis baru
             </Link>
-            <Link href="/dashboard/contacts/import" className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+            <Link href="/dashboard/contacts/import" className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Upload className="h-4 w-4" />
-              Impor
+              Unggah dari Excel
             </Link>
-            <Link href="/dashboard/email-finder" className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+            <Link href="/dashboard/email-finder" className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Mail className="h-4 w-4" />
-              Cari Email
+              Temukan email
             </Link>
-            <button className="flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+            <button className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Download className="h-4 w-4" />
-              Ekspor
+              Unduh daftar
             </button>
           </div>
         }

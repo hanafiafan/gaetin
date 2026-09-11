@@ -7,10 +7,9 @@ export default function BillingPage() {
     <div className="space-y-5">
       <PageHero
         tone="akun"
-        kicker="Subscription"
-        kickerIcon={Sparkles}
-        title="Langganan & Kredit"
-        description="Kelola paket, saldo kredit, dan top-up. Pembayaran via Midtrans (VA, e-wallet, QRIS)."
+        kicker="Akun"
+        title="Tagihan & Kredit"
+        description="Lihat paket langganan dan sisa kreditmu. Bisa bayar lewat transfer bank, e-wallet, atau QRIS."
       />
       <BillingClient />
     </div>

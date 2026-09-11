@@ -17,7 +17,7 @@ interface Log {
   createdAt: string;
 }
 
-const SELECT_CLASS = "h-8 rounded-lg border border-border bg-card px-2 text-xs text-foreground";
+const SELECT_CLASS = "h-10 rounded-lg border border-border bg-card px-2.5 text-sm text-foreground";
 
 /** Nilai enum Prisma bocor ke layar sebagai "OWNER". Sisa kelas bug yang sama
  * dengan status kampanye dan percakapan; peta kecilnya di sini karena role

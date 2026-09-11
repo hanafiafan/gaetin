@@ -101,7 +101,7 @@ export default function AccountSettings() {
               <option key={tz.value} value={tz.value}>{tz.label}</option>
             ))}
           </select>
-          <p className="text-xs text-muted-foreground">Digunakan untuk penjadwalan campaign dan format tampilan waktu.</p>
+          <p className="text-xs text-muted-foreground">Dipakai untuk menjadwalkan pengiriman dan menampilkan jam.</p>
         </div>
 
         {profileError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{profileError}</div>}

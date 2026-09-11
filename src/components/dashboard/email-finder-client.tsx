@@ -119,7 +119,7 @@ export default function EmailFinderClient() {
               placeholder={source === "LEAD" ? "Filter kategori (opsional)" : "Filter label (opsional)"}
               className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
-            <p className="mt-1 text-[11px] text-muted-foreground">*Biarkan kosong untuk semua data yang punya website tapi belum ada email.</p>
+            <p className="mt-1 text-xs text-muted-foreground">*Biarkan kosong untuk semua data yang punya website tapi belum ada email.</p>
           </div>
           <div className="rounded-xl border border-border bg-email/5 p-3 text-center">
             <p className="text-2xl font-semibold text-foreground">{candidateCount ?? "…"}</p>
@@ -134,7 +134,7 @@ export default function EmailFinderClient() {
             {creating ? "Memulai..." : "Mulai Cari Email"}
           </button>
           {source === "LEAD" && (
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Catatan: email yang ditemukan di sini ikut tersalin otomatis begitu lead disimpan jadi Kontak di halaman Scraper.
             </p>
           )}
@@ -166,7 +166,7 @@ export default function EmailFinderClient() {
                     {job.status === "RUNNING" && (
                       <button
                         onClick={() => stop(job.id)}
-                        className="flex h-8 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
+                        className="flex h-10 items-center gap-1.5 border border-destructive/30 bg-destructive/15 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/25"
                       >
                         <StopCircle className="h-3 w-3" /> Hentikan
                       </button>
@@ -174,7 +174,7 @@ export default function EmailFinderClient() {
                     {job.status === "COMPLETED" && job.found > 0 && (
                       <Link
                         href="/dashboard/email-blast"
-                        className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
+                        className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                       >
                         <Send className="h-3 w-3" /> Kirim Email Blast
                       </Link>

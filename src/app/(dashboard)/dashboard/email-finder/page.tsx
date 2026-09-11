@@ -9,10 +9,9 @@ export default async function EmailFinderPage() {
     <div className="space-y-5">
       <PageHero
         tone="email"
-        kicker="Enrichment Engine"
-        kickerIcon={Sparkles}
-        title="Cari Email"
-        description="Kunjungi website lead atau kontak yang belum punya email, temukan alamat emailnya secara otomatis di latar belakang."
+        kicker="Email"
+        title="Temukan Alamat Email"
+        description="Sistem membuka website tiap bisnis dan mencari alamat emailnya untukmu. Berjalan sendiri di latar belakang."
       />
       <EmailFinderClient />
     </div>

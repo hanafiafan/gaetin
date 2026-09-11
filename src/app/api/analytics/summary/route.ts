@@ -31,11 +31,11 @@ export async function GET() {
   }));
 
   const funnel = [
-    { stage: "Lead mentah", value: leads },
-    { stage: "Kontak", value: contacts },
-    { stage: "Dihubungi", value: contacted },
-    { stage: "Dibalas", value: replied },
-    { stage: "Closing", value: wonAgg._count },
+    { stage: "Hasil pencarian", value: leads },
+    { stage: "Disimpan jadi kontak", value: contacts },
+    { stage: "Sudah dikirimi pesan", value: contacted },
+    { stage: "Membalas", value: replied },
+    { stage: "Jadi membeli", value: wonAgg._count },
   ];
 
   return NextResponse.json({

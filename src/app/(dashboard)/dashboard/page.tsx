@@ -6,10 +6,7 @@ import {
   BarChart3,
   Building2,
   CheckCircle2,
-  Chrome,
-  Clock3,
   Contact,
-  Map,
   MessageSquare,
   Plus,
   Send,
@@ -21,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import MetricStrip from "@/components/dashboard/metric-strip";
+import WorkflowGuide from "@/components/dashboard/workflow-guide";
 import { TONE_SOFT } from "@/components/dashboard/section-tone";
 
 function formatIDR(n: number): string {
@@ -89,63 +87,68 @@ export default async function DashboardPage({
   const isLowCredits = credits < 100;
 
   const metrics = [
-    { label: "Total kontak", value: contacts.toLocaleString("id-ID"), hint: `${contactConversion}% dari alur penjualan tersimpan`, icon: Users },
-    { label: "Lead mentah", value: leads.toLocaleString("id-ID"), hint: "Menunggu kurasi & validasi", icon: Target },
-    { label: "Percakapan terbuka", value: openConversations.toLocaleString("id-ID"), hint: "Butuh respons tim", icon: MessageSquare },
-    { label: "Nilai closing", value: formatIDR(revenue), hint: "Deal berstatus menang", icon: TrendingUp, accent: true },
+    { label: "Kontak tersimpan", value: contacts.toLocaleString("id-ID"), hint: "Calon pembeli yang sudah masuk daftarmu", icon: Users },
+    { label: "Hasil pencarian", value: leads.toLocaleString("id-ID"), hint: "Dari Google Maps, belum disimpan jadi kontak", icon: Target },
+    { label: "Belum dibalas", value: openConversations.toLocaleString("id-ID"), hint: "Pesan masuk yang menunggu jawabanmu", icon: MessageSquare },
+    { label: "Uang masuk", value: formatIDR(revenue), hint: "Total dari penjualan yang sudah jadi", icon: TrendingUp, accent: true },
   ];
 
   const actionCards = [
-    { href: "/dashboard/scraper", label: "Cari lead", desc: "Scraping otomatis dari Google Maps", icon: Target, tone: "primary" as const },
-    { href: "/dashboard/contacts/import", label: "Import kontak", desc: "Upload database CSV/Excel lama", icon: Contact, tone: "email" as const },
-    { href: "/dashboard/campaigns", label: "Buat kampanye", desc: "Kirim pesan personal ke banyak kontak", icon: Send, tone: "whatsapp" as const },
-    { href: "/dashboard/analytics", label: "Lihat laporan", desc: "Funnel, revenue, dan ROI kampanye", icon: BarChart3, tone: "kelola" as const },
+    { href: "/dashboard/scraper", label: "Cari bisnis di Maps", desc: "Ambil nama dan nomor dari Google Maps", icon: Target, tone: "primary" as const },
+    { href: "/dashboard/contacts/import", label: "Unggah kontak lama", desc: "Punya daftar di Excel? Masukkan ke sini", icon: Contact, tone: "email" as const },
+    { href: "/dashboard/campaigns", label: "Kirim pesan massal", desc: "Satu pesan ke banyak kontak sekaligus", icon: Send, tone: "whatsapp" as const },
+    { href: "/dashboard/analytics", label: "Lihat laporan", desc: "Berapa yang membalas dan yang membeli", icon: BarChart3, tone: "kelola" as const },
   ];
 
-  const onboarding = [
-    { label: "Setup ekstensi Chrome", done: leads > 0, href: "/dashboard/setup?step=1" },
-    { label: "Hubungkan WhatsApp", done: accounts > 0, href: "/dashboard/setup?step=4" },
-    { label: "Scraping & kontak pertama", done: contacts > 0, href: "/dashboard/setup?step=5" },
-    { label: "Jalankan kampanye pertama", done: blasts + campaigns > 0, href: "/dashboard/campaigns" },
+  // Alur kerja sebenarnya, bukan daftar pemasangan. Urutannya persis cara
+  // aplikasi ini dipakai sehari-hari, dan tiap langkah "selesai" ditentukan
+  // dari data nyata — bukan dari centang manual yang bisa bohong.
+  const workflow = [
+    {
+      title: "Pasang alat di browser Chrome",
+      desc: "Sekali saja. Alat inilah yang nanti mengambil data bisnis dari Google Maps.",
+      href: "/dashboard/setup",
+      cta: "Mulai pasang",
+      done: leads > 0 || contacts > 0,
+    },
+    {
+      title: "Sambungkan nomor WhatsApp",
+      desc: "Nomor ini yang dipakai mengirim pesan. Bisa lebih dari satu.",
+      href: "/dashboard/settings",
+      cta: "Sambungkan",
+      done: accounts > 0,
+    },
+    {
+      title: "Cari calon pembeli di Google Maps",
+      desc: "Ketik jenis usaha dan kotanya, lalu simpan hasilnya jadi daftar kontak.",
+      href: "/dashboard/scraper",
+      cta: "Cari sekarang",
+      done: contacts > 0,
+    },
+    {
+      title: "Kirim pesan ke mereka",
+      desc: "Satu pesan, banyak penerima. Nama tiap orang disisipkan otomatis.",
+      href: "/dashboard/campaigns",
+      cta: "Kirim pesan",
+      done: blasts + campaigns > 0,
+    },
+    {
+      title: "Balas dan catat yang jadi beli",
+      desc: "Balasan masuk ke Pesan Masuk. Yang serius, pindahkan ke Peluang Penjualan.",
+      href: "/dashboard/inbox",
+      cta: "Lihat balasan",
+      done: revenue > 0,
+    },
   ];
 
   const isExtensionSetupDone = leads > 0;
-  const doneSteps = onboarding.filter((s) => s.done).length;
 
   return (
     <div className="space-y-5">
-      {/* Setup guide banner — show until user has scraped at least once */}
-      {!isExtensionSetupDone && (
-        <div className="border-l-2 border-primary bg-muted">
-          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-foreground">
-                <Chrome className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-bold text-foreground">Setup ekstensi Chrome dulu</p>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Install ekstensi, aktifkan fitur Google Maps, dan izinkan popup — butuh 10 menit saja.
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Chrome className="h-3 w-3" /> Install ekstensi</span>
-                  <span>·</span>
-                  <span className="flex items-center gap-1"><Map className="h-3 w-3" /> Aktifkan checkbox Maps</span>
-                  <span>·</span>
-                  <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3" /> Izin browser</span>
-                </div>
-              </div>
-            </div>
-            <Link
-              href="/dashboard/setup"
-              className="cg-press flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground"
-            >
-              Mulai Setup
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* Banner "setup dulu" dihapus. Syarat selesainya berbeda dari panduan
+          alur di bawah, sehingga satu layar bisa menyuruh memasang ekstensi
+          sekaligus menyatakan pemasangannya sudah beres. Satu sumber
+          kebenaran: WorkflowGuide. */}
 
       {isLowCredits && (
         <div className="flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 px-5 py-3.5">
@@ -177,13 +180,15 @@ export default async function DashboardPage({
           angka. */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            Ringkasan Workspace
+          <span className="inline-flex items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-foreground">
+            Mulai
           </span>
-          <h1 className="cg-display mt-2 text-[clamp(1.5rem,2.4vw,2rem)]">
-            Halo, {session.user.name.split(" ")[0]}. Mari gaet peluang berikutnya.
+          <h1 className="cg-display mt-2.5 text-[clamp(1.75rem,2.8vw,2.35rem)]">
+            Halo, {session.user.name.split(" ")[0]}
           </h1>
+          <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">
+            Ini ringkasan workspace-mu. Kalau bingung harus mulai dari mana, ikuti lima langkah di bawah.
+          </p>
         </div>
         {subscription && (
           <span className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
@@ -193,45 +198,13 @@ export default async function DashboardPage({
         )}
       </div>
 
-      {/* Angka workspace, dengan progress pengaturan sebagai kartu gelap
-          bersarang di kanannya — pola panel-dalam-panel dari referensi. */}
-      <MetricStrip
-        items={metrics}
-        asideDark
-        aside={
-          <>
-            <div className="cg-label">Progress pengaturan</div>
-            <div className="mt-1 text-xs text-muted-foreground">
-              {doneSteps} dari {onboarding.length} langkah selesai
-            </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
-              <div
-                className="h-full rounded-full bg-primary transition-all duration-500"
-                style={{ width: `${(doneSteps / onboarding.length) * 100}%` }}
-              />
-            </div>
-            <div className="mt-4 space-y-1.5">
-              {onboarding.map((step) => (
-                <Link
-                  key={step.label}
-                  href={step.href}
-                  className="group flex items-center justify-between rounded-lg px-2.5 py-2 text-sm font-medium text-foreground/80 transition hover:bg-foreground/[0.07] hover:text-foreground"
-                >
-                  <span className="flex items-center gap-2.5">
-                    {step.done ? (
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                    ) : (
-                      <Clock3 className="h-4 w-4 text-muted-foreground" />
-                    )}
-                    {step.label}
-                  </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
-                </Link>
-              ))}
-            </div>
-          </>
-        }
-      />
+      {/* Angka workspace dulu — sekali lihat tahu posisi hari ini. */}
+      <MetricStrip items={metrics} />
+
+      {/* Lalu alur kerjanya. Ini bagian terpenting halaman untuk orang yang
+          baru pertama masuk: satu langkah disorot sebagai giliran sekarang,
+          sisanya jelas sudah atau belum. */}
+      <WorkflowGuide steps={workflow} />
 
       {/* Action cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -274,7 +247,7 @@ export default async function DashboardPage({
             <p className="cg-label text-muted-foreground">Tugas aktif hari ini</p>
           </div>
         </div>
-        <Link href="/dashboard/tasks" className="flex h-9 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+        <Link href="/dashboard/tasks" className="flex h-10 items-center gap-2 border border-border px-4 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
           <Plus className="h-3.5 w-3.5" />
           Buat Tugas
         </Link>
@@ -284,13 +257,13 @@ export default async function DashboardPage({
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <div className="cg-card rounded-xl p-5">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="cg-display text-xl">Lead terbaru</h2>
+            <h2 className="cg-display text-xl">Bisnis yang baru ditemukan</h2>
             <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
           </div>
           <div className="mt-4 space-y-2">
             {recentLeads.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                Belum ada lead. <Link href="/dashboard/scraper" className="text-foreground hover:underline">Mulai scraping.</Link>
+                Belum ada lead. <Link href="/dashboard/scraper" className="text-foreground hover:underline">Mulai cari sekarang.</Link>
               </div>
             ) : (
               recentLeads.map((lead, i) => (
@@ -304,7 +277,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-xs font-medium text-foreground/80">{lead.phone ?? "—"}</p>
-                    <p className="text-[10px] text-muted-foreground">{new Date(lead.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(lead.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</p>
                   </div>
                 </div>
               ))

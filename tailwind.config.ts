@@ -85,6 +85,31 @@ const config: Config = {
         "3xl": "calc(var(--radius) + 12px)",
         full: "9999px",
       },
+      /* Skala tipe dinaikkan satu tingkat di seluruh aplikasi.
+         Audit sebelum perubahan: 191 teks berukuran 12px atau lebih kecil
+         (173x text-xs, plus 11px dan 10px hardcoded) dan hanya 13 teks
+         berukuran 16px ke atas. Itu bukan soal selera — itu di bawah ambang
+         nyaman baca untuk mata yang sudah menua.
+
+         Menaikkannya di sini, bukan di ~400 tempat pemakaian: text-sm adalah
+         ukuran badan teks paling umum di app ini, jadi 15px membuat hampir
+         semua teks ikut naik sekaligus. line-height juga dilonggarkan; teks
+         rapat lebih sulit diikuti mata daripada teks kecil. */
+      fontSize: {
+        xs: ["0.8125rem", { lineHeight: "1.15rem" }],   // 13px (dari 12)
+        sm: ["0.9375rem", { lineHeight: "1.45rem" }],   // 15px (dari 14)
+        base: ["1.0625rem", { lineHeight: "1.65rem" }], // 17px (dari 16)
+        lg: ["1.1875rem", { lineHeight: "1.75rem" }],   // 19px (dari 18)
+        xl: ["1.375rem", { lineHeight: "1.85rem" }],    // 22px (dari 20)
+        "2xl": ["1.625rem", { lineHeight: "2.1rem" }],
+        "3xl": ["2rem", { lineHeight: "2.4rem" }],
+        "4xl": ["2.5rem", { lineHeight: "2.8rem" }],
+        "5xl": ["3.25rem", { lineHeight: "1.05" }],
+        "6xl": ["4rem", { lineHeight: "1.02" }],
+        "7xl": ["4.75rem", { lineHeight: "1" }],
+        "8xl": ["6rem", { lineHeight: "1" }],
+        "9xl": ["8rem", { lineHeight: "1" }],
+      },
       fontFamily: {
         sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Impact", "sans-serif"],
@@ -149,17 +174,6 @@ const config: Config = {
         shimmer: "shimmer 2s linear infinite",
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "scale-in": "scale-in 0.2s ease-out",
-      },
-      fontSize: {
-        xs: ["0.75rem", { lineHeight: "1rem" }],
-        sm: ["0.875rem", { lineHeight: "1.25rem" }],
-        base: ["1rem", { lineHeight: "1.5rem" }],
-        lg: ["1.125rem", { lineHeight: "1.75rem" }],
-        xl: ["1.25rem", { lineHeight: "1.75rem" }],
-        "2xl": ["1.5rem", { lineHeight: "2rem" }],
-        "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
-        "4xl": ["2.25rem", { lineHeight: "2.5rem" }],
-        "5xl": ["3rem", { lineHeight: "1" }],
       },
     },
   },

@@ -473,9 +473,9 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <div className="flex items-center gap-2">
                     <form onSubmit={handleMapSearch} className="flex items-center">
                        <input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 max-w-[140px] rounded-xl border border-border bg-card px-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
-                       <button type="submit" className="ml-1 flex h-8 items-center rounded-lg border border-border px-2 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">Cari</button>
+                       <button type="submit" className="ml-1 flex h-10 items-center rounded-lg border border-border px-2 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">Cari</button>
                     </form>
-                    <button type="button" onClick={locateMe} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-primary/30 hover:text-foreground" title="Lokasi Saya">
+                    <button type="button" onClick={locateMe} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-primary/30 hover:text-foreground" title="Lokasi Saya">
                       <Compass className="h-4 w-4" />
                     </button>
                     <span className="ml-2 border border-border px-2 py-0.5 text-xs text-muted-foreground">{radius} km</span>
@@ -512,7 +512,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     <Loader2 className="h-5 w-5 text-foreground animate-spin" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm">Scraping berjalan</div>
+                    <div className="font-semibold text-sm">Pencarian berjalan</div>
                     <p className="text-xs text-muted-foreground mt-0.5">Tab Google Maps terbuka. Jangan tutup sampai selesai — data masuk otomatis.</p>
                     {currentJob && (
                       <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
@@ -640,7 +640,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                       <input placeholder="cth: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-muted-foreground">Maks. jumlah lead</label>
+                      <label className="text-xs font-medium text-muted-foreground">Maksimal berapa bisnis</label>
                       <input type="number" min="1" max="1000" placeholder="100" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
                     </div>
                   </div>
@@ -659,7 +659,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   placeholder="mis. Bandung, Jakarta Selatan"
                   className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
                 />
-                <p className="text-xs text-muted-foreground">Sistem akan mencari lead di seluruh area administrasi ini.</p>
+                <p className="text-xs text-muted-foreground">Sistem akan mencari bisnis di seluruh wilayah ini.</p>
                 {showSuggestions && regionSuggestions.length > 0 && (
                   <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-xl border border-border bg-background/95 shadow-xl backdrop-blur-md">
                     {regionSuggestions.map((s, i) => (
@@ -773,7 +773,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
         <div className="cg-card rounded-xl">
           <div className="p-4">
             <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-sm font-bold text-foreground">Riwayat scraping</h2>
+              <h2 className="text-sm font-bold text-foreground">Pencarian sebelumnya</h2>
               <span className="bg-primary/15 px-2 py-0.5 text-xs font-bold text-foreground">{savedJobs.length}</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -817,7 +817,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           <div className="space-y-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <h2 className="text-base font-bold text-foreground">Hasil lead</h2>
+                <h2 className="text-base font-bold text-foreground">Bisnis yang ditemukan</h2>
                 <span className="bg-primary/15 px-2 py-0.5 text-xs font-bold tabular-nums text-foreground">
                   {leads.length}
                 </span>
@@ -826,19 +826,19 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
-                <a href={exportHref("csv")} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
+                <a href={exportHref("csv")} className="flex h-10 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
                   <Download className="h-4 w-4" />
                   Export CSV
                 </a>
-                <a href={exportHref("xlsx")} className="flex h-8 items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 text-xs font-bold text-success transition hover:bg-success/20">
+                <a href={exportHref("xlsx")} className="flex h-10 items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 text-xs font-bold text-success transition hover:bg-success/20">
                   <Download className="h-4 w-4" />
                   Export Excel
                 </a>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">
+                <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-10 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">
                   <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
                 </button>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-40">
+                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-40">
                   <Columns3 className="h-4 w-4" />
                   Simpan + pipeline
                 </button>

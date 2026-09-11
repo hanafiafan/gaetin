@@ -1,12 +1,12 @@
-import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TONE_DOT, type SectionTone } from "@/components/dashboard/section-tone";
+import { TONE_SOFT, type SectionTone } from "@/components/dashboard/section-tone";
 
 export type PageHeroTone = SectionTone;
 
 interface PageHeroProps {
+  /** Nama area di navigasi atas — Mulai / WhatsApp / Email / Kelola / Akun.
+   * Menjawab "saya sedang di bagian mana", bukan slogan. */
   kicker: string;
-  kickerIcon: LucideIcon;
   title: string;
   description: string;
   tone?: PageHeroTone;
@@ -16,15 +16,21 @@ interface PageHeroProps {
 }
 
 /**
- * Baris judul halaman: penanda seksi, judul, deskripsi singkat, aksi di kanan.
+ * Kepala halaman: penanda area, judul, satu kalimat penjelas, aksi di kanan.
  *
- * Versi sebelumnya adalah blok tinggi dengan badge berwarna besar dan panel
- * dekoratif — referensinya jauh lebih ringkas: judul dan aksinya dalam satu
- * baris tipis, lalu langsung ke isi.
+ * Dua perubahan dari versi sebelumnya, keduanya soal keterbacaan:
+ *
+ * 1. Kickernya dulu jargon Inggris — "Contact Intelligence", "Number Hygiene",
+ *    "Enrichment Engine" — di 14 dari 18 halaman. Itu kalimat PERTAMA yang
+ *    dibaca orang di tiap halaman, dan tidak berarti apa-apa bagi yang belum
+ *    terbiasa. Sekarang isinya nama area yang sama persis dengan menu di atas,
+ *    berwarna sesuai areanya, sehingga berfungsi sebagai "kamu ada di sini".
+ *
+ * 2. Prop kickerIcon dihapus: 17 dari 18 halaman mengoper ikon Sparkles yang
+ *    sama dan tidak menyampaikan apa pun.
  */
 export default function PageHero({
   kicker,
-  kickerIcon: KickerIcon,
   title,
   description,
   tone = "primary",
@@ -34,13 +40,16 @@ export default function PageHero({
   return (
     <div className={cn("flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between", className)}>
       <div className="min-w-0">
-        <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          <span className={cn("h-1.5 w-1.5 rounded-full", TONE_DOT[tone])} />
-          <KickerIcon className="h-3.5 w-3.5" />
+        <span
+          className={cn(
+            "inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wide",
+            TONE_SOFT[tone],
+          )}
+        >
           {kicker}
         </span>
-        <h1 className="cg-display mt-2 text-[clamp(1.5rem,2.4vw,2rem)]">{title}</h1>
-        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
+        <h1 className="cg-display mt-2.5 text-[clamp(1.75rem,2.8vw,2.35rem)]">{title}</h1>
+        <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">{description}</p>
       </div>
       {rightSlot && <div className="shrink-0">{rightSlot}</div>}
     </div>

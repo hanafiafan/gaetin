@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bell, ChevronDown, Lock, LogOut, ShieldCheck, Zap } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
 import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
@@ -11,15 +11,19 @@ import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import HeaderSearch from "@/components/dashboard/header-search";
 
 /**
- * Navigasi atas berbentuk pil, menggantikan rail kiri.
+ * Navigasi atas berbentuk pil.
  *
- * Referensinya memakai lima pil datar di puncak layar, sementara app ini punya
- * 19 tujuan dalam 5 grup. Satu baris pil grup, masing-masing membuka isinya
- * saat disentuh kursor — semua tujuan tetap satu aksi, seperti rail lama yang
- * menampilkan 19 menu sekaligus, tapi dengan siluet referensi.
+ * Dulu panelnya terbuka saat kursor lewat. Hover punya tiga masalah untuk
+ * pengguna yang kurang terbiasa: panelnya hilang sendiri kalau kursor meleset
+ * sedikit, tidak ada sama sekali di layar sentuh, dan tidak pernah memberi
+ * konfirmasi bahwa menunya memang sudah dibuka. Sekarang dibuka dengan klik
+ * dan bertahan sampai ditutup — klik di luar, tombol Escape, atau memilih
+ * salah satu tujuan.
  *
- * Sempat ada baris kedua berisi menu grup aktif. Setelah dropdown ada, baris
- * itu mengulang informasi yang sama dan panelnya saling menimpa, jadi dihapus.
+ * Tiap tujuan membawa satu kalimat penjelas. Label seperti "Validator" atau
+ * "CRM" tidak memberi tahu apa pun ke orang yang belum pernah memakai alat
+ * sejenis, jadi labelnya diganti bahasa sehari-hari dan tetap ditemani
+ * keterangan.
  */
 
 type Props = {
@@ -43,8 +47,10 @@ function initials(name?: string | null, email?: string | null) {
     .join("");
 }
 
+/* Target sentuh 44px. Versi sebelumnya 40px, dan di badan halaman banyak yang
+   32px — di bawah ambang yang nyaman untuk tangan yang kurang stabil. */
 const ICON_BTN =
-  "flex h-10 w-10 items-center justify-center rounded-xl border border-border text-foreground/80 transition hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground";
+  "flex h-11 w-11 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground";
 
 export default function WorkspaceNav({
   appName = "Hellens",
@@ -58,10 +64,30 @@ export default function WorkspaceNav({
 }: Props) {
   const pathname = usePathname();
   const [locked, setLocked] = useState<string | null>(null);
-  // Panel dropdown lebih lebar dari pil pemicunya, jadi kotak hover-nya
-  // menutupi pil di sebelahnya dan dua panel bisa terbuka bersamaan.
-  // Satu state memastikan hanya satu yang terbuka.
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  // Menu yang dibuka dengan klik butuh cara menutup yang jelas, kalau tidak ia
+  // menjebak. Klik di luar dan Escape adalah dua cara yang sudah dikenal.
+  useEffect(() => {
+    if (!openGroup) return;
+    const onPointer = (e: PointerEvent) => {
+      if (!navRef.current?.contains(e.target as Node)) setOpenGroup(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenGroup(null);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openGroup]);
+
+  // Berpindah halaman harus menutup menunya; tanpa ini panel tetap menggantung
+  // di atas halaman yang baru dibuka.
+  useEffect(() => setOpenGroup(null), [pathname]);
 
   const visible = navGroups
     .map((g) => ({ ...g, items: g.items.filter((i) => !i.flag || featureFlags?.[i.flag] !== false) }))
@@ -77,82 +103,105 @@ export default function WorkspaceNav({
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex min-h-[68px] max-w-[1600px] flex-wrap items-center gap-3 px-3 sm:px-5 lg:px-7">
+        <div className="mx-auto flex min-h-[72px] max-w-[1600px] flex-wrap items-center gap-3 px-3 sm:px-5 lg:px-7">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
             <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
             <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
           </Link>
 
           <nav
+            ref={navRef}
             aria-label="Bagian utama"
-            className="hidden items-center gap-1 rounded-full border border-border p-1 lg:flex"
+            className="hidden items-center gap-1 rounded-lg border border-border p-1 lg:flex"
           >
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
+              const open = openGroup === g.label;
               return (
-                <div
-                  key={g.label}
-                  className="relative"
-                  onMouseEnter={() => setOpenGroup(g.label)}
-                  onMouseLeave={() => setOpenGroup(null)}
-                >
-                  <Link
-                    href={g.items[0].href}
+                <div key={g.label} className="relative">
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-haspopup="menu"
                     aria-current={active ? "page" : undefined}
+                    onClick={() => setOpenGroup(open ? null : g.label)}
                     className={cn(
-                      "flex items-center gap-1 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
+                      "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-md px-4 font-medium transition",
                       active
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground",
+                        : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
                     )}
                   >
                     {g.label}
-                    <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                  </Link>
+                    <ChevronDown className={cn("h-4 w-4 opacity-60 transition-transform", open && "rotate-180")} />
+                  </button>
 
-                  <div
-                    className={cn(
-                      "absolute left-0 top-full z-40 pt-2 transition",
-                      openGroup === g.label ? "visible opacity-100" : "invisible opacity-0",
-                    )}
-                  >
-                    <div className="min-w-[220px] rounded-xl border border-border bg-popover p-1.5 shadow-2xl">
-                      {g.items.map((item) => {
-                        const Icon = item.icon;
-                        const itemActive = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
-                        if (isLocked(item)) {
-                          return (
-                            <button
-                              key={item.href}
-                              type="button"
-                                        onClick={() => { setLocked(item.label); setOpenGroup(null); }}
-                              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-foreground/45 transition hover:bg-foreground/5"
-                            >
-                              <Icon className="h-4 w-4" />
-                              <span className="flex-1 text-left">{item.label}</span>
-                              <Lock className="h-3 w-3 text-warning" />
-                            </button>
+                  {open && (
+                    <div role="menu" className="absolute left-0 top-full z-40 pt-2">
+                      <div className="w-[330px] overflow-hidden rounded-xl border border-border bg-popover p-1.5 shadow-2xl">
+                        {g.items.map((item) => {
+                          const Icon = item.icon;
+                          const itemActive = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
+                          const itemLocked = isLocked(item);
+
+                          const body = (
+                            <>
+                              <span
+                                className={cn(
+                                  "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+                                  itemActive ? "bg-primary text-primary-foreground" : "bg-foreground/[0.07]",
+                                )}
+                              >
+                                <Icon className="h-5 w-5" />
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span className="flex items-center gap-1.5 font-semibold">
+                                  {item.label}
+                                  {itemLocked && <Lock className="h-3.5 w-3.5 text-warning" />}
+                                </span>
+                                <span className="mt-0.5 block text-sm leading-snug text-muted-foreground">
+                                  {item.desc}
+                                </span>
+                              </span>
+                            </>
                           );
-                        }
-                        return (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={() => setOpenGroup(null)}
-                            className={cn(
-                              "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition",
-                              itemActive
-                                ? "bg-primary/15 font-semibold text-foreground"
-                                : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
-                            )}
-                          >
-                            <Icon className="h-4 w-4" />
-                            {item.label}
-                          </Link>
-                        );
-                      })}
+
+                          if (itemLocked) {
+                            return (
+                              <button
+                                key={item.href}
+                                type="button"
+                                role="menuitem"
+                                onClick={() => {
+                                  setLocked(item.label);
+                                  setOpenGroup(null);
+                                }}
+                                className="flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left text-foreground/50 transition hover:bg-foreground/5"
+                              >
+                                {body}
+                              </button>
+                            );
+                          }
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              role="menuitem"
+                              onClick={() => setOpenGroup(null)}
+                              className={cn(
+                                "flex items-start gap-3 rounded-lg px-3 py-2.5 transition",
+                                itemActive
+                                  ? "bg-primary/15 text-foreground"
+                                  : "text-foreground/85 hover:bg-foreground/5 hover:text-foreground",
+                              )}
+                            >
+                              {body}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -163,39 +212,39 @@ export default function WorkspaceNav({
 
             <Link
               href="/dashboard/billing"
-              title="Kredit tersisa"
-              className="hidden h-10 items-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold text-foreground transition hover:border-foreground/30 sm:flex"
+              title="Sisa kredit — klik untuk beli tambahan"
+              className="hidden h-11 items-center gap-2 rounded-lg border border-border px-3.5 font-semibold text-foreground transition hover:border-foreground/30 sm:flex"
             >
-              <Zap className="h-4 w-4 text-primary" />
+              <Zap className="h-5 w-5 text-primary" />
               {credits.toLocaleString("id-ID")}
             </Link>
 
             {isSuperAdmin && (
               <Link href="/admin" className={ICON_BTN} title="Konsol Owner">
-                <ShieldCheck className="h-4 w-4" />
+                <ShieldCheck className="h-5 w-5" />
               </Link>
             )}
 
             <button type="button" className={cn(ICON_BTN, "relative")} title="Notifikasi">
-              <Bell className="h-4 w-4" />
+              <Bell className="h-5 w-5" />
               <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
             </button>
 
             <form action="/api/auth/logout" method="POST" className="contents">
-              <button type="submit" className={ICON_BTN} title="Keluar">
-                <LogOut className="h-4 w-4" />
+              <button type="submit" className={ICON_BTN} title="Keluar dari akun">
+                <LogOut className="h-5 w-5" />
               </button>
             </form>
 
-            <div className="flex items-center gap-2.5 rounded-xl border border-border py-1 pl-1 pr-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+            <div className="flex items-center gap-2.5 rounded-lg border border-border py-1 pl-1 pr-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
                 {initials(user?.name, user?.email)}
               </span>
               <span className="hidden min-w-0 leading-tight sm:block">
-                <span className="block max-w-[140px] truncate text-sm font-semibold text-foreground">
+                <span className="block max-w-[140px] truncate font-semibold text-foreground">
                   {user?.name ?? "Owner"}
                 </span>
-                <span className="block truncate text-[11px] text-muted-foreground">
+                <span className="block truncate text-sm text-muted-foreground">
                   {workspaceName ?? "Workspace"}
                   {planName ? ` · ${planName}` : ""}
                 </span>
@@ -203,7 +252,6 @@ export default function WorkspaceNav({
             </div>
           </div>
         </div>
-
       </header>
 
       <UpgradeModal feature={locked} onClose={() => setLocked(null)} />

@@ -9,10 +9,9 @@ export default async function InboxPage() {
     <div className="space-y-5">
       <PageHero
         tone="whatsapp"
-        kicker="Conversation Hub"
-        kickerIcon={Sparkles}
-        title="Inbox"
-        description="Balasan WhatsApp masuk di sini. Balas cepat, ubah status percakapan, dan jaga momentum closing."
+        kicker="WhatsApp"
+        title="Pesan Masuk"
+        description="Balasan dari calon pembeli masuk ke sini. Balas langsung tanpa pindah aplikasi."
       />
       <InboxClient />
     </div>

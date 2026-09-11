@@ -7,10 +7,9 @@ export default function SupportPage() {
     <div className="space-y-5">
       <PageHero
         tone="akun"
-        kicker="Help Center"
-        kickerIcon={Sparkles}
+        kicker="Akun"
         title="Bantuan"
-        description="Lihat FAQ, dokumentasi ringkas, atau kirim tiket bila butuh bantuan."
+        description="Jawaban atas pertanyaan yang sering ditanyakan. Belum terjawab? Kirim keluhanmu di sini."
       />
       <SupportClient />
     </div>

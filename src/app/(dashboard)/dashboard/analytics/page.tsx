@@ -7,10 +7,9 @@ export default function AnalyticsPage() {
     <div className="space-y-5">
       <PageHero
         tone="kelola"
-        kicker="Business Intelligence"
-        kickerIcon={Sparkles}
-        title="Analitik"
-        description="Funnel konversi, sumber lead, tren pengiriman, dan ROI per kampanye."
+        kicker="Kelola"
+        title="Laporan"
+        description="Lihat berapa kontak yang masuk, berapa yang membalas, dan berapa yang akhirnya membeli."
       />
       <AnalyticsClient />
     </div>

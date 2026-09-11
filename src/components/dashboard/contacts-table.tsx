@@ -26,7 +26,7 @@ const WA_BADGE: Record<Contact["waStatus"], string> = {
 const WA_LABEL: Record<Contact["waStatus"], string> = {
   ACTIVE: "Aktif WA",
   INACTIVE: "Tidak aktif",
-  UNKNOWN: "Belum dicek",
+  UNKNOWN: "Nomor belum dicek",
 };
 
 /** Cycled per row so the table reads as a set of tinted cards instead of a
@@ -123,8 +123,8 @@ export default function ContactsTable() {
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const headers = emailOnly
-    ? ["Kontak", "Email", "Label", "Telepon", "Skor", "Status WA"]
-    : ["Kontak", "Telepon", "Lokasi", "Kategori", "Skor", "Status WA"];
+    ? ["Nama", "Email", "Label", "Telepon", "Nilai", "Nomor WhatsApp"]
+    : ["Nama", "Telepon", "Kota", "Jenis usaha", "Nilai", "Nomor WhatsApp"];
 
   return (
     <div className="space-y-4">
@@ -133,15 +133,15 @@ export default function ContactsTable() {
           ikut meregang mengikuti tinggi form di sebelahnya. */}
       <MetricStrip
         items={[
-          { label: emailOnly ? "Kontak dengan email" : "Total database", value: total.toLocaleString("id-ID"), icon: Users, accent: true },
-          { label: "Aktif di halaman ini", value: String(summary.active), icon: CheckCircle2 },
-          { label: "Belum dicek", value: String(summary.unknown), icon: Search },
+          { label: emailOnly ? "Kontak dengan email" : "Kontak tersimpan", value: total.toLocaleString("id-ID"), icon: Users, accent: true },
+          { label: "Nomor aktif di halaman ini", value: String(summary.active), icon: CheckCircle2 },
+          { label: "Nomor belum dicek", value: String(summary.unknown), icon: Search },
         ]}
         aside={
           <form onSubmit={addContact} className="space-y-3">
             <div>
               <p className="font-semibold text-foreground">Tambah cepat</p>
-              <p className="text-xs text-muted-foreground">Masukkan prospek manual tanpa keluar dari halaman.</p>
+              <p className="text-xs text-muted-foreground">Ketik nama dan nomornya langsung di sini.</p>
             </div>
             <input
               value={name}
@@ -197,10 +197,10 @@ export default function ContactsTable() {
                   onChange={(e) => { setPage(1); setWaStatus(e.target.value); }}
                   className="bg-transparent text-sm text-foreground outline-none"
                 >
-                  <option value="">Semua status WA</option>
+                  <option value="">Semua nomor</option>
                   <option value="ACTIVE">Aktif WA</option>
                   <option value="INACTIVE">Tidak aktif</option>
-                  <option value="UNKNOWN">Belum dicek</option>
+                  <option value="UNKNOWN">Nomor belum dicek</option>
                 </select>
               </div>
               {loading && (
@@ -219,13 +219,13 @@ export default function ContactsTable() {
               <div className="flex gap-2">
                 <button
                   onClick={bulkTag}
-                  className="flex h-8 items-center gap-1.5 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
+                  className="flex h-10 items-center gap-1.5 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground"
                 >
                   <Tag className="h-3.5 w-3.5" /> Label
                 </button>
                 <button
                   onClick={bulkDelete}
-                  className="flex h-8 items-center gap-1.5 border border-destructive/20 bg-destructive/10 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/20"
+                  className="flex h-10 items-center gap-1.5 border border-destructive/20 bg-destructive/10 px-3 text-xs font-bold text-destructive transition hover:bg-destructive/20"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Hapus
                 </button>
@@ -249,7 +249,7 @@ export default function ContactsTable() {
                   />
                 </th>
                 {headers.map((h) => (
-                  <th key={h} className={cn("p-3 text-xs font-bold uppercase text-muted-foreground", h === "Skor" && "text-center")}>{h}</th>
+                  <th key={h} className={cn("p-3 text-xs font-bold uppercase text-muted-foreground", h === "Nilai" && "text-center")}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -309,7 +309,7 @@ export default function ContactsTable() {
                     <p className="font-bold text-foreground">{emailOnly ? "Belum ada kontak dengan email" : "Belum ada kontak yang cocok"}</p>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {emailOnly
-                        ? "Jalankan Cari Email untuk menemukan alamat email dari kontak yang sudah di-scrap."
+                        ? "Buka menu Temukan Alamat Email untuk mencari email dari kontak yang sudah di-scrap."
                         : "Tambahkan manual, impor CSV/Excel, atau ambil lead dari Scraper."}
                     </p>
                   </td>
@@ -328,14 +328,14 @@ export default function ContactsTable() {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
+              className="h-10 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
             >
               Sebelumnya
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
+              className="h-10 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40"
             >
               Berikutnya
             </button>

@@ -9,10 +9,9 @@ export default async function ValidatorPage() {
     <div className="space-y-5">
       <PageHero
         tone="whatsapp"
-        kicker="Number Hygiene"
-        kickerIcon={Sparkles}
-        title="Validasi Nomor"
-        description="Cek nomor aktif WhatsApp sebelum outreach untuk menghemat kredit dan menjaga delivery rate."
+        kicker="WhatsApp"
+        title="Cek Nomor WhatsApp"
+        description="Periksa dulu nomor mana yang benar-benar aktif di WhatsApp, supaya pesanmu tidak terbuang ke nomor mati."
       />
       <ValidatorClient />
     </div>

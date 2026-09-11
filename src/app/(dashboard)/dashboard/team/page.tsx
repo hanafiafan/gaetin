@@ -7,10 +7,9 @@ export default function TeamPage() {
     <div className="space-y-5">
       <PageHero
         tone="akun"
-        kicker="Workspace Access"
-        kickerIcon={Sparkles}
-        title="Tim"
-        description="Kelola anggota workspace dan perannya. Hanya Owner/Admin yang bisa menambah atau mengubah."
+        kicker="Akun"
+        title="Anggota Tim"
+        description="Tambahkan rekan kerja supaya bisa ikut mengelola workspace ini. Hanya Owner dan Admin yang boleh mengubah."
       />
       <TeamClient />
     </div>

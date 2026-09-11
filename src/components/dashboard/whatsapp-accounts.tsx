@@ -145,7 +145,7 @@ export default function WhatsAppAccounts() {
                 {a.status === "connected" ? (
                   <button
                     onClick={() => disconnect(a.id)}
-                    className="h-8 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-destructive/30 hover:text-destructive"
+                    className="h-10 border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-destructive/30 hover:text-destructive"
                   >
                     Putuskan
                   </button>
@@ -153,7 +153,7 @@ export default function WhatsAppAccounts() {
                   <button
                     onClick={() => connect(a.id)}
                     disabled={qr?.id === a.id}
-                    className="h-8 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                    className="h-10 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                   >
                     Hubungkan
                   </button>

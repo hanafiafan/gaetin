@@ -9,10 +9,9 @@ export default async function FollowUpsPage() {
     <div className="space-y-5">
       <PageHero
         tone="whatsapp"
-        kicker="Automation"
-        kickerIcon={Sparkles}
-        title="Follow-up Otomatis"
-        description="Buat aturan tindak lanjut untuk kontak yang belum membalas. Rangkaian berhenti saat kontak membalas."
+        kicker="WhatsApp"
+        title="Pesan Susulan"
+        description="Kalau kontak belum membalas setelah beberapa hari, sistem mengirim pesan susulan otomatis. Berhenti sendiri begitu dibalas."
       />
       <FollowUpsClient />
     </div>

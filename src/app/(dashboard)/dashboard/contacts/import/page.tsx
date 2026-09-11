@@ -7,10 +7,9 @@ export default function ImportPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <PageHero
-        kicker="Impor Data"
-        kickerIcon={Upload}
+        kicker="Mulai"
         title="Impor Kontak"
-        description="Unggah file CSV atau Excel, cocokkan kolom, lalu impor. Nomor duplikat disaring otomatis."
+        description="Punya daftar kontak di file Excel atau CSV? Unggah di sini. Nomor yang dobel otomatis dibuang."
         tone="kelola"
         rightSlot={
           <Link

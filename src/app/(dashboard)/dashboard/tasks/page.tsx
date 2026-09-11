@@ -7,10 +7,9 @@ export default function TasksPage() {
     <div className="space-y-5">
       <PageHero
         tone="kelola"
-        kicker="Sales Taskboard"
-        kickerIcon={Sparkles}
-        title="Tugas"
-        description="Catat pengingat follow-up manual, prioritaskan kontak penting, dan tandai pekerjaan sales yang selesai."
+        kicker="Kelola"
+        title="Daftar Tugas"
+        description="Catat pekerjaan yang harus kamu kerjakan beserta tenggatnya, supaya tidak ada calon pembeli yang terlupa."
       />
       <TasksClient />
     </div>

@@ -191,7 +191,7 @@ export default function BillingClient() {
               className={cn("px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Tahunan
-              {data && <span className="ml-2 bg-success/20 px-1.5 py-0.5 text-[10px] font-semibold text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
+              {data && <span className="ml-2 bg-success/20 px-1.5 py-0.5 text-xs font-semibold text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
             </button>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function BillingClient() {
       {/* Top-up */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-semibold text-foreground">Top-up kredit</h2>
+          <h2 className="text-lg font-semibold text-foreground">Beli kredit tambahan</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">Beli kredit tambahan kapan saja, langsung aktif setelah pembayaran.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -326,7 +326,7 @@ export default function BillingClient() {
             return (
               <div key={pack.id} className={cn("relative rounded-xl border p-5 transition", cheapest ? "border-success/30 bg-success/5" : "border-border bg-muted/50 hover:border-border")}>
                 {cheapest && (
-                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 bg-success/20 px-2.5 py-0.5 text-[11px] font-semibold text-success">
+                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 bg-success/20 px-2.5 py-0.5 text-xs font-semibold text-success">
                     <TrendingUp className="h-3 w-3" /> Terbaik
                   </span>
                 )}
@@ -352,7 +352,7 @@ export default function BillingClient() {
       <div>
         <div className="mb-5">
           <h2 className="text-lg font-semibold text-foreground">Riwayat transaksi</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Semua pembayaran dan top-up kredit tercatat di sini.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">Semua pembayaran dan pembelian kredit tercatat di sini.</p>
         </div>
         <div className="overflow-hidden rounded-xl border border-border bg-card">
           <div className="overflow-x-auto">

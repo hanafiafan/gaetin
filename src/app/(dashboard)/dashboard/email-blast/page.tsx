@@ -9,10 +9,9 @@ export default async function EmailBlastPage() {
     <div className="space-y-5">
       <PageHero
         tone="email"
-        kicker="Outreach Engine"
-        kickerIcon={Sparkles}
-        title="Email Blast"
-        description="Kirim email personal ke kontak yang punya alamat email, dengan personalisasi dan progress yang mudah dipantau."
+        kicker="Email"
+        title="Kirim Email Massal"
+        description="Kirim email ke banyak kontak sekaligus. Nama dan kota tiap penerima bisa disisipkan otomatis."
       />
       <EmailBlastClient />
     </div>

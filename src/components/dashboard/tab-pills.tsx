@@ -36,7 +36,7 @@ export default function TabPills({
             onClick={() => onChange(t.key)}
             aria-pressed={active}
             className={cn(
-              "flex h-9 items-center gap-2 rounded-full border px-4 text-sm transition",
+              "flex h-10 items-center gap-2 rounded-full border px-4 text-sm transition",
               active
                 ? "border-primary bg-primary font-semibold text-primary-foreground"
                 : "border-border text-foreground/70 hover:border-foreground/30 hover:text-foreground",
@@ -46,7 +46,7 @@ export default function TabPills({
             {t.count !== undefined && (
               <span
                 className={cn(
-                  "rounded-full px-1.5 text-[11px] font-bold",
+                  "rounded-full px-1.5 text-xs font-bold",
                   active ? "bg-primary-foreground/15" : "bg-foreground/10",
                 )}
               >

@@ -11,9 +11,8 @@ export default async function ScraperPage() {
     <div className="space-y-6">
       <PageHero
         tone="primary"
-        kicker="Market Research Engine"
-        kickerIcon={Sparkles}
-        title="Scraper Lead"
+        kicker="Mulai"
+        title="Cari Bisnis di Maps"
         description={
           legacyOsmEnabled
             ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach."

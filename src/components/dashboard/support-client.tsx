@@ -114,7 +114,7 @@ export default function SupportClient() {
         <div className="cg-card rounded-xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <LifeBuoy className="h-4 w-4 text-foreground" />
-            <h2 className="font-semibold text-foreground">Kirim tiket bantuan</h2>
+            <h2 className="font-semibold text-foreground">Kirim pertanyaan ke kami</h2>
           </div>
 
           {sent && (
@@ -159,9 +159,9 @@ export default function SupportClient() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Ticket className="h-4 w-4 text-foreground" />
-            <h2 className="font-semibold text-foreground">Tiket saya</h2>
+            <h2 className="font-semibold text-foreground">Pertanyaan yang sudah kamu kirim</h2>
             {tickets.length > 0 && (
-              <span className="bg-primary/20 px-2 py-0.5 text-[10px] font-semibold text-foreground">{tickets.length}</span>
+              <span className="bg-primary/20 px-2 py-0.5 text-xs font-semibold text-foreground">{tickets.length}</span>
             )}
           </div>
           {tickets.length === 0 ? (

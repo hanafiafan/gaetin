@@ -115,8 +115,8 @@ export default function CampaignsClient() {
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-semibold text-foreground">Rancang kampanye</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Gunakan template, targetkan segmen, dan jadwalkan pengiriman.</p>
+          <h2 className="font-semibold text-foreground">Buat pengiriman baru</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Pilih contoh pesan, tentukan siapa yang dikirimi, lalu atur waktunya.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
         {quota && (
@@ -140,7 +140,7 @@ export default function CampaignsClient() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Nama kampanye"
+            placeholder="Beri nama pengiriman ini"
             className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
@@ -168,7 +168,7 @@ export default function CampaignsClient() {
               defaultValue=""
               className={SELECT_CLASS}
             >
-              <option value="">Pakai template... (opsional)</option>
+              <option value="">Pakai contoh pesan... (boleh dikosongkan)</option>
               {templates.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
             </select>
           )}
@@ -214,7 +214,7 @@ export default function CampaignsClient() {
       <div className="cg-card flex flex-col overflow-hidden rounded-xl">
         <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
           <div>
-            <h2 className="font-semibold text-foreground">Daftar kampanye</h2>
+            <h2 className="font-semibold text-foreground">Pengiriman yang sudah dibuat</h2>
             <p className="text-sm text-muted-foreground">{campaigns.length} kampanye dibuat</p>
           </div>
         </div>
@@ -222,8 +222,8 @@ export default function CampaignsClient() {
         {campaigns.length === 0 ? (
           <div className="p-5">
             <EmptyState
-              title="Belum ada kampanye"
-              hint="Rancang kampanye pertama dari panel di kiri. Butuh kontak dulu? Ambil lead dari Scraper."
+              title="Belum ada pengiriman"
+              hint="Buat pengiriman pertamamu lewat panel di kiri. Belum punya kontak? Cari dulu di Google Maps."
               action={{ href: "/dashboard/scraper", label: "Cari lead" }}
             />
           </div>
@@ -268,7 +268,7 @@ export default function CampaignsClient() {
                             <button
                               onClick={() => act(campaign.id, "execute")}
                               disabled={quota?.remaining === 0}
-                              className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+                              className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
                             >
                               <Play className="h-3 w-3" /> Jalankan
                             </button>
@@ -276,7 +276,7 @@ export default function CampaignsClient() {
                           {campaign.status === "ACTIVE" && (
                             <button
                               onClick={() => act(campaign.id, "pause")}
-                              className="flex h-8 items-center gap-1.5 rounded-lg border border-warning/30 bg-warning/15 px-3 text-xs font-bold text-warning transition hover:bg-warning/25"
+                              className="flex h-10 items-center gap-1.5 rounded-lg border border-warning/30 bg-warning/15 px-3 text-xs font-bold text-warning transition hover:bg-warning/25"
                             >
                               <Pause className="h-3 w-3" /> Jeda
                             </button>
@@ -284,7 +284,7 @@ export default function CampaignsClient() {
                           {campaign.status === "PAUSED" && (
                             <button
                               onClick={() => act(campaign.id, "resume")}
-                              className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
+                              className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                             >
                               <RotateCcw className="h-3 w-3" /> Lanjutkan
                             </button>

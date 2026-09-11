@@ -52,14 +52,14 @@ export default function TemplatesClient() {
       <div className="cg-card rounded-xl p-5">
         <form onSubmit={create} className="space-y-3">
           <div>
-            <h2 className="font-semibold text-foreground">Template baru</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Buat copy yang bisa dipakai ulang di blast dan campaign.</p>
+            <h2 className="font-semibold text-foreground">Buat contoh pesan baru</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Tulis sekali, pakai berkali-kali saat mengirim pesan.</p>
           </div>
           {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Nama template"
+            placeholder="Beri nama pesan ini"
             className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <textarea
@@ -90,12 +90,12 @@ export default function TemplatesClient() {
 
       <div className="cg-card rounded-xl p-5">
         <div className="mb-4">
-          <h2 className="font-semibold text-foreground">Library template</h2>
+          <h2 className="font-semibold text-foreground">Contoh pesan tersimpan</h2>
           <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>
         </div>
         {items.length === 0 ? (
           <EmptyState
-            title="Belum ada template"
+            title="Belum ada contoh pesan"
             hint="Template menyimpan pesan yang sering dipakai supaya tidak perlu diketik ulang tiap kampanye. Buat yang pertama dari panel di kiri."
             action={{ href: "/dashboard/campaigns", label: "Lihat kampanye" }}
           />

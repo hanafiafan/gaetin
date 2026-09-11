@@ -24,6 +24,10 @@ import type { SectionTone } from "@/components/dashboard/section-tone";
 
 export type NavItem = {
   label: string;
+  /** Satu kalimat yang menjelaskan menu ini melakukan apa, ditampilkan di
+   * bawah labelnya. Label sependek "Validator" atau "CRM" tidak memberi tahu
+   * apa pun ke orang yang belum pernah memakai alat sejenis. */
+  desc: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   flag?: string;
@@ -45,49 +49,49 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     label: "Mulai",
     tone: "primary",
     items: [
-      { label: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Setup Ekstensi", href: "/dashboard/setup", icon: Chrome },
-      { label: "Kontak", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
-      { label: "Scraper", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
+      { label: "Ringkasan", desc: "Angka penting dan langkah berikutnya", href: "/dashboard", icon: LayoutDashboard },
+      { label: "Pasang Ekstensi", desc: "Panduan pasang alat di browser Chrome", href: "/dashboard/setup", icon: Chrome },
+      { label: "Daftar Kontak", desc: "Semua calon pembeli yang sudah tersimpan", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
+      { label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis dari Google Maps", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
     ],
   },
   {
     label: "WhatsApp",
     tone: "whatsapp",
     items: [
-      { label: "Sambung WhatsApp", href: "/dashboard/settings", icon: Smartphone, flag: "settings", skipActiveHighlight: true },
-      { label: "Kampanye", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
-      { label: "Inbox", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
-      { label: "Follow-up", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
-      { label: "Validator", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
-      { label: "Templates", href: "/dashboard/templates", icon: FileText, flag: "templates" },
+      { label: "Sambungkan Nomor", desc: "Hubungkan nomor WhatsApp untuk mengirim", href: "/dashboard/settings", icon: Smartphone, flag: "settings", skipActiveHighlight: true },
+      { label: "Kirim Pesan Massal", desc: "Kirim satu pesan ke banyak kontak sekaligus", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
+      { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
+      { label: "Pesan Susulan", desc: "Kirim otomatis kalau belum dibalas", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
+      { label: "Cek Nomor WhatsApp", desc: "Pastikan nomor aktif sebelum dikirimi", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
+      { label: "Contoh Pesan", desc: "Simpan pesan yang sering dipakai", href: "/dashboard/templates", icon: FileText, flag: "templates" },
     ],
   },
   {
     label: "Email",
     tone: "email",
     items: [
-      { label: "Cari Email", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
-      { label: "Email Blast", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
+      { label: "Temukan Alamat Email", desc: "Cari email dari website bisnis", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
+      { label: "Kirim Email Massal", desc: "Kirim email ke banyak kontak sekaligus", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
     ],
   },
   {
     label: "Kelola",
     tone: "kelola",
     items: [
-      { label: "CRM", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
-      { label: "Tugas", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
-      { label: "Laporan", href: "/dashboard/analytics", icon: BarChart3, flag: "analytics" },
+      { label: "Peluang Penjualan", desc: "Lacak calon pembeli sampai jadi closing", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
+      { label: "Daftar Tugas", desc: "Catatan pekerjaan yang harus dikerjakan", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
+      { label: "Laporan", desc: "Hasil penjualan dan performa pengiriman", href: "/dashboard/analytics", icon: BarChart3, flag: "analytics" },
     ],
   },
   {
     label: "Akun",
     tone: "akun",
     items: [
-      { label: "Tagihan", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
-      { label: "Tim", href: "/dashboard/team", icon: Bot, flag: "team" },
-      { label: "Bantuan", href: "/dashboard/support", icon: Headphones, flag: "support" },
-      { label: "Pengaturan", href: "/dashboard/settings", icon: Settings, flag: "settings" },
+      { label: "Tagihan & Kredit", desc: "Paket langganan dan sisa kredit", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
+      { label: "Anggota Tim", desc: "Tambah rekan kerja ke workspace ini", href: "/dashboard/team", icon: Bot, flag: "team" },
+      { label: "Bantuan", desc: "Pertanyaan umum dan kirim keluhan", href: "/dashboard/support", icon: Headphones, flag: "support" },
+      { label: "Pengaturan", desc: "Nomor WhatsApp, profil, dan keamanan", href: "/dashboard/settings", icon: Settings, flag: "settings" },
     ],
   },
 ];

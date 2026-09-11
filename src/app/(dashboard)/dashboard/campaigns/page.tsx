@@ -9,10 +9,9 @@ export default async function CampaignsPage() {
     <div className="space-y-5">
       <PageHero
         tone="whatsapp"
-        kicker="Campaign Manager"
-        kickerIcon={Sparkles}
-        title="Kampanye"
-        description="Rencanakan outreach terjadwal, pilih template, pause/resume saat dibutuhkan, dan pantau progress pengiriman."
+        kicker="WhatsApp"
+        title="Kirim Pesan Massal"
+        description="Kirim satu pesan WhatsApp ke banyak kontak sekaligus. Bisa dijadwalkan, dihentikan, dan dilanjutkan kapan saja."
       />
       <CampaignsClient />
     </div>
