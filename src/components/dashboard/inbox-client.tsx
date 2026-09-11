@@ -99,7 +99,7 @@ export default function InboxClient() {
       {/* Conversation list */}
       <div className="overflow-y-auto border-r border-border">
         <div className="sticky top-0 z-10 border-b border-border bg-background p-4">
-          <div className="flex items-center gap-2 font-black text-foreground">
+          <div className="flex items-center gap-2 font-semibold text-foreground">
             <Inbox className="h-5 w-5 text-foreground" />
             Percakapan
           </div>

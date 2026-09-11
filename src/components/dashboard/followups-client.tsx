@@ -95,7 +95,7 @@ export default function FollowUpsClient() {
       <div className="cg-card rounded-xl p-5 space-y-4">
         <form onSubmit={create} className="space-y-3">
           <div>
-            <h2 className="font-black text-foreground">Aturan follow-up baru</h2>
+            <h2 className="font-semibold text-foreground">Aturan follow-up baru</h2>
             <p className="mt-1 text-sm text-muted-foreground">Kirim pesan otomatis setelah beberapa hari tanpa balasan.</p>
           </div>
           {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -162,7 +162,7 @@ export default function FollowUpsClient() {
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="font-black text-foreground">Aturan aktif</h2>
+            <h2 className="font-semibold text-foreground">Aturan aktif</h2>
             <p className="text-sm text-muted-foreground">{rules.length} aturan tersimpan</p>
           </div>
           <button

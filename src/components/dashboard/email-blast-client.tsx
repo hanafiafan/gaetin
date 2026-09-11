@@ -81,7 +81,7 @@ export default function EmailBlastClient() {
     <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-black text-foreground">Buat email blast baru</h2>
+          <h2 className="font-semibold text-foreground">Buat email blast baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Target otomatis ke kontak yang punya email. Tulis subjek dan isi pesan personal.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -133,7 +133,7 @@ export default function EmailBlastClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-black text-foreground">Riwayat email blast</h2>
+          <h2 className="font-semibold text-foreground">Riwayat email blast</h2>
           <p className="text-sm text-muted-foreground">{blasts.length} email blast dibuat</p>
         </div>
         <div className="space-y-3">

@@ -159,7 +159,7 @@ export default function AnalyticsClient() {
                 {summary.byCampaign.map((c, i) => (
                   <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-card">
                     <td className="p-4 font-medium text-foreground">{c.name}</td>
-                    <td className="p-4 text-right font-black text-success">{formatIDR(c.revenue)}</td>
+                    <td className="p-4 text-right font-semibold text-success">{formatIDR(c.revenue)}</td>
                   </tr>
                 ))}
               </tbody>

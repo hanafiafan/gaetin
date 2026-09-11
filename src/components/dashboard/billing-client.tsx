@@ -176,7 +176,7 @@ export default function BillingClient() {
       <div>
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-black text-foreground">Pilih paket</h2>
+            <h2 className="text-lg font-semibold text-foreground">Pilih paket</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">Upgrade atau downgrade kapan saja. Bayar via VA, e-wallet, atau QRIS.</p>
           </div>
           <div className="flex rounded-full border border-border bg-card p-1 text-sm">
@@ -191,7 +191,7 @@ export default function BillingClient() {
               className={cn("px-4 py-1.5 font-bold transition", cycle === "YEARLY" ? "gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
             >
               Tahunan
-              {data && <span className="ml-2 bg-success/20 px-1.5 py-0.5 text-[10px] font-black text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
+              {data && <span className="ml-2 bg-success/20 px-1.5 py-0.5 text-[10px] font-semibold text-success">-{Math.round(data.yearlyDiscount * 100)}%</span>}
             </button>
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function BillingClient() {
               >
                 {featured && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="gradient-primary inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black text-primary-foreground shadow-sm">
+                    <span className="gradient-primary inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
                       <Sparkles className="h-3 w-3" /> Paling populer
                     </span>
                   </div>
@@ -232,7 +232,7 @@ export default function BillingClient() {
                 <div>
                   <p className="text-sm font-bold text-muted-foreground">{p.name}</p>
                   <div className="mt-2 flex items-end gap-1">
-                    <span className="text-3xl font-black text-foreground">
+                    <span className="text-3xl font-semibold text-foreground">
                       {amount === 0 ? "Gratis" : idr(amount)}
                     </span>
                     {amount > 0 && (
@@ -289,7 +289,7 @@ export default function BillingClient() {
           tidak bisa melenceng dari yang benar-benar dipotong sistem. */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-black text-foreground">Apa yang memakai kredit</h2>
+          <h2 className="text-lg font-semibold text-foreground">Apa yang memakai kredit</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Kredit hanya terpotong saat sebuah aksi berhasil. Scraping sendiri gratis.
           </p>
@@ -301,7 +301,7 @@ export default function BillingClient() {
                 <p className="text-sm font-bold text-foreground">{u.label}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{u.detail}</p>
               </div>
-              <span className="shrink-0 text-sm font-black text-foreground">
+              <span className="shrink-0 text-sm font-semibold text-foreground">
                 {u.cost === 0 ? "Gratis" : `${u.cost} kredit`}
               </span>
             </div>
@@ -312,7 +312,7 @@ export default function BillingClient() {
       {/* Top-up */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-black text-foreground">Top-up kredit</h2>
+          <h2 className="text-lg font-semibold text-foreground">Top-up kredit</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">Beli kredit tambahan kapan saja, langsung aktif setelah pembayaran.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -326,13 +326,13 @@ export default function BillingClient() {
             return (
               <div key={pack.id} className={cn("relative rounded-xl border p-5 transition", cheapest ? "border-success/30 bg-success/5" : "border-border bg-muted/50 hover:border-border")}>
                 {cheapest && (
-                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 bg-success/20 px-2.5 py-0.5 text-[11px] font-black text-success">
+                  <span className="absolute -top-3 right-4 inline-flex items-center gap-1 bg-success/20 px-2.5 py-0.5 text-[11px] font-semibold text-success">
                     <TrendingUp className="h-3 w-3" /> Terbaik
                   </span>
                 )}
-                <p className="text-2xl font-black text-foreground">{pack.credits.toLocaleString("id-ID")}</p>
+                <p className="text-2xl font-semibold text-foreground">{pack.credits.toLocaleString("id-ID")}</p>
                 <p className="mt-0.5 text-sm font-bold text-muted-foreground">kredit</p>
-                <p className="mt-3 text-xl font-black text-foreground">{idr(pack.price)}</p>
+                <p className="mt-3 text-xl font-semibold text-foreground">{idr(pack.price)}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{idr(ppc)}/kredit</p>
                 <button
                   disabled={busy}
@@ -351,7 +351,7 @@ export default function BillingClient() {
       {/* Transaction history */}
       <div>
         <div className="mb-5">
-          <h2 className="text-lg font-black text-foreground">Riwayat transaksi</h2>
+          <h2 className="text-lg font-semibold text-foreground">Riwayat transaksi</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">Semua pembayaran dan top-up kredit tercatat di sini.</p>
         </div>
         <div className="overflow-hidden rounded-xl border border-border bg-card">

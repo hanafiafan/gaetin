@@ -37,7 +37,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
         </div>
 
         <div className="px-6 pb-6">
-          <h2 className="text-xl font-black text-foreground">{feature} butuh paket Bisnis</h2>
+          <h2 className="text-xl font-semibold text-foreground">{feature} butuh paket Bisnis</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Paket Starter hanya mencakup scraping Google Maps dan ekspor CSV. Upgrade ke Bisnis untuk membuka fitur ini.
           </p>
@@ -45,7 +45,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
           <div className="mt-5 space-y-2">
             {LOCKED_FEATURES.map((f) => (
               <div key={f} className="flex items-center gap-2.5 text-sm text-foreground/80">
-                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/20 text-foreground text-[9px] font-black">✓</span>
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/20 text-foreground text-[9px] font-semibold">✓</span>
                 {f}
               </div>
             ))}
@@ -58,7 +58,7 @@ export default function UpgradeModal({ feature, onClose }: { feature: string | n
                 <p className="text-xs text-muted-foreground">Mulai dari</p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-black text-foreground">Rp199K</p>
+                <p className="text-2xl font-semibold text-foreground">Rp199K</p>
                 <p className="text-xs text-muted-foreground">/bulan</p>
               </div>
             </div>

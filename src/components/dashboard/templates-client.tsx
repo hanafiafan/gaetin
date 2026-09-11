@@ -52,7 +52,7 @@ export default function TemplatesClient() {
       <div className="cg-card rounded-xl p-5">
         <form onSubmit={create} className="space-y-3">
           <div>
-            <h2 className="font-black text-foreground">Template baru</h2>
+            <h2 className="font-semibold text-foreground">Template baru</h2>
             <p className="mt-1 text-sm text-muted-foreground">Buat copy yang bisa dipakai ulang di blast dan campaign.</p>
           </div>
           {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -90,7 +90,7 @@ export default function TemplatesClient() {
 
       <div className="cg-card rounded-xl p-5">
         <div className="mb-4">
-          <h2 className="font-black text-foreground">Library template</h2>
+          <h2 className="font-semibold text-foreground">Library template</h2>
           <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>
         </div>
         {items.length === 0 ? (

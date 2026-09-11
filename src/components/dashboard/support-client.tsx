@@ -82,35 +82,31 @@ export default function SupportClient() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
       {/* FAQ */}
-      <div>
-        <div className="mb-4 flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-foreground" />
-          <h2 className="font-black text-foreground">Pertanyaan umum</h2>
+      {/* Satu kartu berisi daftar yang dipisah garis rambut, bukan enam kartu
+          melayang dengan celah di antaranya — FAQ adalah satu daftar, bukan
+          enam benda terpisah. */}
+      <div className="cg-card overflow-hidden rounded-xl">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3.5">
+          <HelpCircle className="h-4 w-4 text-foreground/70" />
+          <h2 className="font-semibold text-foreground">Pertanyaan umum</h2>
         </div>
-        <div className="space-y-2">
-          {FAQ.map((f, i) => (
-            <div
-              key={f.q}
-              className={cn("rounded-xl border transition", openFaq === i ? "border-primary/25 bg-primary/[0.06]" : "border-border bg-card hover:border-border")}
+        {FAQ.map((f, i) => (
+          <div key={f.q} className={cn("border-b border-border last:border-0", openFaq === i && "bg-muted/40")}>
+            <button
+              type="button"
+              onClick={() => setOpenFaq(openFaq === i ? null : i)}
+              className="flex w-full items-center justify-between gap-3 px-5 py-3.5 text-left transition hover:bg-muted/50"
             >
-              <button
-                type="button"
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
-              >
-                <span className="text-sm font-bold text-foreground">{f.q}</span>
-                <ChevronDown
-                  className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openFaq === i && "rotate-180 text-foreground")}
-                />
-              </button>
-              {openFaq === i && (
-                <div className="border-t border-border px-4 pb-4 pt-3 text-sm leading-7 text-foreground/80">
-                  {f.a}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+              <span className="text-sm font-semibold text-foreground">{f.q}</span>
+              <ChevronDown
+                className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openFaq === i && "rotate-180 text-foreground")}
+              />
+            </button>
+            {openFaq === i && (
+              <div className="px-5 pb-4 text-sm leading-7 text-foreground/80">{f.a}</div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Ticket form + list */}
@@ -118,12 +114,12 @@ export default function SupportClient() {
         <div className="cg-card rounded-xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <LifeBuoy className="h-4 w-4 text-foreground" />
-            <h2 className="font-black text-foreground">Kirim tiket bantuan</h2>
+            <h2 className="font-semibold text-foreground">Kirim tiket bantuan</h2>
           </div>
 
           {sent && (
             <div className="mb-4 rounded-xl bg-success/10 px-4 py-3 text-sm font-medium text-success">
-              Tiket <span className="font-black">{sent}</span> terkirim. Tim kami merespons maks 1×24 jam kerja.
+              Tiket <span className="font-semibold">{sent}</span> terkirim. Tim kami merespons maks 1×24 jam kerja.
             </div>
           )}
 
@@ -163,9 +159,9 @@ export default function SupportClient() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Ticket className="h-4 w-4 text-foreground" />
-            <h2 className="font-black text-foreground">Tiket saya</h2>
+            <h2 className="font-semibold text-foreground">Tiket saya</h2>
             {tickets.length > 0 && (
-              <span className="bg-primary/20 px-2 py-0.5 text-[10px] font-black text-foreground">{tickets.length}</span>
+              <span className="bg-primary/20 px-2 py-0.5 text-[10px] font-semibold text-foreground">{tickets.length}</span>
             )}
           </div>
           {tickets.length === 0 ? (

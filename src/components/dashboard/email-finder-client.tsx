@@ -92,7 +92,7 @@ export default function EmailFinderClient() {
     <div className="grid gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-black text-foreground">Mulai pencarian baru</h2>
+          <h2 className="font-semibold text-foreground">Mulai pencarian baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Pilih sumber data, lalu jalankan — proses berjalan di latar belakang.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
@@ -122,7 +122,7 @@ export default function EmailFinderClient() {
             <p className="mt-1 text-[11px] text-muted-foreground">*Biarkan kosong untuk semua data yang punya website tapi belum ada email.</p>
           </div>
           <div className="rounded-xl border border-border bg-email/5 p-3 text-center">
-            <p className="text-2xl font-black text-foreground">{candidateCount ?? "…"}</p>
+            <p className="text-2xl font-semibold text-foreground">{candidateCount ?? "…"}</p>
             <p className="text-xs text-muted-foreground">{SOURCE_LABEL[source]} siap dicari (maks 500/proses)</p>
           </div>
           <button
@@ -143,7 +143,7 @@ export default function EmailFinderClient() {
 
       <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
-          <h2 className="font-black text-foreground">Riwayat pencarian</h2>
+          <h2 className="font-semibold text-foreground">Riwayat pencarian</h2>
           <p className="text-sm text-muted-foreground">{jobs.length} proses dijalankan</p>
         </div>
         <div className="space-y-3">

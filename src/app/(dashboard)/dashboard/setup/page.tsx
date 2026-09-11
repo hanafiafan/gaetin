@@ -336,7 +336,7 @@ function StepMaps({
               </span>
             </div>
             <div className="mt-1.5 flex items-center gap-1.5">
-              <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-destructive">
+              <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-destructive">
                 Wajib aktif!
               </span>
               <span className="text-[10px] text-muted-foreground">Tanpa ini scraping tidak bisa berjalan</span>
@@ -365,7 +365,7 @@ function StepMaps({
             { text: "Centang kotak \"Perbarui hasil saat peta digeser\"", action: "Ada di bagian atas daftar hasil pencarian" },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/20 text-[10px] font-black text-warning">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/20 text-[10px] font-semibold text-warning">
                 {i + 1}
               </span>
               <div>
@@ -586,7 +586,7 @@ function StepFirstScrape() {
             { step: "4", text: "Ekstensi akan scrape otomatis dan data masuk ke dashboard" },
           ].map((item) => (
             <div key={item.step} className="flex items-start gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-black text-foreground">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-semibold text-foreground">
                 {item.step}
               </span>
               <p className="text-sm text-foreground/80">{item.text}</p>

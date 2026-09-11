@@ -60,7 +60,7 @@ export default function MobileNav({
           <div className="cg-sidebar absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-foreground/15 px-4 py-4">
-              <span className="text-base font-black text-foreground">{appName}</span>
+              <span className="text-base font-semibold text-foreground">{appName}</span>
               <button
                 onClick={close}
                 className="flex h-8 w-8 items-center justify-center rounded-xl text-foreground/60 hover:text-foreground"
@@ -95,7 +95,7 @@ export default function MobileNav({
                             >
                               <Icon className="h-4 w-4 opacity-40" />
                               <span className="flex-1 text-left opacity-50">{item.label}</span>
-                              <span className="bg-warning/10 px-1.5 py-0.5 text-[9px] font-black uppercase text-warning">Bisnis</span>
+                              <span className="bg-warning/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-warning">Bisnis</span>
                             </button>
                           );
                         }

@@ -1,12 +1,47 @@
+import type { LucideIcon } from "lucide-react";
 import WhatsAppAccounts from "@/components/dashboard/whatsapp-accounts";
 import WorkspaceProfileSettings from "@/components/dashboard/workspace-profile-settings";
 import AccountSettings from "@/components/dashboard/account-settings";
 import PageHero from "@/components/dashboard/page-hero";
-import { Building2, Chrome, Download, Settings, Smartphone, Sparkles, UserCircle } from "lucide-react";
+import { Building2, Chrome, Download, Smartphone, Sparkles, UserCircle } from "lucide-react";
+
+/**
+ * Kartu setelan: pita judul dipisahkan garis rambut, lalu isinya langsung.
+ *
+ * Sebelumnya tiap seksi adalah kartu ber-padding 8 yang membungkus KARTU LAIN
+ * ber-padding 6 — dua border dan dua lapis padding untuk satu form. Empat kali
+ * berturut-turut, masing-masing disalin manual.
+ */
+function SettingsSection({
+  icon: Icon,
+  title,
+  description,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="cg-card overflow-hidden rounded-xl">
+      <header className="flex items-start gap-3 border-b border-border bg-muted/40 px-5 py-4">
+        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06] text-foreground/70">
+          <Icon className="h-4 w-4" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="font-semibold text-foreground">{title}</h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+        </div>
+      </header>
+      <div className="p-5">{children}</div>
+    </section>
+  );
+}
 
 export default function SettingsPage() {
   return (
-    <div className="max-w-6xl space-y-6">
+    <div className="max-w-5xl space-y-5">
       <PageHero
         tone="akun"
         kicker="Workspace Settings"
@@ -15,81 +50,56 @@ export default function SettingsPage() {
         description="Konfigurasi koneksi WhatsApp, profil workspace, dan pengaturan akun Anda."
       />
 
-      <div className="grid gap-6">
-        {/* WhatsApp */}
-        <div className="cg-card rounded-xl p-6 sm:p-8">
-          <div className="mb-6 max-w-2xl">
-            <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <Smartphone className="h-6 w-6 text-foreground" /> Koneksi WhatsApp
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Hubungkan satu atau lebih nomor WhatsApp. Tiap nomor punya batas kirim harian sendiri.
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-6">
-            <WhatsAppAccounts />
-          </div>
-        </div>
+      <SettingsSection
+        icon={Smartphone}
+        title="Koneksi WhatsApp"
+        description="Hubungkan satu atau lebih nomor WhatsApp. Tiap nomor punya batas kirim harian sendiri."
+      >
+        <WhatsAppAccounts />
+      </SettingsSection>
 
-        {/* Workspace profile */}
-        <div className="cg-card rounded-xl p-6 sm:p-8">
-          <div className="mb-6 max-w-2xl">
-            <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <Building2 className="h-6 w-6 text-foreground" /> Profil Workspace
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Nama dan informasi workspace Anda.
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-6">
-            <WorkspaceProfileSettings />
-          </div>
-        </div>
+      <SettingsSection
+        icon={Building2}
+        title="Profil Workspace"
+        description="Nama dan informasi workspace Anda."
+      >
+        <WorkspaceProfileSettings />
+      </SettingsSection>
 
-        {/* Account & security */}
-        <div className="cg-card rounded-xl p-6 sm:p-8">
-          <div className="mb-6 max-w-2xl">
-            <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <UserCircle className="h-6 w-6 text-foreground" /> Akun & Keamanan
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Perbarui nama, zona waktu, dan password akun Anda.
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-6">
-            <AccountSettings />
-          </div>
-        </div>
+      <SettingsSection
+        icon={UserCircle}
+        title="Akun & Keamanan"
+        description="Perbarui nama, zona waktu, dan password akun Anda."
+      >
+        <AccountSettings />
+      </SettingsSection>
 
-        {/* Chrome extension */}
-        <div className="cg-card rounded-xl p-6 sm:p-8">
-          <div className="mb-6 max-w-2xl">
-            <h2 className="flex items-center gap-3 text-xl font-bold text-foreground">
-              <Chrome className="h-6 w-6 text-foreground" /> Ekstensi Chrome
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Ekstensi yang menjalankan scraping otomatis dari Google Maps di browser Anda.
+      <SettingsSection
+        icon={Chrome}
+        title="Ekstensi Chrome"
+        description="Ekstensi yang menjalankan scraping otomatis dari Google Maps di browser Anda."
+      >
+        <div className="flex flex-col items-start gap-4 rounded-lg border border-primary/25 bg-primary/[0.07] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-semibold text-foreground">Ekstensi Hellens untuk Chrome</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Versi terbaru · Kompatibel dengan Chrome 100+ · Lihat panduan instalasi lengkap di{" "}
+              <a href="/dashboard/setup" className="font-medium text-foreground hover:underline">
+                Setup Ekstensi
+              </a>
+              .
             </p>
           </div>
-          <div className="flex flex-col items-start gap-4 rounded-xl border border-primary/20 bg-primary/5 p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-bold text-foreground">Ekstensi Hellens untuk Chrome</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Versi terbaru · Kompatibel dengan Chrome 100+ · Lihat panduan instalasi lengkap di{" "}
-                <a href="/dashboard/setup" className="text-foreground hover:underline">Setup Ekstensi</a>.
-              </p>
-            </div>
-            <a
-              href="/extension.zip"
-              download
-              className="flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-            >
-              <Download className="h-4 w-4" />
-              Download .ZIP
-            </a>
-          </div>
+          <a
+            href="/extension.zip"
+            download
+            className="flex h-10 shrink-0 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+          >
+            <Download className="h-4 w-4" />
+            Download .ZIP
+          </a>
         </div>
-      </div>
+      </SettingsSection>
     </div>
   );
 }
