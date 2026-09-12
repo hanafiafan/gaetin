@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 
 export class InsufficientCreditsError extends Error {
@@ -21,7 +22,11 @@ export async function addCredits(
   amount: number,
   reason: string,
 ): Promise<number> {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction((tx) => addCreditsInTransaction(tx, workspaceId, amount, reason));
+}
+
+export async function addCreditsInTransaction(tx: Prisma.TransactionClient, workspaceId: string, amount: number, reason: string): Promise<number> {
+    if (!Number.isSafeInteger(amount) || amount < 0) throw new Error("INVALID_CREDIT_AMOUNT");
     const ws = await tx.workspace.update({
       where: { id: workspaceId },
       data: { credits: { increment: amount } },
@@ -31,7 +36,6 @@ export async function addCredits(
       data: { workspaceId, amount, reason, balanceAfter: ws.credits },
     });
     return ws.credits;
-  });
 }
 
 /** Potong kredit; lempar InsufficientCreditsError bila saldo kurang. */
@@ -40,8 +44,11 @@ export async function deductCredits(
   amount: number,
   reason: string,
 ): Promise<number> {
-  if (amount <= 0) return getBalance(workspaceId);
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction((tx) => deductCreditsInTransaction(tx, workspaceId, amount, reason));
+}
+
+export async function deductCreditsInTransaction(tx: Prisma.TransactionClient, workspaceId: string, amount: number, reason: string): Promise<number> {
+    if (!Number.isSafeInteger(amount) || amount < 0) throw new Error("INVALID_CREDIT_AMOUNT");
     // Cek saldo dan pemotongan harus satu pernyataan. Sebagai baca-lalu-tulis di
     // READ COMMITTED, dua request bersamaan sama-sama membaca saldo lama, sama-sama
     // lolos cek, lalu sama-sama memotong — saldo bisa jatuh di bawah nol.
@@ -56,5 +63,4 @@ export async function deductCredits(
       data: { workspaceId, amount: -amount, reason, balanceAfter: balance },
     });
     return balance;
-  });
 }

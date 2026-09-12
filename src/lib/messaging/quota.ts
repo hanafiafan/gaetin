@@ -8,42 +8,20 @@ export class DailyMessagingQuotaError extends Error {
   }
 }
 
+// Billing day is Asia/Jakarta (UTC+7), independent of the app/worker host timezone.
 export function dayStart(date = new Date()): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const day = 86_400_000, offset = 7 * 3_600_000;
+  return new Date(Math.floor((date.getTime() + offset) / day) * day - offset);
 }
-
 export function nextDayStart(date = new Date()): Date {
-  const next = dayStart(date);
-  next.setDate(next.getDate() + 1);
-  return next;
+  return new Date(dayStart(date).getTime() + 86_400_000);
 }
 
 export async function getDailyMessagingUsage(workspaceId: string, date = new Date()): Promise<number> {
   const start = dayStart(date);
-  const [campaignSent, blastSent, followUpSent] = await Promise.all([
-    prisma.campaignMessage.count({
-      where: {
-        status: { in: ["SENT", "DELIVERED", "READ"] },
-        sentAt: { gte: start },
-        campaign: { workspaceId },
-      },
-    }),
-    prisma.blastMessage.count({
-      where: {
-        status: { in: ["SENT", "DELIVERED", "READ"] },
-        sentAt: { gte: start },
-        blast: { workspaceId },
-      },
-    }),
-    prisma.followUpSchedule.count({
-      where: {
-        status: "SENT",
-        sentAt: { gte: start },
-        rule: { workspaceId },
-      },
-    }),
-  ]);
-  return campaignSent + blastSent + followUpSent;
+  return prisma.outboundDelivery.count({ where: {
+    workspaceId, channel: "WHATSAPP", status: { not: "FAILED" }, createdAt: { gte: start },
+  } });
 }
 
 export async function getDailyMessagingQuota(workspaceId: string) {

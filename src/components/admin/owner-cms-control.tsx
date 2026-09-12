@@ -6,7 +6,7 @@ import {
   BarChart3,
   CreditCard,
   Database,
-  Image,
+  Image as ImageIcon,
   Loader2,
   Plus,
   Save,
@@ -248,7 +248,7 @@ export default function OwnerCmsControl() {
           </div>
 
           <div className={SECTION_CARD}>
-            <p className={SECTION_TITLE}><Image className="h-5 w-5 text-foreground" />Asset &amp; Media Registry</p>
+            <p className={SECTION_TITLE}><ImageIcon className="h-5 w-5 text-foreground" />Asset &amp; Media Registry</p>
             <div className="grid gap-3 md:grid-cols-2">
               {Object.entries(settings.mediaAssets).map(([key, value]) => (
                 <div key={key} className="space-y-1">

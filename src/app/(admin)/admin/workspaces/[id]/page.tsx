@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, BarChart3, CreditCard, Database, Loader2,
@@ -47,14 +47,14 @@ export default function WorkspaceDetailPage() {
   const [tab, setTab] = useState<"overview" | "scraper" | "blasts" | "credits">("overview");
   const [loading, setLoading] = useState(true);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const r = await fetch(`/api/admin/workspaces/${id}`);
     const j = await r.json();
     if (j.success) setData(j.data);
     setLoading(false);
-  }
-  useEffect(() => { load(); }, [id]);
+  }, [id]);
+  useEffect(() => { load(); }, [load]);
 
   async function act(body: Record<string, unknown>) {
     await fetch(`/api/admin/workspaces/${id}`, {

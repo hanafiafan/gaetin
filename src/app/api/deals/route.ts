@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
@@ -15,6 +16,8 @@ const CreateSchema = z.object({
 export async function GET() {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "crmPipeline");
+  if (denied) return denied;
 
   const agg = await prisma.deal.aggregate({
     where: { workspaceId: session.workspace.id, status: "WON" },
@@ -30,6 +33,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "crmPipeline");
+  if (denied) return denied;
   const workspaceId = session.workspace.id;
 
   let body: unknown;

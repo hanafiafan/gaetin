@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
@@ -8,6 +9,8 @@ import { fail } from "@/lib/api";
 export async function GET() {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "campaigns");
+  if (denied) return denied;
 
   const items = await prisma.campaign.findMany({
     where: { workspaceId: session.workspace.id },
@@ -28,6 +31,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "campaigns");
+  if (denied) return denied;
   const workspaceId = session.workspace.id;
 
   let body: unknown;
@@ -57,7 +62,8 @@ export async function POST(req: NextRequest) {
   const scheduledDate = scheduledAt ? new Date(scheduledAt) : null;
   const isScheduled = scheduledDate ? scheduledDate.getTime() > Date.now() : false;
 
-  const campaign = await prisma.campaign.create({
+  const campaign = await prisma.$transaction(async (tx) => {
+  const campaign = await tx.campaign.create({
     data: {
       workspaceId,
       name,
@@ -70,8 +76,11 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  await prisma.campaignMessage.createMany({
+  await tx.campaignMessage.createMany({
     data: contacts.map((c) => ({ campaignId: campaign.id, contactId: c.id })),
+  });
+
+    return campaign;
   });
 
   return NextResponse.json(

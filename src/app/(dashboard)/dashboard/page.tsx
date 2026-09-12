@@ -18,10 +18,11 @@ function formatIDR(n: number): string {
 }
 
 export default async function DashboardPage({
-  searchParams,
+  searchParams: searchParamsPromise,
 }: {
-  searchParams?: { feature?: string; error?: string };
+  searchParams?: Promise<{ feature?: string; error?: string }>;
 }) {
+  const searchParams = await searchParamsPromise;
   const session = await requireSession();
   const workspaceId = session.workspace.id;
 

@@ -1,96 +1,44 @@
 import { prisma } from "@/lib/db/prisma";
 import { getMessagingProvider } from "@/lib/messaging/provider";
-import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { deductCreditsInTransaction, InsufficientCreditsError } from "@/lib/credits/service";
 import { CREDIT_COSTS } from "@/config/plans";
+import { enqueue } from "@/lib/jobs/queue";
 
-export interface ValidationJob {
-  /** Job disimpan di satu Map global lintas-tenant, jadi pemiliknya harus ikut
-   * tersimpan — tanpa ini id job saja sudah cukup untuk membaca progres atau
-   * menghentikan validasi milik workspace lain. */
-  workspaceId: string;
-  total: number;
-  processed: number;
-  active: number;
-  inactive: number;
-  unverified: number;
-  status: "running" | "done" | "stopped";
+export async function getValidation(id: string, workspaceId: string) {
+  return prisma.validationRun.findFirst({ where: { id, workspaceId } });
 }
-
-// Tracker progress in-memory (single instance). Di produksi: pakai BullMQ + DB.
-const g = globalThis as unknown as { __valJobs?: Map<string, ValidationJob> };
-const jobs: Map<string, ValidationJob> = g.__valJobs ?? new Map();
-if (!g.__valJobs) g.__valJobs = jobs;
-
-function delay(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
+export async function stopValidation(id: string, workspaceId: string) {
+  await prisma.validationRun.updateMany({ where: { id, workspaceId, status: "running" }, data: { status: "stopped" } });
 }
-
-// workspaceId wajib pada kedua fungsi ini supaya pemanggil tidak bisa lupa
-// memeriksanya — pengecekan di route mudah terlewat saat menambah endpoint baru.
-export function getValidation(id: string, workspaceId: string): ValidationJob | null {
-  const j = jobs.get(id);
-  return j && j.workspaceId === workspaceId ? j : null;
-}
-
-export function stopValidation(id: string, workspaceId: string): void {
-  const j = jobs.get(id);
-  if (j && j.workspaceId === workspaceId) j.status = "stopped";
-}
-
-export async function runValidation(
-  jobId: string,
-  workspaceId: string,
-  accountId: string,
-  contactIds: string[],
-): Promise<void> {
-  const job: ValidationJob = {
-    workspaceId,
-    total: contactIds.length,
-    processed: 0,
-    active: 0,
-    inactive: 0,
-    unverified: 0,
-    status: "running",
-  };
-  jobs.set(jobId, job);
-
-  const provider = getMessagingProvider();
-
-  for (const cid of contactIds) {
-    if (job.status === "stopped") break;
-    const c = await prisma.contact.findFirst({ where: { id: cid, workspaceId } });
-    if (!c) {
-      job.processed += 1;
-      continue;
-    }
-    // Potong kredit per nomor; berhenti jika kredit habis.
+export async function runValidation(jobId: string, workspaceId: string, accountId: string, contactIds: string[]) {
+  const job = await getValidation(jobId, workspaceId);
+  if (!job || job.status !== "running") return;
+  for (let i = job.processed; i < Math.min(contactIds.length, job.processed + 10); i++) {
+    const current = await getValidation(jobId, workspaceId);
+    if (!current || current.status !== "running") return;
+    const c = await prisma.contact.findFirst({ where: { id: contactIds[i], workspaceId } });
+    let registered: boolean | null = null;
+    if (c) { try { registered = await getMessagingProvider().isRegistered(accountId, c.phone); } catch { /* unavailable is not INACTIVE */ } }
     try {
-      await deductCredits(workspaceId, CREDIT_COSTS.validateNumber, "VALIDATE");
-    } catch (e) {
-      if (e instanceof InsufficientCreditsError) {
-        job.status = "stopped";
-        break;
-      }
-      throw e;
-    }
-    try {
-      const ok = await provider.isRegistered(accountId, c.phone);
-      await prisma.contact.update({
-        where: { id: c.id },
-        data: { waStatus: ok ? "ACTIVE" : "INACTIVE" },
+      await prisma.$transaction(async (tx) => {
+        const claimed = await tx.validationRun.updateMany({ where: { id: jobId, workspaceId, status: "running", processed: i }, data: { processed: { increment: 1 } } });
+        if (!claimed.count) return;
+        if (c && registered !== null) {
+          await deductCreditsInTransaction(tx, workspaceId, CREDIT_COSTS.validateNumber, "VALIDATE");
+          await tx.contact.update({ where: { id: c.id }, data: { waStatus: registered ? "ACTIVE" : "INACTIVE" } });
+          await tx.validationRun.update({ where: { id: jobId }, data: registered ? { active: { increment: 1 } } : { inactive: { increment: 1 } } });
+        } else await tx.validationRun.update({ where: { id: jobId }, data: { unverified: { increment: 1 } } });
       });
-      if (ok) job.active += 1;
-      else job.inactive += 1;
-    } catch {
-      // Kredit sudah dipotong sebelum percobaan ini. Tanpa pengembalian, gateway
-      // yang mati menghabiskan seluruh saldo pelanggan tanpa memvalidasi apa pun.
-      await addCredits(workspaceId, CREDIT_COSTS.validateNumber, "REFUND_VALIDATE").catch(() => undefined);
-      job.unverified += 1;
+    } catch (err) {
+      if (err instanceof InsufficientCreditsError) { await stopValidation(jobId, workspaceId); return; }
+      throw err;
     }
-    job.processed += 1;
-    // Jeda acak 2-5 detik untuk menghindari rate limit (Req 7.4).
-    await delay(2000 + Math.random() * 3000);
+    await new Promise((r) => setTimeout(r, process.env.NODE_ENV === "test" ? 0 : 2000 + Math.random() * 3000));
   }
-
-  if (job.status !== "stopped") job.status = "done";
+  await prisma.$transaction(async (tx) => {
+    const current = await tx.validationRun.findUniqueOrThrow({ where: { id: jobId } });
+    if (current.status !== "running") return;
+    if (current.processed >= current.total) await tx.validationRun.update({ where: { id: jobId }, data: { status: "done" } });
+    else await enqueue(tx, "VALIDATION", jobId, workspaceId, { id: jobId, accountId, targetIds: contactIds });
+  });
 }

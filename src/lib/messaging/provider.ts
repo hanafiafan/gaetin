@@ -13,6 +13,7 @@ export interface ConnectResult {
 }
 
 export interface MessagePayload {
+  idempotencyKey?: string;
   text?: string;
   mediaUrl?: string;
   mediaType?: "image" | "document" | "video";
@@ -21,6 +22,8 @@ export interface MessagePayload {
 
 export interface SendResult {
   ok: boolean;
+  retryable?: boolean;
+  uncertain?: boolean;
   waMessageId?: string;
   error?: string;
 }
@@ -40,9 +43,10 @@ export interface IMessagingProvider {
 
 let cached: IMessagingProvider | null = null;
 
-// Factory provider. Saat ini hanya Baileys; gateway/Cloud API menyusul dengan
-// menambah cabang berdasarkan env.WA_PROVIDER tanpa mengubah pemakai interface.
+// Both legacy baileys and gateway settings use the external Baileys gateway.
+// Cloud API must fail explicitly until a real adapter exists.
 export function getMessagingProvider(): IMessagingProvider {
+  if (process.env.WA_PROVIDER === "cloud_api") throw new Error("WhatsApp Cloud API belum dikonfigurasi");
   if (!cached) cached = new BaileysProvider();
   return cached;
 }

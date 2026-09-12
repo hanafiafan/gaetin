@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface U {
   id: string;
@@ -14,15 +14,15 @@ export default function AdminUsers() {
   const [rows, setRows] = useState<U[]>([]);
   const [query, setQuery] = useState("");
 
-  async function load() {
+  const load = useCallback(async () => {
     const r = await fetch(`/api/admin/users${query ? `?query=${encodeURIComponent(query)}` : ""}`);
     const j = await r.json();
     if (j.success) setRows(j.data);
-  }
+  }, [query]);
   useEffect(() => {
     const t = setTimeout(load, 250);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [load]);
 
   async function act(id: string, action: string) {
     await fetch(`/api/admin/users/${id}`, {

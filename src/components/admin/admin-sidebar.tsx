@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -41,7 +42,7 @@ export default function AdminSidebar() {
   return (
     <aside className="cg-sidebar sticky top-0 z-20 hidden h-screen w-[280px] shrink-0 flex-col px-4 py-5 md:flex">
       <Link href="/admin" className="flex items-center gap-2.5">
-        <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7 shrink-0" />
+        <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7 shrink-0" />
         <div className="min-w-0">
           <div className="cg-display text-2xl">Hellens</div>
           <div className="cg-label truncate text-foreground/55">Konsol Owner</div>

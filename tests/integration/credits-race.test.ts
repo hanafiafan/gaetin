@@ -2,17 +2,9 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { PrismaClient } from "@prisma/client";
 import { deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
 
-// Butuh Postgres sungguhan — perilaku yang diuji adalah jaminan atomicity di
-// level SQL, bukan sesuatu yang bisa dipalsukan dengan mock. Dilewati bila DB
-// tidak tersedia (mis. CI tanpa service Postgres) supaya suite tetap hijau.
+// Integration runs require an explicit isolated TEST_DATABASE_URL and fail if unavailable.
 const prisma = new PrismaClient();
-let dbUp = false;
-
-beforeAll(async () => {
-  dbUp = await prisma
-    .$queryRaw`SELECT 1`.then(() => true)
-    .catch(() => false);
-});
+beforeAll(async () => { await prisma.$queryRaw`SELECT 1`; });
 
 afterAll(async () => {
   await prisma.$disconnect();
@@ -32,7 +24,6 @@ async function withWorkspace(credits: number, fn: (id: string) => Promise<void>)
 
 describe("deductCredits", () => {
   it("menolak pemotongan melebihi saldo tanpa mengubah saldo", async () => {
-    if (!dbUp) return;
     await withWorkspace(3, async (id) => {
       await expect(deductCredits(id, 4, "TEST")).rejects.toBeInstanceOf(InsufficientCreditsError);
       const after = await prisma.workspace.findUniqueOrThrow({
@@ -44,7 +35,6 @@ describe("deductCredits", () => {
   });
 
   it("memotong tepat sampai nol, lalu menolak", async () => {
-    if (!dbUp) return;
     await withWorkspace(2, async (id) => {
       expect(await deductCredits(id, 1, "TEST")).toBe(1);
       expect(await deductCredits(id, 1, "TEST")).toBe(0);
@@ -58,7 +48,6 @@ describe("deductCredits", () => {
   // koneksi terpisah dan jeda di antara baca dan tulis — bila mengubah
   // deductCredits, verifikasi manual dengan cara itu.
   it("tidak pernah membiarkan saldo jatuh di bawah nol", async () => {
-    if (!dbUp) return;
     await withWorkspace(5, async (id) => {
       await Promise.allSettled(Array.from({ length: 20 }, () => deductCredits(id, 1, "TEST")));
       const after = await prisma.workspace.findUniqueOrThrow({

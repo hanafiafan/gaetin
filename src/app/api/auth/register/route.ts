@@ -21,7 +21,7 @@ function slugify(s: string): string {
 
 export async function POST(req: NextRequest) {
   const ip = clientIp(req);
-  if (!rateLimit(`register:${ip}`, 5, 60_000).ok) {
+  if (!(await rateLimit(`register:${ip}`, 5, 60_000)).ok) {
     return fail("RATE_001", "Terlalu banyak percobaan. Coba lagi sebentar.", 429);
   }
 

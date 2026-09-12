@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import StatRow from "@/components/brand/stat-row";
 import { Check } from "lucide-react";
@@ -22,7 +23,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Left panel — inverted */}
       <section className="relative hidden bg-foreground p-10 text-background lg:flex lg:flex-col">
         <Link href="/" className="flex items-center gap-2.5">
-          <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
+          <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
           <span className="cg-display text-2xl">Hellens</span>
         </Link>
 
@@ -64,7 +65,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="w-full max-w-md">
           <div className="mb-10 lg:hidden">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7" />
+              <Image width={28} height={28} src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7" />
               <span className="cg-display text-2xl">Hellens</span>
             </Link>
             <p className="cg-label mt-3 text-muted-foreground">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import LandingConversionPanel from "@/components/landing-conversion-panel";
 import LandingFaq from "@/components/landing-faq";
@@ -243,7 +244,7 @@ export default function HomePage() {
       <header className="landing-header sticky top-0 border-b border-foreground bg-background">
         <nav className="cg-section flex items-center justify-between gap-4 py-4">
           <Link href="/" className="flex min-w-0 items-center gap-2.5">
-            <img src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7" />
+            <Image width={28} height={28} src="/brand/hellens-mark-black.png" alt="" className="h-7 w-7" />
             <span className="cg-display text-2xl">Hellens</span>
           </Link>
 
@@ -305,7 +306,7 @@ export default function HomePage() {
           <div className="relative hidden aspect-square lg:block">
             <WireGlobe className="absolute right-0 top-0 h-3/4 w-3/4 text-border" />
 
-            <img
+            <Image width={800} height={800} sizes="50vw" priority
               src="/media/hero-form.webp"
               alt=""
               className="absolute left-0 top-[6%] h-[88%] w-full object-contain"
@@ -364,7 +365,7 @@ export default function HomePage() {
           <div className="grid gap-10 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-center lg:gap-14">
             {/* Photo with a yellow bar breaking its edge, per the reference */}
             <div className="relative hidden lg:block">
-              <img
+              <Image width={600} height={750} sizes="300px"
                 src="/media/value-band.jpg"
                 alt="Pemilik bisnis mengelola prospek dari dashboard Hellens"
                 className="aspect-[4/5] w-full object-cover grayscale"
@@ -669,7 +670,7 @@ export default function HomePage() {
             <article key={testimonial.name} className="cg-press flex flex-col justify-between rounded-3xl bg-background p-8 text-foreground">
               <p className="text-lg leading-8 text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
               <div className="mt-10 flex items-center gap-3">
-                <img
+                <Image width={56} height={56}
                   src={testimonial.photo}
                   alt={testimonial.name}
                   className="h-14 w-14 shrink-0 object-cover grayscale"
@@ -730,7 +731,7 @@ export default function HomePage() {
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
             <div>
               <Link href="/" className="flex items-center gap-2.5">
-                <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
+                <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
                 <span className="cg-display text-2xl">Hellens</span>
               </Link>
               <p className="mt-5 max-w-xs text-sm leading-7 opacity-60">

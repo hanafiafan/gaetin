@@ -34,12 +34,7 @@ export class BaileysProvider implements IMessagingProvider {
     toPhone: string,
     payload: MessagePayload,
   ): Promise<SendResult> {
-    try {
-      const id = await wa.sendText(accountId, toPhone, payload.text ?? "");
-      return { ok: true, waMessageId: id };
-    } catch (e) {
-      return { ok: false, error: e instanceof Error ? e.message : "Gagal mengirim" };
-    }
+    return wa.sendText(accountId, toPhone, payload.text ?? "", payload.idempotencyKey);
   }
 
   async isRegistered(accountId: string, toPhone: string): Promise<boolean> {

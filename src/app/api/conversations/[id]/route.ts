@@ -1,12 +1,16 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { fail } from "@/lib/api";
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "inbox");
+  if (denied) return denied;
 
   const convo = await prisma.conversation.findFirst({
     where: { id: params.id, workspaceId: session.workspace.id },
@@ -40,9 +44,12 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 
 const PatchSchema = z.object({ status: z.enum(["OPEN", "PENDING", "RESOLVED"]) });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "inbox");
+  if (denied) return denied;
 
   const convo = await prisma.conversation.findFirst({
     where: { id: params.id, workspaceId: session.workspace.id },

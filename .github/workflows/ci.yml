@@ -8,18 +8,36 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: gaetin_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U test" --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       # Nilai dummy agar prisma generate & build (yang memvalidasi env) lolos.
-      DATABASE_URL: "postgresql://user:pass@localhost:5432/db?schema=public"
+      DATABASE_URL: "postgresql://test:test@localhost:5432/gaetin_test?schema=public"
       JWT_SECRET: "ci-placeholder-secret-please-override-0123456789"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npx prisma generate
+      - run: npx prisma migrate deploy
+      - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
+      - run: npm run test:integration
+        env:
+          TEST_DATABASE_URL: postgresql://test:test@localhost:5432/gaetin_test?schema=public
+      - run: node --test gateway/tests/*.test.js
       - run: npm run build
+      - run: npm run test:e2e
+        env:
+          TEST_DATABASE_URL: postgresql://test:test@localhost:5432/gaetin_test?schema=public

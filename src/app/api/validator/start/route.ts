@@ -1,9 +1,10 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { runValidation } from "@/lib/validator/service";
+import { enqueue } from "@/lib/jobs/queue";
 import { fail } from "@/lib/api";
 
 const Schema = z.object({
@@ -15,6 +16,8 @@ const Schema = z.object({
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "waValidation");
+  if (denied) return denied;
   const workspaceId = session.workspace.id;
 
   let body: unknown;
@@ -50,7 +53,10 @@ export async function POST(req: NextRequest) {
   if (contacts.length === 0) return fail("EMPTY", "Tidak ada kontak untuk divalidasi", 400);
 
   const jobId = randomUUID();
-  void runValidation(jobId, workspaceId, account.id, contacts.map((c) => c.id)).catch(() => undefined);
+  await prisma.$transaction(async (tx) => {
+    await tx.validationRun.create({ data: { id: jobId, workspaceId, total: contacts.length } });
+    await enqueue(tx, "VALIDATION", jobId, workspaceId, { id: jobId, accountId: account.id, targetIds: contacts.map((c) => c.id) });
+  });
 
   return NextResponse.json({ success: true, data: { jobId, total: contacts.length } }, { status: 202 });
 }

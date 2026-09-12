@@ -54,3 +54,8 @@ tsconfig.tsbuildinfo
 
 # dev server log
 dev-server.log
+
+# local scratch and gateway dependencies
+/work/
+/gateway/node_modules/
+/gateway/wa-sessions/

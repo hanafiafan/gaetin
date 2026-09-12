@@ -5,7 +5,8 @@ import { IMPERSONATE_COOKIE, authCookieOptions } from "@/lib/auth/constants";
 import { logAudit } from "@/lib/audit";
 import { fail } from "@/lib/api";
 
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
+export async function POST(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
 

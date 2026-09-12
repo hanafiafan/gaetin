@@ -38,21 +38,22 @@ export async function POST(req: NextRequest) {
     payload.transaction_status === "settlement" ||
     (payload.transaction_status === "capture" && payload.fraud_status === "accept");
 
-  await prisma.webhookEvent
+  const event = await prisma.webhookEvent
     .create({
       data: {
         source: "midtrans",
         orderId: payload.order_id ?? null,
         signatureValid: true,
         payload: payload as object,
-        processed: isPaid,
+        processed: false,
       },
     })
     .catch(() => undefined);
 
   if (isPaid && payload.order_id) {
     try {
-      await handlePaidTransaction(payload.order_id);
+      await handlePaidTransaction(payload.order_id, payload.gross_amount);
+      if (event) await prisma.webhookEvent.update({ where: { id: event.id }, data: { processed: true } });
     } catch {
       // 500 so Midtrans retries instead of silently losing the credit/subscription grant.
       return NextResponse.json({ error: "processing failed" }, { status: 500 });

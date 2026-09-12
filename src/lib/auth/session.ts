@@ -15,7 +15,7 @@ export interface Session {
 }
 
 export async function getSession(): Promise<Session | null> {
-  const token = cookies().get(AUTH_COOKIE)?.value;
+  const token = (await cookies()).get(AUTH_COOKIE)?.value;
   if (!token) return null;
 
   const payload = verifyToken(token);
@@ -28,7 +28,7 @@ export async function getSession(): Promise<Session | null> {
     where: { id: payload.sub },
     include: { memberships: { include: { workspace: true }, orderBy: { createdAt: "asc" }, take: 1 } },
   });
-  if (!user) return null;
+  if (!user || user.sessionVersion !== (payload.version ?? 0)) return null;
 
   // Lock/ban harus mematikan sesi yang sudah berjalan, bukan hanya menolak login berikutnya.
   if (user.lockedUntil && user.lockedUntil > new Date()) return null;
@@ -41,7 +41,7 @@ export async function getSession(): Promise<Session | null> {
   let impersonating = false;
 
   // Super-admin dapat impersonate workspace lain (cookie khusus).
-  const impersonateId = cookies().get(IMPERSONATE_COOKIE)?.value;
+  const impersonateId = (await cookies()).get(IMPERSONATE_COOKIE)?.value;
   if (impersonateId && user.isSuperAdmin) {
     const ws = await prisma.workspace.findUnique({ where: { id: impersonateId } });
     if (ws) {

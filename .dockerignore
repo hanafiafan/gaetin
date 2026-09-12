@@ -11,3 +11,8 @@ coverage
 Dockerfile
 docker-compose.yml
 .github
+
+work
+tests
+*.tsbuildinfo
+.codex-screenshots

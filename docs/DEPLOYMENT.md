@@ -1,133 +1,55 @@
-# Panduan Deployment — Hellens
+# Deployment Gaetin
 
-Deploy dengan Docker Compose di satu VPS: aplikasi (Next.js + Baileys), PostgreSQL, dan Caddy (reverse proxy + SSL otomatis).
+## Layanan wajib
 
-## Prasyarat
+`app`, `worker`, `gateway`, dan `db`. Compose standar menambahkan Caddy. Compose Coolify memakai jaringan eksternal `coolify` dan routing Traefik yang sudah ada. Port aplikasi langsung hanya di-bind ke localhost; akses publik melewati reverse proxy.
 
-- VPS (mis. 2 vCPU / 4 GB RAM untuk awal) dengan Docker + Docker Compose.
-- Domain yang diarahkan (A record) ke IP VPS, mis. `scraper.hellens.dev`.
-- Port 80 & 443 terbuka.
+Jalankan hanya **satu worker** dan **satu gateway untuk satu volume sesi**. Worker memakai koneksi PostgreSQL khusus untuk advisory lock; jangan arahkan koneksi worker melalui PgBouncer transaction pooling. Duplikat worker keluar dengan error dan tidak menjalankan job.
 
-## 1. Siapkan environment
+## Konfigurasi
 
-Di server, clone repo lalu buat `.env`:
+- `DATABASE_URL`: PostgreSQL aplikasi. Compose mengarahkannya ke service `db`.
+- `JWT_SECRET`: secret penandatanganan sesi.
+- `WA_GATEWAY_TOKEN`: token aplikasi/worker ke gateway. Set sebagai `GATEWAY_TOKEN` pada gateway.
+- `WEBHOOK_SECRET`: secret gateway ke aplikasi. Gunakan nilai terpisah dari JWT.
+- `WA_GATEWAY_BASE_URL`: `http://gateway:3001` di Compose.
+- `NEXT_PUBLIC_APP_URL`: URL publik aplikasi.
+- Compose standar: `DB_USER`, `DB_PASSWORD`, `DOMAIN`.
+- Coolify: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, serta secret di atas.
 
-```bash
-cp .env.example .env
-```
+Konfigurasi Midtrans dan email mengikuti integrasi admin yang sudah ada. Jangan menyalin secret produksi ke database pengujian.
 
-Isi minimal:
+## Instalasi baru
 
-```
-JWT_SECRET=<hasil: openssl rand -base64 48>
-NEXT_PUBLIC_APP_URL=https://scraper.hellens.dev
-MIDTRANS_MERCHANT_ID=<merchant ID Midtrans>
-MIDTRANS_CLIENT_KEY=<client key Midtrans>
-MIDTRANS_SERVER_KEY=<server key Midtrans>
-MIDTRANS_IS_PRODUCTION=true
-```
-
-Lalu set variabel khusus compose (boleh di `.env` yang sama):
-
-```
-DOMAIN=scraper.hellens.dev
-DB_PASSWORD=<password DB kuat>
-```
-
-> `DATABASE_URL` otomatis di-override oleh compose ke service `db`, jadi tidak perlu diatur manual untuk mode Docker.
-
-## 2. Build & jalankan
-
-```bash
+```sh
 docker compose up -d --build
 ```
 
-Yang terjadi:
-- `db` (Postgres) menyala dengan volume persisten.
-- `app` build, lalu saat start menjalankan `prisma migrate deploy` (membuat/menerapkan semua migrasi) dan `next start`.
-- `caddy` menerbitkan sertifikat SSL otomatis untuk `DOMAIN` dan mem-proxy ke app.
+App dan worker menjalankan `prisma migrate deploy` sebelum mulai. PostgreSQL memakai lock migrasi. Jika proses kedua gagal memperoleh lock saat instalasi awal, restart policy akan mencoba kembali. Worker/gateway healthcheck memeriksa proses; `/api/health` memeriksa koneksi database aplikasi.
 
-Cek kesehatan:
+## Upgrade instalasi lama
 
-```bash
-curl https://scraper.hellens.dev/api/health   # {"ok":true,"db":"up"}
-```
+1. Buat backup PostgreSQL dan volume `wa_sessions`.
+2. Pause kampanye dan hentikan proses app/worker lama. Tunggu pengiriman yang sedang berlangsung selesai sebelum migrasi. Pengiriman versi lama tidak memiliki receipt; jangan otomatis melanjutkan pesan yang hasilnya belum jelas.
+3. Isi `WA_GATEWAY_TOKEN` dan `WEBHOOK_SECRET` terpisah pada konfigurasi deployment.
+4. Deploy app, worker, gateway, dan migrasi bersama-sama. Jangan mencampur gateway lama yang tidak mendukung idempotency key dengan worker baru.
+5. Verifikasi health, gateway tersambung, login, dan worker log `Gaetin worker ready`.
+6. Uji satu pesan ke nomor pengujian serta checkout sandbox sebelum menerima pengiriman/pembayaran produksi.
 
-## 3. Buat super-admin
+Migrasi menambahkan tabel job/delivery/validasi/rate-limit serta field waktu pesan dan versi sesi. Waktu pesan lama direkonstruksi dari bukti pesan tersimpan, bukan `lastContacted` yang ambigu. Riwayat pesan duplikat dipertahankan; hanya ID provider pada duplikat setelah baris pertama yang dikosongkan agar unique index dapat diterapkan. Receipt historis tidak menagih ulang kredit. Invoice baru menyimpan snapshot alokasi kredit; invoice lama memakai katalog saat settlement karena snapshot historis tidak tersedia.
 
-Akun super-admin ditandai lewat flag `isSuperAdmin`. Untuk akun pertama, daftar lewat UI lalu set flag via SQL:
+## Pemantauan
 
-```bash
-docker compose exec db psql -U postgres -d hellens_scraper -c \
-  "UPDATE \"User\" SET \"isSuperAdmin\" = true WHERE email = 'kamu@email.com';"
-```
+- Periksa `docker compose logs worker gateway app`.
+- `BackgroundJob.status=FAILED` menyimpan alasan di `error`; worker mencoba maksimum lima kali dengan backoff.
+- Kampanye/blast yang kehabisan retry dipause/stop agar dapat dilanjutkan setelah penyebab diperbaiki. Job yang sudah selesai tidak dijalankan ulang hanya karena proses restart.
+- Receipt/outbox gateway berada di `wa_sessions/.gateway/`. Jangan menghapus receipt saat kampanye masih bisa diretry. File sesi dan receipt memerlukan backup serta pemantauan disk.
+- `OutboundDelivery.status=UNKNOWN` berarti hasil perlu dikonfirmasi pada WhatsApp/provider email. Jangan mengirim ulang atau mengembalikan kredit sebelum memastikan pesan benar-benar gagal. Hasil yang diketahui gagal dikembalikan kreditnya atomik; hasil ambigu tetap dicadangkan.
+- Untuk pemeriksaan dan rekonsiliasi gunakan endpoint super-admin `/api/admin/deliveries` dan `/api/admin/deliveries/:id` (PATCH dengan `status: SENT|FAILED` dan `note`). Rekonsiliasi tersedia untuk UNKNOWN lebih dari 5 menit atau PENDING lebih dari 24 jam, hanya setelah hasil dikonfirmasi pada provider. Status FAILED mengembalikan kredit satu kali. Tidak ada pengiriman ulang otomatis.
+- Follow-up aktif diperiksa secara berkala saat worker berjalan; jadwal bukan jaminan waktu real-time. Beban antrean, delay pengiriman, dan durasi scraper dapat menunda eksekusi.
 
-Setelah itu `/admin` bisa diakses.
+## Batas yang perlu dipahami
 
-## 4. Migrasi database
+Baileys tidak menyediakan transaksi atomik bersama PostgreSQL. Sistem menggunakan receipt persisten dan menghentikan pengiriman ambigu, bukan menjanjikan exactly-once mutlak. Pengujian lokal memakai provider tiruan; koneksi WhatsApp nyata, Midtrans sandbox, dan infrastruktur deployment harus diverifikasi menggunakan akun pengujian di lingkungan tujuan.
 
-Migrasi dijalankan otomatis saat container `app` start (`prisma migrate deploy`). Untuk menjalankan manual:
-
-```bash
-docker compose exec app npx prisma migrate deploy
-```
-
-> Saat development, gunakan `npm run db:migrate` untuk membuat migrasi baru, commit folder `prisma/migrations/`, lalu deploy.
-
-## 5. Webhook Midtrans
-
-Di dashboard Midtrans (Settings > Configuration), set Payment Notification URL ke
-`https://scraper.hellens.dev/api/webhooks/midtrans`. Tidak perlu token verifikasi terpisah —
-setiap notifikasi diverifikasi lewat `signature_key` (SHA512 dari `order_id + status_code +
-gross_amount + MIDTRANS_SERVER_KEY`) yang dikirim Midtrans di body notifikasi.
-
-## 6. Backup database (otomatis harian)
-
-Tambahkan cron di host:
-
-```bash
-0 2 * * * docker compose -f /path/docker-compose.yml exec -T db \
-  pg_dump -U postgres hellens_scraper | gzip > /backups/hellens-$(date +\%F).sql.gz
-```
-
-Uji restore secara berkala:
-
-```bash
-gunzip -c backup.sql.gz | docker compose exec -T db psql -U postgres -d hellens_scraper
-```
-
-## 7. Monitoring
-
-- Endpoint `/api/health` untuk uptime check (UptimeRobot/Uptime Kuma).
-- Log: `docker compose logs -f app`.
-- Opsional: pasang Sentry (DSN) untuk error tracking.
-
-## 8. Update versi
-
-```bash
-git pull
-docker compose up -d --build
-```
-
-Migrasi baru otomatis diterapkan saat container start.
-
-## Catatan penting
-
-**Baileys = satu instance.** Koneksi WhatsApp & proses latar (scraper, blast, follow-up) hidup di dalam proses `app`. Karena itu **jangan menjalankan beberapa replika `app`** — sesi WhatsApp tidak dibagi antar proses. Skala dulu secara vertikal (RAM/CPU lebih besar). Bila perlu skala horizontal nanti, pindahkan pengiriman ke worker BullMQ terpisah dan/atau gateway WhatsApp.
-
-**RAM.** Tiap nomor WhatsApp aktif memakai memori. Pantau dan upgrade VPS saat jumlah nomor/tenant bertumbuh.
-
-**Sesi WhatsApp persisten.** Disimpan di volume `wa_sessions` (`/app/wa-sessions`). Jangan hapus volume ini agar nomor tidak perlu pairing ulang.
-
-**CI/CD.** `.github/workflows/ci.yml` menjalankan lint tipe, test, dan build pada tiap push/PR. Untuk auto-deploy, tambahkan langkah SSH ke VPS yang menjalankan `git pull && docker compose up -d --build`, atau pakai registry image.
-
-## Checklist produksi
-
-- [ ] `.env` lengkap; `JWT_SECRET` & `DB_PASSWORD` kuat dan rahasia.
-- [ ] Domain + SSL aktif (cek gembok https).
-- [ ] `prisma migrate deploy` sukses (cek `/api/health`).
-- [ ] Webhook Midtrans terhubung (uji transaksi kecil).
-- [ ] Backup harian berjalan + uji restore.
-- [ ] Monitoring uptime aktif.
-- [ ] Super-admin dibuat.
-- [ ] Disclaimer kepatuhan (ToS Google, risiko WA) tampil.
+DNS, domain, konfigurasi akun eksternal, dan data produksi tidak diubah oleh perbaikan kode ini.

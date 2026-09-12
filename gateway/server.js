@@ -10,6 +10,7 @@ const QRCode = require("qrcode");
 const pino = require("pino");
 const path = require("path");
 const fs = require("fs/promises");
+const { createReceiptStore, createWebhookOutbox } = require("./durable");
 
 // ==================== Config ====================
 
@@ -49,21 +50,19 @@ const RECONNECT_DELAY_MS = 10_000;
 
 // ==================== Webhook helper ====================
 
-async function callWebhook(payload) {
-  if (!WEBHOOK_URL) return;
-  try {
-    await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-webhook-secret": WEBHOOK_SECRET,
-      },
-      body: JSON.stringify(payload),
-    });
-  } catch {
-    // non-fatal
-  }
-}
+const durableDir = path.join(SESSION_DIR, ".gateway");
+const sendOnce = createReceiptStore(path.join(durableDir, "receipts"));
+const webhookOutbox = createWebhookOutbox(path.join(durableDir, "outbox"), async (payload) => {
+  if (!WEBHOOK_URL || !WEBHOOK_SECRET) throw new Error("Webhook configuration missing");
+  const res = await fetch(WEBHOOK_URL, {
+    method: "POST", signal: AbortSignal.timeout(15000),
+    headers: { "Content-Type": "application/json", "x-webhook-secret": WEBHOOK_SECRET },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Webhook HTTP ${res.status}`);
+});
+async function callWebhook(payload) { await webhookOutbox.enqueue(payload); }
+setInterval(() => { void webhookOutbox.flush().catch(console.error); }, 5000).unref();
 
 // ==================== Connection manager ====================
 
@@ -201,6 +200,10 @@ app.use((req, res, next) => {
   if (req.headers.authorization !== `Bearer ${TOKEN}`) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
+  const accountId = req.path.split("/")[2] || req.body?.accountId;
+  if (accountId && (typeof accountId !== "string" || !/^[a-zA-Z0-9_-]{1,100}$/.test(accountId))) {
+    return res.status(400).json({ ok: false, error: "Invalid accountId" });
+  }
   next();
 });
 
@@ -243,35 +246,31 @@ app.post("/disconnect/:accountId", async (req, res) => {
 
 // Send text message
 app.post("/send", async (req, res) => {
-  const { accountId, phone, text } = req.body;
-  if (!accountId || !phone || !text) {
-    return res.status(400).json({ ok: false, error: "accountId, phone, text required" });
-  }
-  let e = sessions.get(accountId);
-  if (!e?.sock || e.status !== "connected") {
-    // Attempt auto-reconnect if session files exist
-    const sessionPath = path.join(SESSION_DIR, accountId);
-    const sessionDirExists = await fs.access(sessionPath).then(() => true, () => false);
-    if (sessionDirExists) {
-      console.log(`[${accountId}] Attempting auto-reconnect before send...`);
-      await startConnection(accountId).catch(() => {});
-      const startWait = Date.now();
-      while (Date.now() - startWait < 8000) {
-        e = sessions.get(accountId);
-        if (e?.sock && e.status === "connected") break;
-        await new Promise(r => setTimeout(r, 500));
-      }
-    }
-  }
-  if (!e?.sock || e.status !== "connected") {
-    return res.status(400).json({ ok: false, error: "WA_NOT_CONNECTED" });
+  const { accountId, phone, text, idempotencyKey } = req.body;
+  if (typeof idempotencyKey !== "string" || !idempotencyKey || idempotencyKey.length > 200 || !accountId || !phone || !text) {
+    return res.status(400).json({ ok: false, error: "accountId, phone, text, idempotencyKey required" });
   }
   try {
-    const jid = `${phone}@s.whatsapp.net`;
-    const result = await e.sock.sendMessage(jid, { text });
-    res.json({ ok: true, waMessageId: result?.key?.id ?? null });
+    const result = await sendOnce(idempotencyKey, { accountId, phone, text }, async () => {
+      let e = sessions.get(accountId);
+      if (!e?.sock || e.status !== "connected") {
+        await startConnection(accountId);
+        const startWait = Date.now();
+        while (Date.now() - startWait < 8000) {
+          e = sessions.get(accountId);
+          if (e?.sock && e.status === "connected") break;
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+      if (!e?.sock || e.status !== "connected") {
+        const error = new Error("WA_NOT_CONNECTED"); error.definitive = true; throw error;
+      }
+      const sent = await e.sock.sendMessage(`${phone}@s.whatsapp.net`, { text });
+      return sent?.key?.id ?? null;
+    });
+    res.json(result);
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.status(503).json({ ok: false, retryable: true, error: err.message });
   }
 });
 
@@ -312,7 +311,7 @@ app.post("/is-registered", async (req, res) => {
     for (const file of files) {
       const fullPath = path.join(SESSION_DIR, file);
       const stat = await fs.stat(fullPath);
-      if (stat.isDirectory()) {
+      if (stat.isDirectory() && !file.startsWith(".")) {
         console.log(`🔄 Auto-restoring WA session: ${file}`);
         startConnection(file).catch(err => console.error(`Failed auto-restoring ${file}:`, err.message));
       }

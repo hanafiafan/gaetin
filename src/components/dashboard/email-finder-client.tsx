@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2, Mail, Play, Send, StopCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,13 +43,13 @@ export default function EmailFinderClient() {
     if (json.success) setJobs(json.data);
   }
 
-  async function loadCandidateCount() {
+  const loadCandidateCount = useCallback(async () => {
     const params = new URLSearchParams({ source });
     if (label) params.set("label", label);
     const res = await fetch(`/api/email-finder/candidates?${params.toString()}`);
     const json = await res.json();
     if (json.success) setCandidateCount(json.data.count);
-  }
+  }, [source, label]);
 
   useEffect(() => {
     loadJobs();
@@ -59,7 +59,7 @@ export default function EmailFinderClient() {
   useEffect(() => {
     const t = setTimeout(loadCandidateCount, 250);
     return () => clearTimeout(t);
-  }, [source, label]);
+  }, [loadCandidateCount]);
 
   useEffect(() => {
     const anyRunning = jobs.some((j) => j.status === "RUNNING");

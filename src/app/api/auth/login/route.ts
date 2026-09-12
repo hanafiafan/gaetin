@@ -17,7 +17,7 @@ const GENERIC = "Email atau password salah";
 
 export async function POST(req: NextRequest) {
   const ip = clientIp(req);
-  if (!rateLimit(`login:${ip}`, 10, 60_000).ok) {
+  if (!(await rateLimit(`login:${ip}`, 10, 60_000)).ok) {
     return fail("RATE_001", "Terlalu banyak percobaan. Coba lagi sebentar.", 429);
   }
 
@@ -46,12 +46,11 @@ export async function POST(req: NextRequest) {
 
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
-    const attempts = user.failedAttempts + 1;
-    const data =
-      attempts >= MAX_FAILED_ATTEMPTS
-        ? { failedAttempts: 0, lockedUntil: new Date(Date.now() + LOCK_MINUTES * 60_000) }
-        : { failedAttempts: attempts };
-    await prisma.user.update({ where: { id: user.id }, data });
+    await prisma.$executeRaw`
+      UPDATE "User" SET
+        "lockedUntil" = CASE WHEN "failedAttempts" + 1 >= ${MAX_FAILED_ATTEMPTS} THEN ${new Date(Date.now() + LOCK_MINUTES * 60_000)} ELSE "lockedUntil" END,
+        "failedAttempts" = CASE WHEN "failedAttempts" + 1 >= ${MAX_FAILED_ATTEMPTS} THEN 0 ELSE "failedAttempts" + 1 END
+      WHERE id = ${user.id}`;
     return fail("AUTH_001", GENERIC, 401);
   }
 
@@ -61,7 +60,7 @@ export async function POST(req: NextRequest) {
     data: { failedAttempts: 0, lockedUntil: null },
   });
 
-  const token = signToken(user.id);
+  const token = signToken(user.id, user.sessionVersion);
   const res = NextResponse.json({
     success: true,
     data: { id: user.id, email: user.email, name: user.name },

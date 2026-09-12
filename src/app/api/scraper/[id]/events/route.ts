@@ -5,7 +5,8 @@ import { fail } from "@/lib/api";
 
 const TERMINAL = new Set(["COMPLETED", "FAILED", "STOPPED"]);
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
 

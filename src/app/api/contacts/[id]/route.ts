@@ -9,7 +9,8 @@ async function ownedContact(id: string, workspaceId: string) {
   return prisma.contact.findFirst({ where: { id, workspaceId } });
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
 
@@ -52,7 +53,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json({ success: true, data: contact });
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
 

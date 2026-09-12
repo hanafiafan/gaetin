@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { fail } from "@/lib/api";
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
 
@@ -16,7 +17,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   return NextResponse.json({ success: true, data: job });
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
 

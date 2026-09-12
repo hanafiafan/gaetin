@@ -1,5 +1,5 @@
 # ===== Builder =====
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 WORKDIR /app
 
 # Prisma butuh openssl.
@@ -17,7 +17,7 @@ ENV JWT_SECRET="build-time-placeholder-secret-please-override"
 RUN npm run build
 
 # ===== Runner =====
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
@@ -29,11 +29,14 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/scripts ./scripts
 
 # Folder sesi WhatsApp (di-mount sebagai volume agar persisten).
 RUN mkdir -p /app/wa-sessions
 
 EXPOSE 3000
 
-# Jalankan migrasi lalu start server. Baileys hidup di dalam proses ini.
+# App and worker share this image; WhatsApp runs in the separate gateway service.
 CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]

@@ -1,12 +1,16 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
-import { runEmailBlast } from "@/lib/email-blast/service";
+import { startSendJob } from "@/lib/jobs/queue";
 import { fail } from "@/lib/api";
 
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
+export async function POST(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "emailBlast");
+  if (denied) return denied;
 
   const blast = await prisma.emailBlast.findFirst({
     where: { id: params.id, workspaceId: session.workspace.id },
@@ -15,13 +19,8 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   if (!blast) return fail("NOT_FOUND", "Email blast tidak ditemukan", 404);
   if (blast.status === "RUNNING") return fail("BLAST_002", "Email blast sedang berjalan", 409);
 
-  await prisma.emailBlast.update({
-    where: { id: blast.id },
-    data: { status: "RUNNING", startedAt: new Date() },
-  });
-
-  // Jalankan di latar belakang (di produksi: worker BullMQ) — sama pola dengan blast WhatsApp.
-  void runEmailBlast(blast.id).catch(() => undefined);
+  const started = await startSendJob("EMAIL_BLAST", blast.id, session.workspace.id, false);
+  if (!started) return fail("JOB_CONFLICT", "Status pekerjaan berubah atau tidak dapat dijalankan", 409);
 
   return NextResponse.json({ success: true, data: { status: "RUNNING" } }, { status: 202 });
 }

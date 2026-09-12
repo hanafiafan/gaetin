@@ -1,0 +1,7 @@
+node_modules
+.env
+.env.*
+wa-sessions
+coverage
+tests
+*.log

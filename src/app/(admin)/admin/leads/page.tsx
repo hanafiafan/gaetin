@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Building2, Download, Filter, MapPin, Phone, Search, Star } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -34,22 +34,27 @@ export default function AdminLeadsPage() {
   const [offset, setOffset] = useState(0);
   const LIMIT = 200;
 
-  async function load(reset = false) {
+  const requestSequence = useRef(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const load = useCallback(async (pageOffset = 0) => {
+    const sequence = ++requestSequence.current;
     setLoading(true);
-    const o = reset ? 0 : offset;
-    const params = new URLSearchParams({ limit: String(LIMIT), offset: String(o) });
+    setLoadError(null);
+    const params = new URLSearchParams({ limit: String(LIMIT), offset: String(pageOffset) });
     if (wsFilter) params.set("workspaceId", wsFilter);
     if (search.trim()) params.set("search", search.trim());
     if (hasPhone) params.set("hasPhone", "true");
-    const r = await fetch(`/api/admin/leads?${params}`);
-    const j = await r.json();
-    if (j.success) {
-      setLeads(j.data.items);
-      setTotal(j.data.total);
-      if (reset) setOffset(0);
-    }
-    setLoading(false);
-  }
+    try {
+      const r = await fetch(`/api/admin/leads?${params}`);
+      const j = await r.json();
+      if (!r.ok || !j.success) throw new Error("Data gagal dimuat. Silakan coba lagi.");
+      if (sequence === requestSequence.current) {
+        setLeads(j.data.items); setTotal(j.data.total); setOffset(pageOffset);
+      }
+    } catch (err) {
+      if (sequence === requestSequence.current) setLoadError(err instanceof Error ? err.message : "Data gagal dimuat");
+    } finally { if (sequence === requestSequence.current) setLoading(false); }
+  }, [wsFilter, search, hasPhone]);
 
   useEffect(() => {
     fetch("/api/admin/workspaces").then(r => r.json()).then(j => {
@@ -57,7 +62,7 @@ export default function AdminLeadsPage() {
     });
   }, []);
 
-  useEffect(() => { load(true); }, [wsFilter, hasPhone]);
+  useEffect(() => { const timer = setTimeout(() => { void load(0); }, 250); return () => clearTimeout(timer); }, [load]);
 
   function exportCsv() {
     const header = ["businessName","phone","category","rating","address","website","workspace","createdAt"];
@@ -87,7 +92,7 @@ export default function AdminLeadsPage() {
       <div className="flex flex-wrap gap-3 rounded-xl border border-border bg-muted p-3">
         <div className="relative min-w-[200px] flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && load(true)} placeholder="Cari bisnis, kategori, nomor..." className="h-10 w-full rounded-xl border border-border bg-muted pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
+          <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && load(0)} placeholder="Cari bisnis, kategori, nomor..." className="h-10 w-full rounded-xl border border-border bg-muted pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
         </div>
         <select value={wsFilter} onChange={e => setWsFilter(e.target.value)} className={SELECT_CLASS}>
           <option value="">Semua workspace</option>
@@ -97,11 +102,12 @@ export default function AdminLeadsPage() {
           <input type="checkbox" checked={hasPhone} onChange={e => setHasPhone(e.target.checked)} className="accent-primary" />
           Ada nomor
         </label>
-        <button onClick={() => load(true)} className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">
+        <button onClick={() => load(0)} className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground transition hover:border-primary/30 hover:text-foreground">
           <Filter className="h-4 w-4" />Cari
         </button>
       </div>
 
+      {loadError && <p role="alert" className="text-sm text-destructive">{loadError}</p>}
       <div className="overflow-hidden rounded-xl border border-border">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -159,8 +165,8 @@ export default function AdminLeadsPage() {
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Menampilkan {offset + 1}–{Math.min(offset + LIMIT, total)} dari {total.toLocaleString("id-ID")}</span>
           <div className="flex gap-2">
-            <button disabled={offset === 0} onClick={() => { setOffset(Math.max(0, offset - LIMIT)); load(); }} className="flex h-8 items-center rounded-lg border border-border px-3 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">Prev</button>
-            <button disabled={offset + LIMIT >= total} onClick={() => { setOffset(offset + LIMIT); load(); }} className="flex h-8 items-center rounded-lg border border-border px-3 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">Next</button>
+            <button disabled={offset === 0} onClick={() => { void load(Math.max(0, offset - LIMIT)); }} className="flex h-8 items-center rounded-lg border border-border px-3 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">Prev</button>
+            <button disabled={offset + LIMIT >= total} onClick={() => { void load(offset + LIMIT); }} className="flex h-8 items-center rounded-lg border border-border px-3 text-xs font-bold text-foreground transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">Next</button>
           </div>
         </div>
       )}

@@ -6,7 +6,8 @@ import { fail } from "@/lib/api";
 
 const Schema = z.object({ action: z.enum(["lock", "unlock", "toggleSuperAdmin"]) });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
 

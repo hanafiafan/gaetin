@@ -1,31 +1,21 @@
-// Rate limiter in-memory sederhana (fixed window). Untuk produksi multi-instance,
-// ganti backing store ke Redis.
-
-const g = globalThis as unknown as { __rl?: Map<string, { count: number; reset: number }> };
-const store = g.__rl ?? new Map<string, { count: number; reset: number }>();
-if (!g.__rl) g.__rl = store;
-
-export interface RateResult {
-  ok: boolean;
-  retryAfter?: number; // detik
+import { prisma } from "@/lib/db/prisma";
+import { createHash } from "crypto";
+export interface RateResult { ok: boolean; retryAfter?: number }
+/** Shared atomic fixed-window limiter; survives restarts and multiple app instances. */
+export async function rateLimit(key: string, limit: number, windowMs: number): Promise<RateResult> {
+  const id = createHash("sha256").update(key).digest("hex");
+  const now = new Date();
+  const reset = new Date(now.getTime() + windowMs);
+  const [bucket] = await prisma.$queryRaw<{ count: number; resetAt: Date }[]>`
+    INSERT INTO "RateLimitBucket" (id, count, "resetAt") VALUES (${id}, 1, ${reset})
+    ON CONFLICT (id) DO UPDATE SET
+      count = CASE WHEN "RateLimitBucket"."resetAt" <= ${now} THEN 1 ELSE "RateLimitBucket".count + 1 END,
+      "resetAt" = CASE WHEN "RateLimitBucket"."resetAt" <= ${now} THEN ${reset} ELSE "RateLimitBucket"."resetAt" END
+    RETURNING count, "resetAt"`;
+  return bucket.count <= limit ? { ok: true } : { ok: false, retryAfter: Math.ceil((bucket.resetAt.getTime() - now.getTime()) / 1000) };
 }
-
-export function rateLimit(key: string, limit: number, windowMs: number): RateResult {
-  const now = Date.now();
-  const e = store.get(key);
-  if (!e || now > e.reset) {
-    store.set(key, { count: 1, reset: now + windowMs });
-    return { ok: true };
-  }
-  if (e.count >= limit) {
-    return { ok: false, retryAfter: Math.ceil((e.reset - now) / 1000) };
-  }
-  e.count += 1;
-  return { ok: true };
-}
-
 export function clientIp(req: Request): string {
+  // Only trust forwarding headers supplied/overwritten by the configured reverse proxy.
   const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
-  return req.headers.get("x-real-ip") ?? "unknown";
+  return fwd?.split(",")[0].trim() || req.headers.get("x-real-ip") || "unknown";
 }

@@ -80,7 +80,7 @@ export default function FollowUpsClient() {
     const j = await r.json();
     setRunning(false);
     if (j.success) {
-      alert(`Dibuat ${j.data.generated} jadwal, terkirim ${j.data.sent}, gagal ${j.data.failed}.`);
+      alert("Follow-up masuk antrean. Worker akan memprosesnya otomatis.");
       load();
     } else {
       setError(j?.error?.message ?? "Gagal menjalankan follow-up");
@@ -213,7 +213,7 @@ export default function FollowUpsClient() {
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          Di produksi, &ldquo;Jalankan&rdquo; dieksekusi otomatis secara berkala oleh cron.
+          Worker memeriksa aturan aktif secara berkala. Tombol Jalankan menambahkan pemeriksaan ke antrean.
         </p>
       </div>
     </div>

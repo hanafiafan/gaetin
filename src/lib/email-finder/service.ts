@@ -1,25 +1,11 @@
 import { prisma } from "@/lib/db/prisma";
 import { scrapeEmailFromWebsite } from "@/lib/enrichment/email-scraper";
-import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { deductCreditsInTransaction, InsufficientCreditsError } from "@/lib/credits/service";
+import { enqueue } from "@/lib/jobs/queue";
 import { CREDIT_COSTS } from "@/config/plans";
 
 export type EmailFindSource = "LEAD" | "CONTACT";
 const MAX_TARGETS_PER_JOB = 500;
-const CONCURRENCY = 5;
-
-async function mapLimit<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let i = 0;
-  async function worker() {
-    while (i < items.length) {
-      const idx = i++;
-      results[idx] = await fn(items[idx]);
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
-  return results;
-}
-
 // Lead tidak punya field "label" seperti Contact — filter opsional dipetakan ke
 // Lead.category untuk sumber LEAD, dan Contact.label untuk sumber CONTACT.
 function candidateWhere(workspaceId: string, source: EmailFindSource, label?: string | null) {
@@ -53,7 +39,8 @@ export async function createAndRunEmailFindJob(
       : await prisma.contact.findMany({ where, select: { id: true }, take: MAX_TARGETS_PER_JOB });
   if (targets.length === 0) return null;
 
-  const job = await prisma.emailFindJob.create({
+  const job = await prisma.$transaction(async (tx) => {
+  const job = await tx.emailFindJob.create({
     data: {
       workspaceId,
       source,
@@ -65,67 +52,42 @@ export async function createAndRunEmailFindJob(
     },
   });
 
-  void runEmailFindJob(
-    job.id,
-    workspaceId,
-    source,
-    targets.map((t) => t.id),
-  ).catch(() => undefined);
+    await enqueue(tx, "EMAIL_FIND", job.id, workspaceId, { id: job.id, source, targetIds: targets.map((t) => t.id) });
+    return job;
+  });
 
   return { id: job.id, totalTargets: targets.length };
 }
 
-async function runEmailFindJob(
-  jobId: string,
-  workspaceId: string,
-  source: EmailFindSource,
-  targetIds: string[],
-): Promise<void> {
-  let processed = 0;
-  let found = 0;
-  try {
-    const websites =
-      source === "LEAD"
-        ? await prisma.lead.findMany({ where: { id: { in: targetIds } }, select: { id: true, website: true } })
-        : await prisma.contact.findMany({ where: { id: { in: targetIds } }, select: { id: true, website: true } });
-
-    await mapLimit(websites, CONCURRENCY, async (w) => {
-      if (await jobStopped(jobId)) return;
-
-      const email = await scrapeEmailFromWebsite(w.website!);
-      if (email) {
-        // Ditagih hanya saat ketemu, bukan per percobaan — pelanggan membayar
-        // hasil. Saldo habis menghentikan job, bukan menggagalkannya.
-        try {
-          await deductCredits(workspaceId, CREDIT_COSTS.findEmail, "FIND_EMAIL");
-        } catch (e) {
-          if (e instanceof InsufficientCreditsError) {
-            await prisma.emailFindJob.update({ where: { id: jobId }, data: { status: "STOPPED" } });
-            return;
-          }
-          throw e;
-        }
-        try {
-          if (source === "LEAD") await prisma.lead.update({ where: { id: w.id }, data: { email } });
-          else await prisma.contact.update({ where: { id: w.id }, data: { email } });
-        } catch (e) {
-          await addCredits(workspaceId, CREDIT_COSTS.findEmail, "REFUND_FIND_EMAIL").catch(() => undefined);
-          throw e;
-        }
-        found += 1;
-      }
-      processed += 1;
-      await prisma.emailFindJob.update({ where: { id: jobId }, data: { processed, found } });
-    });
-
-    const stopped = await jobStopped(jobId);
-    await prisma.emailFindJob.update({
-      where: { id: jobId },
-      data: { status: stopped ? "STOPPED" : "COMPLETED", completedAt: new Date(), processed, found },
-    });
-  } catch {
-    await prisma.emailFindJob
-      .update({ where: { id: jobId }, data: { status: "FAILED", processed, found } })
-      .catch(() => undefined);
+export async function runEmailFindJob(jobId: string, workspaceId: string, source: EmailFindSource, targetIds: string[]): Promise<void> {
+  const job = await prisma.emailFindJob.findFirst({ where: { id: jobId, workspaceId } });
+  if (!job || job.status !== "RUNNING") return;
+  for (let i = job.processed; i < Math.min(targetIds.length, job.processed + 10); i++) {
+    if (await jobStopped(jobId)) return;
+    const row = source === "LEAD"
+      ? await prisma.lead.findFirst({ where: { id: targetIds[i], workspaceId } })
+      : await prisma.contact.findFirst({ where: { id: targetIds[i], workspaceId } });
+    const email = row?.website && !row.email ? await scrapeEmailFromWebsite(row.website) : null;
+    try {
+      await prisma.$transaction(async (tx) => {
+        const claimed = await tx.emailFindJob.updateMany({ where: { id: jobId, workspaceId, status: "RUNNING", processed: i }, data: { processed: { increment: 1 } } });
+        if (!claimed.count || !email || !row) return;
+        const changed = source === "LEAD"
+          ? await tx.lead.updateMany({ where: { id: row.id, workspaceId, email: null }, data: { email } })
+          : await tx.contact.updateMany({ where: { id: row.id, workspaceId, email: null }, data: { email } });
+        if (!changed.count) return;
+        await deductCreditsInTransaction(tx, workspaceId, CREDIT_COSTS.findEmail, "FIND_EMAIL");
+        await tx.emailFindJob.update({ where: { id: jobId }, data: { found: { increment: 1 } } });
+      });
+    } catch (err) {
+      if (err instanceof InsufficientCreditsError) { await prisma.emailFindJob.update({ where: { id: jobId }, data: { status: "STOPPED" } }); return; }
+      throw err;
+    }
   }
+  await prisma.$transaction(async (tx) => {
+    const current = await tx.emailFindJob.findUniqueOrThrow({ where: { id: jobId } });
+    if (current.status !== "RUNNING") return;
+    if (current.processed >= targetIds.length) await tx.emailFindJob.update({ where: { id: jobId }, data: { status: "COMPLETED", completedAt: new Date() } });
+    else await enqueue(tx, "EMAIL_FIND", jobId, workspaceId, { id: jobId, source, targetIds });
+  });
 }

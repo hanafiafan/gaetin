@@ -69,18 +69,23 @@ export default function InboxClient() {
     threadTimer.current = setInterval(() => loadThread(id), 4000);
   }
 
+  const replyAttempt = useRef<{ conversation: string; text: string; id: string } | null>(null);
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedId || !reply.trim()) return;
+    if (sending) return;
+    if (replyAttempt.current?.conversation !== selectedId || replyAttempt.current?.text !== reply) replyAttempt.current = { conversation: selectedId, text: reply, id: crypto.randomUUID() };
     setSending(true);
-    const r = await fetch(`/api/conversations/${selectedId}/messages`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: reply }),
-    });
-    setSending(false);
-    if (r.ok) { setReply(""); loadThread(selectedId); }
-    else { const j = await r.json(); alert(j?.error?.message ?? "Gagal mengirim"); }
+    try {
+      const r = await fetch(`/api/conversations/${selectedId}/messages`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: reply, clientRequestId: replyAttempt.current.id }),
+      });
+      if (r.ok) { setReply(""); replyAttempt.current = null; loadThread(selectedId); }
+      else { const j = await r.json(); alert(j?.error?.message ?? "Gagal mengirim"); }
+    } catch { alert("Koneksi terputus. Coba lagi untuk memeriksa pengiriman pesan yang sama."); }
+    finally { setSending(false); }
   }
 
   async function setStatus(status: string) {

@@ -6,7 +6,8 @@ import { addCredits } from "@/lib/credits/service";
 import { logAudit } from "@/lib/audit";
 import { fail } from "@/lib/api";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
 
@@ -61,7 +62,8 @@ const Schema = z.object({
   status: z.enum(["TRIAL", "ACTIVE", "EXPIRED", "BLOCKED", "CANCELLED"]).optional(),
 });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
 

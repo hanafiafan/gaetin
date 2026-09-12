@@ -23,7 +23,7 @@ function requestedFields(value: unknown): Set<string> {
  */
 export async function runScraperJob(jobId: string): Promise<void> {
   const job = await prisma.scraperJob.findUnique({ where: { id: jobId } });
-  if (!job) return;
+  if (!job || job.status !== "RUNNING") return;
 
   const ws = await prisma.workspace.findUnique({
     where: { id: job.workspaceId },
@@ -49,8 +49,9 @@ export async function runScraperJob(jobId: string): Promise<void> {
         : generateGrid(job.centerLat as number, job.centerLng as number, job.radiusKm as number));
   const zoom = job.radiusKm ? zoomForRadius(job.radiusKm) : 13;
 
-  const seen = new Set<string>();
-  let totalFound = 0;
+  const existing = await prisma.lead.findMany({ where: { scraperJobId: job.id }, select: { businessName: true, phone: true, address: true } });
+  const seen = new Set(existing.map((p) => p.phone || `${p.businessName}|${p.address ?? ""}`.toLowerCase()));
+  let totalFound = existing.length;
   let duplicates = 0;
   let firstPoint = true;
 
@@ -80,7 +81,7 @@ export async function runScraperJob(jobId: string): Promise<void> {
         } catch {
           retryCount++;
           if (retryCount >= 3) {
-            if (firstPoint && !hasRegion) {
+            if (firstPoint) {
               await prisma.scraperJob.update({ where: { id: jobId }, data: { status: "FAILED" } });
               return;
             }
@@ -90,7 +91,7 @@ export async function runScraperJob(jobId: string): Promise<void> {
         }
       }
       
-      if (retryCount >= 3 && (!firstPoint || hasRegion)) continue;
+      if (retryCount >= 3 && !firstPoint) continue;
       firstPoint = false;
 
       for (const pl of places) {
@@ -135,7 +136,8 @@ export async function runScraperJob(jobId: string): Promise<void> {
       where: { id: jobId },
       data: { status: stopped ? "STOPPED" : "COMPLETED", totalFound, duplicates },
     });
-  } catch {
+  } catch (err) {
+    console.error("Scraper failed", jobId, err);
     await prisma.scraperJob
       .update({ where: { id: jobId }, data: { status: "FAILED" } })
       .catch(() => undefined);

@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db/prisma";
 
 export const dynamic = "force-dynamic";
 
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
+export default async function BlogDetailPage({ params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+  const params = await paramsPromise;
   const post = await prisma.blogPost.findFirst({
     where: { slug: params.slug, status: "PUBLISHED" },
   });

@@ -6,7 +6,8 @@ import { fail } from "@/lib/api";
 
 const Schema = z.object({ active: z.boolean() });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
 
@@ -23,7 +24,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json({ success: true });
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
   await prisma.announcement.delete({ where: { id: params.id } }).catch(() => undefined);

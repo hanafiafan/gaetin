@@ -134,6 +134,7 @@ async function osmScrape(o: GetPlacesOpts): Promise<RawPlace[]> {
       : { keyword: o.keyword, location: o.location, limit: o.limit };
   const res = await fetch(`${env.SCRAPER_SERVICE_URL.replace(/\/$/, "")}/scrape`, {
     method: "POST",
+    signal: AbortSignal.timeout(75_000),
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
@@ -181,6 +182,7 @@ out center ${Math.min(Math.max(o.limit, 1), 120)};
 
   const res = await fetch(env.OVERPASS_API_URL, {
     method: "POST",
+    signal: AbortSignal.timeout(75_000),
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ data: query }),
   });
@@ -250,6 +252,7 @@ async function googleTextSearch(o: GetPlacesOpts): Promise<RawPlace[]> {
     const body = pageToken ? { ...baseBody, pageToken } : baseBody;
     const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
       method: "POST",
+    signal: AbortSignal.timeout(75_000),
       headers: {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": o.apiKey,

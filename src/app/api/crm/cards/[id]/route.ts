@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
@@ -13,9 +14,12 @@ async function ownedCard(id: string, workspaceId: string) {
   });
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "crmPipeline");
+  if (denied) return denied;
   const workspaceId = session.workspace.id;
 
   const card = await ownedCard(params.id, workspaceId);
@@ -46,9 +50,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json({ success: true });
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "crmPipeline");
+  if (denied) return denied;
 
   const card = await ownedCard(params.id, session.workspace.id);
   if (!card) return fail("NOT_FOUND", "Kartu tidak ditemukan", 404);

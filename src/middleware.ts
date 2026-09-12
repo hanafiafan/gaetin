@@ -23,10 +23,6 @@ function normalizePath(value?: string) {
   return path.length > 1 && path.endsWith("/") ? path.slice(0, -1) : path;
 }
 
-function isSafeLocalPath(value: string | null) {
-  return Boolean(value && value.startsWith("/") && !value.startsWith("//"));
-}
-
 function adminUrlFor(req: NextRequest, pathname: string) {
   const primaryUrl = process.env.ADMIN_PRIMARY_URL;
   if (!primaryUrl) return null;
@@ -51,7 +47,6 @@ export function middleware(req: NextRequest) {
     Boolean(adminEntryPath) && (pathname === adminEntryPath || pathname.startsWith(`${adminEntryPath}/`));
   const effectivePathname = isAdminEntry ? `/admin${pathname.slice(adminEntryPath.length)}` : pathname;
 
-  const isAuthPage = pathname === "/login" || pathname === "/register";
   const isProtected = effectivePathname.startsWith("/dashboard") || effectivePathname.startsWith("/admin");
 
   if (isAdminHost && pathname === "/") {
@@ -67,11 +62,6 @@ export function middleware(req: NextRequest) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("next", pathname + req.nextUrl.search);
     return NextResponse.redirect(loginUrl);
-  }
-  if (isAuthPage && token) {
-    const next = req.nextUrl.searchParams.get("next");
-    const target = isSafeLocalPath(next) ? next! : isAdminHost ? "/admin" : "/dashboard";
-    return NextResponse.redirect(new URL(target, req.url));
   }
   if (isAdminEntry) {
     const rewriteUrl = req.nextUrl.clone();

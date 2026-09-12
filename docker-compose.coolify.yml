@@ -13,15 +13,15 @@ services:
       - WA_SESSION_DIR=/app/wa-sessions
       - WA_PROVIDER=gateway
       - WA_GATEWAY_BASE_URL=http://gateway:3001
-      - WA_GATEWAY_TOKEN=${JWT_SECRET}
-      - WEBHOOK_SECRET=${JWT_SECRET}
+      - WA_GATEWAY_TOKEN=${WA_GATEWAY_TOKEN:?set WA_GATEWAY_TOKEN}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:?set WEBHOOK_SECRET}
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - wa_sessions:/app/wa-sessions
     ports:
-      - "${APP_PORT:-3005}:3000"
+      - "127.0.0.1:${APP_PORT:-3005}:3000"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 5s
@@ -47,6 +47,29 @@ services:
       - default
       - coolify
 
+  worker:
+    build: .
+    restart: unless-stopped
+    command: ["sh", "-c", "npx prisma migrate deploy && npm run worker"]
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-hellens_scraper}?schema=public
+      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET}
+      - WA_PROVIDER=gateway
+      - WA_GATEWAY_BASE_URL=http://gateway:3001
+      - WA_GATEWAY_TOKEN=${WA_GATEWAY_TOKEN:?set WA_GATEWAY_TOKEN}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://scraper.hellens.dev}
+    depends_on:
+      db:
+        condition: service_healthy
+      gateway:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "const fs=require('fs'); process.exit(Date.now()-fs.statSync('/tmp/gaetin-worker-health').mtimeMs < 30000 ? 0 : 1)"]
+      interval: 15s
+      start_period: 60s
+    networks: [default]
+
   gateway:
     build:
       context: ./gateway
@@ -54,9 +77,9 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3001
-      - GATEWAY_TOKEN=${JWT_SECRET}
+      - GATEWAY_TOKEN=${WA_GATEWAY_TOKEN:?set WA_GATEWAY_TOKEN}
       - WEBHOOK_URL=http://app:3000/api/whatsapp/webhook
-      - WEBHOOK_SECRET=${JWT_SECRET}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:?set WEBHOOK_SECRET}
       - SESSION_DIR=/app/wa-sessions
     volumes:
       - wa_sessions:/app/wa-sessions

@@ -20,26 +20,29 @@ export async function isEmailConfigured(): Promise<boolean> {
 }
 
 export interface SendEmailInput {
+  idempotencyKey?: string;
   to: string;
   subject: string;
   html: string;
 }
 
 /** Kirim satu email lewat provider yang dikonfigurasi admin (Settings > Integrasi). */
-export async function sendEmail(input: SendEmailInput): Promise<{ ok: boolean; error?: string }> {
+export async function sendEmail(input: SendEmailInput): Promise<{ ok: boolean; error?: string; uncertain?: boolean }> {
   const cfg = await getEmailSettings();
   if (!cfg.provider || !cfg.apiKey) return { ok: false, error: "EMAIL_NOT_CONFIGURED" };
 
   if (cfg.provider === "resend") {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
+      signal: AbortSignal.timeout(20_000),
       headers: {
+        ...(input.idempotencyKey ? { "Idempotency-Key": input.idempotencyKey } : {}),
         Authorization: `Bearer ${cfg.apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ from: cfg.from, to: input.to, subject: input.subject, html: input.html }),
     }).catch(() => null);
-    if (!res || !res.ok) return { ok: false, error: `Resend error (${res?.status ?? "network"})` };
+    if (!res || !res.ok) return { ok: false, uncertain: !res || res.status >= 500, error: `Resend error (${res?.status ?? "network"}); periksa status di provider bila belum pasti` };
     return { ok: true };
   }
 

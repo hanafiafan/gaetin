@@ -1,145 +1,58 @@
 import { prisma } from "@/lib/db/prisma";
-import { getMessagingProvider } from "@/lib/messaging/provider";
 import { renderMessage } from "@/lib/messaging/text";
-import { getAccountDailyCounter } from "@/lib/messaging/account-limit";
-import { getDailyMessagingQuota } from "@/lib/messaging/quota";
+import { deliverWhatsApp, DeliveryBlockedError } from "@/lib/messaging/delivery";
+import { InsufficientCreditsError } from "@/lib/credits/service";
+import { DailyMessagingQuotaError } from "@/lib/messaging/quota";
 
-function delay(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
+export function needsFollowUp(lastOutboundAt: Date | null, lastInboundAt: Date | null, days: number, now = new Date()) {
+  return !!lastOutboundAt && lastOutboundAt.getTime() <= now.getTime() - days * 86_400_000 && (!lastInboundAt || lastInboundAt < lastOutboundAt);
 }
-
-interface TriggerValue {
-  days?: number;
-  accountId?: string;
-}
-
-/**
- * Proses follow-up untuk satu workspace:
- * 1) Hasilkan jadwal untuk aturan "X hari tanpa balasan".
- * 2) Kirim jadwal yang sudah jatuh tempo (hormati DNC, retry maks 2x).
- * Dipanggil manual atau oleh cron (Fase 7).
- */
-export async function processFollowUps(workspaceId: string): Promise<{
-  generated: number;
-  sent: number;
-  failed: number;
-}> {
-  let generated = 0;
-  let sent = 0;
-  let failed = 0;
-
-  const rules = await prisma.followUpRule.findMany({
-    where: { workspaceId, isActive: true, triggerType: "NO_REPLY_DAYS" },
-  });
-
-  // 1) Generate jadwal.
+export async function processFollowUps(workspaceId: string) {
+  let generated = 0, sent = 0, failed = 0;
+  const rules = await prisma.followUpRule.findMany({ where: { workspaceId, isActive: true, triggerType: "NO_REPLY_DAYS" } });
   for (const rule of rules) {
-    const tv = (rule.triggerValue as TriggerValue) ?? {};
+    const tv = rule.triggerValue as { days?: number; accountId?: string };
     const days = tv.days ?? 3;
-    const cutoff = new Date(Date.now() - days * 86_400_000);
-
-    const contacts = await prisma.contact.findMany({
-      where: { workspaceId, OR: [{ lastContacted: { lt: cutoff } }, { lastContacted: null }] },
-      select: { id: true, phone: true },
-      take: 1000,
-    });
-
-    for (const c of contacts) {
-      const dnc = await prisma.doNotContact.findUnique({
-        where: { workspaceId_phone: { workspaceId, phone: c.phone } },
-      });
-      if (dnc) continue;
-
-      const exists = await prisma.followUpSchedule.findFirst({
-        where: { ruleId: rule.id, contactId: c.id, status: { in: ["SCHEDULED", "SENT"] } },
-        select: { id: true },
-      });
-      if (exists) continue;
-
-      await prisma.followUpSchedule.create({
-        data: { ruleId: rule.id, contactId: c.id, scheduledAt: new Date() },
-      });
-      generated += 1;
+    // Keyset pagination avoids starving contacts after the first page.
+    let cursor: string | undefined;
+    while (true) {
+      const contacts = await prisma.contact.findMany({ where: { workspaceId, lastOutboundAt: { lte: new Date(Date.now() - days * 86_400_000) } }, orderBy: { id: "asc" }, take: 500, ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}) });
+      for (const c of contacts) {
+        if (!needsFollowUp(c.lastOutboundAt, c.lastInboundAt, days)) continue;
+        const existing = await prisma.followUpSchedule.findFirst({ where: { ruleId: rule.id, contactId: c.id, OR: [{ outboundAt: c.lastOutboundAt }, { outboundAt: null, status: { in: ["SENT", "SCHEDULED"] } }] } });
+        if (existing) continue;
+        const created = await prisma.followUpSchedule.createMany({ data: [{ ruleId: rule.id, contactId: c.id, outboundAt: c.lastOutboundAt, scheduledAt: new Date() }], skipDuplicates: true });
+        generated += created.count;
+      }
+      if (contacts.length < 500) break;
+      cursor = contacts[contacts.length - 1].id;
     }
   }
-
-  // 2) Kirim yang jatuh tempo.
-  const provider = getMessagingProvider();
-  const due = await prisma.followUpSchedule.findMany({
-    where: { status: "SCHEDULED", scheduledAt: { lte: new Date() }, rule: { workspaceId } },
-    include: { rule: true, contact: true },
-    take: 500,
-  });
-
+  const due = await prisma.followUpSchedule.findMany({ where: { status: "SCHEDULED", scheduledAt: { lte: new Date() }, rule: { workspaceId, isActive: true } }, orderBy: { scheduledAt: "asc" }, take: 10 });
   for (const s of due) {
-    const tv = (s.rule.triggerValue as TriggerValue) ?? {};
-    const accountId = tv.accountId;
-    if (!accountId) {
-      await prisma.followUpSchedule.update({
-        where: { id: s.id },
-        data: { status: "FAILED", errorReason: "Akun pengirim tidak diset" },
-      });
-      failed += 1;
-      continue;
+    const fresh = await prisma.followUpSchedule.findUnique({ where: { id: s.id }, include: { rule: true, contact: true } });
+    if (!fresh || fresh.status !== "SCHEDULED" || !fresh.rule.isActive) continue;
+    const tv = fresh.rule.triggerValue as { days?: number; accountId?: string };
+    if (!needsFollowUp(fresh.contact.lastOutboundAt, fresh.contact.lastInboundAt, tv.days ?? 3) || (fresh.outboundAt && fresh.outboundAt.getTime() !== fresh.contact.lastOutboundAt?.getTime())) {
+      await prisma.followUpSchedule.updateMany({ where: { id: s.id, status: "SCHEDULED" }, data: { status: "STOPPED_REPLIED" } }); continue;
     }
-
-    // Batas harian per akun pengirim: lewati jadwal akun ini, jangan hentikan
-    // seluruh antrean workspace (akun lain mungkin masih punya kuota).
-    const acc = await getAccountDailyCounter(accountId);
-    if (!acc || acc.sentToday >= acc.dailyLimit) continue;
-
-    const quota = await getDailyMessagingQuota(workspaceId);
-    if (quota.remaining <= 0) break;
-
-    if ((await provider.getStatus(accountId)) !== "connected") {
-      await prisma.followUpSchedule.update({
-        where: { id: s.id },
-        data: { status: "FAILED", errorReason: "Akun WhatsApp tidak terhubung" },
-      });
-      failed += 1;
-      continue;
+    if (!tv.accountId) { await prisma.followUpSchedule.update({ where: { id: s.id }, data: { status: "FAILED", errorReason: "Akun pengirim tidak diset" } }); failed++; continue; }
+    try {
+      const c = fresh.contact;
+      const result = await deliverWhatsApp({ id: `FOLLOW_UP:${s.id}`, workspaceId, accountId: tv.accountId, contactId: c.id, followUp: true,
+        text: renderMessage(fresh.rule.messageTemplate, { nama: c.name, name: c.name, kota: c.city, phone: c.phone }) });
+      await prisma.followUpSchedule.update({ where: { id: s.id }, data: { status: result.status === "SENT" ? "SENT" : "FAILED", sentAt: result.status === "SENT" ? new Date() : null, errorReason: result.error } });
+      if (result.status === "SENT") sent++; else failed++;
+    } catch (err) {
+      if (err instanceof InsufficientCreditsError) break;
+      if (err instanceof DailyMessagingQuotaError || err instanceof DeliveryBlockedError) {
+        if (err.message.startsWith("Opt-out")) await prisma.followUpSchedule.update({ where: { id: s.id }, data: { status: "CANCELLED" } });
+        else await prisma.followUpSchedule.update({ where: { id: s.id }, data: { scheduledAt: new Date(Date.now() + 60_000), errorReason: err.message } });
+        continue;
+      }
+      throw err;
     }
-
-    const dnc = await prisma.doNotContact.findUnique({
-      where: { workspaceId_phone: { workspaceId, phone: s.contact.phone } },
-    });
-    if (dnc) {
-      await prisma.followUpSchedule.update({ where: { id: s.id }, data: { status: "CANCELLED" } });
-      continue;
-    }
-
-    const text = renderMessage(s.rule.messageTemplate, {
-      nama: s.contact.name,
-      name: s.contact.name,
-      kota: s.contact.city,
-      phone: s.contact.phone,
-    });
-
-    const res = await provider.sendMessage(accountId, s.contact.phone, { text });
-    if (res.ok) {
-      await prisma.followUpSchedule.update({
-        where: { id: s.id },
-        data: { status: "SENT", sentAt: new Date() },
-      });
-      await prisma.messagingAccount.update({
-        where: { id: accountId },
-        data: { sentToday: { increment: 1 } },
-      });
-      await prisma.contact.update({ where: { id: s.contactId }, data: { lastContacted: new Date() } });
-      sent += 1;
-    } else {
-      const retry = s.retryCount + 1;
-      await prisma.followUpSchedule.update({
-        where: { id: s.id },
-        data:
-          retry >= 2
-            ? { status: "FAILED", errorReason: res.error ?? "Gagal kirim", retryCount: retry }
-            : { retryCount: retry },
-      });
-      failed += 1;
-    }
-    await delay(1000 + Math.random() * 2000);
+    await new Promise((r) => setTimeout(r, process.env.NODE_ENV === "test" ? 0 : 3000 + Math.random() * 5000));
   }
-
   return { generated, sent, failed };
 }

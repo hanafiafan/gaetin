@@ -10,11 +10,11 @@ export async function getAccountDailyCounter(accountId: string) {
 
   const today = dayStart();
   if (!account.sentTodayResetAt || account.sentTodayResetAt < today) {
-    return prisma.messagingAccount.update({
-      where: { id: accountId },
-      data: { sentToday: 0, sentTodayResetAt: new Date() },
-      select: { id: true, dailyLimit: true, sentToday: true, sentTodayResetAt: true },
+    await prisma.messagingAccount.updateMany({
+      where: { id: accountId, OR: [{ sentTodayResetAt: null }, { sentTodayResetAt: { lt: today } }] },
+      data: { sentToday: 0, sentTodayResetAt: today },
     });
+    return prisma.messagingAccount.findUnique({ where: { id: accountId }, select: { id: true, dailyLimit: true, sentToday: true, sentTodayResetAt: true } });
   }
 
   return account;

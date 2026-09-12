@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { computeScore } from "@/lib/leads/scoring";
-import { addCredits, deductCredits, InsufficientCreditsError } from "@/lib/credits/service";
+import { deductCreditsInTransaction, InsufficientCreditsError } from "@/lib/credits/service";
 import { addContactToFirstPipelineStage } from "@/lib/crm/pipeline";
 import { getWorkspacePlan } from "@/lib/plans/limits";
 import { CREDIT_COSTS } from "@/config/plans";
@@ -49,62 +49,27 @@ export async function POST(req: NextRequest) {
       skipped += 1;
       continue;
     }
-    const existing = await prisma.contact.findUnique({
-      where: { workspaceId_phone: { workspaceId, phone: l.phone } },
-    });
-
-    if (existing) {
-      // Sudah jadi kontak: tautkan saja, tidak memotong kredit.
-      await prisma.lead.update({ where: { id: l.id }, data: { saved: true, contactId: existing.id } });
-      if (parsed.data.addToPipeline) {
-        const pipeline = await addContactToFirstPipelineStage(workspaceId, existing.id);
-        if (pipeline.added) pipelineAdded += 1;
-      }
-      skipped += 1;
-      continue;
-    }
-
-    // Kontak baru: potong kredit dulu.
     try {
-      await deductCredits(workspaceId, CREDIT_COSTS.saveLead, "SAVE_LEAD");
-    } catch (e) {
-      if (e instanceof InsufficientCreditsError) {
-        outOfCredits = true;
-        break;
-      }
-      throw e;
-    }
-
-    let c;
-    try {
-      c = await prisma.contact.create({
-        data: {
-          workspaceId,
-          name: l.businessName,
-          phone: l.phone,
-          email: l.email,
-          website: l.website,
-          address: l.address,
-          city: l.city,
-          category: l.category,
-          latitude: l.latitude,
-          longitude: l.longitude,
-          source: "SCRAPER",
-          score: computeScore(l),
-        },
+      const result = await prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM "Workspace" WHERE id = ${workspaceId} FOR UPDATE`;
+        let contact = await tx.contact.findUnique({ where: { workspaceId_phone: { workspaceId, phone: l.phone! } } });
+        const created = !contact;
+        if (!contact) {
+          await deductCreditsInTransaction(tx, workspaceId, CREDIT_COSTS.saveLead, "SAVE_LEAD");
+          contact = await tx.contact.create({ data: { workspaceId, name: l.businessName, phone: l.phone!, email: l.email, website: l.website, address: l.address, city: l.city, category: l.category, latitude: l.latitude, longitude: l.longitude, source: "SCRAPER", score: computeScore(l) } });
+        }
+        await tx.lead.update({ where: { id: l.id }, data: { saved: true, contactId: contact.id } });
+        return { id: contact.id, created };
       });
-    } catch (e) {
-      // Kredit dipotong sebelum baris ini; kembalikan agar kontak yang gagal
-      // dibuat tidak tetap menagih pelanggan.
-      await addCredits(workspaceId, CREDIT_COSTS.saveLead, "REFUND_SAVE_LEAD").catch(() => undefined);
-      throw e;
+      if (result.created) saved++; else skipped++;
+      if (parsed.data.addToPipeline) {
+        const pipeline = await addContactToFirstPipelineStage(workspaceId, result.id);
+        if (pipeline.added) pipelineAdded++;
+      }
+    } catch (err) {
+      if (err instanceof InsufficientCreditsError) { outOfCredits = true; break; }
+      throw err;
     }
-    await prisma.lead.update({ where: { id: l.id }, data: { saved: true, contactId: c.id } });
-    if (parsed.data.addToPipeline) {
-      const pipeline = await addContactToFirstPipelineStage(workspaceId, c.id);
-      if (pipeline.added) pipelineAdded += 1;
-    }
-    saved += 1;
   }
 
   return NextResponse.json({

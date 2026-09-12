@@ -22,8 +22,9 @@ export async function sendText(
   accountId: string,
   phone: string,
   text: string,
-): Promise<string | undefined> {
-  return gwSend(accountId, phone, text);
+  idempotencyKey?: string,
+) {
+  return gwSend(accountId, phone, text, idempotencyKey);
 }
 
 export async function isRegistered(accountId: string, phone: string): Promise<boolean> {

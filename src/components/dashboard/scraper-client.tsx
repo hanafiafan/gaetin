@@ -106,17 +106,16 @@ interface Job {
 
 export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmEnabled?: boolean }) {
   const mapEl = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const markerRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const circleRef = useRef<any>(null);
+  const mapRef = useRef<import("leaflet").Map | null>(null);
+  const markerRef = useRef<import("leaflet").Marker | null>(null);
+  const circleRef = useRef<import("leaflet").Circle | null>(null);
   const geoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const esRef = useRef<EventSource | null>(null);
 
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [radius, setRadius] = useState(5);
+  const radiusRef = useRef(radius);
+  radiusRef.current = radius;
   const [label, setLabel] = useState("");
   const [mode, setMode] = useState<"auto" | "manual" | "extension">(legacyOsmEnabled ? "auto" : "extension");
   const [regionInput, setRegionInput] = useState("");
@@ -178,7 +177,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
       const map = L.map(mapEl.current).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 12);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
       const marker = L.marker([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], { draggable: true, icon }).addTo(map);
-      const circle = L.circle([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], { radius: radius * 1000, color: "#2563eb", fillColor: "#2563eb", fillOpacity: 0.12 }).addTo(map);
+      const circle = L.circle([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], { radius: radiusRef.current * 1000, color: "#2563eb", fillColor: "#2563eb", fillOpacity: 0.12 }).addTo(map);
       mapRef.current = map;
       markerRef.current = marker;
       circleRef.current = circle;
@@ -192,8 +191,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
         const ll = marker.getLatLng();
         setPoint(ll.lat, ll.lng);
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      map.on("click", (e: any) => setPoint(e.latlng.lat, e.latlng.lng));
+          map.on("click", (e: import("leaflet").LeafletMouseEvent) => setPoint(e.latlng.lat, e.latlng.lng));
       geocode(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
     })();
     return () => {
@@ -208,7 +206,7 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
 
   useEffect(() => {
     if (circleRef.current) circleRef.current.setRadius(radius * 1000);
-  }, [activeJobId, currentJob]);
+  }, [radius, activeJobId, currentJob]);
 
   useEffect(() => {
     if (mode === "auto" && regionInput.trim().length > 2 && showSuggestions) {

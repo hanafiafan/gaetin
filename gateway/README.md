@@ -1,31 +1,21 @@
-# Hellens WA Gateway
+# Gaetin WhatsApp Gateway
 
-Server Baileys persisten untuk koneksi WhatsApp. Di-deploy di Railway, dipanggil oleh aplikasi Next.js di Vercel.
+Gateway Express/Baileys untuk aplikasi dan worker Gaetin. Gunakan Node.js 22, satu instance gateway per volume sesi, dan volume persisten.
 
-## Environment Variables
+| Environment | Fungsi |
+|---|---|
+| GATEWAY_TOKEN | Bearer token aplikasi/worker |
+| WEBHOOK_URL | URL `/api/whatsapp/webhook` aplikasi |
+| WEBHOOK_SECRET | Secret webhook, terpisah dari JWT aplikasi |
+| SESSION_DIR | Direktori sesi persisten; default `./wa-sessions` |
+| PORT | Port HTTP; default 3001 |
 
-| Variable | Required | Keterangan |
-|---|---|---|
-| `GATEWAY_TOKEN` | ✅ | Bearer token untuk auth request dari Next.js |
-| `WEBHOOK_URL` | ✅ | URL webhook Next.js (misal: `https://hellens.vercel.app/api/whatsapp/webhook`) |
-| `WEBHOOK_SECRET` | ✅ | Secret bersama untuk validasi webhook |
-| `SESSION_DIR` | ❌ | Folder session (default: `./wa-sessions`) |
-| `PORT` | ❌ | Port server (default: 3001, Railway set otomatis) |
+`npm ci && npm start` menjalankan gateway. `npm test` menjalankan tes receipt dan outbox tanpa WhatsApp nyata.
 
-## Deploy ke Railway
+Endpoint: `GET /health`, `POST /connect/:accountId`, `GET /qr/:accountId`, `POST /disconnect/:accountId`, `POST /send`, dan `POST /is-registered`. Semua selain health memerlukan Bearer token.
 
-1. Buat project baru di Railway
-2. Connect repo ini (pilih folder `gateway/` sebagai root)
-3. Set environment variables di atas
-4. Railway otomatis deploy saat push ke main
+`/send` menerima `accountId`, `phone`, `text`, dan **idempotencyKey wajib**. Gateway menyimpan receipt di `.gateway/receipts` sebelum mengirim. Request berulang dengan payload sama tidak menggandakan pengiriman, termasuk setelah restart. Payload berubah dengan key sama ditolak. Hasil pengiriman yang terputus dan tidak dapat dipastikan ditandai `uncertain`; jangan otomatis mengirim ulang dengan key baru.
 
-## Endpoints
+Webhook disimpan di `.gateway/outbox` dan dicoba ulang sampai aplikasi membalas sukses. Jangan menghapus `.gateway` saat memulihkan sesi. Backup volume dan pantau kapasitas disk. Pemulihan sesi mengabaikan direktori internal `.gateway`.
 
-| Method | Path | Keterangan |
-|---|---|---|
-| GET | `/health` | Health check (tanpa auth) |
-| POST | `/connect/:accountId` | Mulai koneksi WhatsApp |
-| GET | `/qr/:accountId` | Ambil QR + status saat ini |
-| POST | `/disconnect/:accountId` | Putuskan koneksi |
-| POST | `/send` | Kirim pesan teks |
-| POST | `/is-registered` | Cek apakah nomor terdaftar di WA |
+Compose utama maupun Coolify sudah menyertakan gateway. Jika memakai Railway atau host lain, pasang volume ke `SESSION_DIR`, atur URL webhook, dan sesuaikan `WA_GATEWAY_BASE_URL` aplikasi/worker. Jangan menjalankan gateway lama bersama worker baru.

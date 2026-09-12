@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/db/prisma";
 import { AUTH_COOKIE, IMPERSONATE_COOKIE, authCookieOptions } from "@/lib/auth/constants";
 
 export async function POST(request: NextRequest) {
-  const token = cookies().get(AUTH_COOKIE)?.value;
+  const token = (await cookies()).get(AUTH_COOKIE)?.value;
 
   // Catat token sebagai tidak valid agar ditolak di request berikutnya (Requirement 14.9).
-  if (token) {
-    await prisma.invalidatedToken
-      .create({ data: { token, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) } })
-      .catch(() => undefined);
+  const payload = token ? verifyToken(token) : null;
+  if (token && payload?.exp) {
+    await prisma.invalidatedToken.upsert({ where: { token }, update: {}, create: { token, expiresAt: new Date(payload.exp * 1000) } });
   }
 
   // Denylist dibaca setiap request; tanpa sapuan ini tabelnya tumbuh selamanya.

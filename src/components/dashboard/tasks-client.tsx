@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TabPills from "@/components/dashboard/tab-pills";
@@ -33,21 +33,21 @@ export default function TasksClient() {
   const [priority, setPriority] = useState("MEDIUM");
   const [error, setError] = useState<string | null>(null);
 
-  async function loadTasks() {
+  const loadTasks = useCallback(async () => {
     const r = await fetch(`/api/tasks?status=${filter}`);
     const j = await r.json();
     if (j.success) {
       setTasks(j.data);
       setCounts(j.counts ?? {});
     }
-  }
+  }, [filter]);
   async function loadContacts() {
     const r = await fetch("/api/contacts?pageSize=100");
     const j = await r.json();
     if (j.success) setContacts(j.data.items);
   }
   useEffect(() => { loadContacts(); }, []);
-  useEffect(() => { loadTasks(); }, [filter]);
+  useEffect(() => { loadTasks(); }, [loadTasks]);
 
   async function create(e: React.FormEvent) {
     e.preventDefault();

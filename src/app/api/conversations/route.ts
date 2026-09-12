@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
@@ -6,6 +7,8 @@ import { fail } from "@/lib/api";
 export async function GET() {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "inbox");
+  if (denied) return denied;
 
   const rows = await prisma.conversation.findMany({
     where: { workspaceId: session.workspace.id },

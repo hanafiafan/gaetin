@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
@@ -7,6 +8,8 @@ import { fail } from "@/lib/api";
 export async function GET() {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "autoFollowUp");
+  if (denied) return denied;
 
   const rules = await prisma.followUpRule.findMany({
     where: { workspaceId: session.workspace.id },
@@ -27,6 +30,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "autoFollowUp");
+  if (denied) return denied;
   const workspaceId = session.workspace.id;
 
   let body: unknown;

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -105,7 +106,7 @@ export default function WorkspaceNav({
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex min-h-[72px] max-w-[1600px] flex-wrap items-center gap-3 px-3 sm:px-5 lg:px-7">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
-            <img src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
+            <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
             <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
           </Link>
 

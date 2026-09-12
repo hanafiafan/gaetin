@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
@@ -8,6 +9,8 @@ import { fail } from "@/lib/api";
 export async function GET() {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "emailBlast");
+  if (denied) return denied;
 
   const items = await prisma.emailBlast.findMany({
     where: { workspaceId: session.workspace.id },
@@ -29,6 +32,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "emailBlast");
+  if (denied) return denied;
   const workspaceId = session.workspace.id;
 
   let body: unknown;
@@ -48,7 +53,8 @@ export async function POST(req: NextRequest) {
   const contacts = await prisma.contact.findMany({ where, select: { id: true }, take: 10000 });
   if (contacts.length === 0) return fail("EMPTY", "Tidak ada kontak dengan email yang cocok", 400);
 
-  const blast = await prisma.emailBlast.create({
+  const blast = await prisma.$transaction(async (tx) => {
+  const blast = await tx.emailBlast.create({
     data: {
       workspaceId,
       name,
@@ -61,8 +67,11 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  await prisma.emailBlastMessage.createMany({
+  await tx.emailBlastMessage.createMany({
     data: contacts.map((c) => ({ emailBlastId: blast.id, contactId: c.id })),
+  });
+
+    return blast;
   });
 
   return NextResponse.json(

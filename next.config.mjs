@@ -51,11 +51,8 @@ const nextConfig = {
       { source: "/dashboard/blast", destination: "/dashboard/campaigns", permanent: false },
     ];
   },
-  experimental: {
-    // Baileys & beberapa lib server-only tidak boleh dibundle ke client.
-    serverComponentsExternalPackages: ["@whiskeysockets/baileys", "bullmq", "ioredis", "pino"],
-    // Pastikan worker/queue tidak ikut ter-tree-shake saat build.
-  },
+  serverExternalPackages: ["pino", "pg"],
+
 };
 
 export default nextConfig;

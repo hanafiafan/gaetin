@@ -11,7 +11,8 @@ const Schema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED"]).optional(),
 });
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
 
@@ -38,7 +39,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json({ success: true });
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getSuperAdminSession();
   if (!session) return fail("FORBIDDEN", "Akses super-admin diperlukan", 403);
   await prisma.blogPost.delete({ where: { id: params.id } }).catch(() => undefined);

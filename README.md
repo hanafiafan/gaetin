@@ -1,321 +1,86 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/Hellens-SaaS%20Growth%20Platform-10B981?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Hellens" />
-</p>
+# Gaetin
 
-<h1 align="center">🚀 Hellens</h1>
+Gaetin (nama sebelumnya Hellens) adalah platform prospek, kampanye WhatsApp/email, inbox, CRM, dan billing berbasis workspace.
 
-<p align="center">
-  <strong>All-in-one SaaS growth platform for lead generation, WhatsApp outreach, CRM & analytics.</strong>
-</p>
+## Arsitektur
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js" alt="Next.js 14" />
-  <img src="https://img.shields.io/badge/TypeScript-5.5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Prisma-5.18-2D3748?style=flat-square&logo=prisma" alt="Prisma" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/License-Private-gray?style=flat-square" alt="License" />
-</p>
+- **Web/API:** Next.js 15, React 18, TypeScript.
+- **Data:** PostgreSQL 16 dan Prisma 5.
+- **Worker:** proses Node.js terpisah; antrean persisten `BackgroundJob` di PostgreSQL.
+- **WhatsApp:** Express/Baileys gateway terpisah; aplikasi memakai HTTP dan menerima webhook.
+- **Prospek:** ekstensi Google Maps, Overpass/OSM, atau Google Places dengan API key workspace.
+- **Pembayaran:** Midtrans; invoice, aktivasi paket, kredit, dan ledger diselesaikan atomik.
+- **Deployment:** Docker Compose + Caddy, atau Compose untuk Coolify.
 
-<p align="center">
-  <a href="#-features">Features</a> •
-  <a href="#%EF%B8%8F-architecture">Architecture</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-docker-deployment">Docker</a> •
-  <a href="#-project-structure">Structure</a> •
-  <a href="#-roadmap">Roadmap</a>
-</p>
+`WA_PROVIDER=baileys` tetap diterima untuk kompatibilitas, tetapi transport aktual selalu gateway. `cloud_api` belum diimplementasikan dan ditolak secara eksplisit. Domain, logo, dan ID integrasi Hellens yang sudah dipakai pelanggan tidak diganti otomatis.
 
----
+## Menjalankan lokal
 
-## 📋 Overview
+Gunakan Node.js 22.12+ dan PostgreSQL 16. Salin `.env.example` ke `.env`, lalu isi `DATABASE_URL`, `JWT_SECRET`, `WA_GATEWAY_BASE_URL`, `WA_GATEWAY_TOKEN`, dan `WEBHOOK_SECRET`.
 
-**Hellens** is a comprehensive SaaS growth platform designed for businesses that rely on WhatsApp as their primary communication channel. It provides an end-to-end pipeline:
-
-```
-Scrape Leads → Manage & Segment → Blast via WhatsApp → Handle Inbox/CS → Close Deals & Measure ROI
-```
-
-Built with a **multi-tenant architecture**, Hellens supports teams and agencies with role-based access control (Owner / Admin / Agent) per workspace.
-
----
-
-## ✨ Features
-
-### 🔍 Lead Generation
-- **Google Maps Scraper** — Automated lead extraction with deduplication
-- **Lead Scoring** — Prioritize high-value prospects
-- **Segmentation** — Organize leads with custom tags and filters
-- **CSV/Excel Import & Export** — Bulk data management
-
-### 💬 WhatsApp Messaging
-- **Multi-Device Support** — Connect multiple WhatsApp numbers via QR
-- **Broadcast Campaigns** — Schedule and send bulk messages
-- **Template Engine** — Reusable message templates with variables
-- **Anti-Ban Controls** — Daily limits, warm-up schedules, rate limiting
-- **Number Validator** — Verify WhatsApp numbers before sending
-
-### 📥 Inbox & Customer Service
-- **Unified Inbox** — All conversations in one place
-- **Two-Way Messaging** — Reply to customer messages in real-time
-- **Auto-Reply** — Rule-based automated responses
-- **Team Assignment** — Route conversations to agents
-
-### 📊 CRM & Analytics
-- **Deal Pipeline** — Visual Kanban-style deal tracking
-- **ROI Tracking** — Measure campaign performance
-- **Analytics Dashboard** — Comprehensive business metrics with charts
-- **Follow-Up Automation** — Scheduled task reminders
-
-### 🗺️ Map View
-- **Geographic Analysis** — Visualize leads on an interactive map
-- **Market Intelligence** — Identify opportunity clusters
-
-### 💳 Billing & Subscription
-- **Plan Management** — Free, Starter, Pro, Enterprise tiers
-- **Midtrans Integration** — Automated payment processing
-- **Credit System** — Usage-based billing for advanced features
-
-### ⚙️ Platform
-- **Multi-Tenant** — Workspace isolation with team support
-- **Dark/Light Mode** — Full theme support across all UI
-- **Admin Panel** — Platform-wide management & monitoring
-- **API-First** — 27+ REST API endpoints
-- **Docker Ready** — One-command production deployment
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                     Caddy (Reverse Proxy)                │
-│                   Auto SSL · HTTP/2 · HTTPS              │
-└──────────────────────────┬──────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────┐
-│               Next.js 14 (App Router)                    │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────────┐  │
-│  │  Landing Page│  │  Dashboard   │  │  Admin Panel   │  │
-│  │  (SSR)       │  │  (Client)    │  │  (Protected)   │  │
-│  └─────────────┘  └──────────────┘  └────────────────┘  │
-│  ┌──────────────────────────────────────────────────┐    │
-│  │              API Routes (27+ endpoints)           │    │
-│  │  auth · contacts · blast · campaigns · crm · ...  │    │
-│  └──────────────────────────────────────────────────┘    │
-└──────┬───────────────┬───────────────┬──────────────────┘
-       │               │               │
-┌──────▼──────┐ ┌──────▼──────┐
-│ PostgreSQL  │ │   Baileys   │
-│  (Prisma)   │ │ (WhatsApp)  │
-│  Multi-     │ │  Multi-     │
-│  tenant DB  │ │  Session    │
-└─────────────┘ └─────────────┘
-```
-
-### Key Design Decisions
-
-| Decision | Rationale |
-|----------|-----------|
-| **Multi-tenant via Workspace** | All data scoped by `Workspace`; users connect through `Membership` with roles |
-| **WhatsApp Provider Abstraction** | `IMessagingProvider` interface decouples business logic from the backend; `WA_PROVIDER` env supports `baileys`/`gateway`/`cloud_api`, but only Baileys is wired up today — the other two are reserved for later |
-| **In-Process Blast/Follow-up** | Sends run fire-and-forget in the app process with a stop-flag poll — no queue worker yet; a natural next step if volume grows |
-| **Near-Zero Cost Stack** | All core features self-hosted on a single VPS — no per-message API fees |
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-| Requirement | Version |
-|-------------|---------|
-| Node.js | 20+ (recommended 22) |
-| PostgreSQL | 14+ |
-| npm | 8+ |
-
-### Installation
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/hanafiafan/hellens.git
-cd hellens
-
-# 2. Install dependencies
-npm install
-
-# 3. Configure environment
-cp .env.example .env
-# Edit .env — fill in DATABASE_URL, JWT_SECRET, etc.
-
-# 4. Generate Prisma client & run migrations
-npm run db:generate
-npm run db:migrate
-
-# 5. (Optional) Seed demo data
-npm run db:seed
-# Demo login: demo@nusantara.test / Demo1234
-
-# 6. Start development server
+```sh
+npm ci
+npx prisma migrate deploy
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Jalankan worker pada terminal kedua:
 
----
-
-## 🐳 Docker Deployment
-
-Deploy the entire stack with a single command:
-
-```bash
-# Set your domain and credentials
-export DOMAIN=yourdomain.com
-export DB_USER=postgres
-export DB_PASSWORD=your-secure-password
-
-# Launch all services
-docker compose up -d
+```sh
+npm run worker
 ```
 
-This spins up:
-- **PostgreSQL 16** — Primary database
-- **Hellens App** — Next.js production build
-- **Caddy** — Reverse proxy with automatic HTTPS
+Jalankan gateway pada terminal ketiga:
 
----
-
-## 📜 Available Scripts
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Create production build |
-| `npm run start` | Start production server |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm run test` | Run unit + property tests (Vitest) |
-| `npm run db:generate` | Generate Prisma client |
-| `npm run db:migrate` | Create/apply database migrations |
-| `npm run db:studio` | Open Prisma Studio (DB GUI) |
-| `npm run db:seed` | Seed demo data |
-
----
-
-## 📁 Project Structure
-
-```
-hellens/
-├── prisma/
-│   ├── schema.prisma          # Database schema (multi-tenant)
-│   └── seed.ts                # Demo data seeder
-├── src/
-│   ├── app/
-│   │   ├── (auth)/            # Login & registration pages
-│   │   ├── (dashboard)/
-│   │   │   └── dashboard/
-│   │   │       ├── analytics/     # Business metrics & charts
-│   │   │       ├── blast/         # Broadcast messaging
-│   │   │       ├── campaigns/     # Campaign management
-│   │   │       ├── contacts/      # Contact management
-│   │   │       ├── crm/           # Deal pipeline & CRM
-│   │   │       ├── inbox/         # Unified messaging inbox
-│   │   │       ├── map/           # Geographic lead view
-│   │   │       ├── scraper/       # Google Maps scraper
-│   │   │       ├── settings/      # Workspace settings
-│   │   │       ├── tasks/         # Task management
-│   │   │       ├── templates/     # Message templates
-│   │   │       └── ...            # + billing, team, validator, etc.
-│   │   ├── (admin)/           # Platform admin panel
-│   │   ├── api/               # 27+ REST API endpoints
-│   │   └── page.tsx           # Landing page
-│   ├── components/
-│   │   ├── dashboard/         # Dashboard-specific components
-│   │   ├── admin/             # Admin panel components
-│   │   └── ui/                # shadcn/ui base components
-│   ├── lib/
-│   │   ├── auth/              # JWT authentication
-│   │   ├── billing/           # Payment processing
-│   │   ├── blast/             # Broadcast engine
-│   │   ├── contacts/          # Contact management
-│   │   ├── crm/               # CRM business logic
-│   │   ├── db/                # Prisma client singleton
-│   │   ├── messaging/         # WhatsApp provider abstraction
-│   │   ├── scraper/           # Lead scraping engine
-│   │   ├── whatsapp/          # Baileys integration
-│   │   └── ...                # + email, validators, etc.
-│   ├── config/                # Plan catalogs & feature flags
-│   └── middleware.ts          # Auth & route protection
-├── gateway/                   # WhatsApp gateway service
-├── extension/                 # Chrome extension
-├── docker-compose.yml         # Full-stack Docker deployment
-├── Dockerfile                 # Multi-stage production build
-└── Caddyfile                  # Reverse proxy configuration
+```sh
+cd gateway
+npm ci
+# Isi GATEWAY_TOKEN, WEBHOOK_URL, WEBHOOK_SECRET, SESSION_DIR, PORT pada environment.
+npm start
 ```
 
----
+Gateway lokal biasanya memakai port 3001; `WEBHOOK_URL` menunjuk ke `http://localhost:3000/api/whatsapp/webhook`. Worker wajib aktif untuk kampanye, email blast, follow-up, validasi, pencarian email, dan scraper server. Ekstensi tetap memasukkan hasil melalui endpoint khususnya.
 
-## 💰 Cost Architecture
+## Model keandalan
 
-Hellens is designed for **near-zero operational costs**. All core features run on a single VPS without third-party subscriptions.
+- API menyimpan transisi status dan job dalam satu transaksi. Request execute bersamaan hanya memiliki satu pemenang.
+- Satu worker aktif memegang advisory lock PostgreSQL melalui koneksi khusus. Worker kedua ditolak. Job `RUNNING` dipulihkan saat worker pengganti memperoleh lock.
+- Kampanye, email, validasi, dan pencarian email diproses dalam batch kecil agar pekerjaan lain dapat berjalan. Scheduler memeriksa kampanye jatuh tempo dan aturan follow-up pada tiap putaran worker.
+- Generasi job melindungi requeue/pause/resume dari penyelesaian proses lama.
+- Kredit dan slot kuota WhatsApp dipesan atomik per ID pengiriman. Hari kuota memakai Asia/Jakarta, sama pada web dan worker.
+- Gateway menyimpan receipt sebelum mengirim. Retry dengan ID sama memakai receipt yang sama. Volume sesi menyimpan receipt serta outbox webhook dan wajib persisten.
+- Jika gateway mati saat pengiriman sehingga hasil tidak dapat dipastikan, receipt berstatus `UNKNOWN`; pesan tidak otomatis dikirim ulang. Kredit tetap dicadangkan sampai hasil dikonfirmasi. Ini menghindari klaim jaminan exactly-once yang tidak disediakan WhatsApp.
+- Email yang hasilnya ambigu juga tidak dikirim ulang otomatis. Resend menerima idempotency key; receipt lokal tetap melindungi pemulihan setelah batas retensi provider.
+- Webhook pesan masuk dideduplikasi berdasarkan ID provider, dan seluruh perubahan inbox/opt-out/follow-up disimpan atomik. Kegagalan database membalas 503; gateway menyimpan event hingga berhasil.
+- Follow-up hanya berlaku setelah pesan keluar yang belum dibalas. Pesan follow-up tidak memicu dirinya sendiri. Kontak yang belum pernah dihubungi dikecualikan.
+- Paket kedaluwarsa memengaruhi batas dan akses API; penggantian password mencabut seluruh sesi melalui versi sesi.
 
-| Category | Service | Cost |
-|----------|---------|------|
-| ✅ **Core (Free)** | PostgreSQL, Next.js, Baileys | Self-hosted |
-| ✅ **Maps** | Leaflet + free tiles, Nominatim geocoding | Free tier |
-| ✅ **Scraping** | Self-hosted Google Maps scraper | Free |
-| 💳 **Revenue-Aligned** | Midtrans payment processing | Per-transaction fee only |
-| 📧 **Email** | Resend/Brevo transactional emails | Free tier |
+## Pengujian
 
-> **Scaling note:** Since WhatsApp runs via Baileys, the primary scaling cost is server RAM (per active connection), not per-message API fees — significantly cheaper than gateway services.
+```sh
+npm run lint
+npm run typecheck
+npm test
+node --test gateway/tests/*.test.js
+npm run build
+```
 
----
+Tes database harus menggunakan database terpisah, bukan database pelanggan:
 
-## ⚠️ Compliance & Risk Notes
+```sh
+DATABASE_URL=postgresql://test:test@localhost:5432/gaetin_test npx prisma migrate deploy
+TEST_DATABASE_URL=postgresql://test:test@localhost:5432/gaetin_test npm run test:integration
+# Setelah npm run build, uji HTTP dengan gateway tiruan (tanpa pesan nyata):
+TEST_DATABASE_URL=postgresql://test:test@localhost:5432/gaetin_test npm run test:e2e
+```
 
-> [!WARNING]
-> **Google Maps Scraping** — Scraping Google Maps violates their ToS. Consider using the official Google Places API or third-party data providers for production use.
+`npm test` menjalankan unit/property tests. Tes integrasi memerlukan `TEST_DATABASE_URL` dan gagal bila database tidak tersedia; tidak ada lagi tes database yang tampak lulus tanpa menjalankan assertion. CI menyediakan PostgreSQL dan menjalankan kedua suite.
 
-> [!WARNING]
-> **Unofficial WhatsApp API** — Using Baileys (unofficial WA API) carries a risk of account bans. The platform includes anti-ban controls (daily limits, warm-up, DoNotContact/opt-out lists), but consider offering the official WhatsApp Cloud API as an alternative for risk-averse users.
+## Deployment dan operasi
 
----
+Lihat [panduan deployment](docs/DEPLOYMENT.md), termasuk migrasi sistem lama, secret, pemulihan job, dan pemeriksaan pengiriman ambigu.
 
-## 🗺️ Roadmap
+## Referensi pembaruan dependensi
 
-- [x] Auth (register/login/JWT, lockout) + dashboard layout
-- [x] WhatsApp connection (Baileys) + real-time status (Socket.IO)
-- [x] Google Maps scraper + lead management (segments, scoring, dedup)
-- [x] Blast + Campaign (queue, anti-ban) + number validation
-- [x] Inbox / Customer Service (two-way) + auto-reply
-- [x] CRM pipeline + Deal/ROI tracking
-- [x] Follow-up automation + tasks
-- [x] Subscription + Midtrans billing
-- [x] Map view (market analysis)
-- [ ] White-label support
-- [ ] WhatsApp Cloud API official integration
-- [ ] Advanced AI-powered auto-reply
-- [ ] Multi-language support
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This is a private project. All rights reserved.
-
----
-
-<p align="center">
-  Built with ❤️ using Next.js, TypeScript, and Prisma
-  <br />
-  <sub>© 2024–2026 Hellens. All rights reserved.</sub>
-</p>
+- [Migrasi Next.js 15](https://nextjs.org/docs/app/guides/upgrading/version-15): request APIs dan route params menggunakan akses asinkron.
+- [Distribusi resmi SheetJS](https://docs.sheetjs.com/docs/getting-started/installation/nodejs/): versi registry npm lama diganti tarball resmi 0.20.3.

@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
@@ -14,6 +15,8 @@ const STATUS_MAP: Record<string, string> = {
 export async function GET() {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "blast");
+  if (denied) return denied;
 
   const rows = await prisma.messagingAccount.findMany({
     where: { workspaceId: session.workspace.id },
@@ -35,6 +38,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return fail("AUTH_003", "Tidak terautentikasi", 401);
+  const denied = await featureDenied(session.workspace.id, "blast");
+  if (denied) return denied;
 
   let body: unknown;
   try {
