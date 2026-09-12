@@ -46,7 +46,7 @@ function SettingsSection({
 
 export default function SettingsPage() {
   return (
-    <div className="max-w-5xl space-y-5">
+    <div className="mx-auto max-w-5xl space-y-5">
       <PageHero
         title="Pengaturan"
         description="Sambungkan nomor WhatsApp, ubah nama workspace, dan atur keamanan akunmu."

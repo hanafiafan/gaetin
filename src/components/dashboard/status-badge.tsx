@@ -25,7 +25,8 @@ const TONE: Record<Tone, string> = {
   warn: "bg-warning/15 text-warning",
   bad: "bg-destructive/15 text-destructive",
   idle: "bg-muted-foreground/15 text-muted-foreground",
-  busy: "bg-primary/15 text-primary",
+  // Lime hanya sebagai isian, tidak pernah sebagai teks di atas putih.
+  busy: "bg-primary/25 text-foreground",
 };
 
 const STATUS: Record<string, { label: string; tone: Tone }> = {

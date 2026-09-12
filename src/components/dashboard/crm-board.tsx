@@ -140,7 +140,7 @@ export default function CrmBoard() {
             key={col.id}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => onDrop(col)}
-            className="flex min-h-[22rem] w-72 shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-muted/40"
+            className="flex min-h-[22rem] w-56 shrink-0 grow flex-col overflow-hidden rounded-xl border border-border bg-muted/40"
           >
             <div
               className="flex items-center gap-2 border-b-2 bg-background p-3"

@@ -99,7 +99,9 @@ export default function AnalyticsClient() {
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={summary.funnel} layout="vertical" margin={{ left: 10, right: 16 }}>
                 <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="stage" width={90} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
+                {/* 90px memotong "Disimpan jadi kontak" jadi dua-tiga baris; label tahapan
+                    corong memang panjang, jadi kolomnya yang menyesuaikan. */}
+                <YAxis type="category" dataKey="stage" width={132} tick={{ fontSize: 11, fill: CHART.axis }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={{ fill: CHART_CURSOR_FILL }} />
                 <Bar dataKey="value" fill={CHART.accent} radius={0} maxBarSize={CHART_MAX_BAR} />
               </BarChart>

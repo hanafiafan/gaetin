@@ -151,7 +151,7 @@ export default function BillingClient() {
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Saldo kredit</p>
               {isLow && <Zap className="h-4 w-4 text-warning" />}
             </div>
-            <p className={cn("mt-4 text-3xl font-semibold tracking-tight", isLow ? "text-warning" : "text-primary")}>
+            <p className={cn("mt-4 text-3xl font-semibold tracking-tight", isLow ? "text-warning" : "text-foreground")}>
               {me ? me.credits.toLocaleString("id-ID") : "—"}
             </p>
             {me && (

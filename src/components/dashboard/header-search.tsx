@@ -25,7 +25,7 @@ export default function HeaderSearch() {
         const term = q.trim();
         if (term) router.push(`/dashboard/contacts?q=${encodeURIComponent(term)}`);
       }}
-      className="hidden h-10 w-[220px] items-center gap-2 rounded-xl border border-border px-3.5 transition focus-within:border-foreground/40 xl:flex"
+      className="hidden h-9 w-[184px] items-center gap-2 rounded-lg border border-border px-3 transition focus-within:border-foreground/40 2xl:flex"
     >
       <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
       <input

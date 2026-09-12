@@ -31,7 +31,6 @@ type Props = {
   appName?: string;
   user?: { name?: string | null; email?: string | null } | null;
   workspaceName?: string | null;
-  planName?: string | null;
   credits?: number;
   featureFlags?: Record<string, boolean> | null;
   isSuperAdmin?: boolean;
@@ -51,13 +50,12 @@ function initials(name?: string | null, email?: string | null) {
 /* Target sentuh 44px. Versi sebelumnya 40px, dan di badan halaman banyak yang
    32px — di bawah ambang yang nyaman untuk tangan yang kurang stabil. */
 const ICON_BTN =
-  "flex h-11 w-11 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground";
+  "flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground";
 
 export default function WorkspaceNav({
   appName = "Hellens",
   user,
   workspaceName,
-  planName,
   credits = 0,
   featureFlags,
   isSuperAdmin = false,
@@ -104,7 +102,7 @@ export default function WorkspaceNav({
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex min-h-[72px] max-w-[1600px] flex-wrap items-center gap-3 px-3 sm:px-5 lg:px-7">
+        <div className="mx-auto flex min-h-[56px] max-w-[1600px] flex-wrap items-center gap-2 px-3 sm:px-5 lg:px-7">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
             <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
             <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
@@ -113,7 +111,7 @@ export default function WorkspaceNav({
           <nav
             ref={navRef}
             aria-label="Bagian utama"
-            className="hidden items-center gap-1 rounded-lg border border-border p-1 lg:flex"
+            className="hidden items-center gap-0.5 rounded-lg border border-border p-0.5 lg:flex"
           >
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
@@ -129,7 +127,7 @@ export default function WorkspaceNav({
                     href={g.items[0].href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex h-11 items-center whitespace-nowrap rounded-md px-4 font-medium transition",
+                      "flex h-9 items-center whitespace-nowrap rounded-md px-3 text-sm font-medium transition",
                       active
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
@@ -149,7 +147,7 @@ export default function WorkspaceNav({
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpenGroup(open ? null : g.label)}
                     className={cn(
-                      "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-md px-4 font-medium transition",
+                      "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm font-medium transition",
                       active
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
@@ -236,15 +234,15 @@ export default function WorkspaceNav({
             <Link
               href="/dashboard/billing"
               title="Sisa kredit — klik untuk beli tambahan"
-              className="hidden h-11 items-center gap-2 rounded-lg border border-border px-3.5 font-semibold text-foreground transition hover:border-foreground/30 sm:flex"
+              className="hidden h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-semibold text-foreground transition hover:border-foreground/30 sm:flex"
             >
-              <Zap className="h-5 w-5 text-primary" />
+              <Zap className="h-4 w-4 text-primary" />
               {credits.toLocaleString("id-ID")}
             </Link>
 
             {isSuperAdmin && (
               <Link href="/admin" className={ICON_BTN} title="Konsol Owner">
-                <ShieldCheck className="h-5 w-5" />
+                <ShieldCheck className="h-4 w-4" />
               </Link>
             )}
 
@@ -256,21 +254,20 @@ export default function WorkspaceNav({
 
             <form action="/api/auth/logout" method="POST" className="contents">
               <button type="submit" className={ICON_BTN} title="Keluar dari akun">
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-4 w-4" />
               </button>
             </form>
 
-            <div className="flex items-center gap-2.5 rounded-lg border border-border py-1 pl-1 pr-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+            <div className="flex items-center gap-2 rounded-lg border border-border py-1 pl-1 pr-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
                 {initials(user?.name, user?.email)}
               </span>
-              <span className="hidden min-w-0 leading-tight sm:block">
-                <span className="block max-w-[140px] truncate font-semibold text-foreground">
+              <span className="hidden min-w-0 max-w-[150px] leading-tight sm:block">
+                <span className="block max-w-[130px] truncate text-sm font-semibold text-foreground">
                   {user?.name ?? "Owner"}
                 </span>
-                <span className="block truncate text-sm text-muted-foreground">
+                <span className="block truncate text-xs text-muted-foreground">
                   {workspaceName ?? "Workspace"}
-                  {planName ? ` · ${planName}` : ""}
                 </span>
               </span>
             </div>

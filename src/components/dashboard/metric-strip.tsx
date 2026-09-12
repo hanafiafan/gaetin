@@ -59,7 +59,10 @@ export default function MetricStrip({
                 )}
               </div>
               <div>
-                <p className={cn("text-3xl font-semibold tracking-tight", m.accent ? "text-primary" : "text-foreground")}>
+                {/* Angka selalu near-black. Lime di atas putih cuma sekitar 1,6:1 —
+                    terbaca sebagai teks pudar, bukan sorotan. Aksennya sudah
+                    dibawa chip ikon dan pita tepi atas kartu. */}
+                <p className="text-3xl font-semibold tracking-tight text-foreground">
                   {m.value}
                 </p>
                 {m.hint && <p className="mt-1 text-xs text-muted-foreground">{m.hint}</p>}
@@ -69,7 +72,7 @@ export default function MetricStrip({
         })}
       </div>
 
-      {aside && <div className={cn("p-5 lg:w-[340px]", asideDark ? "cg-onyx" : "bg-card")}>{aside}</div>}
+      {aside && <div className={cn("flex flex-col justify-center p-5 lg:w-[340px]", asideDark ? "cg-onyx" : "bg-card")}>{aside}</div>}
     </div>
   );
 }

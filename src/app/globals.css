@@ -613,10 +613,14 @@
   }
 
   /* Same idea, horizontal — for the CRM kanban board, whose next column gets
-     abruptly clipped on mobile with no hint it's swipeable. */
-  .cg-scrollfade-x {
-    mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
+     abruptly clipped on mobile with no hint it's swipeable. Hanya di layar
+     kecil: di desktop kolomnya melebar sampai muat, jadi pudarnya cuma
+     memotong kolom terakhir tanpa ada yang bisa digeser. */
+  @media (max-width: 1023px) {
+    .cg-scrollfade-x {
+      mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
+    }
   }
 
   /* Rotating circular badge (hero). */

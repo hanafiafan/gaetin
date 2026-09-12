@@ -93,7 +93,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         appName={appName}
         user={session.user}
         workspaceName={session.workspace.name}
-        planName={PLANS[planId]?.name}
         credits={workspaceInfo?.credits ?? 0}
         featureFlags={ownerCms.featureFlags}
         isSuperAdmin={session.isSuperAdmin}
