@@ -11,6 +11,7 @@ services:
       - JWT_SECRET=${JWT_SECRET:?set a real random JWT_SECRET in Coolify env vars}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://scraper.hellens.dev}
       - WA_SESSION_DIR=/app/wa-sessions
+      - MEDIA_DIR=/app/media
       - WA_PROVIDER=gateway
       - WA_GATEWAY_BASE_URL=http://gateway:3001
       - WA_GATEWAY_TOKEN=${WA_GATEWAY_TOKEN:?set WA_GATEWAY_TOKEN}
@@ -25,6 +26,9 @@ services:
         condition: service_healthy
     volumes:
       - wa_sessions:/app/wa-sessions
+      # Lampiran ditulis app, dibaca gateway. Volume yang sama, pola yang sama
+      # dengan sesi WhatsApp — tanpa itu gateway tidak bisa membuka berkasnya.
+      - media:/app/media
     ports:
       - "127.0.0.1:${APP_PORT:-3005}:3000"
     healthcheck:
@@ -86,8 +90,10 @@ services:
       - WEBHOOK_URL=http://app:3000/api/whatsapp/webhook
       - WEBHOOK_SECRET=${WEBHOOK_SECRET:?set WEBHOOK_SECRET}
       - SESSION_DIR=/app/wa-sessions
+      - MEDIA_DIR=/app/media
     volumes:
       - wa_sessions:/app/wa-sessions
+      - media:/app/media
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 5s
@@ -117,6 +123,7 @@ services:
 volumes:
   pgdata:
   wa_sessions:
+  media:
 
 networks:
   default:

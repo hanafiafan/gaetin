@@ -17,6 +17,7 @@ const { createReceiptStore, createWebhookOutbox } = require("./durable");
 const PORT = process.env.PORT || 3001;
 const TOKEN = process.env.GATEWAY_TOKEN;
 const SESSION_DIR = process.env.SESSION_DIR || "./wa-sessions";
+const MEDIA_DIR = process.env.MEDIA_DIR || "./media";
 const WEBHOOK_URL = process.env.WEBHOOK_URL; // URL Next.js webhook endpoint
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "";
 
@@ -244,14 +245,34 @@ app.post("/disconnect/:accountId", async (req, res) => {
   }
 });
 
-// Send text message
+// Send message: teks, atau teks + satu lampiran
 app.post("/send", async (req, res) => {
-  const { accountId, phone, text, idempotencyKey } = req.body;
-  if (typeof idempotencyKey !== "string" || !idempotencyKey || idempotencyKey.length > 200 || !accountId || !phone || !text) {
-    return res.status(400).json({ ok: false, error: "accountId, phone, text, idempotencyKey required" });
+  const { accountId, phone, text, media, idempotencyKey } = req.body;
+  if (typeof idempotencyKey !== "string" || !idempotencyKey || idempotencyKey.length > 200 || !accountId || !phone || (!text && !media)) {
+    return res.status(400).json({ ok: false, error: "accountId, phone, idempotencyKey dan (text atau media) wajib diisi" });
   }
+
+  // Path lampiran datang lewat HTTP, jadi diperlakukan sebagai input yang tidak
+  // dipercaya: harus berada di dalam MEDIA_DIR. Tanpa ini satu "../../" cukup
+  // untuk mengirimkan berkas mana pun di server ke nomor WhatsApp mana pun.
+  let attachment = null;
+  if (media) {
+    const kind = media.kind;
+    if (!["image", "document", "video"].includes(kind)) {
+      return res.status(400).json({ ok: false, error: "Jenis lampiran tidak dikenal" });
+    }
+    const absolute = path.resolve(MEDIA_DIR, String(media.path || ""));
+    const root = path.resolve(MEDIA_DIR);
+    if (absolute !== root && !absolute.startsWith(root + path.sep)) {
+      return res.status(400).json({ ok: false, error: "Path lampiran tidak valid" });
+    }
+    const exists = await fs.access(absolute).then(() => true, () => false);
+    if (!exists) return res.status(400).json({ ok: false, error: "Berkas lampiran tidak ditemukan" });
+    attachment = { kind, absolute, filename: media.filename || "lampiran", mimetype: media.mimetype };
+  }
+
   try {
-    const result = await sendOnce(idempotencyKey, { accountId, phone, text }, async () => {
+    const result = await sendOnce(idempotencyKey, { accountId, phone, text, media }, async () => {
       let e = sessions.get(accountId);
       if (!e?.sock || e.status !== "connected") {
         await startConnection(accountId);
@@ -265,7 +286,22 @@ app.post("/send", async (req, res) => {
       if (!e?.sock || e.status !== "connected") {
         const error = new Error("WA_NOT_CONNECTED"); error.definitive = true; throw error;
       }
-      const sent = await e.sock.sendMessage(`${phone}@s.whatsapp.net`, { text });
+      let payload;
+      if (!attachment) {
+        payload = { text };
+      } else if (attachment.kind === "image") {
+        payload = { image: { url: attachment.absolute }, caption: text || undefined };
+      } else if (attachment.kind === "video") {
+        payload = { video: { url: attachment.absolute }, caption: text || undefined };
+      } else {
+        payload = {
+          document: { url: attachment.absolute },
+          fileName: attachment.filename,
+          mimetype: attachment.mimetype || "application/octet-stream",
+          caption: text || undefined,
+        };
+      }
+      const sent = await e.sock.sendMessage(`${phone}@s.whatsapp.net`, payload);
       return sent?.key?.id ?? null;
     });
     res.json(result);

@@ -12,12 +12,19 @@ export interface ConnectResult {
   status: "connected" | "connecting" | "disconnected";
 }
 
+/** Lampiran disimpan di volume bersama app + gateway, bukan di URL publik. */
+export interface MessageMedia {
+  /** Path relatif terhadap folder media, mis. "ws_123/9f8e....pdf". */
+  path: string;
+  kind: "image" | "document" | "video";
+  filename: string;
+  mimetype?: string;
+}
+
 export interface MessagePayload {
   idempotencyKey?: string;
   text?: string;
-  mediaUrl?: string;
-  mediaType?: "image" | "document" | "video";
-  filename?: string;
+  media?: MessageMedia;
 }
 
 export interface SendResult {

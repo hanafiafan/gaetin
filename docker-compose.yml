@@ -29,11 +29,13 @@ services:
       WA_GATEWAY_BASE_URL: http://gateway:3001
       WA_GATEWAY_TOKEN: ${WA_GATEWAY_TOKEN:?WA_GATEWAY_TOKEN wajib diisi}
       WEBHOOK_SECRET: ${WEBHOOK_SECRET:?WEBHOOK_SECRET wajib diisi}
+      MEDIA_DIR: /app/media
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - wa_sessions:/app/wa-sessions
+      - media:/app/media
     expose:
       - "3000"
 
@@ -67,8 +69,10 @@ services:
       WEBHOOK_URL: http://app:3000/api/whatsapp/webhook
       WEBHOOK_SECRET: ${WEBHOOK_SECRET:?WEBHOOK_SECRET wajib diisi}
       SESSION_DIR: /app/wa-sessions
+      MEDIA_DIR: /app/media
     volumes:
       - wa_sessions:/app/wa-sessions
+      - media:/app/media
     expose: ["3001"]
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
@@ -92,5 +96,6 @@ services:
 volumes:
   pgdata:
   wa_sessions:
+  media:
   caddy_data:
   caddy_config:

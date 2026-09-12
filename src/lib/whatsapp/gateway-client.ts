@@ -17,11 +17,15 @@ function token(): string {
 // penerima secara berurutan, jadi satu gateway yang menggantung membekukan
 // seluruh kampanye tanpa batas waktu, bukan sekadar memperlambatnya.
 const GATEWAY_TIMEOUT_MS = 20_000;
+// Mengunggah lampiran ke server WhatsApp jauh lebih lama daripada mengirim
+// teks; 20 detik cukup untuk teks, tapi memutus pengiriman video di tengah
+// jalan — dan pengiriman yang terputus berakhir sebagai status "tidak pasti".
+const GATEWAY_MEDIA_TIMEOUT_MS = 90_000;
 
-async function gw(path: string, init?: RequestInit): Promise<Response> {
+async function gw(path: string, init?: RequestInit, timeoutMs = GATEWAY_TIMEOUT_MS): Promise<Response> {
   return fetch(`${baseUrl()}${path}`, {
     ...init,
-    signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
     headers: {
       Authorization: `Bearer ${token()}`,
       "Content-Type": "application/json",
@@ -49,9 +53,19 @@ export async function gwDisconnect(accountId: string): Promise<void> {
   if (!r.ok) throw new Error(`WA_GATEWAY_ERROR_${r.status}`);
 }
 
-export async function gwSend(accountId: string, phone: string, text: string, idempotencyKey?: string): Promise<import("@/lib/messaging/provider").SendResult> {
+export async function gwSend(
+  accountId: string,
+  phone: string,
+  text: string,
+  idempotencyKey?: string,
+  media?: import("@/lib/messaging/provider").MessageMedia,
+): Promise<import("@/lib/messaging/provider").SendResult> {
   try {
-    const r = await gw("/send", { method: "POST", body: JSON.stringify({ accountId, phone, text, idempotencyKey }) });
+    const r = await gw(
+      "/send",
+      { method: "POST", body: JSON.stringify({ accountId, phone, text, media, idempotencyKey }) },
+      media ? GATEWAY_MEDIA_TIMEOUT_MS : GATEWAY_TIMEOUT_MS,
+    );
     const j = await r.json();
     if (typeof j.ok !== "boolean") throw new Error("Invalid gateway response");
     return { ...j, retryable: j.retryable ?? (r.status >= 500 && !j.uncertain) };

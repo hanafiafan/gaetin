@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { History, Inbox, Search, Send, UserCircle2 } from "lucide-react";
+import { FileText, History, Inbox, Loader2, Paperclip, Search, Send, UserCircle2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import EmptyState from "@/components/dashboard/empty-state";
 import ContactPanel from "@/components/dashboard/contact-panel";
@@ -20,7 +20,17 @@ interface Msg {
   id: string;
   direction: "INBOUND" | "OUTBOUND";
   content: string | null;
+  mediaUrl: string | null;
+  status: string;
   createdAt: string;
+}
+
+interface Lampiran {
+  path: string;
+  kind: "image" | "document" | "video";
+  filename: string;
+  mimetype?: string;
+  size: number;
 }
 interface Thread {
   conversation: { id: string; status: string; contact: { id: string; name: string | null; phone: string } };
@@ -43,6 +53,9 @@ export default function InboxClient() {
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
   const [query, setQuery] = useState("");
+  const [lampiran, setLampiran] = useState<Lampiran | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [historyFor, setHistoryFor] = useState<string | null>(null);
   const convoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const threadTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -85,18 +98,42 @@ export default function InboxClient() {
 
   const replyAttempt = useRef<{ conversation: string; text: string; id: string } | null>(null);
 
+  async function pilihBerkas(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    const r = await fetch("/api/uploads", { method: "POST", body: form });
+    setUploading(false);
+    const j = await r.json().catch(() => null);
+    if (!r.ok) {
+      alert(j?.error?.message ?? "Berkas gagal diunggah");
+      return;
+    }
+    setLampiran(j.data);
+  }
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedId || !reply.trim()) return;
+    if (!selectedId || (!reply.trim() && !lampiran)) return;
     if (sending) return;
-    if (replyAttempt.current?.conversation !== selectedId || replyAttempt.current?.text !== reply) replyAttempt.current = { conversation: selectedId, text: reply, id: crypto.randomUUID() };
+    // Kunci percobaan ikut memperhitungkan lampiran: mengganti berkas berarti
+    // pesan yang berbeda, dan memakai ulang ID lama akan ditolak server.
+    const attemptKey = `${reply}|${lampiran?.path ?? ""}`;
+    if (replyAttempt.current?.conversation !== selectedId || replyAttempt.current?.text !== attemptKey) replyAttempt.current = { conversation: selectedId, text: attemptKey, id: crypto.randomUUID() };
     setSending(true);
     try {
       const r = await fetch(`/api/conversations/${selectedId}/messages`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: reply, clientRequestId: replyAttempt.current.id }),
+        body: JSON.stringify({
+          text: reply,
+          ...(lampiran ? { media: { path: lampiran.path, kind: lampiran.kind, filename: lampiran.filename, mimetype: lampiran.mimetype } } : {}),
+          clientRequestId: replyAttempt.current.id,
+        }),
       });
-      if (r.ok) { setReply(""); replyAttempt.current = null; loadThread(selectedId); }
+      if (r.ok) { setReply(""); setLampiran(null); replyAttempt.current = null; loadThread(selectedId); }
       else { const j = await r.json(); alert(j?.error?.message ?? "Gagal mengirim"); }
     } catch { alert("Koneksi terputus. Coba lagi untuk memeriksa pengiriman pesan yang sama."); }
     finally { setSending(false); }
@@ -230,30 +267,91 @@ export default function InboxClient() {
                         : "rounded-bl-sm border border-border bg-muted text-foreground"
                     )}
                   >
+                    {m.mediaUrl && (
+                      <a href={`/api/uploads/${m.mediaUrl}`} target="_blank" rel="noreferrer" className="mb-1.5 block">
+                        {/\.(jpg|png|webp)$/i.test(m.mediaUrl) ? (
+                          // next/image tidak dipakai: berkasnya di balik route
+                          // ber-sesi, bukan URL publik yang bisa dioptimasi.
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={`/api/uploads/${m.mediaUrl}`}
+                            alt="Lampiran"
+                            className="max-h-64 w-auto rounded-lg border border-border/50 object-cover"
+                          />
+                        ) : (
+                          <span className="flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-3 py-2 text-sm">
+                            <FileText className="h-4 w-4 shrink-0" />
+                            Buka lampiran
+                          </span>
+                        )}
+                      </a>
+                    )}
                     {m.content}
-                    <p className={cn("mt-1 text-xs", m.direction === "OUTBOUND" ? "text-foreground/60" : "text-muted-foreground")}>
+                    <p className={cn("mt-1 flex items-center gap-1.5 text-xs", m.direction === "OUTBOUND" ? "text-foreground/60" : "text-muted-foreground")}>
                       {new Date(m.createdAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+                      {/* Pesan gagal dan pesan terkirim tidak boleh terlihat
+                          sama. Sebelumnya keduanya gelembung lime yang serupa,
+                          jadi orang mengira sudah sampai padahal belum. */}
+                      {m.direction === "OUTBOUND" && m.status === "FAILED" && (
+                        <span className="font-semibold text-destructive">· Gagal terkirim</span>
+                      )}
+                      {m.direction === "OUTBOUND" && m.status === "PENDING" && <span>· Menunggu</span>}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
+            <form onSubmit={send} className="border-t border-border p-3">
+              {lampiran && (
+                <div className="mb-2 flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
+                  <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <span className="min-w-0 flex-1 truncate text-foreground">{lampiran.filename}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    {Math.max(1, Math.round(lampiran.size / 1024))} KB
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setLampiran(null)}
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                    aria-label="Buang lampiran"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+              <div className="flex gap-2">
+              <input
+                ref={fileRef}
+                type="file"
+                onChange={pilihBerkas}
+                accept="image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,video/mp4"
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading || sending}
+                title="Lampirkan foto atau dokumen"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/70 transition hover:border-foreground/30 hover:text-foreground disabled:opacity-50"
+              >
+                {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Paperclip className="h-4 w-4" />}
+              </button>
               <input
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
-                placeholder="Ketik balasan..."
+                placeholder={lampiran ? "Tambahkan keterangan (opsional)" : "Ketik balasan..."}
                 className="h-11 flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <button
                 type="submit"
-                disabled={sending || !reply.trim()}
+                disabled={sending || uploading || (!reply.trim() && !lampiran)}
                 className="flex h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
                 Kirim
               </button>
+              </div>
             </form>
           </>
         )}

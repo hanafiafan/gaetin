@@ -6,7 +6,7 @@ import { dayStart, DailyMessagingQuotaError } from "@/lib/messaging/quota";
 import { getWorkspacePlan } from "@/lib/plans/limits";
 
 export class DeliveryBlockedError extends Error {}
-export interface DeliveryInput { id: string; workspaceId: string; accountId: string; contactId: string; followUp?: boolean; text: string }
+export interface DeliveryInput { id: string; workspaceId: string; accountId: string; contactId: string; followUp?: boolean; text: string; media?: import("@/lib/messaging/provider").MessageMedia }
 
 /** Reserve balance and daily capacity once, then use the same gateway receipt on every retry. */
 export async function deliverWhatsApp(input: DeliveryInput) {
@@ -43,7 +43,7 @@ export async function deliverWhatsApp(input: DeliveryInput) {
   const contact = await prisma.contact.findFirst({ where: { id: input.contactId, workspaceId: input.workspaceId } });
   if (!contact) throw new Error("CONTACT_REMOVED_DURING_DELIVERY");
   // Network failure is retryable with the same receipt. An uncertain gateway result is terminal.
-  const result = await getMessagingProvider().sendMessage(input.accountId, contact.phone, { text: input.text, idempotencyKey: input.id });
+  const result = await getMessagingProvider().sendMessage(input.accountId, contact.phone, { text: input.text, media: input.media, idempotencyKey: input.id });
   if (result.retryable) throw new Error(result.error ?? "GATEWAY_UNAVAILABLE");
   return prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM "Workspace" WHERE id = ${input.workspaceId} FOR UPDATE`;

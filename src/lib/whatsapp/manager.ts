@@ -18,13 +18,14 @@ export async function disconnect(accountId: string): Promise<void> {
     .catch(() => undefined);
 }
 
-export async function sendText(
+export async function sendMessage(
   accountId: string,
   phone: string,
   text: string,
   idempotencyKey?: string,
+  media?: import("@/lib/messaging/provider").MessageMedia,
 ) {
-  return gwSend(accountId, phone, text, idempotencyKey);
+  return gwSend(accountId, phone, text, idempotencyKey, media);
 }
 
 export async function isRegistered(accountId: string, phone: string): Promise<boolean> {
