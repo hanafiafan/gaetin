@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { navGroups, isNavActive } from "@/components/dashboard/nav-config";
+import { navGroups, navItemMatches } from "@/components/dashboard/nav-config";
 import { type SectionTone } from "@/components/dashboard/section-tone";
 
 /**
@@ -31,7 +31,7 @@ const TONE_VAR: Record<SectionTone, string> = {
 export function toneForPath(pathname: string): SectionTone {
   for (const group of navGroups) {
     for (const item of group.items) {
-      if (isNavActive(pathname, item.href) && !item.skipActiveHighlight) return group.tone;
+      if (navItemMatches(pathname, item)) return group.tone;
     }
   }
   return "primary";

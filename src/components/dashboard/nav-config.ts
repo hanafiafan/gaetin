@@ -22,6 +22,13 @@ import {
 import type { PlanFeatures } from "@/config/plans";
 import type { SectionTone } from "@/components/dashboard/section-tone";
 
+export type NavTab = {
+  label: string;
+  href: string;
+  flag?: string;
+  planFeature?: keyof PlanFeatures;
+};
+
 export type NavItem = {
   label: string;
   /** Satu kalimat yang menjelaskan menu ini melakukan apa, ditampilkan di
@@ -32,18 +39,27 @@ export type NavItem = {
   icon: React.ComponentType<{ className?: string }>;
   flag?: string;
   planFeature?: keyof PlanFeatures;
-  /** For shortcut items that share a destination with another item in a
-   * different group (e.g. "Sambung WhatsApp" -> /dashboard/settings, same
-   * page as "Pengaturan"). Without this, landing on that page would
-   * highlight both nav items — in two different section colors — at once. */
-  skipActiveHighlight?: boolean;
+  /**
+   * Halaman-halaman yang isinya satu pekerjaan yang sama, digabung jadi satu
+   * menu dengan tab di dalam halaman. Tab pertama adalah halaman utamanya.
+   *
+   * Dulu tiap halaman punya menunya sendiri: "Kirim Pesan WhatsApp", "Kirim
+   * Email Massal", "Pesan Susulan", dan "Contoh Pesan" berdiri sebagai empat
+   * baris berbeda, padahal keempatnya satu pekerjaan — mengirim pesan. Delapan
+   * belas menu memaksa orang menghafal peta, bukan alur kerja.
+   */
+  tabs?: NavTab[];
 };
 
-// Dikelompokkan berurutan cara pakainya, DAN per-channel untuk grup kirim/respons
-// (mulai -> tools WhatsApp -> tools Email -> kelola -> akun) — supaya user baru tidak
-// nyasar di menu datar, dan jelas mana tool yang jalan lewat WhatsApp vs Email.
-// Tiap grup punya warna sendiri (lihat section-tone.ts) supaya user langsung tahu
-// "sedang di area mana" tanpa baca label — Mulai=kuning (anchor), Akun=netral.
+// Dikelompokkan berurutan cara pakainya (mulai -> cari -> kirim -> balas ->
+// akun) supaya user baru tidak nyasar di menu datar. Tiap grup punya warna
+// sendiri (lihat section-tone.ts) supaya user langsung tahu "sedang di area
+// mana" tanpa baca label — Mulai=kuning (anchor), Akun=netral.
+//
+// Menu tingkat atas sengaja ditahan di angka sepuluh. Pekerjaan yang sama
+// dikumpulkan jadi satu menu bertab, bukan dipecah jadi beberapa baris menu:
+// yang perlu diingat orang adalah "saya mau kirim pesan", bukan "kirim pesan
+// WhatsApp ada di menu ketiga, contoh pesannya di menu keenam".
 export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[] = [
   {
     label: "Mulai",
@@ -57,19 +73,38 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     tone: "email",
     items: [
       { label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis dari Google Maps", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
-      { label: "Daftar Kontak", desc: "Semua calon pembeli yang sudah tersimpan", href: "/dashboard/contacts", icon: Users, flag: "contacts" },
-      { label: "Cek Nomor WhatsApp", desc: "Pastikan nomor aktif sebelum dikirimi", href: "/dashboard/validator", icon: ShieldCheck, flag: "validator", planFeature: "waValidation" },
-      { label: "Temukan Alamat Email", desc: "Cari email dari website bisnis", href: "/dashboard/email-finder", icon: UserSearch, flag: "emailFinder", planFeature: "emailBlast" },
+      {
+        label: "Daftar Kontak",
+        desc: "Semua calon pembeli, plus cek nomor dan cari emailnya",
+        href: "/dashboard/contacts",
+        icon: Users,
+        flag: "contacts",
+        tabs: [
+          { label: "Daftar Kontak", href: "/dashboard/contacts", flag: "contacts" },
+          { label: "Cek Nomor WhatsApp", href: "/dashboard/validator", flag: "validator", planFeature: "waValidation" },
+          { label: "Temukan Alamat Email", href: "/dashboard/email-finder", flag: "emailFinder", planFeature: "emailBlast" },
+        ],
+      },
     ],
   },
   {
     label: "Kirim Pesan",
     tone: "whatsapp",
     items: [
-      { label: "Kirim Pesan WhatsApp", desc: "Satu pesan ke banyak kontak sekaligus", href: "/dashboard/campaigns", icon: Megaphone, flag: "campaigns", planFeature: "campaigns" },
-      { label: "Kirim Email Massal", desc: "Satu email ke banyak kontak sekaligus", href: "/dashboard/email-blast", icon: Mail, flag: "emailBlast", planFeature: "emailBlast" },
-      { label: "Pesan Susulan", desc: "Kirim otomatis kalau belum dibalas", href: "/dashboard/follow-ups", icon: MessageSquareText, flag: "followUps", planFeature: "autoFollowUp" },
-      { label: "Contoh Pesan", desc: "Simpan pesan yang sering dipakai", href: "/dashboard/templates", icon: FileText, flag: "templates" },
+      {
+        label: "Kirim Pesan",
+        desc: "Kirim WhatsApp atau email ke banyak kontak sekaligus",
+        href: "/dashboard/campaigns",
+        icon: Megaphone,
+        flag: "campaigns",
+        planFeature: "campaigns",
+        tabs: [
+          { label: "WhatsApp", href: "/dashboard/campaigns", flag: "campaigns", planFeature: "campaigns" },
+          { label: "Email", href: "/dashboard/email-blast", flag: "emailBlast", planFeature: "emailBlast" },
+          { label: "Pesan Susulan", href: "/dashboard/follow-ups", flag: "followUps", planFeature: "autoFollowUp" },
+          { label: "Contoh Pesan", href: "/dashboard/templates", flag: "templates" },
+        ],
+      },
     ],
   },
   {
@@ -77,8 +112,18 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     tone: "kelola",
     items: [
       { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
-      { label: "Peluang Penjualan", desc: "Lacak calon pembeli sampai jadi closing", href: "/dashboard/crm", icon: SquareKanban, flag: "crm", planFeature: "crmPipeline" },
-      { label: "Daftar Tugas", desc: "Catatan pekerjaan yang harus dikerjakan", href: "/dashboard/tasks", icon: CheckCircle2, flag: "tasks" },
+      {
+        label: "Peluang Penjualan",
+        desc: "Lacak calon pembeli sampai closing, lengkap dengan tugasnya",
+        href: "/dashboard/crm",
+        icon: SquareKanban,
+        flag: "crm",
+        planFeature: "crmPipeline",
+        tabs: [
+          { label: "Papan Peluang", href: "/dashboard/crm", flag: "crm", planFeature: "crmPipeline" },
+          { label: "Daftar Tugas", href: "/dashboard/tasks", flag: "tasks" },
+        ],
+      },
       { label: "Laporan", desc: "Hasil penjualan dan performa pengiriman", href: "/dashboard/analytics", icon: BarChart3, flag: "analytics" },
     ],
   },
@@ -87,15 +132,76 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     tone: "akun",
     items: [
       { label: "Tagihan & Kredit", desc: "Paket langganan dan sisa kredit", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
-      { label: "Anggota Tim", desc: "Tambah rekan kerja ke workspace ini", href: "/dashboard/team", icon: Bot, flag: "team" },
+      {
+        label: "Pengaturan",
+        desc: "Nomor WhatsApp, profil workspace, keamanan, dan anggota tim",
+        href: "/dashboard/settings",
+        icon: Settings,
+        flag: "settings",
+        tabs: [
+          { label: "Pengaturan", href: "/dashboard/settings", flag: "settings" },
+          { label: "Anggota Tim", href: "/dashboard/team", flag: "team" },
+        ],
+      },
       { label: "Bantuan", desc: "Pertanyaan umum dan kirim keluhan", href: "/dashboard/support", icon: Headphones, flag: "support" },
-      // Dulu ada dua tujuan menuju halaman ini: "Sambungkan Nomor" di grup
-      // WhatsApp dan "Pengaturan" di sini. Satu halaman dengan dua nama di dua
-      // tempat justru membuat orang ragu keduanya sama atau beda.
-      { label: "Pengaturan", desc: "Sambungkan nomor WhatsApp, profil, dan keamanan", href: "/dashboard/settings", icon: Settings, flag: "settings" },
     ],
   },
 ];
+
+/** Tab yang benar-benar boleh tampil: yang fiturnya tidak dimatikan owner. */
+export function visibleTabs(item: NavItem, flags?: Record<string, boolean> | null): NavTab[] {
+  return (item.tabs ?? []).filter((t) => !t.flag || flags?.[t.flag] !== false);
+}
+
+/**
+ * Menu tampil kalau minimal satu tabnya tampil — bukan kalau flag menu
+ * induknya hidup. Tanpa ini, mematikan "campaigns" ikut mengubur Email Massal
+ * dan Contoh Pesan yang masih menyala, dan halamannya jadi tidak bisa dicapai
+ * dari mana pun.
+ */
+export function navItemVisible(item: NavItem, flags?: Record<string, boolean> | null): boolean {
+  if (item.tabs?.length) return visibleTabs(item, flags).length > 0;
+  return !item.flag || flags?.[item.flag] !== false;
+}
+
+/** Tujuan menu: tab pertama yang masih tampil. */
+export function navItemHref(item: NavItem, flags?: Record<string, boolean> | null): string {
+  if (!item.tabs?.length) return item.href;
+  return visibleTabs(item, flags)[0]?.href ?? item.href;
+}
+
+/**
+ * Menu terkunci hanya kalau SEMUA tab yang tampil terkunci. Menu "Kirim Pesan"
+ * memayungi WhatsApp, Email, Susulan, dan Contoh Pesan; mengunci seluruh menu
+ * karena paketnya tidak punya blast WhatsApp akan ikut mengunci Contoh Pesan
+ * yang sebenarnya gratis untuk semua paket.
+ */
+export function navItemLocked(
+  item: NavItem,
+  flags?: Record<string, boolean> | null,
+  planFeatures?: PlanFeatures,
+): boolean {
+  if (!planFeatures) return false;
+  const tabs = visibleTabs(item, flags);
+  if (tabs.length) return tabs.every((t) => t.planFeature && planFeatures[t.planFeature] === false);
+  return Boolean(item.planFeature && planFeatures[item.planFeature] === false);
+}
+
+/** Menu ini yang sedang dibuka? Termasuk kalau yang dibuka salah satu tabnya. */
+export function navItemMatches(pathname: string, item: NavItem): boolean {
+  if (isNavActive(pathname, item.href)) return true;
+  return (item.tabs ?? []).some((t) => isNavActive(pathname, t.href));
+}
+
+/** Tab untuk halaman yang sedang dibuka — dipakai kepala halaman. */
+export function tabsForPath(pathname: string): NavTab[] | null {
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      if (item.tabs?.length && navItemMatches(pathname, item)) return item.tabs;
+    }
+  }
+  return null;
+}
 
 /**
  * Halaman yang TIDAK punya tempat di menu, beserta area tempatnya bernaung.
@@ -116,7 +222,7 @@ export const offNavSections: Record<string, { group: string; tone: SectionTone }
 export function sectionForPath(pathname: string): { group: string; tone: SectionTone } {
   for (const group of navGroups) {
     for (const item of group.items) {
-      if (isNavActive(pathname, item.href) && !item.skipActiveHighlight) {
+      if (navItemMatches(pathname, item)) {
         return { group: group.label, tone: group.tone };
       }
     }

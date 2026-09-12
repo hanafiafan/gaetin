@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Lock, LogOut, Menu, Settings, X } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
-import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
+import { navGroups, navItemMatches, navItemVisible, navItemHref, navItemLocked, type NavItem } from "@/components/dashboard/nav-config";
 import { TONE_TEXT } from "@/components/dashboard/section-tone";
 import { cn } from "@/lib/utils";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
@@ -35,8 +35,7 @@ export default function MobileNav({
   const [lockedFeature, setLockedFeature] = useState<string | null>(null);
 
   function isItemLocked(item: NavItem): boolean {
-    if (!item.planFeature || !planFeatures) return false;
-    return planFeatures[item.planFeature] === false;
+    return navItemLocked(item, featureFlags, planFeatures);
   }
 
   const close = () => setOpen(false);
@@ -75,7 +74,7 @@ export default function MobileNav({
             {/* Nav */}
             <nav className="mt-4 flex-1 space-y-4 px-3 pb-4">
               {navGroups.map((group) => {
-                const items = group.items.filter((item) => !item.flag || featureFlags?.[item.flag] !== false);
+                const items = group.items.filter((item) => navItemVisible(item, featureFlags));
                 if (!items.length) return null;
                 return (
                   <div key={group.label}>
@@ -83,7 +82,7 @@ export default function MobileNav({
                     <div className="space-y-0.5">
                       {items.map((item) => {
                         const Icon = item.icon;
-                        const active = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
+                        const active = navItemMatches(pathname, item);
                         const locked = isItemLocked(item);
 
                         if (locked) {
@@ -107,7 +106,7 @@ export default function MobileNav({
                         return (
                           <Link
                             key={item.href}
-                            href={item.href}
+                            href={navItemHref(item, featureFlags)}
                             onClick={close}
                             className={cn(
                               "flex items-start gap-3 rounded-lg px-3 py-3 font-semibold transition-colors duration-200",

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Lock, LogOut, ShieldCheck, Zap } from "lucide-react";
 import type { PlanFeatures } from "@/config/plans";
-import { navGroups, isNavActive, type NavItem } from "@/components/dashboard/nav-config";
+import { navGroups, navItemMatches, navItemVisible, navItemHref, navItemLocked, type NavItem } from "@/components/dashboard/nav-config";
 import { cn } from "@/lib/utils";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import HeaderSearch from "@/components/dashboard/header-search";
@@ -89,15 +89,14 @@ export default function WorkspaceNav({
   useEffect(() => setOpenGroup(null), [pathname]);
 
   const visible = navGroups
-    .map((g) => ({ ...g, items: g.items.filter((i) => !i.flag || featureFlags?.[i.flag] !== false) }))
+    .map((g) => ({ ...g, items: g.items.filter((i) => navItemVisible(i, featureFlags)) }))
     .filter((g) => g.items.length > 0);
 
   const activeGroup =
-    visible.find((g) => g.items.some((i) => isNavActive(pathname, i.href) && !i.skipActiveHighlight)) ??
+    visible.find((g) => g.items.some((i) => navItemMatches(pathname, i))) ??
     visible[0];
 
-  const isLocked = (item: NavItem) =>
-    Boolean(item.planFeature && planFeatures && planFeatures[item.planFeature] === false);
+  const isLocked = (item: NavItem) => navItemLocked(item, featureFlags, planFeatures);
 
   return (
     <>
@@ -124,7 +123,7 @@ export default function WorkspaceNav({
                 return (
                   <Link
                     key={g.label}
-                    href={g.items[0].href}
+                    href={navItemHref(g.items[0], featureFlags)}
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "flex h-9 items-center whitespace-nowrap rounded-md px-3 text-sm font-medium transition",
@@ -162,7 +161,7 @@ export default function WorkspaceNav({
                       <div className="w-[330px] overflow-hidden rounded-xl border border-border bg-popover p-1.5 shadow-2xl">
                         {g.items.map((item) => {
                           const Icon = item.icon;
-                          const itemActive = isNavActive(pathname, item.href) && !item.skipActiveHighlight;
+                          const itemActive = navItemMatches(pathname, item);
                           const itemLocked = isLocked(item);
 
                           const body = (
@@ -206,7 +205,7 @@ export default function WorkspaceNav({
                           return (
                             <Link
                               key={item.href}
-                              href={item.href}
+                              href={navItemHref(item, featureFlags)}
                               role="menuitem"
                               onClick={() => setOpenGroup(null)}
                               className={cn(

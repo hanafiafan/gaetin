@@ -6,6 +6,7 @@ import AnnouncementBanner from "@/components/dashboard/announcement-banner";
 import ImpersonationBanner from "@/components/dashboard/impersonation-banner";
 import FeatureGate from "@/components/dashboard/feature-gate";
 import SectionCanvas from "@/components/dashboard/section-canvas";
+import { NavAccessProvider } from "@/components/dashboard/nav-access";
 import { getOwnerCmsSettings } from "@/lib/owner-cms";
 import { PLANS, getEffectivePlanId, getEffectiveStatus, type PlanId } from "@/config/plans";
 
@@ -117,7 +118,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <main className="relative z-10 flex-1 px-3 py-5 sm:px-5 lg:px-8 lg:py-7">
               <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">
                 <AnnouncementBanner />
-                {children}
+                <NavAccessProvider value={{ featureFlags: ownerCms.featureFlags, planFeatures }}>
+                  {children}
+                </NavAccessProvider>
               </div>
             </main>
           </SectionCanvas>
