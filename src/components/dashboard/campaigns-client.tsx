@@ -46,6 +46,7 @@ export default function CampaignsClient() {
   const [label, setLabel] = useState("");
   const [scheduledAt, setScheduledAt] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -87,6 +88,7 @@ export default function CampaignsClient() {
   async function create(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setCreating(true);
     const payload: Record<string, unknown> = { name, accountId, messageTemplate: message, scope };
     if (label) payload.label = label;
@@ -99,6 +101,13 @@ export default function CampaignsClient() {
     const json = await res.json();
     setCreating(false);
     if (!res.ok) { setError(json?.error?.message ?? "Gagal membuat kampanye"); return; }
+    // Penerima yang tersaring karena baru dihubungi harus disebutkan. Daftar
+    // yang menyusut tanpa penjelasan terlihat seperti kontak yang hilang.
+    setInfo(
+      json.data?.skipped > 0
+        ? `${json.data.totalRecipients} penerima disiapkan. ${json.data.skipped} kontak dilewati karena baru dihubungi dalam 14 hari terakhir.`
+        : `${json.data?.totalRecipients ?? 0} penerima disiapkan.`,
+    );
     setName(""); setMessage(""); setLabel(""); setScheduledAt("");
     loadCampaigns();
   }
@@ -120,6 +129,7 @@ export default function CampaignsClient() {
           <p className="mt-1 text-sm text-muted-foreground">Pilih contoh pesan, tentukan siapa yang dikirimi, lalu atur waktunya.</p>
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
+        {info && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">{info}</div>}
         {quota && (
           <div className="rounded-xl border border-border bg-whatsapp/5 p-3">
             <div className="flex items-center justify-between gap-3">

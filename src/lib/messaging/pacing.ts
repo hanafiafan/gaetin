@@ -102,3 +102,18 @@ export function alasanBerhenti(terbaru: { status: string }[]): string | null {
 
   return null;
 }
+
+/** Berapa hari sebuah kontak "beristirahat" setelah dikirimi pesan massal. */
+export const JEDA_KONTAK_HARI = 14;
+
+/**
+ * Batas waktu untuk menyaring penerima: kontak yang terakhir dihubungi setelah
+ * waktu ini sedang beristirahat dan tidak ikut dikirimi.
+ *
+ * Orang yang sama masuk tiga blast dalam seminggu adalah cara tercepat membuat
+ * dia menekan "Laporkan" — dan laporan adalah jalur tercepat menuju blokir.
+ * Ini TIDAK berlaku untuk membalas percakapan; hanya untuk pengiriman massal.
+ */
+export function batasJedaKontak(now = new Date()): Date {
+  return new Date(now.getTime() - JEDA_KONTAK_HARI * 86_400_000);
+}

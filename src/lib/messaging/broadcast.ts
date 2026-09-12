@@ -4,9 +4,8 @@ import { renderMessage } from "./text";
 import { InsufficientCreditsError } from "@/lib/credits/service";
 import { DailyMessagingQuotaError } from "./quota";
 import { enqueue } from "@/lib/jobs/queue";
-import { effectiveDailyLimit } from "@/lib/messaging/warmup";
 import { alasanBerhenti, dalamJamKirim, jedaPesanMs, jendelaBerikutnya, JENDELA_PERIKSA } from "@/lib/messaging/pacing";
-import { dayStart } from "@/lib/messaging/quota";
+import { nomorUntukPesan, totalSisaJatah } from "@/lib/messaging/rotation";
 
 /**
  * Satu pesan per putaran, lalu job-nya menjadwalkan dirinya sendiri.
@@ -56,8 +55,12 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
     if (state?.status !== (campaign ? "ACTIVE" : "RUNNING")) break;
     let status: "SENT" | "FAILED" = "FAILED";
     let error: string | null = null;
+    // Nomor dipilih per pesan, bukan sekali untuk seluruh kampanye: beban
+    // dibagi ke semua nomor tersambung menurut sisa jatah masing-masing.
+    // Pesan yang pernah dicoba tetap memakai nomor yang sama.
+    const pengirim = (await nomorUntukPesan(`${kind}:${m.id}`, job.workspaceId, accountId)) ?? accountId;
     try {
-      const delivery = await deliverWhatsApp({ id: `${kind}:${m.id}`, workspaceId: job.workspaceId, accountId, contactId: m.contactId,
+      const delivery = await deliverWhatsApp({ id: `${kind}:${m.id}`, workspaceId: job.workspaceId, accountId: pengirim, contactId: m.contactId,
         text: renderMessage(template, { nama: m.contact.name, name: m.contact.name, kota: m.contact.city, phone: m.contact.phone }) });
       status = delivery.status === "SENT" ? "SENT" : "FAILED";
       error = delivery.status === "UNKNOWN" ? "Status kirim belum pasti; periksa WhatsApp sebelum mengirim ulang." : delivery.error;
@@ -89,14 +92,10 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
       // Jeda dihitung dari jatah nomor ini hari ini (sudah memperhitungkan masa
       // pemanasan) dibagi sisa jam kirim, bukan angka tetap. Jatah yang sama,
       // tapi tersebar sepanjang hari kerja alih-alih habis dalam belasan menit.
-      const akun = await tx.messagingAccount.findUnique({
-        where: { id: accountId },
-        select: { dailyLimit: true, warmupDay: true, sentToday: true, sentTodayResetAt: true },
-      });
-      const hariIni = dayStart();
-      const jatahHarian = akun ? effectiveDailyLimit(akun) : 50;
-      const sudahTerkirim = akun?.sentTodayResetAt && akun.sentTodayResetAt >= hariIni ? akun.sentToday : 0;
-      const jeda = process.env.NODE_ENV === "test" ? 0 : jedaPesanMs({ jatahHarian, sudahTerkirim });
+      // Sisa jatah SELURUH nomor tersambung, bukan satu nomor: jatahnya dibagi
+      // oleh rotasi, tapi jam kirimnya tidak bertambah.
+      const sisa = await totalSisaJatah(job.workspaceId);
+      const jeda = process.env.NODE_ENV === "test" ? 0 : jedaPesanMs({ jatahHarian: Math.max(1, sisa), sudahTerkirim: 0 });
       await enqueue(tx, kind, id, job.workspaceId, { id }, new Date(Date.now() + jeda));
     }
   });
