@@ -1,9 +1,24 @@
 import { prisma } from "@/lib/db/prisma";
 import { normalizePhone } from "@/lib/utils";
 import { isOptOut } from "@/lib/contacts/dnc";
+import { claimInboundMedia } from "@/lib/media/storage";
 
 /** Persist the message, unread count, reply cancellation and opt-out atomically. */
-export async function handleIncomingMessage(accountId: string, rawPhone: string, text: string, waMessageId?: string, occurredAt = new Date()) {
+export interface IncomingMedia {
+  path: string;
+  kind: "image" | "document" | "video" | "audio";
+  filename?: string;
+  mimetype?: string;
+}
+
+export async function handleIncomingMessage(
+  accountId: string,
+  rawPhone: string,
+  text: string,
+  waMessageId?: string,
+  occurredAt = new Date(),
+  media?: IncomingMedia,
+) {
   const phone = normalizePhone(rawPhone);
   if (!phone || !waMessageId) throw new Error("INVALID_INCOMING_MESSAGE");
   await prisma.$transaction(async (tx) => {
@@ -21,7 +36,11 @@ export async function handleIncomingMessage(accountId: string, rawPhone: string,
       create: { workspaceId, contactId: contact.id, messagingAccountId: accountId, lastMessageAt: occurredAt, unreadCount: 1 },
     });
     if (convo.lastMessageAt < occurredAt) await tx.conversation.update({ where: { id: convo.id }, data: { lastMessageAt: occurredAt } });
-    await tx.inboxMessage.create({ data: { conversationId: convo.id, direction: "INBOUND", content: text, waMessageId, status: "DELIVERED", createdAt: occurredAt } });
+    // Lampiran dipindahkan ke folder workspace di luar transaksi tidak mungkin
+    // — tapi memindah berkas TIDAK boleh membatalkan pesannya, jadi kegagalan
+    // pindah cuma mengembalikan null dan pesannya tersimpan tanpa lampiran.
+    const mediaUrl = media ? await claimInboundMedia(workspaceId, media.path) : null;
+    await tx.inboxMessage.create({ data: { conversationId: convo.id, direction: "INBOUND", content: text, mediaUrl, waMessageId, status: "DELIVERED", createdAt: occurredAt } });
     await tx.followUpSchedule.updateMany({ where: { contactId: contact.id, status: "SCHEDULED", OR: [{ outboundAt: null }, { outboundAt: { lte: occurredAt } }] }, data: { status: "STOPPED_REPLIED" } });
     if (isOptOut(text)) await tx.doNotContact.upsert({ where: { workspaceId_phone: { workspaceId, phone } }, update: {}, create: { workspaceId, phone, reason: "OPT_OUT" } });
   });

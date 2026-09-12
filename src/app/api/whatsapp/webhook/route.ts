@@ -7,7 +7,23 @@ import { secureEqual } from "@/lib/secure-compare";
 const Schema = z.discriminatedUnion("event", [
   z.object({ event: z.literal("connected"), accountId: z.string().min(1), phone: z.string().optional() }),
   z.object({ event: z.literal("disconnected"), accountId: z.string().min(1) }),
-  z.object({ event: z.literal("message"), accountId: z.string().min(1), phone: z.string().min(1), text: z.string(), msgId: z.string().min(1), occurredAt: z.string().datetime().optional() }),
+  z.object({
+    event: z.literal("message"),
+    accountId: z.string().min(1),
+    phone: z.string().min(1),
+    text: z.string(),
+    msgId: z.string().min(1),
+    occurredAt: z.string().datetime().optional(),
+    // Lampiran yang sudah diunduh gateway ke folder titipan "inbound/".
+    media: z
+      .object({
+        path: z.string().min(1).max(300),
+        kind: z.enum(["image", "document", "video", "audio"]),
+        filename: z.string().max(200).optional(),
+        mimetype: z.string().max(120).optional(),
+      })
+      .optional(),
+  }),
 ]);
 export async function POST(req: NextRequest) {
   const expected = process.env.WEBHOOK_SECRET ?? "";
@@ -16,7 +32,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ ok: false, error: "Invalid event" }, { status: 400 });
   const body = parsed.data;
   try {
-    if (body.event === "message") await handleIncomingMessage(body.accountId, body.phone, body.text, body.msgId, body.occurredAt ? new Date(body.occurredAt) : new Date());
+    if (body.event === "message") await handleIncomingMessage(body.accountId, body.phone, body.text, body.msgId, body.occurredAt ? new Date(body.occurredAt) : new Date(), body.media);
     else await prisma.messagingAccount.updateMany({ where: { id: body.accountId }, data: body.event === "connected"
       ? { status: "CONNECTED", phoneNumber: body.phone, lastConnected: new Date() }
       : { status: "DISCONNECTED" } });

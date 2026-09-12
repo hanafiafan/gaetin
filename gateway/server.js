@@ -5,7 +5,9 @@ const {
   DisconnectReason,
   fetchLatestBaileysVersion,
   Browsers,
+  downloadMediaMessage,
 } = require("@whiskeysockets/baileys");
+const crypto = require("crypto");
 const QRCode = require("qrcode");
 const pino = require("pino");
 const path = require("path");
@@ -167,16 +169,72 @@ async function doStartConnection(accountId, existing) {
       const text =
         msg.message?.conversation ??
         msg.message?.extendedTextMessage?.text ??
+        msg.message?.imageMessage?.caption ??
+        msg.message?.videoMessage?.caption ??
+        msg.message?.documentMessage?.caption ??
         "";
+      const media = await simpanMediaMasuk(msg, sock);
       await callWebhook({
         event: "message",
         accountId,
         phone,
         text,
         msgId: msg.key.id ?? null,
+        ...(media ? { media } : {}),
       });
     }
   });
+}
+
+const MEDIA_MASUK = { imageMessage: "image", videoMessage: "video", documentMessage: "document", audioMessage: "audio" };
+const EKSTENSI = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "video/mp4": "mp4", "application/pdf": "pdf", "audio/ogg": "ogg", "audio/mpeg": "mp3" };
+/** 32 MB: lebih besar dari batas unggah kita sendiri, karena yang ini dikirim pelanggan. */
+const MAKS_MEDIA_MASUK = 32 * 1024 * 1024;
+
+/**
+ * Mengunduh lampiran yang dikirim pelanggan ke folder media bersama.
+ *
+ * Disimpan di bawah "inbound/<accountId>/", bukan langsung di folder
+ * workspace: gateway tidak tahu workspace mana yang memiliki akun ini — itu
+ * urusan app. App yang memindahkannya saat webhook diproses.
+ *
+ * Kegagalan unduh TIDAK menggagalkan pesannya: teks dan keterangannya tetap
+ * dikirim ke webhook, cuma tanpa lampiran. Kehilangan satu foto jauh lebih
+ * ringan daripada kehilangan seluruh percakapan.
+ *
+ * Batas yang diketahui: berkas yang webhook-nya gagal permanen akan tertinggal
+ * di "inbound/" tanpa ada yang membersihkan. Tambahkan penyapu berkala (hapus
+ * yang lebih tua dari beberapa hari) kalau folder itu mulai menumpuk.
+ */
+async function simpanMediaMasuk(msg, sock) {
+  const jenisPesan = Object.keys(MEDIA_MASUK).find((k) => msg.message?.[k]);
+  if (!jenisPesan) return null;
+  const isi = msg.message[jenisPesan];
+  const ukuran = Number(isi?.fileLength ?? 0);
+  if (ukuran > MAKS_MEDIA_MASUK) {
+    console.warn("Lampiran masuk dilewati, terlalu besar:", ukuran);
+    return null;
+  }
+  try {
+    const buffer = await downloadMediaMessage(msg, "buffer", {}, { logger, reuploadRequest: sock.updateMediaMessage });
+    if (!buffer?.length || buffer.length > MAKS_MEDIA_MASUK) return null;
+    const mimetype = isi.mimetype ? String(isi.mimetype).split(";")[0] : "application/octet-stream";
+    const ext = EKSTENSI[mimetype] ?? "bin";
+    const namaSimpan = `${crypto.randomUUID()}.${ext}`;
+    const folder = path.join(MEDIA_DIR, "inbound");
+    await fs.mkdir(folder, { recursive: true });
+    await fs.writeFile(path.join(folder, namaSimpan), buffer);
+    return {
+      path: path.join("inbound", namaSimpan),
+      kind: MEDIA_MASUK[jenisPesan],
+      filename: isi.fileName ? String(isi.fileName).slice(0, 120) : `lampiran.${ext}`,
+      mimetype,
+      size: buffer.length,
+    };
+  } catch (err) {
+    console.error("Gagal mengunduh lampiran masuk:", err.message);
+    return null;
+  }
 }
 
 async function disconnectAccount(accountId) {

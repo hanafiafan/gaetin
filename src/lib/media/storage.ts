@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, rename, writeFile } from "fs/promises";
 import path from "path";
 
 /**
@@ -93,6 +93,31 @@ export async function saveUpload(workspaceId: string, file: File): Promise<Store
     size: file.size,
     mimetype: file.type,
   };
+}
+
+/**
+ * Memindahkan lampiran masuk dari folder titipan gateway ke folder workspace.
+ *
+ * Gateway tidak tahu workspace mana yang memiliki sebuah akun WhatsApp — ia
+ * hanya tahu accountId — jadi ia menaruh unduhannya di "inbound/". App yang
+ * tahu pemiliknya, dan ia memindahkannya begitu webhook diproses. Karena
+ * keduanya berbagi volume yang sama, ini cuma ganti nama, bukan salin.
+ */
+export async function claimInboundMedia(workspaceId: string, relative: string): Promise<string | null> {
+  if (!relative.startsWith("inbound/")) return null;
+  try {
+    const asal = resolveMediaPath(relative);
+    const namaBerkas = path.basename(asal);
+    const tujuanRelatif = path.join(workspaceId, namaBerkas);
+    const tujuan = resolveMediaPath(tujuanRelatif);
+    await mkdir(path.dirname(tujuan), { recursive: true });
+    await rename(asal, tujuan);
+    return tujuanRelatif;
+  } catch {
+    // Berkasnya hilang atau tidak bisa dipindah: pesannya tetap disimpan tanpa
+    // lampiran. Menggagalkan seluruh pesan karena satu foto jauh lebih mahal.
+    return null;
+  }
 }
 
 /** Berkas ini milik workspace yang meminta? Foldernya sudah menyimpan jawabannya. */
