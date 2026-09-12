@@ -46,6 +46,32 @@ export async function GET() {
   }
   if (!pipeline) return fail("NOT_FOUND", "Pipeline tidak ditemukan", 404);
 
+  // Kartu yang cuma berisi nama dan nomor tidak memberi tahu apa pun tentang
+  // keadaan peluangnya. Dua query agregat — bukan satu query per kartu —
+  // menambahkan tugas yang belum selesai dan nilai penjualan yang sudah jadi.
+  const contactIds = pipeline.columns.flatMap((col) => col.cards.map((c) => c.contactId));
+
+  const [taskRows, dealRows] = await Promise.all([
+    contactIds.length
+      ? prisma.task.groupBy({
+          by: ["contactId"],
+          where: { contactId: { in: contactIds }, status: { not: "COMPLETED" } },
+          _count: { _all: true },
+          _min: { dueDate: true },
+        })
+      : Promise.resolve([]),
+    contactIds.length
+      ? prisma.deal.groupBy({
+          by: ["contactId"],
+          where: { workspaceId, contactId: { in: contactIds }, status: "WON" },
+          _sum: { value: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const taskBy = new Map(taskRows.map((t) => [t.contactId, t]));
+  const dealBy = new Map(dealRows.map((d) => [d.contactId, d]));
+
   const columns = pipeline.columns.map((col) => ({
     id: col.id,
     name: col.name,
@@ -56,6 +82,9 @@ export async function GET() {
       name: c.contact.name,
       phone: c.contact.phone,
       score: c.contact.score,
+      openTasks: taskBy.get(c.contactId)?._count._all ?? 0,
+      nextDueDate: taskBy.get(c.contactId)?._min.dueDate?.toISOString() ?? null,
+      wonValue: Number(dealBy.get(c.contactId)?._sum.value ?? 0),
     })),
   }));
 
