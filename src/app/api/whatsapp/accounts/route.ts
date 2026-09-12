@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { CreateAccountSchema } from "@/lib/validators/whatsapp";
 import { fail } from "@/lib/api";
+import { effectiveDailyLimit, isWarmingUp } from "@/lib/messaging/warmup";
 
 const STATUS_MAP: Record<string, string> = {
   CONNECTED: "connected",
@@ -30,6 +31,12 @@ export async function GET() {
     status: STATUS_MAP[a.status] ?? "disconnected",
     dailyLimit: a.dailyLimit,
     sentToday: a.sentToday,
+    warmupDay: a.warmupDay,
+    // Batas yang benar-benar berlaku hari ini. Tanpa ini, nomor baru terlihat
+    // "boleh 100 pesan" padahal ditolak di pesan ke-21, dan itu terbaca
+    // sebagai kerusakan, bukan sebagai pengaman.
+    todayLimit: effectiveDailyLimit({ dailyLimit: a.dailyLimit, warmupDay: a.warmupDay }),
+    warmingUp: isWarmingUp({ dailyLimit: a.dailyLimit, warmupDay: a.warmupDay }),
   }));
 
   return NextResponse.json({ success: true, data });

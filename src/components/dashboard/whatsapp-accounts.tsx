@@ -11,6 +11,9 @@ interface Account {
   status: "connected" | "connecting" | "disconnected" | string;
   dailyLimit?: number;
   sentToday?: number;
+  warmupDay?: number;
+  todayLimit?: number;
+  warmingUp?: boolean;
 }
 
 export default function WhatsAppAccounts() {
@@ -139,6 +142,16 @@ export default function WhatsAppAccounts() {
                 <p className="text-sm text-muted-foreground">
                   {a.phoneNumber ? `+${a.phoneNumber}` : "Belum terhubung"}
                 </p>
+                {a.todayLimit !== undefined && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Terkirim hari ini {a.sentToday ?? 0} dari {a.todayLimit}
+                    {a.warmingUp && (
+                      <span className="ml-1.5 rounded bg-warning/15 px-1.5 py-0.5 font-semibold text-warning">
+                        Masa pemanasan · hari {Math.max(1, a.warmupDay ?? 0)}
+                      </span>
+                    )}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <StatusBadge status={a.status} />

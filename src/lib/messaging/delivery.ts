@@ -4,6 +4,7 @@ import { getMessagingProvider } from "@/lib/messaging/provider";
 import { CREDIT_COSTS, PLANS } from "@/config/plans";
 import { dayStart, DailyMessagingQuotaError } from "@/lib/messaging/quota";
 import { getWorkspacePlan } from "@/lib/plans/limits";
+import { effectiveDailyLimit } from "@/lib/messaging/warmup";
 
 export class DeliveryBlockedError extends Error {}
 export interface DeliveryInput { id: string; workspaceId: string; accountId: string; contactId: string; followUp?: boolean; text: string; media?: import("@/lib/messaging/provider").MessageMedia }
@@ -33,10 +34,16 @@ export async function deliverWhatsApp(input: DeliveryInput) {
     const today = dayStart();
     const used = await tx.outboundDelivery.count({ where: { workspaceId: input.workspaceId, channel: "WHATSAPP", status: { not: "FAILED" }, createdAt: { gte: today } } });
     if (used >= plan.limits.campaignDailyLimit) throw new DailyMessagingQuotaError(plan.limits.campaignDailyLimit);
-    const count = account.sentTodayResetAt && account.sentTodayResetAt >= today ? account.sentToday : 0;
-    if (count >= account.dailyLimit) throw new DailyMessagingQuotaError(account.dailyLimit);
+    // Hari aktif baru menaikkan satu anak tangga pemanasan. Dihitung di sini,
+    // saat pesan pertama hari itu benar-benar diterima untuk dikirim, supaya
+    // nomor yang menganggur tidak ikut naik tangga tanpa mengirim apa pun.
+    const hariBaru = !account.sentTodayResetAt || account.sentTodayResetAt < today;
+    const warmupDay = hariBaru ? account.warmupDay + 1 : account.warmupDay;
+    const batasHariIni = effectiveDailyLimit({ dailyLimit: account.dailyLimit, warmupDay });
+    const count = hariBaru ? 0 : account.sentToday;
+    if (count >= batasHariIni) throw new DailyMessagingQuotaError(batasHariIni);
     await deductCreditsInTransaction(tx, input.workspaceId, CREDIT_COSTS.sendWhatsApp, "SEND_WHATSAPP");
-    await tx.messagingAccount.update({ where: { id: account.id }, data: { sentToday: count + 1, sentTodayResetAt: today } });
+    await tx.messagingAccount.update({ where: { id: account.id }, data: { sentToday: count + 1, sentTodayResetAt: today, warmupDay } });
     return tx.outboundDelivery.create({ data: { id: input.id, workspaceId: input.workspaceId, contactId: input.contactId, accountId: input.accountId, channel: "WHATSAPP", cost: CREDIT_COSTS.sendWhatsApp } });
   });
   if (row.status !== "PENDING") return row;
