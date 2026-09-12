@@ -14,7 +14,7 @@ export async function GET(_req: Request, { params: paramsPromise }: { params: Pr
 
   const convo = await prisma.conversation.findFirst({
     where: { id: params.id, workspaceId: session.workspace.id },
-    include: { contact: { select: { name: true, phone: true } } },
+    include: { contact: { select: { id: true, name: true, phone: true } } },
   });
   if (!convo) return fail("NOT_FOUND", "Percakapan tidak ditemukan", 404);
 
@@ -35,7 +35,7 @@ export async function GET(_req: Request, { params: paramsPromise }: { params: Pr
       conversation: {
         id: convo.id,
         status: convo.status,
-        contact: { name: convo.contact.name, phone: convo.contact.phone },
+        contact: { id: convo.contact.id, name: convo.contact.name, phone: convo.contact.phone },
       },
       messages,
     },

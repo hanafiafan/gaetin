@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Inbox, Send, UserCircle2 } from "lucide-react";
+import { History, Inbox, Search, Send, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import EmptyState from "@/components/dashboard/empty-state";
+import ContactPanel from "@/components/dashboard/contact-panel";
 
 interface Convo {
   id: string;
+  contactId: string;
   name: string | null;
   phone: string;
   status: string;
   unreadCount: number;
+  lastMessage: string | null;
+  lastDirection: "INBOUND" | "OUTBOUND" | null;
 }
 interface Msg {
   id: string;
@@ -19,7 +23,7 @@ interface Msg {
   createdAt: string;
 }
 interface Thread {
-  conversation: { id: string; status: string; contact: { name: string | null; phone: string } };
+  conversation: { id: string; status: string; contact: { id: string; name: string | null; phone: string } };
   messages: Msg[];
 }
 
@@ -38,6 +42,8 @@ export default function InboxClient() {
   const [thread, setThread] = useState<Thread | null>(null);
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
+  const [query, setQuery] = useState("");
+  const [historyFor, setHistoryFor] = useState<string | null>(null);
   const convoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const threadTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -60,6 +66,14 @@ export default function InboxClient() {
       if (threadTimer.current) clearInterval(threadTimer.current);
     };
   }, []);
+
+  // Penyaringan di sisi klien: daftarnya dibatasi 200 percakapan dan sudah ada
+  // di memori, jadi mengirim setiap ketikan ke server hanya menambah tunggu.
+  const shown = convos.filter((c) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return [c.name, c.phone, c.lastMessage].some((v) => v?.toLowerCase().includes(q));
+  });
 
   function select(id: string) {
     setSelectedId(id);
@@ -108,7 +122,17 @@ export default function InboxClient() {
             <Inbox className="h-5 w-5 text-foreground" />
             Percakapan
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">{convos.length} thread tersedia</p>
+          <p className="mt-1 text-xs text-muted-foreground">{convos.length} percakapan</p>
+          <div className="relative mt-3">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Cari nama, nomor, atau isi pesan"
+              aria-label="Cari percakapan"
+              className="h-9 w-full rounded-lg border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+            />
+          </div>
         </div>
         {convos.length === 0 && (
           <div className="p-4">
@@ -119,7 +143,7 @@ export default function InboxClient() {
             />
           </div>
         )}
-        {convos.map((c) => (
+        {shown.map((c) => (
           <button
             key={c.id}
             onClick={() => select(c.id)}
@@ -134,7 +158,11 @@ export default function InboxClient() {
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-foreground">{c.name ?? `+${c.phone}`}</p>
-                <p className="truncate text-xs text-muted-foreground">+{c.phone} · {STATUS_LABEL[c.status] ?? c.status}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {c.lastMessage
+                    ? `${c.lastDirection === "INBOUND" ? "" : "Kamu: "}${c.lastMessage}`
+                    : `+${c.phone} · ${STATUS_LABEL[c.status] ?? c.status}`}
+                </p>
               </div>
             </div>
             {c.unreadCount > 0 && (
@@ -166,6 +194,16 @@ export default function InboxClient() {
                 </p>
                 <p className="text-xs text-muted-foreground">+{thread.conversation.contact.phone}</p>
               </div>
+              <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setHistoryFor(thread.conversation.contact.id)}
+                className="flex h-10 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-semibold text-foreground/80 transition hover:border-foreground/30 hover:text-foreground"
+                title="Lihat seluruh riwayat kontak ini"
+              >
+                <History className="h-4 w-4" />
+                Riwayat
+              </button>
               <select
                 value={thread.conversation.status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -175,6 +213,7 @@ export default function InboxClient() {
                 <option value="PENDING">{STATUS_LABEL.PENDING}</option>
                 <option value="RESOLVED">{STATUS_LABEL.RESOLVED}</option>
               </select>
+              </div>
             </div>
 
             <div className="flex-1 space-y-3 overflow-y-auto bg-muted p-4">
@@ -219,6 +258,8 @@ export default function InboxClient() {
           </>
         )}
       </div>
+
+      <ContactPanel contactId={historyFor} onClose={() => setHistoryFor(null)} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, Users, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ContactPanel from "@/components/dashboard/contact-panel";
 import MetricStrip from "@/components/dashboard/metric-strip";
 
 interface Contact {
@@ -39,6 +40,7 @@ function scoreClass(score: number): string {
 }
 
 export default function ContactsTable() {
+  const [openContactId, setOpenContactId] = useState<string | null>(null);
   // Pencarian di header mengarah ke sini lewat ?q=, jadi nilai awalnya diambil
   // dari URL — kalau tidak, user mengetik di header lalu mendarat di daftar
   // yang tidak tersaring sama sekali.
@@ -266,7 +268,13 @@ export default function ContactsTable() {
                     />
                   </td>
                   <td className="p-3">
-                    <p className="font-bold text-foreground">{contact.name ?? "Tanpa nama"}</p>
+                    <button
+                      type="button"
+                      onClick={() => setOpenContactId(contact.id)}
+                      className="text-left font-bold text-foreground underline-offset-4 hover:underline"
+                    >
+                      {contact.name ?? "Tanpa nama"}
+                    </button>
                     {!emailOnly && (
                       <p className="text-xs text-muted-foreground">{contact.email ?? contact.label ?? "Belum ada detail tambahan"}</p>
                     )}
@@ -342,6 +350,8 @@ export default function ContactsTable() {
           </div>
         </div>
       </div>
+
+      <ContactPanel contactId={openContactId} onClose={() => setOpenContactId(null)} />
     </div>
   );
 }

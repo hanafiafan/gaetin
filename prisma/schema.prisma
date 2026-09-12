@@ -84,6 +84,7 @@ model Workspace {
   followUpRules     FollowUpRule[]
   tasks             Task[]
   doNotContacts     DoNotContact[]
+  contactNotes      ContactNote[]
   tickets           SupportTicket[]
   branding          BrandingSettings?
   subscription      Subscription?
@@ -186,6 +187,7 @@ model Contact {
   conversations     Conversation[]
   deals             Deal[]
   leads             Lead[]
+  notes             ContactNote[]
 
   @@unique([workspaceId, phone])
   @@index([workspaceId, waStatus])
@@ -694,6 +696,23 @@ enum TaskStatus {
 }
 
 // ==================== DO-NOT-CONTACT (compliance/opt-out) ====================
+
+// Catatan manual tentang satu kontak — hasil telepon, keberatan yang muncul,
+// janji yang dibuat. Sebelumnya tidak ada tempat menyimpannya sama sekali: apa
+// pun yang terjadi di luar aplikasi hilang begitu saja.
+model ContactNote {
+  id          String   @id @default(cuid())
+  workspaceId String
+  contactId   String
+  body        String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId, createdAt])
+}
 
 model DoNotContact {
   id          String   @id @default(cuid())

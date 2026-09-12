@@ -13,17 +13,26 @@ export async function GET() {
   const rows = await prisma.conversation.findMany({
     where: { workspaceId: session.workspace.id },
     orderBy: { lastMessageAt: "desc" },
-    include: { contact: { select: { name: true, phone: true } } },
+    include: {
+      contact: { select: { id: true, name: true, phone: true } },
+      // Cuplikan pesan terakhir: tanpa ini daftar percakapan cuma berisi nama
+      // dan nomor, dan satu-satunya cara tahu isi percakapannya adalah membuka
+      // semuanya satu per satu.
+      messages: { orderBy: { createdAt: "desc" }, take: 1, select: { content: true, direction: true } },
+    },
     take: 200,
   });
 
   const data = rows.map((c) => ({
     id: c.id,
+    contactId: c.contact.id,
     name: c.contact.name,
     phone: c.contact.phone,
     status: c.status,
     unreadCount: c.unreadCount,
     lastMessageAt: c.lastMessageAt,
+    lastMessage: c.messages[0]?.content ?? null,
+    lastDirection: c.messages[0]?.direction ?? null,
   }));
   return NextResponse.json({ success: true, data });
 }
