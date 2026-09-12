@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FileText, History, Inbox, Loader2, Paperclip, Search, Send, UserCircle2, X } from "lucide-react";
+import { renderMessage } from "@/lib/messaging/text";
 import { cn } from "@/lib/utils";
 import EmptyState from "@/components/dashboard/empty-state";
 import ContactPanel from "@/components/dashboard/contact-panel";
@@ -23,6 +24,12 @@ interface Msg {
   mediaUrl: string | null;
   status: string;
   createdAt: string;
+}
+
+interface Template {
+  id: string;
+  name: string;
+  body: string;
 }
 
 interface Lampiran {
@@ -55,6 +62,8 @@ export default function InboxClient() {
   const [query, setQuery] = useState("");
   const [lampiran, setLampiran] = useState<Lampiran | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [templateOpen, setTemplateOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [historyFor, setHistoryFor] = useState<string | null>(null);
   const convoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -89,6 +98,7 @@ export default function InboxClient() {
   });
 
   function select(id: string) {
+    setTemplateOpen(false);
     setSelectedId(id);
     setThread(null);
     loadThread(id);
@@ -97,6 +107,32 @@ export default function InboxClient() {
   }
 
   const replyAttempt = useRef<{ conversation: string; text: string; id: string } | null>(null);
+
+  async function bukaTemplate() {
+    const berikutnya = !templateOpen;
+    setTemplateOpen(berikutnya);
+    // Diambil saat dibuka, bukan saat halaman dimuat: sebagian besar balasan
+    // diketik langsung, jadi tidak perlu memanggil API untuk semua orang.
+    if (berikutnya && templates.length === 0) {
+      const r = await fetch("/api/templates");
+      const j = await r.json().catch(() => null);
+      if (j?.success) setTemplates(j.data);
+    }
+  }
+
+  function sisipkanTemplate(t: Template) {
+    const kontak = thread?.conversation.contact;
+    // Variabel diisi di sini, bukan dikirim mentah: yang muncul di kotak
+    // balasan harus persis yang akan diterima pelanggan, supaya masih bisa
+    // disunting sebelum dikirim.
+    const teks = renderMessage(t.body, {
+      nama: kontak?.name ?? "",
+      name: kontak?.name ?? "",
+      phone: kontak?.phone ?? "",
+    });
+    setReply((sebelumnya) => (sebelumnya.trim() ? `${sebelumnya.trimEnd()} ${teks}` : teks));
+    setTemplateOpen(false);
+  }
 
   async function pilihBerkas(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -302,7 +338,42 @@ export default function InboxClient() {
               ))}
             </div>
 
-            <form onSubmit={send} className="border-t border-border p-3">
+            <form onSubmit={send} className="relative border-t border-border p-3">
+              {templateOpen && (
+                <div className="absolute bottom-full left-3 right-3 z-20 mb-2 max-h-64 overflow-y-auto rounded-xl border border-border bg-popover p-1.5 shadow-2xl">
+                  {templates.length === 0 ? (
+                    <p className="p-3 text-sm text-muted-foreground">
+                      Belum ada contoh pesan.{" "}
+                      <a href="/dashboard/templates" className="font-semibold text-foreground underline underline-offset-2">
+                        Buat dulu
+                      </a>
+                      .
+                    </p>
+                  ) : (
+                    templates.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => sisipkanTemplate(t)}
+                        className="block w-full rounded-lg px-3 py-2 text-left transition hover:bg-foreground/5"
+                      >
+                        <span className="block text-sm font-semibold text-foreground">{t.name}</span>
+                        {/* Pratinjaunya ikut diisi variabelnya: daftar yang
+                            menampilkan "{{nama}}" memaksa orang menerjemahkan
+                            sendiri apa yang akan terkirim. */}
+                        <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                          {renderMessage(t.body, {
+                            nama: thread?.conversation.contact.name ?? "",
+                            name: thread?.conversation.contact.name ?? "",
+                            phone: thread?.conversation.contact.phone ?? "",
+                          })}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+
               {lampiran && (
                 <div className="mb-2 flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
                   <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -336,6 +407,21 @@ export default function InboxClient() {
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/70 transition hover:border-foreground/30 hover:text-foreground disabled:opacity-50"
               >
                 {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Paperclip className="h-4 w-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={bukaTemplate}
+                disabled={sending}
+                title="Sisipkan contoh pesan yang sudah disimpan"
+                aria-expanded={templateOpen}
+                className={cn(
+                  "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border transition disabled:opacity-50",
+                  templateOpen
+                    ? "border-foreground bg-foreground/5 text-foreground"
+                    : "border-border text-foreground/70 hover:border-foreground/30 hover:text-foreground",
+                )}
+              >
+                <FileText className="h-4 w-4" />
               </button>
               <input
                 value={reply}
