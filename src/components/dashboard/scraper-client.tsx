@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css";
 import {
   Building2,
   CheckCircle2,
   Clock,
   Columns3,
-  Compass,
   Download,
   ExternalLink,
   Filter,
@@ -18,8 +16,6 @@ import {
   Mail,
   MapPin,
   MessageSquare,
-  Navigation,
-  Palette,
   QrCode,
   Radar,
   Save,
@@ -33,7 +29,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_CENTER = { lat: -6.2088, lng: 106.8456 }; // Jakarta
 const DEFAULT_FIELDS: DataField[] = ["phone", "address", "website", "category", "coordinates"];
 
 /* Enam kolom pertama di DATA_FIELDS adalah yang dipakai untuk menghubungi dan
@@ -104,29 +99,13 @@ interface Job {
   createdAt: string;
 }
 
-export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmEnabled?: boolean }) {
-  const mapEl = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<import("leaflet").Map | null>(null);
-  const markerRef = useRef<import("leaflet").Marker | null>(null);
-  const circleRef = useRef<import("leaflet").Circle | null>(null);
-  const geoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+export default function ScraperClient() {
   const esRef = useRef<EventSource | null>(null);
 
-  const [center, setCenter] = useState(DEFAULT_CENTER);
-  const [radius, setRadius] = useState(5);
-  const radiusRef = useRef(radius);
-  radiusRef.current = radius;
-  const [label, setLabel] = useState("");
-  const [mode, setMode] = useState<"auto" | "manual" | "extension">(legacyOsmEnabled ? "auto" : "extension");
   const [regionInput, setRegionInput] = useState("");
-  const [regionSuggestions, setRegionSuggestions] = useState<{display_name: string}[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [mapSearch, setMapSearch] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState("");
-  const [areaName, setAreaName] = useState("");
   const [maxLeads, setMaxLeads] = useState("100");
-  const [color, setColor] = useState("#2563eb");
   const [dataFields, setDataFields] = useState<Set<DataField>>(new Set(DEFAULT_FIELDS));
   const [showAllFields, setShowAllFields] = useState(false);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
@@ -142,19 +121,6 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
   const [busy, setBusy] = useState(false);
   const selectedJobId = currentJob?.id ?? activeJobId;
 
-  function geocode(lat: number, lng: number) {
-    if (geoTimer.current) clearTimeout(geoTimer.current);
-    geoTimer.current = setTimeout(async () => {
-      try {
-        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-        const j = await r.json();
-        setLabel(j.display_name ?? "");
-      } catch {
-        // abaikan
-      }
-    }, 600);
-  }
-
   async function loadSaved() {
     const r = await fetch("/api/scraper");
     const j = await r.json();
@@ -163,71 +129,10 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
 
   useEffect(() => {
     loadSaved();
-    let cancelled = false;
-    (async () => {
-      const L = (await import("leaflet")).default;
-      if (cancelled || !mapEl.current || mapRef.current) return;
-      const icon = L.icon({
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-      });
-      const map = L.map(mapEl.current).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 12);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
-      const marker = L.marker([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], { draggable: true, icon }).addTo(map);
-      const circle = L.circle([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], { radius: radiusRef.current * 1000, color: "#2563eb", fillColor: "#2563eb", fillOpacity: 0.12 }).addTo(map);
-      mapRef.current = map;
-      markerRef.current = marker;
-      circleRef.current = circle;
-      const setPoint = (lat: number, lng: number) => {
-        setCenter({ lat, lng });
-        marker.setLatLng([lat, lng]);
-        circle.setLatLng([lat, lng]);
-        geocode(lat, lng);
-      };
-      marker.on("dragend", () => {
-        const ll = marker.getLatLng();
-        setPoint(ll.lat, ll.lng);
-      });
-          map.on("click", (e: import("leaflet").LeafletMouseEvent) => setPoint(e.latlng.lat, e.latlng.lng));
-      geocode(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
-    })();
     return () => {
-      cancelled = true;
       if (esRef.current) { esRef.current.close(); esRef.current = null; }
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
     };
   }, []);
-
-  useEffect(() => {
-    if (circleRef.current) circleRef.current.setRadius(radius * 1000);
-  }, [radius, activeJobId, currentJob]);
-
-  useEffect(() => {
-    if (mode === "auto" && regionInput.trim().length > 2 && showSuggestions) {
-      const delayFn = setTimeout(async () => {
-        try {
-          const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(regionInput)}&limit=5`);
-          const j = await r.json();
-          setRegionSuggestions(j || []);
-        } catch {}
-      }, 500);
-      return () => clearTimeout(delayFn);
-    } else if (regionInput.trim().length <= 2) {
-      setRegionSuggestions([]);
-    }
-  }, [regionInput, mode, showSuggestions]);
-
-  useEffect(() => {
-    if (circleRef.current) {
-      circleRef.current.setStyle({ color, fillColor: color });
-    }
-  }, [color]);
 
   async function loadLeads(jobId: string) {
     const params = new URLSearchParams({ scraperJobId: jobId, pageSize: "200" });
@@ -266,86 +171,22 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
     };
   }
 
-  async function handleMapSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!mapSearch.trim()) return;
-    try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearch)}`);
-      const j = await r.json();
-      if (j && j.length > 0) {
-        const lat = parseFloat(j[0].lat);
-        const lon = parseFloat(j[0].lon);
-        if (mapRef.current) {
-          mapRef.current.flyTo([lat, lon], 13);
-        }
-        setCenter({ lat, lng: lon });
-        markerRef.current?.setLatLng([lat, lon]);
-        circleRef.current?.setLatLng([lat, lon]);
-        setLabel(j[0].display_name);
-      }
-    } catch {}
-  }
-
-  function locateMe() {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          if (mapRef.current) {
-            mapRef.current.flyTo([lat, lon], 14);
-          }
-          setCenter({ lat, lng: lon });
-          markerRef.current?.setLatLng([lat, lon]);
-          circleRef.current?.setLatLng([lat, lon]);
-          geocode(lat, lon);
-        },
-        () => alert("Gagal mendapatkan lokasi. Pastikan izin lokasi aktif."),
-      );
-    } else {
-      alert("Browser Anda tidak mendukung geolokasi.");
-    }
-  }
-
   async function start() {
     if (keywords.length === 0) return;
     const combinedKeyword = keywords.join(", ");
     setBusy(true);
     setLeads([]);
     setSelected(new Set());
+    const jobName = `${combinedKeyword} (${regionInput || "Indonesia"})`;
     const r = await fetch("/api/scraper/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(
-        mode === "extension"
-          ? {
-              keyword: combinedKeyword,
-              mode: "extension",
-              name: areaName || `${combinedKeyword}${regionInput ? ` (${regionInput})` : ""}`,
-              color,
-              dataFields: [...dataFields],
-            }
-          : mode === "auto"
-          ? {
-              keyword: combinedKeyword,
-              mode: "text",
-              location: regionInput,
-              name: areaName || `${combinedKeyword} (${regionInput})`,
-              color,
-              dataFields: [...dataFields],
-            }
-          : {
-              keyword: combinedKeyword,
-              mode: "map",
-              centerLat: center.lat,
-              centerLng: center.lng,
-              radiusKm: radius,
-              locationLabel: label,
-              name: areaName || `${combinedKeyword} (${radius}km)`,
-              color,
-              dataFields: [...dataFields],
-            }
-      ),
+      body: JSON.stringify({
+        keyword: combinedKeyword,
+        location: regionInput || undefined,
+        name: jobName,
+        dataFields: [...dataFields],
+      }),
     });
     const j = await r.json();
     if (!r.ok) {
@@ -353,31 +194,19 @@ export default function ScraperClient({ legacyOsmEnabled = false }: { legacyOsmE
       alert(j?.error?.message ?? "Gagal memulai");
       return;
     }
-    let jobName = areaName;
-    if (!jobName) {
-      if (mode === "extension") jobName = `${combinedKeyword} (${regionInput || "Indonesia"})`;
-      else if (mode === "auto") jobName = `${combinedKeyword} (${regionInput})`;
-      else jobName = `${combinedKeyword} (${radius}km)`;
-    }
-    setCurrentJob({ id: j.data.id, name: jobName, color, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
+    setCurrentJob({ id: j.data.id, name: jobName, color: null, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
     setActiveJobId(j.data.id);
     setJobStatus("RUNNING");
-    
-    if (mode === "extension") {
-      const location = regionInput || "Indonesia";
-      const q = encodeURIComponent(`${combinedKeyword} di ${location}`);
-      const gmapsUrl = `https://www.google.com/maps/search/${q}` +
-        `?hellens_job_id=${j.data.id}` +
-        `&hellens_token=${j.data.extensionToken ?? ""}` +
-        `&hellens_auto=true` +
-        `&hellens_max=${maxLeads}` +
-        `&hellens_delay=2` +
-        `&hellens_fields=${[...dataFields].join(",")}`;
-      window.open(gmapsUrl, "_blank");
-    } else {
-      // Trigger background execution and let it hang so Vercel doesn't kill it
-      fetch(`/api/scraper/${j.data.id}/execute`, { method: "POST" }).catch(e => console.error("Execute failed", e));
-    }
+
+    const q = encodeURIComponent(`${combinedKeyword} di ${regionInput || "Indonesia"}`);
+    const gmapsUrl = `https://www.google.com/maps/search/${q}` +
+      `?hellens_job_id=${j.data.id}` +
+      `&hellens_token=${j.data.extensionToken ?? ""}` +
+      `&hellens_auto=true` +
+      `&hellens_max=${maxLeads}` +
+      `&hellens_delay=2` +
+      `&hellens_fields=${[...dataFields].join(",")}`;
+    window.open(gmapsUrl, "_blank");
 
     subscribe(j.data.id);
   }
@@ -466,51 +295,8 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
 
   return (
     <div className="space-y-5">
-      <div className={cn("grid gap-4 items-start", legacyOsmEnabled && "xl:grid-cols-[minmax(0,1fr)_380px]")}>
-        {legacyOsmEnabled && (
-          mode === "manual" ? (
-            <div className="cg-card cg-tone-top overflow-hidden rounded-xl">
-              <div className="p-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border bg-card px-4 py-3 gap-3">
-                  <div>
-                    <div className="font-semibold text-sm">Area pencarian manual</div>
-                    <div className="text-xs text-muted-foreground">Klik peta atau cari lokasi</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <form onSubmit={handleMapSearch} className="flex items-center">
-                       <input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Cari daerah..." className="h-8 max-w-[140px] rounded-xl border border-border bg-card px-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
-                       <button type="submit" className="ml-1 flex h-10 items-center rounded-lg border border-border px-2 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">Cari</button>
-                    </form>
-                    <button type="button" onClick={locateMe} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-foreground/80 transition hover:border-primary/30 hover:text-foreground" title="Lokasi Saya">
-                      <Compass className="h-4 w-4" />
-                    </button>
-                    <span className="ml-2 border border-border px-2 py-0.5 text-xs text-muted-foreground">{radius} km</span>
-                  </div>
-                </div>
-                <div ref={mapEl} className="h-[440px] w-full" />
-              </div>
-            </div>
-          ) : mode === "auto" ? (
-            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-xl">
-              <div className="p-6 max-w-md text-center">
-                <Radar className="h-12 w-12 mx-auto text-foreground/40 mb-4" />
-                <h3 className="text-lg font-semibold text-foreground">Otomatis Wilayah</h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Pencarian tidak menggunakan titik pin atau radius, melainkan mencari di seluruh batas wilayah (kota/kabupaten) yang Anda ketik di kolom samping.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="cg-card flex min-h-[440px] h-full items-center justify-center rounded-xl">
-              <div className="p-6 max-w-md text-center">
-                <h3 className="text-lg font-semibold text-foreground">Mode Ekstensi</h3>
-                <p className="text-sm text-muted-foreground mt-2">Pencarian dilakukan otomatis di tab Google Maps yang dibuka oleh sistem.</p>
-              </div>
-            </div>
-          )
-        )}
-        
-        {mode === "extension" && activeJobId && jobStatus === "RUNNING" ? (
+      <div className="grid gap-4 items-start">
+        {activeJobId && jobStatus === "RUNNING" ? (
             <div className="cg-card rounded-xl border-primary/30 bg-primary/[0.03]">
               <div className="p-5">
                 <div className="flex items-start gap-4">
@@ -544,32 +330,6 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
           ) : (
             <div className="cg-card rounded-xl">
           <div className="space-y-5 p-5">
-
-            {legacyOsmEnabled && (
-              <div className="flex rounded-xl border border-border bg-muted/50 p-1">
-                  <button
-                    type="button"
-                    onClick={() => setMode("auto")}
-                    className={cn("flex-1 border-2 border-transparent px-4 py-2 text-sm font-medium transition-colors", mode === "auto" ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                  >
-                    Otomatis Wilayah
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMode("manual")}
-                    className={cn("flex-1 border-2 border-transparent px-4 py-2 text-sm font-medium transition-colors", mode === "manual" ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                  >
-                    Custom Area
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMode("extension")}
-                    className={cn("flex-1 border-2 border-transparent px-4 py-2 text-sm font-medium transition-colors", mode === "extension" ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-                  >
-                    Ekstensi Chrome
-                  </button>
-              </div>
-            )}
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Kata kunci bisnis <span className="font-normal text-muted-foreground">(bisa lebih dari satu)</span></label>
@@ -625,7 +385,6 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             </div>
 
-              {mode === "extension" ? (
                 <div className="space-y-4">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-y border-border py-3">
                     <span className="cg-label text-muted-foreground">Cara kerja</span>
@@ -651,61 +410,6 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                     </div>
                   </div>
                 </div>
-              ) : mode === "auto" ? (
-              <div className="relative space-y-2 border-l-2 border-primary py-1 pl-3">
-                <label className="text-sm font-medium text-foreground">Nama Wilayah / Kota</label>
-                <input
-                  value={regionInput}
-                  onChange={(e) => {
-                    setRegionInput(e.target.value);
-                    setShowSuggestions(true);
-                  }}
-                  onFocus={() => setShowSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  placeholder="mis. Bandung, Jakarta Selatan"
-                  className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-                />
-                <p className="text-xs text-muted-foreground">Sistem akan mencari bisnis di seluruh wilayah ini.</p>
-                {showSuggestions && regionSuggestions.length > 0 && (
-                  <div className="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-xl border border-border bg-background/95 shadow-xl backdrop-blur-md">
-                    {regionSuggestions.map((s, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-2.5 text-left text-sm text-foreground/80 outline-none transition-colors hover:bg-primary/10 hover:text-foreground focus:bg-primary/10 focus:text-foreground"
-                        onClick={() => {
-                          setRegionInput(s.display_name);
-                          setShowSuggestions(false);
-                        }}
-                      >
-                        {s.display_name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              ) : (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Nama area (Opsional)</label>
-                <input value={areaName} onChange={(e) => setAreaName(e.target.value)} placeholder="mis. Gym Bekasi Timur" className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
-              </div>
-            )}
-
-            {mode === "manual" && (
-              <div className="grid gap-3 sm:grid-cols-[1fr_72px]">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Radius pencarian: {radius} km</label>
-                  <input type="range" min={1} max={20} step={1} value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="w-full accent-primary" />
-                </div>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-1 text-sm font-medium">
-                    <Palette className="h-4 w-4" />
-                    Warna
-                  </label>
-                  <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-10 w-full rounded-md border" aria-label="Warna area" />
-                </div>
-              </div>
-            )}
 
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
@@ -750,22 +454,10 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </button>
             </div>
 
-            {mode === "manual" && (
-              <div className="rounded-xl border border-border bg-card p-3">
-                <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
-                  <Navigation className="h-3.5 w-3.5" />
-                  Lokasi pusat
-                </div>
-                <p className="line-clamp-3 text-sm text-muted-foreground">
-                  {label || "Klik peta atau geser pin untuk titik pusat."}
-                </p>
-              </div>
-            )}
-
             <button
               className="cg-label flex h-12 w-full items-center justify-center rounded-lg bg-primary text-primary-foreground transition hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted"
               onClick={start}
-              disabled={busy || keywords.length === 0 || (mode === "auto" && !regionInput.trim()) || (mode === "extension" && !regionInput.trim())}
+              disabled={busy || keywords.length === 0 || !regionInput.trim()}
             >
               {busy ? (
                 <>
@@ -775,7 +467,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               ) : (
                 <>
                   <Radar className="mr-2 h-4 w-4" />
-                  {mode === "extension" ? "Mulai & Buka Google Maps" : "Mulai Scraping"}
+                  Mulai &amp; Buka Google Maps
                 </>
               )}
             </button>

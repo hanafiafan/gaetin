@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import type { Prisma } from "@prisma/client";
 
-export type JobKind = "CAMPAIGN" | "BLAST" | "EMAIL_BLAST" | "FOLLOW_UP" | "SCRAPER" | "EMAIL_FIND" | "VALIDATION";
+export type JobKind = "CAMPAIGN" | "BLAST" | "EMAIL_BLAST" | "FOLLOW_UP" | "EMAIL_FIND" | "VALIDATION";
 export async function enqueue(tx: Prisma.TransactionClient, kind: JobKind, id: string, workspaceId: string, payload: Prisma.InputJsonValue = { id }, runAt = new Date()) {
   return tx.backgroundJob.upsert({
     where: { id: `${kind}:${id}` },

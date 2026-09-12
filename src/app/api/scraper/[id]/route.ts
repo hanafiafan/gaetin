@@ -10,7 +10,7 @@ export async function GET(_req: Request, { params: paramsPromise }: { params: Pr
 
   const job = await prisma.scraperJob.findFirst({
     where: { id: params.id, workspaceId: session.workspace.id },
-    select: { id: true, status: true, totalFound: true, duplicates: true, gridPoints: true },
+    select: { id: true, status: true, totalFound: true, duplicates: true },
   });
   if (!job) return fail("NOT_FOUND", "Job tidak ditemukan", 404);
 

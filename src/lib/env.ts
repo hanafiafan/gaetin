@@ -23,8 +23,6 @@ const envSchema = z.object({
 
   DEFAULT_COUNTRY_CODE: z.string().default("62"),
 
-  SCRAPER_SERVICE_URL: z.string().optional(),
-  OVERPASS_API_URL: z.string().url().default("https://overpass-api.de/api/interpreter"),
 });
 
 // Parsing lazily agar bisa dipakai di edge/runtime berbeda tanpa crash saat import.

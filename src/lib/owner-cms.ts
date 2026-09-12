@@ -18,7 +18,6 @@ export const DEFAULT_OWNER_CMS: OwnerCmsSettings = {
     crm: true,
     inbox: true,
     billing: true,
-    legacyOsmScraper: false,
   },
   mediaAssets: {
     logo: "",

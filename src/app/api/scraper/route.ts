@@ -17,7 +17,6 @@ export async function GET() {
       color: true,
       keyword: true,
       location: true,
-      radiusKm: true,
       status: true,
       totalFound: true,
       createdAt: true,

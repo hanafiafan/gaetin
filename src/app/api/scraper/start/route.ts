@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { ScraperStartSchema } from "@/lib/validators/scraper";
-import { generateGrid } from "@/lib/geo";
-import { runScraperJob } from "@/lib/scraper/service";
 import { getWorkspacePlan, monthStart } from "@/lib/plans/limits";
-import { MAX_SCRAPER_RADIUS_KM } from "@/config/plans";
 import { fail } from "@/lib/api";
 import { env } from "@/lib/env";
 
@@ -28,12 +25,6 @@ export async function POST(req: NextRequest) {
 
   const d = parsed.data;
   const plan = await getWorkspacePlan(session.workspace.id);
-  if (d.mode === "map" && d.radiusKm != null && d.radiusKm > MAX_SCRAPER_RADIUS_KM) {
-    return fail("VAL_001", `Radius maksimal ${MAX_SCRAPER_RADIUS_KM} km.`, 400, {
-      radiusKm: [`Maksimal ${MAX_SCRAPER_RADIUS_KM} km`],
-    });
-  }
-
   const jobsThisMonth = await prisma.scraperJob.count({
     where: {
       workspaceId: session.workspace.id,
@@ -48,23 +39,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const gridPoints =
-    d.mode === "map" && d.centerLat != null && d.centerLng != null && d.radiusKm != null
-      ? generateGrid(d.centerLat, d.centerLng, d.radiusKm).length
-      : 1;
-
   const job = await prisma.scraperJob.create({
     data: {
       workspaceId: session.workspace.id,
       keyword: d.keyword,
-      location: d.locationLabel ?? d.location ?? null,
+      location: d.location ?? null,
       name: d.name ?? null,
       color: d.color ?? null,
-      centerLat: d.centerLat ?? null,
-      centerLng: d.centerLng ?? null,
-      radiusKm: d.radiusKm ?? null,
       dataFields: d.dataFields ?? ["phone", "address", "website", "email", "category", "rating", "coordinates"],
-      gridPoints,
       status: "RUNNING",
       createdById: session.user.id,
     },

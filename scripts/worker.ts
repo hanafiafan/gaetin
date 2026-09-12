@@ -10,7 +10,6 @@ async function main() {
   const { runBlast } = await import("../src/lib/blast/service");
   const { runEmailBlast } = await import("../src/lib/email-blast/service");
   const { processFollowUps } = await import("../src/lib/followup/service");
-  const { runScraperJob } = await import("../src/lib/scraper/service");
   const { runEmailFindJob } = await import("../src/lib/email-finder/service");
   const { runValidation } = await import("../src/lib/validator/service");
   const lock = new Client({ connectionString: process.env.DATABASE_URL, keepAlive: true });
@@ -46,7 +45,6 @@ async function main() {
         case "BLAST": await runBlast(p.id); break;
         case "EMAIL_BLAST": await runEmailBlast(p.id); break;
         case "FOLLOW_UP": await processFollowUps(job.workspaceId); break;
-        case "SCRAPER": await runScraperJob(p.id); break;
         case "EMAIL_FIND": await runEmailFindJob(p.id, job.workspaceId, p.source, p.targetIds); break;
         case "VALIDATION": await runValidation(p.id, job.workspaceId, p.accountId, p.targetIds); break;
         default: throw new Error("Unknown job kind");

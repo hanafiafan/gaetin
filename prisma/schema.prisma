@@ -66,9 +66,6 @@ model Workspace {
   slug      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  // Pilihan sumber data scraping per workspace + BYOK key Google.
-  scraperProvider  String  @default("OSM_SCRAPER") // OSM_SCRAPER | GOOGLE_PLACES
-  googleMapsApiKey String?
   credits          Int     @default(0) // saldo kredit
 
   memberships       Membership[]
@@ -216,14 +213,9 @@ model ScraperJob {
   id          String        @id @default(cuid())
   workspaceId String
   keyword     String
-  location    String? // label hasil reverse-geocode (mis. "Bekasi Timur, Jawa Barat")
+  location    String? // wilayah yang diketik user (mis. "Jakarta Selatan")
   name        String? // nama area scraping kustom (mis. "Gym Bekasi Timur")
   color       String? // warna penanda area (hex)
-  // Lokasi berbasis peta: titik pusat + radius yang dipilih pengguna di map picker.
-  centerLat   Float?
-  centerLng   Float?
-  radiusKm    Float? // radius pencarian dalam kilometer
-  gridPoints  Int           @default(1) // jumlah titik grid untuk cakupan radius
   dataFields  Json? // field data yang diminta user: phone, address, website, email, category, coordinates
   status      ScraperStatus @default(RUNNING)
   totalFound  Int           @default(0)

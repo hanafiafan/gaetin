@@ -25,14 +25,6 @@ export interface PlanLimits {
   campaignDailyLimit: number;
 }
 
-/**
- * Batas radius untuk mode peta. Bukan lagi pembeda paket: mode peta ada di
- * balik flag `legacyOsmScraper` yang mati secara default, sehingga tidak ada
- * satu pun pelanggan yang bisa mencapainya. Tetap dibatasi karena radius besar
- * membangkitkan grid titik yang sangat banyak.
- */
-export const MAX_SCRAPER_RADIUS_KM = 25;
-
 export interface Plan {
   id: PlanId;
   name: string;

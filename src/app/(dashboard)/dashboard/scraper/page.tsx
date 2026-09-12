@@ -1,21 +1,13 @@
 import ScraperClient from "@/components/dashboard/scraper-client";
 import PageHero from "@/components/dashboard/page-hero";
-import { ShieldAlert, Sparkles } from "lucide-react";
-import { getOwnerCmsSettings } from "@/lib/owner-cms";
+import { ShieldAlert } from "lucide-react";
 
-export default async function ScraperPage() {
-  const settings = await getOwnerCmsSettings();
-  const legacyOsmEnabled = settings.featureFlags?.legacyOsmScraper ?? false;
-
+export default function ScraperPage() {
   return (
     <div className="space-y-6">
       <PageHero
         title="Cari Bisnis di Maps"
-        description={
-          legacyOsmEnabled
-            ? "Tentukan area di peta, atur radius, cari bisnis potensial, lalu simpan lead terpilih menjadi kontak siap outreach."
-            : "Ekstrak data bisnis langsung dari Google Maps via ekstensi Chrome, lalu simpan ke CRM dalam satu klik."
-        }
+        description="Ekstrak data bisnis langsung dari Google Maps via ekstensi Chrome, lalu simpan ke CRM dalam satu klik."
         rightSlot={
           <div className="flex items-end lg:justify-end">
             <span className="cg-label flex items-center gap-2 border-l-2 border-warning pl-3 text-muted-foreground">
@@ -25,7 +17,7 @@ export default async function ScraperPage() {
           </div>
         }
       />
-      <ScraperClient legacyOsmEnabled={legacyOsmEnabled} />
+      <ScraperClient />
     </div>
   );
 }
