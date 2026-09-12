@@ -12,6 +12,7 @@ interface Campaign {
   id: string;
   name: string;
   status: string;
+  pauseReason?: string | null;
   totalRecipients: number;
   sentCount: number;
   failedCount: number;
@@ -249,6 +250,12 @@ export default function CampaignsClient() {
                         <p className="text-xs text-muted-foreground">
                           {campaign.sentCount} terkirim · {campaign.failedCount} gagal
                         </p>
+                        {/* Kampanye yang berhenti sendiri harus menyebutkan
+                            sebabnya. Tanpa itu orang menjalankannya lagi ke
+                            nomor yang justru sedang bermasalah. */}
+                        {campaign.pauseReason && campaign.status !== "ACTIVE" && (
+                          <p className="mt-1 max-w-md text-xs text-warning">{campaign.pauseReason}</p>
+                        )}
                       </td>
                       <td className="px-3 py-3">
                         <StatusBadge status={campaign.status} />

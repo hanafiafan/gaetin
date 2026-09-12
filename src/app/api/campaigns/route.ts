@@ -23,6 +23,7 @@ export async function GET() {
       sentCount: true,
       failedCount: true,
       scheduledAt: true,
+      pauseReason: true,
     },
   });
   return NextResponse.json({ success: true, data: items });

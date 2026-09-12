@@ -4,22 +4,53 @@ import { renderMessage } from "./text";
 import { InsufficientCreditsError } from "@/lib/credits/service";
 import { DailyMessagingQuotaError } from "./quota";
 import { enqueue } from "@/lib/jobs/queue";
+import { effectiveDailyLimit } from "@/lib/messaging/warmup";
+import { alasanBerhenti, dalamJamKirim, jedaPesanMs, jendelaBerikutnya, JENDELA_PERIKSA } from "@/lib/messaging/pacing";
+import { dayStart } from "@/lib/messaging/quota";
 
-/** Small batches allow the worker to interleave campaigns and due follow-ups. */
+/**
+ * Satu pesan per putaran, lalu job-nya menjadwalkan dirinya sendiri.
+ *
+ * Dulu satu putaran mengirim sepuluh pesan dengan `sleep` 3-8 detik di
+ * antaranya. Itu dua masalah sekaligus: sepuluh pesan dalam satu menit adalah
+ * pola mesin yang paling mudah dikenali WhatsApp, dan `sleep` di dalam job
+ * menahan worker — yang hanya satu antrean — sehingga kampanye lain dan pesan
+ * susulan ikut menunggu. Menjadwalkan ulang lewat `runAt` menyelesaikan
+ * keduanya, dan jedanya jadi tahan restart karena tersimpan di database.
+ */
 export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
   const campaign = kind === "CAMPAIGN";
   const job = campaign ? await prisma.campaign.findUnique({ where: { id } }) : await prisma.blast.findUnique({ where: { id } });
   if (!job || job.status !== (campaign ? "ACTIVE" : "RUNNING")) return;
   const accountId = "accountId" in job ? job.accountId : (job.variables as { accountId?: string } | null)?.accountId;
   const template = "messageTemplate" in job ? job.messageTemplate : job.messageText ?? "";
-  const pause = async () => {
-    if (campaign) await prisma.campaign.updateMany({ where: { id, status: "ACTIVE" }, data: { status: "PAUSED" } });
-    else await prisma.blast.updateMany({ where: { id, status: "RUNNING" }, data: { status: "STOPPED" } });
+  const pause = async (alasan?: string) => {
+    const sebab = alasan ? { pauseReason: alasan } : {};
+    if (campaign) await prisma.campaign.updateMany({ where: { id, status: "ACTIVE" }, data: { status: "PAUSED", ...sebab } });
+    else await prisma.blast.updateMany({ where: { id, status: "RUNNING" }, data: { status: "STOPPED", ...sebab } });
   };
-  if (!accountId) { await pause(); return; }
+  if (!accountId) { await pause("Nomor pengirim belum dipilih."); return; }
+
+  // Di luar jam kirim: tidur sampai jendela berikutnya, jangan dibatalkan.
+  // Pesan jam dua pagi dua kali salah — sinyal robot, dan mengganggu orangnya.
+  if (!dalamJamKirim()) {
+    await prisma.$transaction((tx) => enqueue(tx, kind, id, job.workspaceId, { id }, jendelaBerikutnya()));
+    return;
+  }
+
+  // Rem otomatis. Lonjakan kegagalan muncul beberapa jam sebelum blokir penuh,
+  // jadi berhenti sekarang jauh lebih murah daripada kehilangan nomornya.
+  // Pesan diproses urut createdAt menaik, jadi yang paling baru dikerjakan
+  // adalah createdAt TERBESAR di antara yang sudah selesai. Tabelnya tidak
+  // punya updatedAt, dan sentAt kosong pada yang gagal — justru yang dicari.
+  const terbaru = campaign
+    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: { in: ["SENT", "FAILED"] } }, orderBy: { createdAt: "desc" }, take: JENDELA_PERIKSA, select: { status: true } })
+    : await prisma.blastMessage.findMany({ where: { blastId: id, status: { in: ["SENT", "FAILED"] } }, orderBy: { createdAt: "desc" }, take: JENDELA_PERIKSA, select: { status: true } });
+  const berhenti = alasanBerhenti(terbaru);
+  if (berhenti) { await pause(berhenti); return; }
   const messages = campaign
-    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: "PENDING" }, include: { contact: true }, orderBy: { createdAt: "asc" }, take: 10 })
-    : await prisma.blastMessage.findMany({ where: { blastId: id, status: "PENDING" }, include: { contact: true }, orderBy: { createdAt: "asc" }, take: 10 });
+    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: "PENDING" }, include: { contact: true }, orderBy: { createdAt: "asc" }, take: 1 })
+    : await prisma.blastMessage.findMany({ where: { blastId: id, status: "PENDING" }, include: { contact: true }, orderBy: { createdAt: "asc" }, take: 1 });
   for (const m of messages) {
     const state = campaign ? await prisma.campaign.findUnique({ where: { id } }) : await prisma.blast.findUnique({ where: { id } });
     if (state?.status !== (campaign ? "ACTIVE" : "RUNNING")) break;
@@ -31,16 +62,15 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
       status = delivery.status === "SENT" ? "SENT" : "FAILED";
       error = delivery.status === "UNKNOWN" ? "Status kirim belum pasti; periksa WhatsApp sebelum mengirim ulang." : delivery.error;
     } catch (err) {
-      if (err instanceof InsufficientCreditsError || err instanceof DailyMessagingQuotaError) { await pause(); break; }
+      if (err instanceof InsufficientCreditsError || err instanceof DailyMessagingQuotaError) { await pause(err.message); break; }
       if (err instanceof DeliveryBlockedError) {
-        if (!err.message.startsWith("Opt-out")) { await pause(); break; }
+        if (!err.message.startsWith("Opt-out")) { await pause(err.message); break; }
         error = err.message;
       } else throw err;
     }
     const data = { status, errorReason: error, sentAt: status === "SENT" ? new Date() : null };
     if (campaign) await prisma.campaignMessage.update({ where: { id: m.id }, data });
     else await prisma.blastMessage.update({ where: { id: m.id }, data });
-    await new Promise((r) => setTimeout(r, process.env.NODE_ENV === "test" ? 0 : 3000 + Math.random() * 5000));
   }
   await prisma.$transaction(async (tx) => {
     const counts = campaign
@@ -55,6 +85,19 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
     const done = active && pending === 0;
     if (campaign) await tx.campaign.update({ where: { id }, data: { sentCount, failedCount, ...(done ? { status: "COMPLETED", completedAt: new Date() } : {}) } });
     else await tx.blast.update({ where: { id }, data: { sentCount, failedCount, ...(done ? { status: "COMPLETED", completedAt: new Date() } : {}) } });
-    if (active && pending) await enqueue(tx, kind, id, job.workspaceId);
+    if (active && pending) {
+      // Jeda dihitung dari jatah nomor ini hari ini (sudah memperhitungkan masa
+      // pemanasan) dibagi sisa jam kirim, bukan angka tetap. Jatah yang sama,
+      // tapi tersebar sepanjang hari kerja alih-alih habis dalam belasan menit.
+      const akun = await tx.messagingAccount.findUnique({
+        where: { id: accountId },
+        select: { dailyLimit: true, warmupDay: true, sentToday: true, sentTodayResetAt: true },
+      });
+      const hariIni = dayStart();
+      const jatahHarian = akun ? effectiveDailyLimit(akun) : 50;
+      const sudahTerkirim = akun?.sentTodayResetAt && akun.sentTodayResetAt >= hariIni ? akun.sentToday : 0;
+      const jeda = process.env.NODE_ENV === "test" ? 0 : jedaPesanMs({ jatahHarian, sudahTerkirim });
+      await enqueue(tx, kind, id, job.workspaceId, { id }, new Date(Date.now() + jeda));
+    }
   });
 }

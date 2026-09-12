@@ -3,12 +3,17 @@ import { renderMessage } from "@/lib/messaging/text";
 import { deliverWhatsApp, DeliveryBlockedError } from "@/lib/messaging/delivery";
 import { InsufficientCreditsError } from "@/lib/credits/service";
 import { DailyMessagingQuotaError } from "@/lib/messaging/quota";
+import { dalamJamKirim } from "@/lib/messaging/pacing";
 
 export function needsFollowUp(lastOutboundAt: Date | null, lastInboundAt: Date | null, days: number, now = new Date()) {
   return !!lastOutboundAt && lastOutboundAt.getTime() <= now.getTime() - days * 86_400_000 && (!lastInboundAt || lastInboundAt < lastOutboundAt);
 }
 export async function processFollowUps(workspaceId: string) {
   let generated = 0, sent = 0, failed = 0;
+  // Pesan susulan tunduk pada jam kirim yang sama dengan kampanye. Jadwalnya
+  // dibangkitkan ulang tiap menit oleh scheduleDueJobs, jadi cukup berhenti di
+  // sini — yang jatuh tempo malam ini akan terkirim besok pagi.
+  if (!dalamJamKirim()) return { generated, sent, failed };
   const rules = await prisma.followUpRule.findMany({ where: { workspaceId, isActive: true, triggerType: "NO_REPLY_DAYS" } });
   for (const rule of rules) {
     const tv = rule.triggerValue as { days?: number; accountId?: string };
