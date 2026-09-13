@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Lock, LogOut, Menu, Settings, X } from "lucide-react";
@@ -39,6 +39,23 @@ export default function MobileNav({
   }
 
   const close = () => setOpen(false);
+  const drawer = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const focusable = () => Array.from(drawer.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select') ?? []);
+    focusable()[0]?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Tab") return;
+      const items = focusable(), first = items[0], last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("keydown", onKey); previous?.focus(); };
+  }, [open]);
+
 
   return (
     <>
@@ -47,7 +64,7 @@ export default function MobileNav({
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Buka menu"
-        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-2xl text-primary-foreground lg:hidden"
+        className="fixed right-28 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-primary shadow-2xl text-primary-foreground lg:hidden"
       >
         <Menu className="h-6 w-6" />
       </button>
@@ -56,7 +73,7 @@ export default function MobileNav({
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={close} />
-          <div className="cg-sidebar absolute left-0 top-0 flex h-full w-[300px] max-w-[88vw] flex-col overflow-y-auto">
+          <div ref={drawer} role="dialog" aria-modal="true" aria-label="Navigasi workspace" className="cg-sidebar absolute left-0 top-0 flex h-full w-[300px] max-w-[88vw] flex-col overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-foreground/15 px-4 py-4">
               <span className="text-base font-semibold text-foreground">{appName}</span>

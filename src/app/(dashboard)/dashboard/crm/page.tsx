@@ -9,7 +9,7 @@ export default async function CrmPage() {
     <div className="space-y-5">
       <PageHero
         title="Peluang Penjualan"
-        description="Pantau calon pembeli dari baru kenal sampai jadi beli. Geser kartunya saat statusnya berubah."
+        description="Pantau calon pembeli dari baru kenal sampai jadi beli. Geser kartu atau pilih tahap penjualan saat statusnya berubah."
       />
       <CrmBoard />
     </div>

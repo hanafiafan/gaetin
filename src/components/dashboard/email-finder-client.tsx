@@ -99,7 +99,7 @@ export default function EmailFinderClient() {
         !sudahDimuat || jobs.length > 0 ? "xl:grid-cols-[380px_minmax(0,1fr)]" : "mx-auto w-full max-w-2xl",
       )}
     >
-      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Mulai pencarian baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Pilih sumber data, lalu jalankan — proses berjalan di latar belakang.</p>
@@ -150,7 +150,7 @@ export default function EmailFinderClient() {
         </form>
       </div>
 
-      <div className="cg-card rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-sheet rounded-xl p-5 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Riwayat pencarian</h2>
           <p className="text-sm text-muted-foreground">{jobs.length} proses dijalankan</p>
