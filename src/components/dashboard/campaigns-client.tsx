@@ -32,6 +32,7 @@ export default function CampaignsClient() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [sudahDimuat, setSudahDimuat] = useState(false);
   const [quota, setQuota] = useState<MessagingQuota | null>(null);
   const [name, setName] = useState("");
   const [accountId, setAccountId] = useState("");
@@ -69,7 +70,7 @@ export default function CampaignsClient() {
   }
 
   useEffect(() => {
-    loadAll();
+    loadAll().finally(() => setSudahDimuat(true));
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, []);
 
@@ -116,7 +117,15 @@ export default function CampaignsClient() {
   const connected = accounts.filter((a) => a.status === "connected");
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
+    <div
+      className={cn(
+        "grid gap-4",
+        // Dua kolom baru masuk akal setelah ada isinya. Sebelum itu
+        // panel kanan cuma berisi satu paragraf, sementara formulirnya
+        // diperas ke 420px — persis saat orang paling butuh ruang.
+        !sudahDimuat || campaigns.length > 0 ? "xl:grid-cols-[420px_minmax(0,1fr)]" : "mx-auto w-full max-w-2xl",
+      )}
+    >
       <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Buat pengiriman baru</h2>

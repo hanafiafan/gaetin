@@ -18,6 +18,7 @@ interface Rule {
 export default function FollowUpsClient() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
+  const [sudahDimuat, setSudahDimuat] = useState(false);
   const [quota, setQuota] = useState<MessagingQuota | null>(null);
   const [name, setName] = useState("");
   const [accountId, setAccountId] = useState("");
@@ -39,7 +40,7 @@ export default function FollowUpsClient() {
     if (jr.success) setRules(jr.data);
     if (jq.success) setQuota(jq.data);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load().finally(() => setSudahDimuat(true)); }, []);
 
   async function create(e: React.FormEvent) {
     e.preventDefault();
@@ -85,7 +86,15 @@ export default function FollowUpsClient() {
   const SELECT_CLASS = "h-10 rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none";
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
+    <div
+      className={cn(
+        "grid gap-4",
+        // Dua kolom baru masuk akal setelah ada isinya. Sebelum itu
+        // panel kanan cuma berisi satu paragraf, sementara formulirnya
+        // diperas ke 420px — persis saat orang paling butuh ruang.
+        !sudahDimuat || rules.length > 0 ? "xl:grid-cols-[420px_minmax(0,1fr)]" : "mx-auto w-full max-w-2xl",
+      )}
+    >
       <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <form onSubmit={create} className="space-y-3">
           <div>
