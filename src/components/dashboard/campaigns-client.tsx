@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Gauge, Loader2, Pause, Play, RotateCcw, Send, Wand2 } from "lucide-react";
+import { CalendarClock, Loader2, Pause, Play, RotateCcw, Send, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
+import QuotaPanel, { type MessagingQuota } from "@/components/dashboard/quota-panel";
 import EmptyState from "@/components/dashboard/empty-state";
 
 interface Account { id: string; label: string; status: string }
@@ -17,18 +18,6 @@ interface Campaign {
   sentCount: number;
   failedCount: number;
   scheduledAt: string | null;
-}
-interface MessagingQuota {
-  planName: string;
-  limit: number;
-  used: number;
-  remaining: number;
-  resetAt: string;
-  connectedNumbers: number;
-  numberCapacity: number;
-  effectiveLimit: number;
-  effectiveRemaining: number;
-  bottleneck: "numbers" | "plan";
 }
 
 function campaignPct(c: Campaign) {
@@ -135,36 +124,7 @@ export default function CampaignsClient() {
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
         {info && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">{info}</div>}
-        {quota && (
-          <div className="rounded-xl border border-border bg-whatsapp/5 p-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Gauge className="h-4 w-4 text-whatsapp" />
-                Kuota kirim harian
-              </div>
-              <span className="text-xs text-muted-foreground">{quota.planName}</span>
-            </div>
-            <div className="mt-2 h-1.5 rounded-full bg-muted">
-              <div
-                className="h-1.5 rounded-full bg-whatsapp"
-                style={{ width: `${Math.min(100, Math.round((quota.used / Math.max(1, quota.effectiveLimit)) * 100))}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {quota.effectiveRemaining.toLocaleString("id-ID")} sisa dari {quota.effectiveLimit.toLocaleString("id-ID")} pesan hari ini.
-            </p>
-            {/* Angka paket saja menyesatkan: satu nomor punya batas amannya
-                sendiri, dan menampilkan "1.000 sisa" ke orang yang hanya punya
-                satu nomor berbatas 100 bukan optimistis — itu salah. */}
-            {quota.bottleneck === "numbers" && (
-              <p className="mt-1.5 text-xs text-warning">
-                {quota.connectedNumbers === 0
-                  ? `Paket ${quota.planName} mengizinkan ${quota.limit.toLocaleString("id-ID")} pesan/hari, tapi belum ada nomor WhatsApp tersambung.`
-                  : `Paket ${quota.planName} mengizinkan ${quota.limit.toLocaleString("id-ID")} pesan/hari, tapi ${quota.connectedNumbers} nomor yang tersambung aman untuk ${quota.numberCapacity.toLocaleString("id-ID")}. Tambah nomor untuk memakai sisa jatah paket.`}
-              </p>
-            )}
-          </div>
-        )}
+        {quota && <QuotaPanel quota={quota} />}
         <form onSubmit={create} className="space-y-3">
           <input
             value={name}
@@ -173,7 +133,7 @@ export default function CampaignsClient() {
             className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
-            <option value="">Pilih nomor WhatsApp...</option>
+            <option value="">Pilih nomor pengirim...</option>
             {connected.map((a) => (<option key={a.id} value={a.id}>{a.label}</option>))}
           </select>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">

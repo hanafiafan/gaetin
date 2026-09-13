@@ -26,7 +26,7 @@ function jobPct(job: FindJob) {
 }
 
 
-const SOURCE_LABEL: Record<Source, string> = { LEAD: "Lead (hasil scraping)", CONTACT: "Kontak tersimpan" };
+const SOURCE_LABEL: Record<Source, string> = { LEAD: "Hasil pencarian di Maps", CONTACT: "Kontak tersimpan" };
 
 export default function EmailFinderClient() {
   const [jobs, setJobs] = useState<FindJob[]>([]);
@@ -135,7 +135,7 @@ export default function EmailFinderClient() {
           </button>
           {source === "LEAD" && (
             <p className="text-xs text-muted-foreground">
-              Catatan: email yang ditemukan di sini ikut tersalin otomatis begitu lead disimpan jadi Kontak di halaman Scraper.
+              Catatan: email yang ditemukan di sini ikut tersalin otomatis begitu hasil pencarian disimpan jadi kontak di halaman Cari Bisnis di Maps.
             </p>
           )}
         </form>
@@ -176,7 +176,7 @@ export default function EmailFinderClient() {
                         href="/dashboard/email-blast"
                         className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
                       >
-                        <Send className="h-3 w-3" /> Kirim Email Blast
+                        <Send className="h-3 w-3" /> Kirim email massal
                       </Link>
                     )}
                   </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gauge, Loader2, Play, Plus, Trash2 } from "lucide-react";
+import { Loader2, Play, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import EmptyState from "@/components/dashboard/empty-state";
+import QuotaPanel, { type MessagingQuota } from "@/components/dashboard/quota-panel";
 
 interface Account { id: string; label: string; status: string }
 interface Rule {
@@ -12,15 +13,6 @@ interface Rule {
   triggerValue: { days?: number } | null;
   isActive: boolean;
   scheduleCount: number;
-}
-interface MessagingQuota {
-  planName: string;
-  limit: number;
-  used: number;
-  remaining: number;
-  resetAt: string;
-  effectiveLimit: number;
-  effectiveRemaining: number;
 }
 
 export default function FollowUpsClient() {
@@ -82,7 +74,7 @@ export default function FollowUpsClient() {
     const j = await r.json();
     setRunning(false);
     if (j.success) {
-      alert("Follow-up masuk antrean. Worker akan memprosesnya otomatis.");
+      alert("Pesan susulan masuk antrean. Sistem akan memprosesnya otomatis.");
       load();
     } else {
       setError(j?.error?.message ?? "Gagal menjalankan follow-up");
@@ -97,28 +89,12 @@ export default function FollowUpsClient() {
       <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <form onSubmit={create} className="space-y-3">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Aturan follow-up baru</h2>
+            <h2 className="text-lg font-semibold text-foreground">Aturan pesan susulan</h2>
             <p className="mt-1 text-sm text-muted-foreground">Kirim pesan otomatis setelah beberapa hari tanpa balasan.</p>
           </div>
           {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
-          {quota && (
-            <div className="rounded-xl border border-border bg-card p-3">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                  <Gauge className="h-4 w-4 text-foreground" />
-                  Kuota kirim harian
-                </div>
-                <span className="text-xs text-muted-foreground">{quota.planName}</span>
-              </div>
-              <div className="mt-2 h-1.5 rounded-full bg-muted">
-                <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / Math.max(1, quota.effectiveLimit)) * 100))}%` }} />
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {quota.effectiveRemaining.toLocaleString("id-ID")} sisa dari {quota.effectiveLimit.toLocaleString("id-ID")} pesan hari ini.
-              </p>
-            </div>
-          )}
-          <div className="grid gap-3 sm:grid-cols-2">
+          {quota && <QuotaPanel quota={quota} />}
+          <div className="grid gap-3">
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -126,7 +102,7 @@ export default function FollowUpsClient() {
               className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
             <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
-              <option value="">Pilih nomor WhatsApp...</option>
+              <option value="">Pilih nomor pengirim...</option>
               {connected.map((a) => (<option key={a.id} value={a.id}>{a.label}</option>))}
             </select>
           </div>
@@ -146,7 +122,7 @@ export default function FollowUpsClient() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={3}
-            placeholder="Pesan follow-up... Halo {{nama}}, masih berminat?"
+            placeholder="Contoh: Halo {{nama}}, masih berminat?"
             className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
           <button
@@ -180,8 +156,8 @@ export default function FollowUpsClient() {
         <div className="space-y-2">
           {rules.length === 0 ? (
             <EmptyState
-              title="Belum ada aturan follow-up"
-              hint="Aturan follow-up mengirim pesan susulan otomatis ke kontak yang belum membalas, tanpa perlu kamu pantau."
+              title="Belum ada aturan pesan susulan"
+              hint="Aturan ini mengirim pesan susulan otomatis ke kontak yang belum membalas, tanpa perlu kamu pantau."
               action={{ href: "/dashboard/contacts", label: "Lihat kontak dulu" }}
             />
           ) : rules.map((r) => (
@@ -215,7 +191,7 @@ export default function FollowUpsClient() {
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          Worker memeriksa aturan aktif secara berkala. Tombol Jalankan menambahkan pemeriksaan ke antrean.
+          Sistem memeriksa aturan aktif secara berkala. Tombol Jalankan hanya mempercepat pemeriksaan berikutnya.
         </p>
       </div>
     </div>

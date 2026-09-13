@@ -188,7 +188,7 @@ export default function TasksClient() {
                   <td colSpan={7} className="p-6">
                     <EmptyState
                       title="Belum ada tugas"
-                      hint="Catat pengingat follow-up dari form di atas, atau mulai dari kontak yang perlu dihubungi."
+                      hint="Catat pengingat dari kolom di atas, atau mulai dari kontak yang perlu dihubungi."
                       action={{ href: "/dashboard/contacts", label: "Lihat kontak" }}
                     />
                   </td>
