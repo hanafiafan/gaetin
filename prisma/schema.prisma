@@ -123,6 +123,10 @@ model MessagingAccount {
   status        ConnectionStatus @default(DISCONNECTED)
   sessionData   Json? // data sesi Baileys / kredensial gateway
   dailyLimit    Int              @default(100) // anti-ban: batas kirim per hari
+  // Umur nomor menurut pemiliknya: BARU | SEMINGGU | SEBULAN | ENAM_BULAN | SETAHUN.
+  // Sistem tidak bisa tahu sendiri sudah berapa lama sebuah nomor dipakai;
+  // yang dilihatnya cuma kapan nomor itu disambungkan ke sini.
+  accountAge    String           @default("BARU")
   sentToday     Int              @default(0)
   sentTodayResetAt DateTime?     @default(now()) // reset counter harian nomor pengirim
   warmupDay     Int              @default(0)

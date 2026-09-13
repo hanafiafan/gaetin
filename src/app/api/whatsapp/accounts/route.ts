@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { CreateAccountSchema } from "@/lib/validators/whatsapp";
 import { fail } from "@/lib/api";
 import { effectiveDailyLimit, isWarmingUp } from "@/lib/messaging/warmup";
+import { hariPemanasanAwal, profilUmur } from "@/lib/messaging/account-age";
 
 const STATUS_MAP: Record<string, string> = {
   CONNECTED: "connected",
@@ -32,6 +33,8 @@ export async function GET() {
     dailyLimit: a.dailyLimit,
     sentToday: a.sentToday,
     warmupDay: a.warmupDay,
+    accountAge: a.accountAge,
+    ageLabel: profilUmur(a.accountAge).label,
     // Batas yang benar-benar berlaku hari ini. Tanpa ini, nomor baru terlihat
     // "boleh 100 pesan" padahal ditolak di pesan ke-21, dan itu terbaca
     // sebagai kerusakan, bukan sebagai pengaman.
@@ -64,6 +67,9 @@ export async function POST(req: NextRequest) {
     data: {
       workspaceId: session.workspace.id,
       label: parsed.data.label,
+      accountAge: parsed.data.accountAge,
+      // Umur nomor menentukan dari anak tangga mana pemanasan dimulai.
+      warmupDay: hariPemanasanAwal(parsed.data.accountAge),
       provider: "BAILEYS",
       createdById: session.user.id,
     },

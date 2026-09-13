@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
+import { PROFIL_UMUR, UMUR_NOMOR, type UmurNomor } from "@/lib/messaging/account-age";
 
 interface Account {
   id: string;
@@ -14,12 +15,17 @@ interface Account {
   warmupDay?: number;
   todayLimit?: number;
   warmingUp?: boolean;
+  accountAge?: UmurNomor;
+  ageLabel?: string;
 }
 
 export default function WhatsAppAccounts() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [label, setLabel] = useState("");
+  const [umur, setUmur] = useState<UmurNomor>("BARU");
   const [loading, setLoading] = useState(false);
+  const [sedangDiatur, setSedangDiatur] = useState<string | null>(null);
+  const [menyimpan, setMenyimpan] = useState(false);
   const [qr, setQr] = useState<{ id: string; img: string | null; status: string; error?: string } | null>(null);
   const esRef = useRef<EventSource | null>(null);
 
@@ -54,10 +60,28 @@ export default function WhatsAppAccounts() {
     await fetch("/api/whatsapp/accounts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ label }),
+      body: JSON.stringify({ label, accountAge: umur }),
     });
     setLabel("");
+    setUmur("BARU");
     setLoading(false);
+    load();
+  }
+
+  async function simpanSetelan(id: string, data: { label?: string; dailyLimit?: number; accountAge?: UmurNomor }) {
+    setMenyimpan(true);
+    const r = await fetch(`/api/whatsapp/accounts/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    setMenyimpan(false);
+    if (!r.ok) {
+      const j = await r.json().catch(() => null);
+      alert(j?.error?.message ?? "Setelan gagal disimpan");
+      return;
+    }
+    setSedangDiatur(null);
     load();
   }
 
@@ -113,20 +137,33 @@ export default function WhatsAppAccounts() {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={add} className="flex gap-2">
-        <input
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          placeholder="Beri nama nomor ini, misalnya Nomor CS"
-          className="h-10 max-w-xs flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
-        >
-          Tambah nomor
-        </button>
+      <form onSubmit={add} className="space-y-2">
+        <div className="flex flex-wrap gap-2">
+          <input
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            placeholder="Beri nama nomor ini, misalnya Nomor CS"
+            className="h-10 min-w-[220px] flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+          />
+          <select
+            value={umur}
+            onChange={(e) => setUmur(e.target.value as UmurNomor)}
+            aria-label="Nomor ini sudah aktif berapa lama"
+            className="h-10 rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none"
+          >
+            {UMUR_NOMOR.map((u) => (
+              <option key={u} value={u}>Sudah aktif: {PROFIL_UMUR[u].label}</option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+          >
+            Tambah nomor
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">{PROFIL_UMUR[umur].keterangan}</p>
       </form>
 
       {accounts.length === 0 && (
@@ -171,8 +208,16 @@ export default function WhatsAppAccounts() {
                     Hubungkan
                   </button>
                 )}
+                <button
+                  onClick={() => setSedangDiatur(sedangDiatur === a.id ? null : a.id)}
+                  className="h-10 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-foreground/30 hover:text-foreground"
+                >
+                  {sedangDiatur === a.id ? "Tutup" : "Atur"}
+                </button>
               </div>
             </div>
+
+            {sedangDiatur === a.id && <SetelanNomor akun={a} menyimpan={menyimpan} onSimpan={simpanSetelan} />}
 
             {qr?.id === a.id && (
               <div className="mt-4 flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4">
@@ -204,5 +249,104 @@ export default function WhatsAppAccounts() {
         ))}
       </div>
     </div>
+  );
+}
+
+/**
+ * Setelan satu nomor: nama, umur, dan batas kirim hariannya.
+ *
+ * Umur nomor tidak bisa diketahui sistem — yang dilihatnya cuma kapan nomor
+ * itu disambungkan ke sini. Pemiliknya yang tahu, dan jawabannya menentukan
+ * dari anak tangga pemanasan mana nomor itu mulai.
+ */
+function SetelanNomor({
+  akun,
+  menyimpan,
+  onSimpan,
+}: {
+  akun: Account;
+  menyimpan: boolean;
+  onSimpan: (id: string, data: { label?: string; dailyLimit?: number; accountAge?: UmurNomor }) => void;
+}) {
+  const [nama, setNama] = useState(akun.label);
+  const [umur, setUmur] = useState<UmurNomor>(akun.accountAge ?? "BARU");
+  const [batas, setBatas] = useState(String(akun.dailyLimit ?? 100));
+
+  const profil = PROFIL_UMUR[umur];
+  const umurBerubah = umur !== (akun.accountAge ?? "BARU");
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSimpan(akun.id, { label: nama.trim() || akun.label, accountAge: umur, dailyLimit: Number(batas) || 1 });
+      }}
+      className="mt-4 space-y-3 rounded-xl border border-border bg-muted/40 p-4"
+    >
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground" htmlFor={`nama-${akun.id}`}>
+            Nama nomor
+          </label>
+          <input
+            id={`nama-${akun.id}`}
+            value={nama}
+            onChange={(e) => setNama(e.target.value)}
+            className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground" htmlFor={`umur-${akun.id}`}>
+            Nomor ini sudah aktif berapa lama?
+          </label>
+          <select
+            id={`umur-${akun.id}`}
+            value={umur}
+            onChange={(e) => setUmur(e.target.value as UmurNomor)}
+            className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none"
+          >
+            {UMUR_NOMOR.map((u) => (
+              <option key={u} value={u}>{PROFIL_UMUR[u].label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground" htmlFor={`batas-${akun.id}`}>
+            Batas kirim per hari
+          </label>
+          <input
+            id={`batas-${akun.id}`}
+            inputMode="numeric"
+            value={batas}
+            onChange={(e) => setBatas(e.target.value.replace(/[^\d]/g, ""))}
+            className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none"
+          />
+          <p className="text-xs text-muted-foreground">
+            Disarankan {profil.batasDisarankan} untuk nomor seumur ini.
+          </p>
+        </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground">{profil.keterangan}</p>
+
+      {/* Mengubah umur menyetel ulang hitungan pemanasan. Itu wajar, tapi harus
+          disebutkan dulu — bukan ditemukan sendiri saat kirimannya tiba-tiba
+          dibatasi 20 pesan sehari. */}
+      {umurBerubah && (
+        <p className="text-xs text-warning">
+          Mengubah umur nomor akan menghitung ulang masa pemanasannya dari awal untuk umur yang baru dipilih.
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={menyimpan}
+        className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-foreground hover:text-background disabled:opacity-50"
+      >
+        Simpan setelan
+      </button>
+    </form>
   );
 }
