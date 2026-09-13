@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, type LucideIcon } from "lucide-react";
+import { ArrowRight, Inbox, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * sinilah arahan paling dibutuhkan.
  */
 export default function EmptyState({
-  icon: Icon,
+  icon: Icon = Inbox,
   title,
   hint,
   action,
@@ -30,18 +30,18 @@ export default function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border px-6 py-10 text-center",
+        "flex flex-col items-center justify-center gap-4 rounded-2xl border border-border/60 bg-muted/20 px-6 py-10 text-center",
         className,
       )}
     >
       {Icon && (
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-foreground/[0.06] text-foreground/60">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-card text-foreground/60 shadow-sm">
           <Icon className="h-5 w-5" />
         </span>
       )}
       <div>
         <p className="text-sm font-semibold text-foreground">{title}</p>
-        {hint && <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">{hint}</p>}
+        {hint && <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">{hint}</p>}
       </div>
       {action && (
         <Link

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { isNavActive, sectionForPath, tabsForPath } from "@/components/dashboard/nav-config";
 import { useNavAccess } from "@/components/dashboard/nav-access";
+import { ChevronRight, Lock } from "lucide-react";
 
 interface PageHeroProps {
   title: string;
@@ -42,22 +43,19 @@ export default function PageHero({ title, description, rightSlot, className }: P
     <div className={cn("cg-page-hero space-y-5", className)}>
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <span
-            className={cn(
-              "inline-flex items-center text-xs font-medium tracking-wide",
-              "text-muted-foreground",
-            )}
-          >
-            {group}
-          </span>
+          <nav aria-label="Lokasi halaman" className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <a href="/dashboard" className="transition hover:text-foreground">Workspace</a>
+            <ChevronRight className="h-3 w-3" aria-hidden="true" />
+            <span>{group}</span>
+          </nav>
           <h1 className="cg-display mt-2.5 text-[clamp(1.75rem,2.8vw,2.35rem)]">{title}</h1>
-          <p className="mt-2 max-w-3xl text-sm sm:text-base leading-relaxed text-muted-foreground">{description}</p>
+          <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-muted-foreground sm:text-base">{description}</p>
         </div>
         {rightSlot && <div className="shrink-0">{rightSlot}</div>}
       </div>
 
       {tabs.length > 1 && (
-        <nav aria-label="Bagian di menu ini" className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
+        <nav aria-label="Bagian di menu ini" className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-1 sm:rounded-full">
           {tabs.map((t) => {
             const active = isNavActive(pathname, t.href);
             const locked = Boolean(t.planFeature && planFeatures && planFeatures[t.planFeature] === false);
@@ -69,13 +67,11 @@ export default function PageHero({ title, description, rightSlot, className }: P
               return (
                 <span
                   key={t.href}
-                  className="flex items-center gap-2 border-b-2 border-transparent px-3 pb-2.5 pt-1 text-sm font-medium text-muted-foreground"
+                  className="flex min-h-10 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-muted-foreground"
                   title="Fitur ini ada di paket yang lebih tinggi"
                 >
                   {t.label}
-                  <span className="rounded bg-warning/15 px-1.5 py-0.5 text-xs font-semibold uppercase text-warning">
-                    Bisnis
-                  </span>
+                  <Lock className="h-3.5 w-3.5" aria-label="Memerlukan peningkatan paket" />
                 </span>
               );
             }

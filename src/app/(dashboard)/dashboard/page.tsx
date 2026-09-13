@@ -79,10 +79,10 @@ export default async function DashboardPage({
   const isLowCredits = credits < 100;
 
   const metrics = [
-    { label: "Kontak tersimpan", value: contacts.toLocaleString("id-ID"), hint: "Calon pembeli yang sudah masuk daftarmu", icon: Users },
-    { label: "Tugas terbuka", value: tasks.toLocaleString("id-ID"), hint: "Pekerjaan yang belum kamu selesaikan", icon: CheckCircle2 },
-    { label: "Belum dibaca", value: openConversations.toLocaleString("id-ID"), hint: "Percakapan dengan pesan yang belum dibaca", icon: MessageSquare },
-    { label: "Penjualan tercatat", value: formatIDR(revenue), hint: "Total dari penjualan yang sudah jadi", icon: TrendingUp, accent: true },
+    { label: "Kontak tersimpan", value: contacts.toLocaleString("id-ID"), hint: "Calon pembeli yang sudah masuk daftarmu", icon: Users, href: "/dashboard/contacts" },
+    { label: "Tugas terbuka", value: tasks.toLocaleString("id-ID"), hint: "Pekerjaan yang belum kamu selesaikan", icon: CheckCircle2, href: "/dashboard/tasks" },
+    { label: "Belum dibaca", value: openConversations.toLocaleString("id-ID"), hint: "Percakapan dengan pesan yang belum dibaca", icon: MessageSquare, href: "/dashboard/inbox" },
+    { label: "Penjualan tercatat", value: formatIDR(revenue), hint: "Total dari penjualan yang sudah jadi", icon: TrendingUp, accent: true, href: "/dashboard/crm" },
   ];
 
 

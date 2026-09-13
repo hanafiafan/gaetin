@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
 
 /**
  * Beberapa metrik sejajar di dalam SATU kartu lebar, dengan panel opsional di
@@ -19,6 +20,7 @@ export interface Metric {
   icon?: LucideIcon;
   /** Sorot satu metrik terpenting dengan warna aksen. */
   accent?: boolean;
+  href?: string;
 }
 
 export default function MetricStrip({
@@ -44,9 +46,11 @@ export default function MetricStrip({
             // mendorong angkanya jauh dari labelnya; rata-atas menyisakan
             // kolom kosong tinggi di bawahnya. Rata-tengah dengan gap tetap
             // menjaga label dan angka tetap satu kesatuan.
-            <div key={m.label} className="flex flex-col justify-center gap-4 bg-card p-4 sm:p-6">
+            <div key={m.label} className="group relative flex min-w-0 flex-col justify-center gap-4 bg-card p-4 sm:p-6">
               <div className="flex items-start justify-between gap-3">
-                <p className="text-xs font-medium tracking-wide text-muted-foreground">{m.label}</p>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground">
+                  {m.href ? <a href={m.href} className="after:absolute after:inset-0 after:rounded-xl hover:text-foreground focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-primary">{m.label}<ArrowUpRight className="ml-1 inline h-3 w-3 opacity-50 transition group-hover:opacity-100" aria-hidden="true" /></a> : m.label}
+                </p>
                 {Icon && (
                   <span
                     className={cn(
@@ -62,7 +66,7 @@ export default function MetricStrip({
                 {/* Angka selalu near-black. Lime di atas putih cuma sekitar 1,6:1 —
                     terbaca sebagai teks pudar, bukan sorotan. Aksennya sudah
                     dibawa chip ikon dan pita tepi atas kartu. */}
-                <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                <p className="break-words text-2xl font-semibold tabular-nums tracking-tight text-foreground sm:text-3xl">
                   {m.value}
                 </p>
                 {m.hint && <p className="mt-1 text-xs text-muted-foreground">{m.hint}</p>}
