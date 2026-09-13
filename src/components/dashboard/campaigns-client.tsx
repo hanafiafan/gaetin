@@ -24,6 +24,11 @@ interface MessagingQuota {
   used: number;
   remaining: number;
   resetAt: string;
+  connectedNumbers: number;
+  numberCapacity: number;
+  effectiveLimit: number;
+  effectiveRemaining: number;
+  bottleneck: "numbers" | "plan";
 }
 
 function campaignPct(c: Campaign) {
@@ -140,11 +145,24 @@ export default function CampaignsClient() {
               <span className="text-xs text-muted-foreground">{quota.planName}</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-muted">
-              <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
+              <div
+                className="h-1.5 rounded-full bg-whatsapp"
+                style={{ width: `${Math.min(100, Math.round((quota.used / Math.max(1, quota.effectiveLimit)) * 100))}%` }}
+              />
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.
+              {quota.effectiveRemaining.toLocaleString("id-ID")} sisa dari {quota.effectiveLimit.toLocaleString("id-ID")} pesan hari ini.
             </p>
+            {/* Angka paket saja menyesatkan: satu nomor punya batas amannya
+                sendiri, dan menampilkan "1.000 sisa" ke orang yang hanya punya
+                satu nomor berbatas 100 bukan optimistis — itu salah. */}
+            {quota.bottleneck === "numbers" && (
+              <p className="mt-1.5 text-xs text-warning">
+                {quota.connectedNumbers === 0
+                  ? `Paket ${quota.planName} mengizinkan ${quota.limit.toLocaleString("id-ID")} pesan/hari, tapi belum ada nomor WhatsApp tersambung.`
+                  : `Paket ${quota.planName} mengizinkan ${quota.limit.toLocaleString("id-ID")} pesan/hari, tapi ${quota.connectedNumbers} nomor yang tersambung aman untuk ${quota.numberCapacity.toLocaleString("id-ID")}. Tambah nomor untuk memakai sisa jatah paket.`}
+              </p>
+            )}
           </div>
         )}
         <form onSubmit={create} className="space-y-3">

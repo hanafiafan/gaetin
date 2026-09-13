@@ -19,6 +19,8 @@ interface MessagingQuota {
   used: number;
   remaining: number;
   resetAt: string;
+  effectiveLimit: number;
+  effectiveRemaining: number;
 }
 
 export default function FollowUpsClient() {
@@ -109,10 +111,10 @@ export default function FollowUpsClient() {
                 <span className="text-xs text-muted-foreground">{quota.planName}</span>
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-muted">
-                <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / quota.limit) * 100))}%` }} />
+                <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${Math.min(100, Math.round((quota.used / Math.max(1, quota.effectiveLimit)) * 100))}%` }} />
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                {quota.remaining.toLocaleString("id-ID")} sisa dari {quota.limit.toLocaleString("id-ID")} pesan hari ini.
+                {quota.effectiveRemaining.toLocaleString("id-ID")} sisa dari {quota.effectiveLimit.toLocaleString("id-ID")} pesan hari ini.
               </p>
             </div>
           )}
