@@ -49,7 +49,7 @@ export default function TemplatesClient() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[420px_minmax(0,1fr)]">
-      <div className="cg-card cg-tone-top rounded-xl p-5">
+      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5">
         <form onSubmit={create} className="space-y-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Buat contoh pesan baru</h2>
@@ -59,14 +59,14 @@ export default function TemplatesClient() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Beri nama pesan ini"
+            aria-label="Beri nama pesan ini" placeholder="Beri nama pesan ini"
             className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={5}
-            placeholder="Halo {{nama}}! {Promo|Penawaran} spesial untuk bisnis di {{kota}}."
+            aria-label="Halo {{nama}}! {Promo|Penawaran} spesial untuk bisnis di {{kota}}." placeholder="Halo {{nama}}! {Promo|Penawaran} spesial untuk bisnis di {{kota}}."
             className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           {body && (
@@ -88,7 +88,7 @@ export default function TemplatesClient() {
         </form>
       </div>
 
-      <div className="cg-card rounded-xl p-5">
+      <div className="cg-card cg-sheet rounded-xl p-5">
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-foreground">Contoh pesan tersimpan</h2>
           <p className="text-sm text-muted-foreground">{items.length} template tersimpan</p>

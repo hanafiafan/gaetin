@@ -133,7 +133,7 @@ export default function AccountSettings() {
                 type={showCurrent ? "text" : "password"}
                 value={currentPw}
                 onChange={e => setCurrentPw(e.target.value)}
-                placeholder="••••••••"
+                aria-label="••••••••" placeholder="••••••••"
                 className="h-10 w-full rounded-xl border border-border bg-card px-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <button type="button" onClick={() => setShowCurrent(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80">
@@ -148,7 +148,7 @@ export default function AccountSettings() {
                 type={showNew ? "text" : "password"}
                 value={newPw}
                 onChange={e => setNewPw(e.target.value)}
-                placeholder="••••••••"
+                aria-label="••••••••" placeholder="••••••••"
                 className="h-10 w-full rounded-xl border border-border bg-card px-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <button type="button" onClick={() => setShowNew(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground/80">

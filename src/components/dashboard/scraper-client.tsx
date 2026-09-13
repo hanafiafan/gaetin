@@ -297,7 +297,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
     <div className="space-y-5">
       <div className="grid gap-4 items-start">
         {activeJobId && jobStatus === "RUNNING" ? (
-            <div className="cg-card rounded-xl border-primary/30 bg-primary/[0.03]">
+            <div className="cg-card cg-sheet rounded-xl border-primary/30 bg-primary/[0.03]">
               <div className="p-5">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-primary/10">
@@ -328,7 +328,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
               </div>
             </div>
           ) : (
-            <div className="cg-card rounded-xl">
+            <div className="cg-card cg-sheet rounded-xl">
           <div className="space-y-5 p-5">
 
             <div className="space-y-2">
@@ -364,7 +364,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                           }
                         }
                       }}
-                      placeholder="Ketik lalu tekan Enter (mis. kedai kopi)"
+                      aria-label="Ketik lalu tekan Enter (mis. kedai kopi)" placeholder="Ketik lalu tekan Enter (mis. kedai kopi)"
                       className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
                     />
                   </div>
@@ -402,11 +402,11 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-muted-foreground">Wilayah / Kota</label>
-                      <input placeholder="cth: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
+                      <input aria-label="cth: Jakarta Selatan" placeholder="cth: Jakarta Selatan" value={regionInput} onChange={(e) => setRegionInput(e.target.value)} className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-muted-foreground">Maksimal berapa bisnis</label>
-                      <input type="number" min="1" max="1000" placeholder="100" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
+                      <input type="number" min="1" max="1000" aria-label="100" placeholder="100" value={maxLeads} onChange={(e) => setMaxLeads(e.target.value)} className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
                     </div>
                   </div>
                 </div>
@@ -477,7 +477,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       </div>
 
       {savedJobs.length > 0 && (
-        <div className="cg-card rounded-xl">
+        <div className="cg-card cg-sheet rounded-xl">
           <div className="p-4">
             <div className="mb-3 flex items-center gap-2">
               <h2 className="text-lg font-semibold text-foreground">Pencarian sebelumnya</h2>
@@ -520,7 +520,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
       )}
 
       {selectedJobId && (
-        <div className="cg-card rounded-xl">
+        <div className="cg-card cg-sheet rounded-xl">
           <div className="space-y-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -554,7 +554,7 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
             <div className="grid gap-2 rounded-xl border border-border bg-card p-3 md:grid-cols-[minmax(0,1fr)_150px_120px_140px]">
               <div className="relative">
                 <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input value={leadQuery} onChange={(e) => setLeadQuery(e.target.value)} placeholder="Cari bisnis, kategori, atau nomor" className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
+                <input value={leadQuery} onChange={(e) => setLeadQuery(e.target.value)} aria-label="Cari bisnis, kategori, atau nomor" placeholder="Cari bisnis, kategori, atau nomor" className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none" />
               </div>
               <select
                 value={savedFilter}

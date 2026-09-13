@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { isNavActive, sectionForPath, tabsForPath } from "@/components/dashboard/nav-config";
 import { useNavAccess } from "@/components/dashboard/nav-access";
-import { TONE_SOFT } from "@/components/dashboard/section-tone";
 
 interface PageHeroProps {
   title: string;
@@ -31,7 +30,7 @@ interface PageHeroProps {
  */
 export default function PageHero({ title, description, rightSlot, className }: PageHeroProps) {
   const pathname = usePathname();
-  const { group, tone } = sectionForPath(pathname);
+  const { group } = sectionForPath(pathname);
   const { featureFlags, planFeatures } = useNavAccess();
 
   // Tab saudara sekandung: halaman lain di menu yang sama. Sengaja dirender di
@@ -40,25 +39,25 @@ export default function PageHero({ title, description, rightSlot, className }: P
   const tabs = (tabsForPath(pathname) ?? []).filter((t) => !t.flag || featureFlags?.[t.flag] !== false);
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className={cn("cg-page-hero space-y-5", className)}>
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
           <span
             className={cn(
-              "inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wide",
-              TONE_SOFT[tone],
+              "inline-flex items-center text-xs font-medium tracking-wide",
+              "text-muted-foreground",
             )}
           >
             {group}
           </span>
           <h1 className="cg-display mt-2.5 text-[clamp(1.75rem,2.8vw,2.35rem)]">{title}</h1>
-          <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">{description}</p>
+          <p className="mt-2 max-w-3xl text-sm sm:text-base leading-relaxed text-muted-foreground">{description}</p>
         </div>
         {rightSlot && <div className="shrink-0">{rightSlot}</div>}
       </div>
 
       {tabs.length > 1 && (
-        <nav aria-label="Bagian di menu ini" className="flex flex-wrap items-center gap-1 border-b border-border">
+        <nav aria-label="Bagian di menu ini" className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
           {tabs.map((t) => {
             const active = isNavActive(pathname, t.href);
             const locked = Boolean(t.planFeature && planFeatures && planFeatures[t.planFeature] === false);
@@ -87,10 +86,10 @@ export default function PageHero({ title, description, rightSlot, className }: P
                 href={t.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "-mb-px border-b-2 px-3 pb-2.5 pt-1 text-sm transition",
+                  "flex min-h-10 items-center rounded-full px-4 py-2 text-sm transition",
                   active
-                    ? "border-foreground font-semibold text-foreground"
-                    : "border-transparent text-muted-foreground hover:border-foreground/20 hover:text-foreground",
+                    ? "bg-primary font-semibold text-primary-foreground"
+                    : "text-muted-foreground hover:bg-white/10 hover:text-foreground",
                 )}
               >
                 {t.label}

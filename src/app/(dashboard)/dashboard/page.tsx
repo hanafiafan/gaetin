@@ -4,6 +4,7 @@ import { getEffectiveStatus } from "@/config/plans";
 import {
   AlertTriangle,
   Building2,
+  ArrowUpRight,
   CheckCircle2,
   MessageSquare,
   TrendingUp,
@@ -29,7 +30,7 @@ export default async function DashboardPage({
   const [contacts, leads, openConversations, wonAgg, subscription, accounts, blasts, campaigns, tasks, workspace, recentLeads] = await Promise.all([
     prisma.contact.count({ where: { workspaceId } }),
     prisma.lead.count({ where: { workspaceId } }),
-    prisma.conversation.count({ where: { workspaceId, status: "OPEN" } }),
+    prisma.conversation.count({ where: { workspaceId, status: "OPEN", unreadCount: { gt: 0 } } }),
     prisma.deal.aggregate({ _sum: { value: true }, where: { workspaceId, status: "WON" } }),
     prisma.subscription.findUnique({ where: { workspaceId } }),
     prisma.messagingAccount.count({ where: { workspaceId, status: "CONNECTED" } }),
@@ -79,9 +80,9 @@ export default async function DashboardPage({
 
   const metrics = [
     { label: "Kontak tersimpan", value: contacts.toLocaleString("id-ID"), hint: "Calon pembeli yang sudah masuk daftarmu", icon: Users },
-    { label: "Tugas hari ini", value: tasks.toLocaleString("id-ID"), hint: "Pekerjaan yang belum kamu selesaikan", icon: CheckCircle2 },
-    { label: "Belum dibalas", value: openConversations.toLocaleString("id-ID"), hint: "Pesan masuk yang menunggu jawabanmu", icon: MessageSquare },
-    { label: "Uang masuk", value: formatIDR(revenue), hint: "Total dari penjualan yang sudah jadi", icon: TrendingUp, accent: true },
+    { label: "Tugas terbuka", value: tasks.toLocaleString("id-ID"), hint: "Pekerjaan yang belum kamu selesaikan", icon: CheckCircle2 },
+    { label: "Belum dibaca", value: openConversations.toLocaleString("id-ID"), hint: "Percakapan dengan pesan yang belum dibaca", icon: MessageSquare },
+    { label: "Penjualan tercatat", value: formatIDR(revenue), hint: "Total dari penjualan yang sudah jadi", icon: TrendingUp, accent: true },
   ];
 
 
@@ -90,35 +91,35 @@ export default async function DashboardPage({
   // dari data nyata — bukan dari centang manual yang bisa bohong.
   const workflow = [
     {
-      title: "Pasang alat di browser Chrome",
+      title: "Siapkan alat pencarian",
       desc: "Sekali saja. Alat inilah yang nanti mengambil data bisnis dari Google Maps.",
       href: "/dashboard/setup",
       cta: "Mulai pasang",
       done: leads > 0 || contacts > 0,
     },
     {
-      title: "Sambungkan nomor WhatsApp",
+      title: "Hubungkan WhatsApp",
       desc: "Nomor ini yang dipakai mengirim pesan. Bisa lebih dari satu.",
       href: "/dashboard/settings",
       cta: "Sambungkan",
       done: accounts > 0,
     },
     {
-      title: "Cari calon pembeli di Google Maps",
+      title: "Kumpulkan prospek",
       desc: "Ketik jenis usaha dan kotanya, lalu simpan hasilnya jadi daftar kontak.",
       href: "/dashboard/scraper",
       cta: "Cari sekarang",
       done: contacts > 0,
     },
     {
-      title: "Kirim pesan ke mereka",
+      title: "Mulai pengiriman",
       desc: "Satu pesan, banyak penerima. Nama tiap orang disisipkan otomatis.",
       href: "/dashboard/campaigns",
       cta: "Kirim pesan",
       done: blasts + campaigns > 0,
     },
     {
-      title: "Balas dan catat yang jadi beli",
+      title: "Kelola penjualan",
       desc: "Balasan masuk ke Pesan Masuk. Yang serius, pindahkan ke Peluang Penjualan.",
       href: "/dashboard/inbox",
       cta: "Lihat balasan",
@@ -164,20 +165,20 @@ export default async function DashboardPage({
           angka. */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <span className="inline-flex items-center rounded-md bg-primary/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-foreground">
-            Mulai
+          <span className="inline-flex items-center text-xs font-medium tracking-wide text-muted-foreground">
+            Workspace / Ringkasan
           </span>
           <h1 className="cg-display mt-2.5 text-[clamp(1.75rem,2.8vw,2.35rem)]">
-            Halo, {session.user.name.split(" ")[0]}
+            Ringkasan workspace
           </h1>
           <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">
-            Ini ringkasan workspace-mu. Kalau bingung harus mulai dari mana, ikuti lima langkah di bawah.
+            Pantau prospek, tindak lanjuti percakapan, dan tentukan langkah berikutnya.
           </p>
         </div>
         {subscription && (
           <span className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
             {planLabel} · {statusLabel}
-            {trialDaysLeft !== null ? ` · Trial ${trialDaysLeft} hari` : ""}
+
           </span>
         )}
       </div>
@@ -188,7 +189,22 @@ export default async function DashboardPage({
       {/* Lalu alur kerjanya. Ini bagian terpenting halaman untuk orang yang
           baru pertama masuk: satu langkah disorot sebagai giliran sekarang,
           sisanya jelas sudah atau belum. */}
-      <WorkflowGuide steps={workflow} />
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <WorkflowGuide steps={workflow} />
+        <aside className="cg-onyx flex flex-col justify-between rounded-3xl border border-white/10 p-6">
+          <div>
+            <span className="text-xs text-muted-foreground">PERLU PERHATIAN</span>
+            <h2 className="mt-5 text-xl font-medium">Fokus berikutnya</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Selesaikan pekerjaan yang sedang menunggu.</p>
+            <div className="mt-6 divide-y divide-border">
+              {[{label: "Percakapan belum dibaca", value: openConversations, href: "/dashboard/inbox"}, {label: "Tugas terbuka", value: tasks, href: "/dashboard/tasks"}].map(item => (
+                <Link key={item.href} href={item.href} className="flex items-center justify-between gap-3 py-4 text-sm hover:text-primary"><span>{item.label}</span><span className="flex items-center gap-3 font-semibold">{item.value}<ArrowUpRight className="h-4 w-4" /></span></Link>
+              ))}
+            </div>
+          </div>
+          <Link href={accounts ? "/dashboard/campaigns" : "/dashboard/settings"} className="mt-6 flex min-h-11 items-center justify-between rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground">{accounts ? "Buat pengiriman" : "Hubungkan WhatsApp"}<ArrowUpRight className="h-4 w-4" /></Link>
+        </aside>
+      </div>
 
       {/* Tiga blok dihapus di sini, semuanya mengulang isi layar yang sama:
 
@@ -202,7 +218,7 @@ export default async function DashboardPage({
             ditulis ulang sebagai angka. */}
 
       {/* Bisnis yang baru ditemukan */}
-      <div className="cg-card rounded-xl p-5">
+      <div className="cg-card cg-sheet rounded-xl p-5">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold text-foreground">Bisnis yang baru ditemukan</h2>
             <Link href="/dashboard/scraper" className="text-xs font-semibold text-foreground transition hover:underline">Lihat semua</Link>
@@ -214,7 +230,7 @@ export default async function DashboardPage({
               </div>
             ) : (
               recentLeads.map((lead, i) => (
-                <div key={i} className="flex items-center gap-3 border border-border bg-card px-4 py-3">
+                <div key={i} className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-border bg-muted">
                     <Building2 className="h-4 w-4 text-muted-foreground" />
                   </div>

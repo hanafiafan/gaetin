@@ -148,13 +148,13 @@ export default function ContactsTable() {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nama (opsional)"
+              aria-label="Nama (opsional)" placeholder="Nama (opsional)"
               className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="08xxxxxxxxxx"
+              aria-label="08xxxxxxxxxx" placeholder="08xxxxxxxxxx"
               className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
             {formError && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{formError}</div>}
@@ -169,7 +169,7 @@ export default function ContactsTable() {
         }
       />
 
-      <div className="cg-card rounded-xl">
+      <div className="cg-card cg-sheet rounded-xl">
         <div className="space-y-3 p-4">
           {/* Search + filter */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -178,7 +178,7 @@ export default function ContactsTable() {
               <input
                 value={query}
                 onChange={(e) => { setPage(1); setQuery(e.target.value); }}
-                placeholder={emailOnly ? "Cari nama, email, atau label..." : "Cari nama, nomor, email, atau label..."}
+                aria-label="Cari kontak" placeholder={emailOnly ? "Cari nama, email, atau label..." : "Cari nama, nomor, email, atau label..."}
                 className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
             </div>
@@ -194,7 +194,7 @@ export default function ContactsTable() {
               </label>
               <div className="flex h-10 items-center gap-2 rounded-xl border border-border bg-card px-3 text-sm">
                 <Filter className="h-4 w-4 text-muted-foreground" />
-                <select
+                <select aria-label="Filter status WhatsApp"
                   value={waStatus}
                   onChange={(e) => { setPage(1); setWaStatus(e.target.value); }}
                   className="bg-transparent text-sm text-foreground outline-none"

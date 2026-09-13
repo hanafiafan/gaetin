@@ -100,8 +100,8 @@ export default function WorkspaceNav({
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex min-h-[56px] max-w-[1600px] flex-wrap items-center gap-2 px-3 sm:px-5 lg:px-7">
+      <header className="cg-topbar sticky top-0 z-30 bg-background/95 backdrop-blur">
+        <div className="mx-auto flex min-h-[76px] max-w-[1600px] flex-wrap items-center gap-2 px-3 sm:px-5 lg:px-7">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
             <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
             <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
@@ -110,7 +110,7 @@ export default function WorkspaceNav({
           <nav
             ref={navRef}
             aria-label="Bagian utama"
-            className="hidden items-center gap-0.5 rounded-lg border border-border p-0.5 lg:flex"
+            className="cg-primary-nav hidden items-center gap-1 rounded-full bg-white p-1 lg:flex"
           >
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
@@ -126,10 +126,10 @@ export default function WorkspaceNav({
                     href={navItemHref(g.items[0], featureFlags)}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex h-9 items-center whitespace-nowrap rounded-md px-3 text-sm font-medium transition",
+                      "flex h-9 items-center whitespace-nowrap rounded-full px-3 text-sm font-medium transition",
                       active
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
                     )}
                   >
                     {g.label}
@@ -146,10 +146,10 @@ export default function WorkspaceNav({
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpenGroup(open ? null : g.label)}
                     className={cn(
-                      "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm font-medium transition",
+                      "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-sm font-medium transition",
                       active
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground/75 hover:bg-foreground/5 hover:text-foreground",
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
                     )}
                   >
                     {g.label}

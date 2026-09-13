@@ -85,7 +85,7 @@ export default function SupportClient() {
       {/* Satu kartu berisi daftar yang dipisah garis rambut, bukan enam kartu
           melayang dengan celah di antaranya — FAQ adalah satu daftar, bukan
           enam benda terpisah. */}
-      <div className="cg-card cg-tone-top overflow-hidden rounded-xl">
+      <div className="cg-card cg-sheet cg-tone-top overflow-hidden rounded-xl">
         <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3.5">
           <HelpCircle className="h-4 w-4 text-foreground/70" />
           <h2 className="text-lg font-semibold text-foreground">Pertanyaan umum</h2>
@@ -111,7 +111,7 @@ export default function SupportClient() {
 
       {/* Ticket form + list */}
       <div className="space-y-5">
-        <div className="cg-card rounded-xl p-5">
+        <div className="cg-card cg-sheet rounded-xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <LifeBuoy className="h-4 w-4 text-foreground" />
             <h2 className="text-lg font-semibold text-foreground">Kirim pertanyaan ke kami</h2>
@@ -129,7 +129,7 @@ export default function SupportClient() {
               <input
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="Ringkasan kendala Anda..."
+                aria-label="Ringkasan kendala Anda..." placeholder="Ringkasan kendala Anda..."
                 required
                 className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none focus:ring-0"
               />
@@ -140,7 +140,7 @@ export default function SupportClient() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
-                placeholder="Jelaskan kendala Anda secara detail..."
+                aria-label="Jelaskan kendala Anda secara detail..." placeholder="Jelaskan kendala Anda secara detail..."
                 required
                 className="w-full rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none focus:ring-0 resize-none"
               />
@@ -173,7 +173,7 @@ export default function SupportClient() {
               {tickets.map((t) => {
                 const s = STATUS_MAP[t.status] ?? { label: t.status, color: "bg-muted-foreground/15 text-muted-foreground" };
                 return (
-                  <div key={t.id} className="cg-card flex items-center justify-between gap-3 rounded-xl px-4 py-3">
+                  <div key={t.id} className="cg-card cg-sheet flex items-center justify-between gap-3 rounded-xl px-4 py-3">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold text-foreground">{t.subject}</p>
                       <p className="flex items-center gap-1 text-xs text-muted-foreground">

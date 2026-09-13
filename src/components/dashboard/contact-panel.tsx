@@ -246,7 +246,7 @@ export default function ContactPanel({ contactId, onClose }: { contactId: string
                 <input
                   value={taskTitle}
                   onChange={(e) => setTaskTitle(e.target.value)}
-                  placeholder="Mis. telepon ulang besok pagi"
+                  aria-label="Mis. telepon ulang besok pagi" placeholder="Mis. telepon ulang besok pagi"
                   className="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
                 />
                 <input
@@ -271,7 +271,7 @@ export default function ContactPanel({ contactId, onClose }: { contactId: string
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 rows={2}
-                placeholder="Hasil telepon, keberatan yang muncul, janji yang dibuat..."
+                aria-label="Hasil telepon, keberatan yang muncul, janji yang dibuat..." placeholder="Hasil telepon, keberatan yang muncul, janji yang dibuat..."
                 className="w-full rounded-lg border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <button

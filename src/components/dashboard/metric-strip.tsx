@@ -35,8 +35,8 @@ export default function MetricStrip({
   className?: string;
 }) {
   return (
-    <div className={cn("cg-card cg-tone-top grid gap-px overflow-hidden rounded-xl bg-border", aside && "lg:grid-cols-[1fr_auto]", className)}>
-      <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+    <div className={cn("cg-metrics cg-onyx grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-border", aside && "lg:grid-cols-[1fr_auto]", className)}>
+      <div className="grid gap-px bg-border grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         {items.map((m) => {
           const Icon = m.icon;
           return (
@@ -44,9 +44,9 @@ export default function MetricStrip({
             // mendorong angkanya jauh dari labelnya; rata-atas menyisakan
             // kolom kosong tinggi di bawahnya. Rata-tengah dengan gap tetap
             // menjaga label dan angka tetap satu kesatuan.
-            <div key={m.label} className="flex flex-col justify-center gap-4 bg-card p-5">
+            <div key={m.label} className="flex flex-col justify-center gap-4 bg-card p-4 sm:p-6">
               <div className="flex items-start justify-between gap-3">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{m.label}</p>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground">{m.label}</p>
                 {Icon && (
                   <span
                     className={cn(
@@ -62,7 +62,7 @@ export default function MetricStrip({
                 {/* Angka selalu near-black. Lime di atas putih cuma sekitar 1,6:1 —
                     terbaca sebagai teks pudar, bukan sorotan. Aksennya sudah
                     dibawa chip ikon dan pita tepi atas kartu. */}
-                <p className="text-3xl font-semibold tracking-tight text-foreground">
+                <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
                   {m.value}
                 </p>
                 {m.hint && <p className="mt-1 text-xs text-muted-foreground">{m.hint}</p>}
