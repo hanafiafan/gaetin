@@ -142,7 +142,7 @@ export default function WhatsAppAccounts() {
           <input
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            aria-label="Beri nama nomor ini, misalnya Nomor CS" placeholder="Beri nama nomor ini, misalnya Nomor CS"
+            placeholder="Beri nama nomor ini, misalnya Nomor CS"
             className="h-10 min-w-[220px] flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <select
@@ -172,7 +172,7 @@ export default function WhatsAppAccounts() {
 
       <div className="space-y-3">
         {accounts.map((a) => (
-          <div key={a.id} className="cg-card cg-sheet rounded-xl p-4">
+          <div key={a.id} className="cg-card rounded-xl p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="font-bold text-foreground">{a.label}</p>

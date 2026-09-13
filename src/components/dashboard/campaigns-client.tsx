@@ -126,7 +126,7 @@ export default function CampaignsClient() {
         !sudahDimuat || campaigns.length > 0 ? "xl:grid-cols-[420px_minmax(0,1fr)]" : "mx-auto w-full max-w-2xl",
       )}
     >
-      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Buat pengiriman baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Pilih contoh pesan, tentukan siapa yang dikirimi, lalu atur waktunya.</p>
@@ -135,28 +135,25 @@ export default function CampaignsClient() {
         {info && <div className="rounded-xl bg-success/10 px-3 py-2 text-sm text-success">{info}</div>}
         {quota && <QuotaPanel quota={quota} />}
         <form onSubmit={create} className="space-y-3">
-          <label htmlFor="campaign-name" className="block text-xs font-semibold text-muted-foreground">01 · Nama pengiriman</label>
-          <input id="campaign-name"
+          <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Beri nama pengiriman ini"
             className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
-          <label htmlFor="campaign-account" className="block text-xs font-semibold text-muted-foreground">02 · Nomor pengirim</label>
-          <select id="campaign-account" value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
+          <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
             <option value="">Pilih nomor pengirim...</option>
             {connected.map((a) => (<option key={a.id} value={a.id}>{a.label}</option>))}
           </select>
-          <p className="text-xs font-semibold text-muted-foreground">03 · Penerima pesan</p>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-            <select aria-label="Kelompok penerima" value={scope} onChange={(e) => setScope(e.target.value as "activeWa" | "all")} className={SELECT_CLASS}>
+            <select value={scope} onChange={(e) => setScope(e.target.value as "activeWa" | "all")} className={SELECT_CLASS}>
               <option value="activeWa">Hanya aktif WA</option>
               <option value="all">Semua kontak</option>
             </select>
             <input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              aria-label="Filter label (opsional)" placeholder="Filter label (opsional)"
+              placeholder="Filter label (opsional)"
               className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
           </div>
@@ -173,8 +170,7 @@ export default function CampaignsClient() {
               {templates.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
             </select>
           )}
-          <label htmlFor="campaign-message" className="block text-xs font-semibold text-muted-foreground">04 · Isi pesan</label>
-          <textarea id="campaign-message"
+          <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={6}
@@ -187,7 +183,6 @@ export default function CampaignsClient() {
               Jadwalkan (opsional)
             </label>
             <input
-              aria-label="Jadwal pengiriman"
               type="datetime-local"
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
@@ -214,7 +209,7 @@ export default function CampaignsClient() {
           setinggi 150px menyisakan setengah layar kosong; referensinya menaruh
           daftar seperti ini dalam tabel padat berkolom tetap sehingga jumlah
           barisnya bisa dibaca sekilas. */}
-      <div className="cg-card cg-sheet flex flex-col overflow-hidden rounded-xl">
+      <div className="cg-card flex flex-col overflow-hidden rounded-xl">
         <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Pengiriman yang sudah dibuat</h2>
@@ -226,8 +221,8 @@ export default function CampaignsClient() {
           <div className="p-5">
             <EmptyState
               title="Belum ada pengiriman"
-              hint="Buat pengiriman pertamamu lewat formulir pengiriman. Belum punya kontak? Cari dulu di Google Maps."
-              action={{ href: "/dashboard/scraper", label: "Cari prospek" }}
+              hint="Buat pengiriman pertamamu lewat panel di kiri. Belum punya kontak? Cari dulu di Google Maps."
+              action={{ href: "/dashboard/scraper", label: "Cari lead" }}
             />
           </div>
         ) : (

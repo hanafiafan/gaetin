@@ -294,7 +294,7 @@ export default function BillingClient() {
             Kredit hanya berkurang kalau tindakannya berhasil. Mencari bisnis di Maps tidak memakai kredit sama sekali.
           </p>
         </div>
-        <div className="cg-card cg-sheet grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-2">
+        <div className="cg-card grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-2">
           {CREDIT_USAGE.map((u) => (
             <div key={u.label} className="flex items-baseline justify-between gap-4 bg-background px-5 py-4">
               <div>

@@ -14,7 +14,6 @@ import { Building2, Chrome, Download, Smartphone, Sparkles, UserCircle } from "l
  * berturut-turut, masing-masing disalin manual.
  */
 function SettingsSection({
-  id,
   icon: Icon,
   title,
   description,
@@ -23,7 +22,6 @@ function SettingsSection({
   accent = false,
   children,
 }: {
-  id: string;
   icon: LucideIcon;
   title: string;
   description: string;
@@ -31,7 +29,7 @@ function SettingsSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={cn("scroll-mt-6","cg-card cg-sheet overflow-hidden rounded-xl", accent && "cg-tone-top")}>
+    <section className={cn("cg-card overflow-hidden rounded-xl", accent && "cg-tone-top")}>
       <header className="flex items-start gap-3 border-b border-border bg-muted/40 px-5 py-4">
         <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.06] text-foreground/70">
           <Icon className="h-4 w-4" />
@@ -54,12 +52,8 @@ export default function SettingsPage() {
         description="Sambungkan nomor WhatsApp, ubah nama workspace, dan atur keamanan akunmu."
       />
 
-      <nav aria-label="Bagian pengaturan" className="flex flex-wrap gap-2">
-        {[['whatsapp', 'Koneksi WhatsApp'], ['workspace', 'Profil workspace'], ['keamanan', 'Keamanan'], ['ekstensi', 'Ekstensi']].map(([id, label]) => <a key={id} href={`#${id}`} className="rounded-full border border-border px-4 py-2.5 text-sm text-foreground/80 hover:bg-white/10">{label}</a>)}
-      </nav>
       <SettingsSection
         accent
-        id="whatsapp"
         icon={Smartphone}
         title="Koneksi WhatsApp"
         description="Hubungkan satu atau lebih nomor WhatsApp. Tiap nomor punya batas kirim harian sendiri."
@@ -68,7 +62,6 @@ export default function SettingsPage() {
       </SettingsSection>
 
       <SettingsSection
-        id="workspace"
         icon={Building2}
         title="Profil Workspace"
         description="Nama dan informasi workspace Anda."
@@ -77,7 +70,6 @@ export default function SettingsPage() {
       </SettingsSection>
 
       <SettingsSection
-        id="keamanan"
         icon={UserCircle}
         title="Akun & Keamanan"
         description="Perbarui nama, zona waktu, dan password akun Anda."
@@ -86,7 +78,6 @@ export default function SettingsPage() {
       </SettingsSection>
 
       <SettingsSection
-        id="ekstensi"
         icon={Chrome}
         title="Ekstensi Chrome"
         description="Alat yang mengambil data bisnis dari Google Maps lewat browser Chrome-mu."

@@ -148,7 +148,7 @@ export default function SetupPage() {
       </div>
 
       {/* Step content */}
-      <div className="cg-card cg-sheet rounded-xl p-6">
+      <div className="cg-card rounded-xl p-6">
         {step === 1 && <StepInstall onCheck={(i) => toggle(1, i)} checked={checked[1]} />}
         {step === 2 && <StepMaps onCheck={(i) => toggle(2, i)} checked={checked[2]} />}
         {step === 3 && <StepPermissions onCheck={(i) => toggle(3, i)} checked={checked[3]} />}

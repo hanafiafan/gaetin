@@ -62,14 +62,14 @@ export type NavItem = {
 // WhatsApp ada di menu ketiga, contoh pesannya di menu keenam".
 export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[] = [
   {
-    label: "Ringkasan",
+    label: "Mulai",
     tone: "primary",
     items: [
       { label: "Ringkasan", desc: "Angka penting dan langkah berikutnya", href: "/dashboard", icon: LayoutDashboard },
     ],
   },
   {
-    label: "Prospek",
+    label: "Cari Calon Pembeli",
     tone: "email",
     items: [
       { label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis dari Google Maps", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
@@ -88,7 +88,7 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     ],
   },
   {
-    label: "Kampanye",
+    label: "Kirim Pesan",
     tone: "whatsapp",
     items: [
       {
@@ -108,7 +108,7 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     ],
   },
   {
-    label: "Penjualan",
+    label: "Balas & Catat",
     tone: "kelola",
     items: [
       { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
@@ -212,8 +212,8 @@ export function tabsForPath(pathname: string): NavTab[] | null {
  * memang selalu dibuka lewat tombol di halaman Daftar Kontak.
  */
 export const offNavSections: Record<string, { group: string; tone: SectionTone }> = {
-  "/dashboard/setup": { group: "Ringkasan", tone: "primary" },
-  "/dashboard/contacts/import": { group: "Prospek", tone: "email" },
+  "/dashboard/setup": { group: "Mulai", tone: "primary" },
+  "/dashboard/contacts/import": { group: "Cari Calon Pembeli", tone: "email" },
 };
 
 /** Area tempat sebuah halaman berada — dipakai kepala halaman supaya judulnya

@@ -152,7 +152,7 @@ export default function ValidatorClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-foreground" />
           <h2 className="text-lg font-semibold text-foreground">Pengecekan nomor</h2>
@@ -199,7 +199,7 @@ export default function ValidatorClient() {
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Cari nama, nomor, atau label..." placeholder="Cari nama, nomor, atau label..."
+                    placeholder="Cari nama, nomor, atau label..."
                     className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                   />
                 </div>
@@ -267,7 +267,7 @@ export default function ValidatorClient() {
         )}
       </div>
 
-      <div className="cg-card cg-sheet rounded-xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Kemajuan</h2>
           {/* Sebelumnya menampilkan status mentah apa adanya: "idle", "running",

@@ -187,9 +187,9 @@ export default function InboxClient() {
   }
 
   return (
-    <div className="cg-card cg-sheet cg-tone-top grid h-[calc(100dvh-260px)] min-h-[420px] max-h-[800px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
+    <div className="cg-card cg-tone-top grid min-h-[640px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
       {/* Conversation list */}
-      <div className={cn("overflow-y-auto border-r border-border", selectedId && "hidden lg:block")}>
+      <div className="overflow-y-auto border-r border-border">
         <div className="sticky top-0 z-10 border-b border-border bg-background p-4">
           <div className="flex items-center gap-2 font-semibold text-foreground">
             <Inbox className="h-5 w-5 text-foreground" />
@@ -248,20 +248,19 @@ export default function InboxClient() {
       </div>
 
       {/* Thread panel */}
-      <div className={cn("min-h-0 min-w-0 flex-col", selectedId ? "flex" : "hidden lg:flex")}>
-        {selectedId && <button type="button" onClick={() => { setSelectedId(null); setThread(null); }} className="min-h-11 border-b border-border px-4 text-left text-sm font-medium lg:hidden">← Semua percakapan</button>}
+      <div className="flex min-w-0 flex-col">
         {!thread ? (
           <div className="flex flex-1 items-center justify-center p-8 text-center">
             <div>
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-whatsapp/10 text-whatsapp">
                 <Inbox className="h-7 w-7" />
               </div>
-              <p className="mt-3 text-sm text-muted-foreground">{selectedId ? "Memuat percakapan…" : "Pilih percakapan untuk melihat riwayat dan membalas."}</p>
+              <p className="mt-3 text-sm text-muted-foreground">Pilih percakapan untuk melihat riwayat dan membalas.</p>
             </div>
           </div>
         ) : (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card p-4">
+            <div className="flex items-center justify-between border-b border-border bg-card p-4">
               <div>
                 <p className="text-sm font-bold text-foreground">
                   {thread.conversation.contact.name ?? `+${thread.conversation.contact.phone}`}
@@ -279,7 +278,6 @@ export default function InboxClient() {
                 Riwayat
               </button>
               <select
-                aria-label="Status percakapan"
                 value={thread.conversation.status}
                 onChange={(e) => setStatus(e.target.value)}
                 className="h-10 rounded-lg border border-border bg-card px-2.5 text-sm text-foreground"
@@ -429,17 +427,15 @@ export default function InboxClient() {
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
                 placeholder={lampiran ? "Tambahkan keterangan (opsional)" : "Ketik balasan..."}
-                aria-label="Tulis balasan"
-                className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+                className="h-11 flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={sending || uploading || (!reply.trim() && !lampiran)}
-                aria-label="Kirim balasan"
-                className="flex h-11 shrink-0 items-center gap-2 rounded-lg bg-primary px-3 sm:px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+                className="flex h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
-                <span className="hidden sm:inline">Kirim</span>
+                Kirim
               </button>
               </div>
             </form>

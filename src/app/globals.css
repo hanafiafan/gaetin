@@ -640,22 +640,3 @@
     animation: none;
   }
 }
-
-/* Workspace v2: charcoal overview, light working surfaces, a single lime accent. */
-.cg-workspace { --background: 222 22% 10%; --primary: 83 100% 50%; --ring: 83 100% 50%; --radius: 0.9rem; background: radial-gradient(ellipse at 15% 0%, #303a49 0, #1b2029 40%, #151920 100%); }
-.cg-workspace .cg-topbar { background: transparent; }
-.cg-workspace .cg-card { border-radius: 24px; box-shadow: 0 8px 28px #0000000a; }
-.cg-workspace .cg-tone-top { border-top-color: hsl(var(--border)); }
-.cg-workspace .cg-sheet { --background: 220 20% 98%; --border: 220 14% 90%; background: hsl(var(--background)); }
-.cg-workspace .cg-display { font-weight: 500; letter-spacing: -0.045em; }
-.cg-workspace .cg-primary-nav { box-shadow: 0 2px 18px #00000016; }
-.cg-workspace .cg-metrics { background: linear-gradient(120deg, #2e3541, #252b35); }
-.cg-workspace .cg-metrics > div, .cg-workspace .cg-metrics > div > div { background: transparent; }
-.cg-workspace .cg-metrics > div > div + div { border-left: 1px solid #ffffff0d; }
-.cg-workspace :is(a,button,input,select,textarea):focus-visible { outline: 2px solid #6a9400; outline-offset: 3px; }
-.cg-workspace .cg-sheet :is(input,select,textarea) { min-height: 42px; }
-.cg-workspace .cg-sheet table th { font-size: 11px; letter-spacing: .03em; font-weight: 600; }
-.cg-workspace .cg-sheet table td { padding-top: 14px; padding-bottom: 14px; }
-.cg-workspace .cg-sheet tbody tr:hover { background: #edf1e980; }
-@media (max-width: 640px) { .cg-workspace .cg-card { border-radius: 18px; } .cg-workspace .cg-display { font-size: 1.9rem; } }
-@media (prefers-reduced-motion: reduce) { .cg-workspace *, .cg-workspace *::before, .cg-workspace *::after { animation: none !important; scroll-behavior: auto !important; transition: none !important; } }

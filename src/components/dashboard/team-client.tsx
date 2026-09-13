@@ -74,11 +74,11 @@ export default function TeamClient() {
   return (
     <div className="space-y-6">
       {isManager && (
-        <form onSubmit={addMember} className="cg-card cg-sheet cg-tone-top flex flex-wrap items-center gap-2 rounded-xl p-4">
+        <form onSubmit={addMember} className="cg-card cg-tone-top flex flex-wrap items-center gap-2 rounded-xl p-4">
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            aria-label="email anggota (sudah terdaftar)" placeholder="email anggota (sudah terdaftar)"
+            placeholder="email anggota (sudah terdaftar)"
             className="h-10 max-w-xs flex-1 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <select value={role} onChange={(e) => setRole(e.target.value as "ADMIN" | "AGENT")} className="h-10 rounded-xl border border-border bg-card px-2 text-sm text-foreground">
@@ -92,9 +92,9 @@ export default function TeamClient() {
         </form>
       )}
 
-      {/* cg-card cg-sheet seperti form di atas dan panel aktivitas di bawah — dengan
+      {/* cg-card seperti form di atas dan panel aktivitas di bawah — dengan
           garis tipis saja tabel ini terbaca belum jadi di antara keduanya. */}
-      <div className="cg-card cg-sheet overflow-hidden rounded-xl">
+      <div className="cg-card overflow-hidden rounded-xl">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted text-left">
@@ -134,7 +134,7 @@ export default function TeamClient() {
 
       <div>
         <h2 className="mb-2 text-lg font-semibold text-foreground">Aktivitas terbaru</h2>
-        <div className="cg-card cg-sheet space-y-1 rounded-xl p-4 text-sm">
+        <div className="cg-card space-y-1 rounded-xl p-4 text-sm">
           {logs.length === 0 && <p className="text-muted-foreground">Belum ada aktivitas tercatat.</p>}
           {logs.map((l) => (
             <div key={l.id} className="flex justify-between border-b border-border/50 py-1.5 last:border-0">

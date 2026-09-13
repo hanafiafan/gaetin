@@ -87,25 +87,25 @@ export default function TasksClient() {
 
   return (
     <div className="space-y-5">
-      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-4">
+      <div className="cg-card cg-tone-top rounded-xl p-4">
         <form onSubmit={create} className="grid gap-3 lg:grid-cols-[1fr_220px_160px_140px_auto]">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            aria-label="Judul tugas" placeholder="Judul tugas"
+            placeholder="Judul tugas"
             className="h-10 rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
-          <select aria-label="Kontak terkait" value={contactId} onChange={(e) => setContactId(e.target.value)} className={SELECT_CLASS}>
+          <select value={contactId} onChange={(e) => setContactId(e.target.value)} className={SELECT_CLASS}>
             <option value="">Kontak...</option>
             {contacts.map((c) => (<option key={c.id} value={c.id}>{c.name ?? `+${c.phone}`}</option>))}
           </select>
           <input
-            aria-label="Tanggal jatuh tempo" type="date"
+            type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
             className="h-10 rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:outline-none"
           />
-          <select aria-label="Prioritas tugas" value={priority} onChange={(e) => setPriority(e.target.value)} className={SELECT_CLASS}>
+          <select value={priority} onChange={(e) => setPriority(e.target.value)} className={SELECT_CLASS}>
             <option value="HIGH">Tinggi</option>
             <option value="MEDIUM">Sedang</option>
             <option value="LOW">Rendah</option>
@@ -130,7 +130,7 @@ export default function TasksClient() {
         />
       </div>
 
-      <div className="cg-card cg-sheet overflow-hidden rounded-xl">
+      <div className="cg-card overflow-hidden rounded-xl">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
             <thead>

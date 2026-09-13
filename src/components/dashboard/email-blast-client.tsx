@@ -88,7 +88,7 @@ export default function EmailBlastClient() {
         !sudahDimuat || blasts.length > 0 ? "xl:grid-cols-[420px_minmax(0,1fr)]" : "mx-auto w-full max-w-2xl",
       )}
     >
-      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Kirim email baru</h2>
           <p className="mt-1 text-sm text-muted-foreground">Target otomatis ke kontak yang punya email. Tulis subjek dan isi pesan personal.</p>
@@ -98,20 +98,20 @@ export default function EmailBlastClient() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            aria-label="Beri nama pengiriman ini" placeholder="Beri nama pengiriman ini"
+            placeholder="Beri nama pengiriman ini"
             className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <input
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            aria-label="Subjek email, mis. Penawaran khusus untuk {{kota}}" placeholder="Subjek email, mis. Penawaran khusus untuk {{kota}}"
+            placeholder="Subjek email, mis. Penawaran khusus untuk {{kota}}"
             className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <div>
             <input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              aria-label="Filter label / tag (opsional, contoh: vip)" placeholder="Filter label / tag (opsional, contoh: vip)"
+              placeholder="Filter label / tag (opsional, contoh: vip)"
               className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
             <p className="mt-1 text-xs text-muted-foreground">
@@ -121,7 +121,7 @@ export default function EmailBlastClient() {
           <textarea
             value={bodyText}
             onChange={(e) => setBodyText(e.target.value)}
-            aria-label="Halo {{nama}}, kami punya penawaran khusus untuk area {{kota}}..." placeholder="Halo {{nama}}, kami punya penawaran khusus untuk area {{kota}}..."
+            placeholder="Halo {{nama}}, kami punya penawaran khusus untuk area {{kota}}..."
             rows={7}
             className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
@@ -140,7 +140,7 @@ export default function EmailBlastClient() {
         </form>
       </div>
 
-      <div className="cg-card cg-sheet rounded-xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Email yang pernah dikirim</h2>
           <p className="text-sm text-muted-foreground">{blasts.length} email blast dibuat</p>

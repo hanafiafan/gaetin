@@ -47,7 +47,7 @@ export default function WorkspaceProfileSettings() {
           <input
             value={name}
             onChange={e => setName(e.target.value)}
-            aria-label="Nama bisnis Anda" placeholder="Nama bisnis Anda"
+            placeholder="Nama bisnis Anda"
             className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
           />
           <p className="text-xs text-muted-foreground">Nama ini muncul di pojok kanan atas layarmu.</p>

@@ -113,7 +113,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {session.impersonating && <ImpersonationBanner workspaceName={session.workspace.name} />}
         {/* Padding di luar lembar, bukan di dalam: kanvas gelap harus terlihat
             membingkai lembar terang, itu yang membuat polanya terbaca. */}
-        <div className="flex flex-1 flex-col px-2 pt-3 pb-20 sm:px-4 lg:px-6 lg:pb-6">
+        <div className="flex flex-1 flex-col px-2 pt-3 sm:px-4 lg:px-6">
           <SectionCanvas>
             <main className="relative z-10 flex-1 px-3 py-5 sm:px-5 lg:px-8 lg:py-7">
               <div className="mx-auto max-w-[1440px] animate-fade-in space-y-5">

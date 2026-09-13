@@ -41,7 +41,7 @@ export default function SectionCanvas({ children }: { children: React.ReactNode 
   const tone = toneForPath(usePathname());
   return (
     <div
-      className="cg-app-surface flex-1"
+      className="cg-app-surface cg-sheet flex-1 rounded-t-[20px] border border-b-0 border-white/10 lg:rounded-t-[28px]"
       style={{ "--tone": TONE_VAR[tone] } as React.CSSProperties}
     >
       {children}

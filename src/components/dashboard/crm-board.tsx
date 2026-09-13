@@ -42,7 +42,6 @@ export default function CrmBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
   const [revenue, setRevenue] = useState(0);
   const [wonCount, setWonCount] = useState(0);
-  const [moveError, setMoveError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [contacts, setContacts] = useState<ContactLite[]>([]);
   const [openContactId, setOpenContactId] = useState<string | null>(null);
@@ -64,13 +63,11 @@ export default function CrmBoard() {
     const card = dragged.current;
     dragged.current = null;
     if (!card) return;
-    setMoveError(null);
-    const response = await fetch(`/api/crm/cards/${card.id}`, {
+    await fetch(`/api/crm/cards/${card.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ columnId: col.id }),
-    }).catch(() => null);
-    if (!response?.ok) { setMoveError("Peluang belum berhasil dipindahkan. Silakan coba kembali."); return; }
+    });
     // Nilai penjualan dulu diminta lewat window.prompt bawaan browser: kotak
     // abu-abu tanpa format rupiah, tanpa nama kontak yang jelas, dan menutupi
     // seluruh halaman. Sekarang formnya di dalam aplikasi, dan bisa dilewati
@@ -131,7 +128,7 @@ export default function CrmBoard() {
     <div className="space-y-4">
       <MetricStrip
         items={[
-          { label: "Penjualan tercatat", value: formatIDR(revenue), icon: BadgeDollarSign, accent: true },
+          { label: "Uang masuk", value: formatIDR(revenue), icon: BadgeDollarSign, accent: true },
           { label: "Penjualan jadi", value: String(wonCount), icon: Trophy },
         ]}
         aside={
@@ -146,7 +143,7 @@ export default function CrmBoard() {
       />
 
       {adding && (
-        <div className="cg-card cg-sheet rounded-xl p-4">
+        <div className="cg-card rounded-xl p-4">
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-bold text-foreground">Pilih kontak — akan masuk ke kolom pertama</span>
             <button
@@ -171,8 +168,7 @@ export default function CrmBoard() {
         </div>
       )}
 
-      {moveError && <p role="alert" className="text-sm text-destructive">{moveError}</p>}
-      <div className="cg-sheet cg-scrollfade-x flex gap-4 overflow-x-auto rounded-3xl p-4">
+      <div className="cg-scrollfade-x flex gap-4 overflow-x-auto pb-2">
         {columns.map((col) => (
           <div
             key={col.id}
@@ -203,9 +199,6 @@ export default function CrmBoard() {
                     // percakapan memang tidak bisa menjawab "kenapa peluang ini
                     // mandek".
                     onClick={() => { if (!didDrag.current) setOpenContactId(card.contactId); }}
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); setOpenContactId(card.contactId); } }}
-                    aria-label={`Buka riwayat ${card.name ?? card.phone}`}
                     className="cursor-grab rounded-lg border border-border bg-background p-3 text-sm shadow-none transition hover:border-foreground active:cursor-grabbing"
                   >
                     <div className="flex items-start gap-2">
@@ -228,11 +221,6 @@ export default function CrmBoard() {
                         )}
                       </div>
                     </div>
-                    <select aria-label={`Tahap penjualan ${card.name ?? card.phone}`} value={col.id}
-                      onClick={(e) => e.stopPropagation()} onChange={(e) => { const target = columns.find(c => c.id === e.target.value); if (target) { dragged.current = card; void onDrop(target); } }}
-                      className="mt-3 w-full rounded-lg border border-border bg-card px-2 py-2 text-xs">
-                      {columns.map(target => <option key={target.id} value={target.id}>{STAGE_LABEL[target.name] ?? target.name}</option>)}
-                    </select>
                   </div>
                 );
               })}

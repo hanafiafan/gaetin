@@ -95,7 +95,7 @@ export default function FollowUpsClient() {
         !sudahDimuat || rules.length > 0 ? "xl:grid-cols-[420px_minmax(0,1fr)]" : "mx-auto w-full max-w-2xl",
       )}
     >
-      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-tone-top rounded-xl p-5 space-y-4">
         <form onSubmit={create} className="space-y-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Aturan pesan susulan</h2>
@@ -107,7 +107,7 @@ export default function FollowUpsClient() {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              aria-label="Nama aturan" placeholder="Nama aturan"
+              placeholder="Nama aturan"
               className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
             <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className={SELECT_CLASS}>
@@ -131,7 +131,7 @@ export default function FollowUpsClient() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={3}
-            aria-label="Contoh: Halo {{nama}}, masih berminat?" placeholder="Contoh: Halo {{nama}}, masih berminat?"
+            placeholder="Contoh: Halo {{nama}}, masih berminat?"
             className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
           <button
@@ -146,7 +146,7 @@ export default function FollowUpsClient() {
         </form>
       </div>
 
-      <div className="cg-card cg-sheet rounded-xl p-5 space-y-4">
+      <div className="cg-card rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Aturan aktif</h2>
