@@ -73,6 +73,11 @@ function LoginForm() {
             </button>
           </div>
         </div>
+        <div className="flex justify-end">
+          <Link href="/lupa-password" className="text-xs font-semibold text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline">
+            Lupa password?
+          </Link>
+        </div>
         <button type="submit" className={BUTTON_CLASS} disabled={loading}>
           {loading ? "Memproses..." : "Masuk"}
         </button>

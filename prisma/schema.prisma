@@ -44,6 +44,20 @@ model UserPreferences {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// Tautan atur ulang password. Yang disimpan HASH-nya, bukan tokennya: isi
+// tabel ini bocor sekalipun, tidak ada tautan yang bisa dipakai orang lain.
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
 model InvalidatedToken {
   id        String   @id @default(cuid())
   token     String   @unique
