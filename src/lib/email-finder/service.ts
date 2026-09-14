@@ -62,7 +62,7 @@ export async function createAndRunEmailFindJob(
 export async function runEmailFindJob(jobId: string, workspaceId: string, source: EmailFindSource, targetIds: string[]): Promise<void> {
   const job = await prisma.emailFindJob.findFirst({ where: { id: jobId, workspaceId } });
   if (!job || job.status !== "RUNNING") return;
-  for (let i = job.processed; i < Math.min(targetIds.length, job.processed + 10); i++) {
+  for (let i = job.processed; i < Math.min(targetIds.length, job.processed + 1); i++) {
     if (await jobStopped(jobId)) return;
     const row = source === "LEAD"
       ? await prisma.lead.findFirst({ where: { id: targetIds[i], workspaceId } })

@@ -38,7 +38,8 @@ function createFloatUI() {
     const d = await storageGet(['hellensJob', 'hellensChunk']);
     if (d.hellensJob) {
       setFloatStatus('Membatalkan...', '#ef4444');
-      await sendToApi(d.hellensJob.jobId, d.hellensChunk || [], true, d.hellensJob.token);
+      if (!await sendToApi(d.hellensJob.jobId, d.hellensChunk || [], false, d.hellensJob.token)) return;
+      if (!await sendToApi(d.hellensJob.jobId, [], true, d.hellensJob.token)) return;
     }
     await chrome.storage.local.remove(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk']);
     window.close();
@@ -470,6 +471,14 @@ function extractCurrentPlace(ariaLabel, dataFields) {
 // ── API ───────────────────────────────────────────────────────────────────────
 
 async function sendToApi(jobId, leads, isFinished, token) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (await sendBatchOnce(jobId, leads, isFinished, token)) return true;
+    if (attempt < 2) await sleep(1000 * (attempt + 1));
+  }
+  return false;
+}
+
+async function sendBatchOnce(jobId, leads, isFinished, token) {
   if (leads.length === 0 && !isFinished) return true;
   return new Promise((resolve) => {
     G(`sendToApi: ${leads.length} leads, finished=${isFinished}`);
@@ -624,18 +633,22 @@ async function scrapeGoogleMaps(jobId, maxLeads, delaySec, token) {
         chunkLeads.push(lead);
         report(`${lead.phone ? '✓' : '○'} ${lead.businessName}`);
         if (chunkLeads.length >= 1) {
-          await sendToApi(jobId, [...chunkLeads], false, token);
+          if (!await sendToApi(jobId, [...chunkLeads], false, token)) {
+            await storageSet({ hellensChunk: chunkLeads, hellensJob: { jobId, token, maxLeads, delaySec } });
+            isRunning = false;
+            throw new Error('Lead belum terkirim. Data disimpan lokal; periksa koneksi sebelum melanjutkan.');
+          }
           totalSaved += chunkLeads.length;
           chunkLeads = [];
         }
       }
-    } catch (e) { G('Extract error:', e.message); }
+    } catch (e) { if (!isRunning) throw e; G('Extract error:', e.message); }
 
     await sleep(delaySec * 1000);
   }
 
   report('Menyelesaikan...');
-  await sendToApi(jobId, [...chunkLeads], true, token);
+  if (!await sendToApi(jobId, [...chunkLeads], true, token)) throw new Error("Gagal menyelesaikan job; periksa koneksi.");
   totalSaved += chunkLeads.length;
   floatUI.style.display = 'none';
   G(`Popup mode done: ${totalSaved} leads`);
@@ -668,7 +681,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 (async function processScrapeQueue() {
   if (!window.location.href.includes('/maps/place/')) return;
 
-  const data = await storageGet(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk', 'hellensCurrentLabel']);
+  const data = await storageGet(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk', 'hellensCurrentLabel', 'hellensProcessedUrl']);
   if (!data.hellensJob || data.hellensPhase !== 'scraping') return;
 
   const { jobId, token, maxLeads, delaySec, dataFields } = data.hellensJob;
@@ -687,8 +700,8 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   // Extract data
   const lead = extractCurrentPlace(ariaLabel, dataFields);
   const newChunk = [...chunk];
-  if (lead.businessName && lead.businessName !== 'Tanpa nama') {
-    newChunk.push(lead);
+  if (data.hellensProcessedUrl !== window.location.href && lead.businessName && lead.businessName !== 'Tanpa nama') {
+    if (!newChunk.some((item) => item.mapsUrl && item.mapsUrl === lead.mapsUrl)) newChunk.push(lead);
     updateFloatUI(saved + newChunk.length, maxLeads, `${lead.phone ? '✓' : '○'} ${lead.businessName}`);
   } else {
     updateFloatUI(saved + newChunk.length, maxLeads, `⊘ ${lead.businessName || 'Tanpa nama'} (dilewati)`);
@@ -698,11 +711,16 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   let newSaved = saved;
   let finalChunk = newChunk;
   if (newChunk.length >= 1) {
-    await sendToApi(jobId, newChunk, false, token);
+    await storageSet({ hellensChunk: newChunk, hellensProcessedUrl: window.location.href });
+    if (!await sendToApi(jobId, newChunk, false, token)) {
+      setFloatStatus('Belum terkirim. Muat ulang untuk mencoba lagi.', '#ef4444');
+      return;
+    }
     newSaved += newChunk.length;
     finalChunk = [];
   }
 
+  await storageSet({ hellensSaved: newSaved, hellensChunk: finalChunk, hellensProcessedUrl: window.location.href });
   const totalDone = newSaved + finalChunk.length;
 
   // Navigate to next place OR finish
@@ -711,13 +729,17 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     // Store next item's aria-label (it's in the URL as the place name)
     const labelFromUrl = decodeURIComponent((nextUrl.match(/\/maps\/place\/([^/@]+)/) || [])[1] || '').replace(/\+/g, ' ');
 
-    await storageSet({ hellensQueue: restQueue, hellensSaved: newSaved, hellensChunk: finalChunk, hellensCurrentLabel: labelFromUrl });
+    await storageSet({ hellensQueue: restQueue, hellensSaved: newSaved, hellensChunk: finalChunk, hellensCurrentLabel: labelFromUrl, hellensProcessedUrl: null });
     await sleep(Math.max(1500, delaySec * 1000));
     window.location.href = nextUrl;
   } else {
     // Done — send remaining + mark finished
     setFloatStatus(`Menyelesaikan...`);
-    await sendToApi(jobId, finalChunk, true, token);
+    if (!await sendToApi(jobId, finalChunk, true, token)) {
+      await storageSet({ hellensSaved: newSaved, hellensChunk: finalChunk });
+      setFloatStatus('Gagal menyelesaikan. Muat ulang untuk mencoba lagi.', '#ef4444');
+      return;
+    }
     await storageRemove(['hellensJob', 'hellensQueue', 'hellensPhase', 'hellensSaved', 'hellensChunk', 'hellensCurrentLabel']);
 
     const total = newSaved + finalChunk.length;

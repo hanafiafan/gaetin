@@ -25,32 +25,33 @@ export async function POST(req: NextRequest) {
 
   const d = parsed.data;
   const plan = await getWorkspacePlan(session.workspace.id);
-  const jobsThisMonth = await prisma.scraperJob.count({
-    where: {
-      workspaceId: session.workspace.id,
-      createdAt: { gte: monthStart() },
-    },
-  });
-  if (jobsThisMonth >= plan.limits.scraperJobsPerMonth) {
-    return fail(
-      "PLAN_LIMIT",
-      `Kuota scraper paket ${plan.name} bulan ini sudah habis (${plan.limits.scraperJobsPerMonth} job).`,
-      403,
-    );
-  }
+  const job = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Workspace" WHERE id = ${session.workspace.id} FOR UPDATE`;
+    const jobsThisMonth = await tx.scraperJob.count({
+      where: {
+        workspaceId: session.workspace.id,
+        createdAt: { gte: monthStart() },
+      },
+    });
+    if (jobsThisMonth >= plan.limits.scraperJobsPerMonth) {
+      return null;
+    }
 
-  const job = await prisma.scraperJob.create({
-    data: {
-      workspaceId: session.workspace.id,
-      keyword: d.keyword,
-      location: d.location ?? null,
-      name: d.name ?? null,
-      color: d.color ?? null,
-      dataFields: d.dataFields ?? ["phone", "address", "website", "email", "category", "rating", "coordinates"],
-      status: "RUNNING",
-      createdById: session.user.id,
-    },
+    return tx.scraperJob.create({
+      data: {
+        workspaceId: session.workspace.id,
+        keyword: d.keyword,
+        location: d.location ?? null,
+        name: d.name ?? null,
+        color: d.color ?? null,
+        dataFields: d.dataFields ?? ["phone", "address", "website", "email", "category", "rating", "coordinates"],
+        status: "RUNNING",
+        createdById: session.user.id,
+      },
+    });
+
   });
+  if (!job) return fail("PLAN_LIMIT", `Kuota scraper paket ${plan.name} bulan ini sudah habis (${plan.limits.scraperJobsPerMonth} job).`, 403);
 
   // Token HMAC deterministik dari job.id + workspaceId — tidak perlu disimpan di DB.
   // Extension mengirim token ini sebagai X-Extension-Token header ke /api/scraper/extension.

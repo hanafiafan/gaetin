@@ -8,6 +8,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 
     fetch(apiUrl, {
       method: 'POST',
+      signal: AbortSignal.timeout(35_000),
       headers: {
         'Content-Type': 'application/json',
         'X-Extension-Token': token || ''

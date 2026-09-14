@@ -1,3 +1,4 @@
+import { featureDenied } from "@/lib/auth/entitlements";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
@@ -28,6 +29,10 @@ export async function POST(req: NextRequest) {
   const parsed = Schema.safeParse(body);
   if (!parsed.success) return fail("VAL_001", "Validasi gagal", 400, parsed.error.flatten().fieldErrors);
 
+  if (parsed.data.addToPipeline) {
+    const denied = await featureDenied(workspaceId, "crmPipeline");
+    if (denied) return denied;
+  }
   const plan = await getWorkspacePlan(workspaceId);
   if (parsed.data.ids.length > plan.limits.saveLeadBatchLimit) {
     return fail(

@@ -84,7 +84,7 @@ async function main() {
   assert.equal((await request("/api/campaigns")).status, 403);
   console.log("PASS: production HTTP smoke — auth, 6 dashboard pages, tenant isolation, webhook deduplication, idempotent inbox, billing replay, scheduled worker, password revocation, expired-plan API access");
 }
-main().catch(err => { console.error(err); process.exitCode = 1; }).finally(async () => {
+main().catch(err => { console.error(err); console.error(logs); process.exitCode = 1; }).finally(async () => {
   for (const child of children) {
     child.kill("SIGTERM");
     await new Promise(resolve => { if (child.exitCode !== null) return resolve(); child.once("exit", resolve); setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 3000).unref(); });

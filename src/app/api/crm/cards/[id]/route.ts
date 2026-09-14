@@ -7,13 +7,6 @@ import { fail } from "@/lib/api";
 
 const MoveSchema = z.object({ columnId: z.string() });
 
-async function ownedCard(id: string, workspaceId: string) {
-  return prisma.pipelineCard.findFirst({
-    where: { id, column: { pipeline: { workspaceId } } },
-    select: { id: true, contactId: true },
-  });
-}
-
 export async function PUT(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
   const session = await getSession();
@@ -22,8 +15,6 @@ export async function PUT(req: NextRequest, { params: paramsPromise }: { params:
   if (denied) return denied;
   const workspaceId = session.workspace.id;
 
-  const card = await ownedCard(params.id, workspaceId);
-  if (!card) return fail("NOT_FOUND", "Kartu tidak ditemukan", 404);
 
   let body: unknown;
   try {
@@ -34,20 +25,25 @@ export async function PUT(req: NextRequest, { params: paramsPromise }: { params:
   const parsed = MoveSchema.safeParse(body);
   if (!parsed.success) return fail("VAL_001", "Validasi gagal", 400, parsed.error.flatten().fieldErrors);
 
-  const column = await prisma.pipelineColumn.findFirst({
-    where: { id: parsed.data.columnId, pipeline: { workspaceId } },
-    select: { id: true, name: true },
-  });
-  if (!column) return fail("NOT_FOUND", "Kolom tujuan tidak ditemukan", 404);
+  return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Workspace" WHERE id = ${workspaceId} FOR UPDATE`;
+    const card = await tx.pipelineCard.findFirst({ where: { id: params.id, column: { pipeline: { workspaceId } } }, include: { column: true } });
+    if (!card) return fail("NOT_FOUND", "Kartu tidak ditemukan", 404);
+    const column = await tx.pipelineColumn.findFirst({
+      where: { id: parsed.data.columnId, pipelineId: card.column.pipelineId, pipeline: { workspaceId } },
+      select: { id: true, name: true },
+    });
+    if (!column) return fail("NOT_FOUND", "Kolom tujuan tidak ditemukan", 404);
 
-  const count = await prisma.pipelineCard.count({ where: { columnId: column.id } });
-  await prisma.pipelineCard.update({
-    where: { id: card.id },
-    data: { columnId: column.id, order: count, movedAt: new Date() },
-  });
-  await prisma.contact.update({ where: { id: card.contactId }, data: { crmStage: column.name } });
+    const count = await tx.pipelineCard.count({ where: { columnId: column.id } });
+    await tx.pipelineCard.update({
+      where: { id: card.id },
+      data: { columnId: column.id, order: count, movedAt: new Date() },
+    });
+    await tx.contact.update({ where: { id: card.contactId }, data: { crmStage: column.name } });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  });
 }
 
 export async function DELETE(_req: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
@@ -57,9 +53,15 @@ export async function DELETE(_req: Request, { params: paramsPromise }: { params:
   const denied = await featureDenied(session.workspace.id, "crmPipeline");
   if (denied) return denied;
 
-  const card = await ownedCard(params.id, session.workspace.id);
-  if (!card) return fail("NOT_FOUND", "Kartu tidak ditemukan", 404);
+  const workspaceId = session.workspace.id;
+  return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Workspace" WHERE id = ${workspaceId} FOR UPDATE`;
+    const card = await tx.pipelineCard.findFirst({ where: { id: params.id, column: { pipeline: { workspaceId } } } });
+    if (!card) return fail("NOT_FOUND", "Kartu tidak ditemukan", 404);
 
-  await prisma.pipelineCard.delete({ where: { id: card.id } });
-  return NextResponse.json({ success: true });
+    await tx.pipelineCard.delete({ where: { id: card.id } });
+    const remaining = await tx.pipelineCard.findFirst({ where: { contactId: card.contactId }, include: { column: true }, orderBy: { movedAt: "desc" } });
+    await tx.contact.update({ where: { id: card.contactId }, data: { crmStage: remaining?.column.name ?? null } });
+    return NextResponse.json({ success: true });
+  });
 }

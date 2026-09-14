@@ -4,6 +4,8 @@
 // untuk VPS kecil. Upgrade path kalau banyak situs butuh render JS: worker terpisah
 // dengan browser headless, bukan di proses utama.
 
+import { fetchPublicHtml } from "./public-html";
+
 const EMAIL_RE = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
 // Domain placeholder/junk yang sering ke-scrape dari script pihak ketiga, bukan email asli bisnis.
@@ -26,28 +28,7 @@ const MAX_HTML_BYTES = 500_000; // jangan baca seluruh halaman kalau raksasa
 
 function isJunkEmail(email: string): boolean {
   const domain = email.split("@")[1]?.toLowerCase() ?? "";
-  return IGNORED_DOMAINS.some((d) => domain === d || domain.endsWith(`.${d}`));
-}
-
-async function fetchHtml(url: string): Promise<string | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      redirect: "follow",
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; HellensBot/1.0)" },
-    });
-    if (!res.ok) return null;
-    const contentType = res.headers.get("content-type") ?? "";
-    if (!contentType.includes("text/html") && !contentType.includes("text")) return null;
-    const buf = await res.arrayBuffer();
-    return Buffer.from(buf.slice(0, MAX_HTML_BYTES)).toString("utf-8");
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
+  return /\.(png|jpe?g|gif|webp|svg|woff2?|css|js)$/i.test(domain) || IGNORED_DOMAINS.some((d) => domain === d || domain.endsWith(`.${d}`));
 }
 
 export function extractFirstValidEmail(html: string): string | null {
@@ -76,8 +57,11 @@ export async function scrapeEmailFromWebsite(website: string): Promise<string | 
   const base = normalizeWebsiteUrl(website);
   if (!base) return null;
 
+  const deadline = Date.now() + 12_000;
   for (const path of CONTACT_PATHS) {
-    const html = await fetchHtml(`${base}${path}`);
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) break;
+    const html = await fetchPublicHtml(`${base}${path}`, Math.min(FETCH_TIMEOUT_MS, remaining), MAX_HTML_BYTES);
     if (!html) continue;
     const email = extractFirstValidEmail(html);
     if (email) return email;

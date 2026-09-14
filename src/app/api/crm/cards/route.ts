@@ -23,31 +23,34 @@ export async function POST(req: NextRequest) {
   const parsed = Schema.safeParse(body);
   if (!parsed.success) return fail("VAL_001", "Validasi gagal", 400, parsed.error.flatten().fieldErrors);
 
-  // Pastikan kolom & kontak milik workspace.
-  const column = await prisma.pipelineColumn.findFirst({
-    where: { id: parsed.data.columnId, pipeline: { workspaceId } },
-    select: { id: true, name: true, pipelineId: true },
-  });
-  if (!column) return fail("NOT_FOUND", "Kolom tidak ditemukan", 404);
+  return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Workspace" WHERE id = ${workspaceId} FOR UPDATE`;
+    // Pastikan kolom & kontak milik workspace.
+    const column = await tx.pipelineColumn.findFirst({
+      where: { id: parsed.data.columnId, pipeline: { workspaceId } },
+      select: { id: true, name: true, pipelineId: true },
+    });
+    if (!column) return fail("NOT_FOUND", "Kolom tidak ditemukan", 404);
 
-  const contact = await prisma.contact.findFirst({
-    where: { id: parsed.data.contactId, workspaceId },
-    select: { id: true },
-  });
-  if (!contact) return fail("NOT_FOUND", "Kontak tidak ditemukan", 404);
+    const contact = await tx.contact.findFirst({
+      where: { id: parsed.data.contactId, workspaceId },
+      select: { id: true },
+    });
+    if (!contact) return fail("NOT_FOUND", "Kontak tidak ditemukan", 404);
 
-  // Hindari kartu ganda untuk kontak yang sama di pipeline ini.
-  const existing = await prisma.pipelineCard.findFirst({
-    where: { contactId: contact.id, column: { pipelineId: column.pipelineId } },
-    select: { id: true },
-  });
-  if (existing) return fail("DUPLICATE", "Kontak sudah ada di pipeline", 409);
+    // Hindari kartu ganda untuk kontak yang sama di pipeline ini.
+    const existing = await tx.pipelineCard.findFirst({
+      where: { contactId: contact.id, column: { pipelineId: column.pipelineId } },
+      select: { id: true },
+    });
+    if (existing) return fail("DUPLICATE", "Kontak sudah ada di pipeline", 409);
 
-  const count = await prisma.pipelineCard.count({ where: { columnId: column.id } });
-  const card = await prisma.pipelineCard.create({
-    data: { columnId: column.id, contactId: contact.id, order: count },
-  });
-  await prisma.contact.update({ where: { id: contact.id }, data: { crmStage: column.name } });
+    const count = await tx.pipelineCard.count({ where: { columnId: column.id } });
+    const card = await tx.pipelineCard.create({
+      data: { columnId: column.id, contactId: contact.id, order: count },
+    });
+    await tx.contact.update({ where: { id: contact.id }, data: { crmStage: column.name } });
 
-  return NextResponse.json({ success: true, data: card }, { status: 201 });
+    return NextResponse.json({ success: true, data: card }, { status: 201 });
+  });
 }

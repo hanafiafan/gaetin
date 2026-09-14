@@ -43,13 +43,13 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
   // adalah createdAt TERBESAR di antara yang sudah selesai. Tabelnya tidak
   // punya updatedAt, dan sentAt kosong pada yang gagal — justru yang dicari.
   const terbaru = campaign
-    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: { in: ["SENT", "FAILED"] } }, orderBy: { createdAt: "desc" }, take: JENDELA_PERIKSA, select: { status: true } })
-    : await prisma.blastMessage.findMany({ where: { blastId: id, status: { in: ["SENT", "FAILED"] } }, orderBy: { createdAt: "desc" }, take: JENDELA_PERIKSA, select: { status: true } });
+    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: { in: ["SENT", "DELIVERED", "READ", "FAILED"] } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: JENDELA_PERIKSA, select: { status: true } })
+    : await prisma.blastMessage.findMany({ where: { blastId: id, status: { in: ["SENT", "DELIVERED", "READ", "FAILED"] } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: JENDELA_PERIKSA, select: { status: true } });
   const berhenti = alasanBerhenti(terbaru);
   if (berhenti) { await pause(berhenti); return; }
   const messages = campaign
-    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: "PENDING" }, include: { contact: true }, orderBy: { createdAt: "asc" }, take: 1 })
-    : await prisma.blastMessage.findMany({ where: { blastId: id, status: "PENDING" }, include: { contact: true }, orderBy: { createdAt: "asc" }, take: 1 });
+    ? await prisma.campaignMessage.findMany({ where: { campaignId: id, status: "PENDING" }, include: { contact: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }], take: 1 })
+    : await prisma.blastMessage.findMany({ where: { blastId: id, status: "PENDING" }, include: { contact: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }], take: 1 });
   for (const m of messages) {
     const state = campaign ? await prisma.campaign.findUnique({ where: { id } }) : await prisma.blast.findUnique({ where: { id } });
     if (state?.status !== (campaign ? "ACTIVE" : "RUNNING")) break;
