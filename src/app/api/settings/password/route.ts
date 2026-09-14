@@ -23,6 +23,17 @@ export async function PUT(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { passwordHash: true } });
   if (!user) return fail("AUTH_003", "User tidak ditemukan", 404);
 
+  // Belum punya password (akun Google): mengizinkan pemasangan password hanya
+  // bermodal sesi yang sedang aktif akan membuat sesi curian bisa mengunci
+  // pemilik aslinya. Jalur "Lupa password" memverifikasi kepemilikan email.
+  if (!user.passwordHash) {
+    return fail(
+      "AUTH_GOOGLE_ONLY",
+      "Akun ini masuk lewat Google dan belum punya password. Buat password lewat halaman Lupa password.",
+      400,
+    );
+  }
+
   const ok = await verifyPassword(parsed.data.currentPassword, user.passwordHash);
   if (!ok) return fail("AUTH_WRONG_PW", "Password saat ini salah", 400);
 

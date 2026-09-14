@@ -7,13 +7,14 @@ import {
   CreditCard,
   Globe,
   KeyRound,
+  LogIn,
   Mail,
   MessageSquare,
   Save,
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
-import { saveMidtransSettings, saveGatewaySettings, saveEmailSettings } from "@/app/actions/admin-settings";
+import { saveMidtransSettings, saveGatewaySettings, saveEmailSettings, saveGoogleLoginSettings } from "@/app/actions/admin-settings";
 
 type Props = { settings: Record<string, string> };
 
@@ -84,6 +85,10 @@ export default function AdminIntegrationsClient({ settings }: Props) {
   const [midtransPending, startMidtrans] = useTransition();
   const [gatewayPending, startGateway] = useTransition();
   const [emailPending, startEmail] = useTransition();
+  const [googlePending, startGoogle] = useTransition();
+  // Diambil dari alamat yang sedang dibuka: itu persis alamat yang harus
+  // didaftarkan di Google, jadi tidak ada yang perlu ditebak atau diketik.
+  const appUrl = typeof window === "undefined" ? "https://scraper.hellens.dev" : window.location.origin;
   const [savedSection, setSavedSection] = useState<string | null>(null);
 
   const [midtransMode, setMidtransMode] = useState<"live" | "sandbox">(
@@ -94,6 +99,7 @@ export default function AdminIntegrationsClient({ settings }: Props) {
     if (section === "midtrans") startMidtrans(async () => { await action(fd); setSavedSection("midtrans"); setTimeout(() => setSavedSection(null), 3000); });
     if (section === "gateway") startGateway(async () => { await action(fd); setSavedSection("gateway"); setTimeout(() => setSavedSection(null), 3000); });
     if (section === "email") startEmail(async () => { await action(fd); setSavedSection("email"); setTimeout(() => setSavedSection(null), 3000); });
+    if (section === "google") startGoogle(async () => { await action(fd); setSavedSection("google"); setTimeout(() => setSavedSection(null), 3000); });
   }
 
   return (
@@ -207,6 +213,38 @@ export default function AdminIntegrationsClient({ settings }: Props) {
           />
           <div className="flex justify-end pt-2">
             <SaveButton pending={emailPending} saved={savedSection === "email"} />
+          </div>
+        </form>
+      </Section>
+
+      {/* Masuk dengan Google */}
+      <Section title="Masuk dengan Google" icon={LogIn}>
+        <form action={(fd) => handleSave("google", saveGoogleLoginSettings, fd)} className="space-y-4">
+          <div className="rounded-xl border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+            Buat OAuth client (tipe <strong>Web application</strong>) di Google Cloud Console → APIs &amp; Services →
+            Credentials. Isi <strong>Authorized redirect URI</strong> dengan alamat di bawah ini, persis sama termasuk
+            https dan tanpa garis miring di ujung:
+            <code className="mt-2 block break-all rounded-lg bg-background px-2 py-1.5 text-foreground">
+              {appUrl}/api/auth/google/callback
+            </code>
+          </div>
+          <Field
+            label="Client ID"
+            name="google_client_id"
+            placeholder="1234567890-xxxx.apps.googleusercontent.com"
+            defaultValue={settings.google_client_id}
+            hint="Dari OAuth client yang baru dibuat"
+          />
+          <Field
+            label="Client Secret"
+            name="google_client_secret"
+            type="password"
+            placeholder="GOCSPX-..."
+            defaultValue={settings.google_client_secret}
+            hint="Kosongkan keduanya untuk menyembunyikan tombol Masuk dengan Google"
+          />
+          <div className="flex justify-end pt-2">
+            <SaveButton pending={googlePending} saved={savedSection === "google"} />
           </div>
         </form>
       </Section>

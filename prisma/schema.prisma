@@ -22,7 +22,12 @@ datasource db {
 model User {
   id             String    @id @default(cuid())
   email          String    @unique
-  passwordHash   String
+  // Kosong untuk akun yang dibuat lewat Google: orangnya belum pernah memilih
+  // password. Mereka bisa membuatnya nanti lewat "Lupa password".
+  passwordHash   String?
+  // Identitas Google (klaim "sub"), dipakai menautkan akun walau emailnya
+  // nanti berubah. Email saja tidak cukup stabil untuk itu.
+  googleId       String?   @unique
   name           String
   sessionVersion Int @default(0)
   isSuperAdmin   Boolean   @default(false)

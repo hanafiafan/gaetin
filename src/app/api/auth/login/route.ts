@@ -44,6 +44,17 @@ export async function POST(req: NextRequest) {
     return fail("AUTH_002", "Akun terkunci sementara karena terlalu banyak percobaan. Coba lagi nanti.", 423);
   }
 
+  // Akun yang dibuat lewat Google belum punya password sama sekali. Menolaknya
+  // dengan "email atau password salah" akan membuat orangnya mencoba menebak
+  // password yang memang tidak pernah ada.
+  if (!user.passwordHash) {
+    return fail(
+      "AUTH_GOOGLE_ONLY",
+      "Akun ini dibuat lewat Google. Masuk dengan Google, atau pakai Lupa password untuk membuat password.",
+      400,
+    );
+  }
+
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
     await prisma.$executeRaw`

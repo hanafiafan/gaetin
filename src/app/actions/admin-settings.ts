@@ -38,6 +38,16 @@ export async function saveGatewaySettings(formData: FormData) {
   return { success: true };
 }
 
+export async function saveGoogleLoginSettings(formData: FormData) {
+  await requireSuperAdmin();
+  const fields = ["google_client_id", "google_client_secret"];
+  for (const key of fields) {
+    const value = (formData.get(key) as string | null) ?? "";
+    await upsertSetting(key, value);
+  }
+  return { success: true };
+}
+
 export async function saveEmailSettings(formData: FormData) {
   await requireSuperAdmin();
   const fields = ["email_provider", "email_api_key", "email_from"];

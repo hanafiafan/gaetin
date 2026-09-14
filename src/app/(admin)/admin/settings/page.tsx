@@ -15,6 +15,8 @@ const SETTING_KEYS = [
   "email_provider",
   "email_api_key",
   "email_from",
+  "google_client_id",
+  "google_client_secret",
 ];
 
 export default async function AdminSettingsPage() {
