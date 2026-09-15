@@ -30,6 +30,7 @@ export async function getDailyMessagingQuota(workspaceId: string) {
   const plan = await getWorkspacePlan(workspaceId);
   const limit = plan.limits.campaignDailyLimit;
   const used = await getDailyMessagingUsage(workspaceId);
+  const penuh = (await prisma.workspace.findUnique({ where: { id: workspaceId }, select: { blastFull: true } }))?.blastFull ?? false;
 
   // Jatah paket bukan jatah yang benar-benar bisa dipakai. Satu nomor WhatsApp
   // punya batas amannya sendiri, jadi kemampuan nyata sebuah workspace adalah
@@ -59,10 +60,20 @@ export async function getDailyMessagingQuota(workspaceId: string) {
     effectiveLimit: efektif,
     effectiveRemaining: Math.min(sisaPaket, sisaNomor),
     bottleneck: (kapasitasNomor < limit ? "numbers" : "plan") as "numbers" | "plan",
+    /** Mode kirim sampai habis menyala: angka di atas tetap dihitung apa
+     * adanya, tapi tidak lagi menghentikan pengiriman. Layar yang menulis
+     * "0 sisa" sementara pesan terus terkirim sama salahnya dengan layar
+     * yang menjanjikan jatah yang tidak ada. */
+    full: penuh,
   };
 }
 
 export async function assertDailyMessagingQuota(workspaceId: string): Promise<void> {
   const quota = await getDailyMessagingQuota(workspaceId);
-  if (quota.remaining <= 0) throw new DailyMessagingQuotaError(quota.limit);
+  // Satu-satunya gerbang sebelum pengiriman dimulai. Tanpa syarat ini, sebuah
+  // workspace dengan mode kirim penuh tetap ditolak 403 saat melanjutkan blas
+  // yang sudah melewati jatah hari ini — persis keadaan yang tombolnya ada
+  // untuk diatasi. Berlaku untuk blas, kampanye, dan pesan susulan sekaligus,
+  // karena ketiganya lewat sini.
+  if (!quota.full && quota.remaining <= 0) throw new DailyMessagingQuotaError(quota.limit);
 }

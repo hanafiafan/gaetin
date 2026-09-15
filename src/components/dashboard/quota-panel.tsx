@@ -22,6 +22,7 @@ export interface MessagingQuota {
   effectiveLimit: number;
   effectiveRemaining: number;
   bottleneck: "numbers" | "plan";
+  full?: boolean;
 }
 
 const angka = (n: number) => n.toLocaleString("id-ID");
@@ -39,19 +40,29 @@ export default function QuotaPanel({ quota }: { quota: MessagingQuota }) {
         <span className="text-xs text-muted-foreground">{quota.planName}</span>
       </div>
 
-      <div className="mt-2 h-1.5 rounded-full bg-muted">
-        <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${persen}%` }} />
-      </div>
+      {!quota.full && (
+        <div className="mt-2 h-1.5 rounded-full bg-muted">
+          <div className="h-1.5 rounded-full bg-whatsapp" style={{ width: `${persen}%` }} />
+        </div>
+      )}
 
       <p className="mt-2 text-xs text-muted-foreground">
-        {angka(quota.effectiveRemaining)} sisa dari {angka(quota.effectiveLimit)} pesan hari ini.
+        {quota.full
+          ? `${angka(quota.used)} pesan terkirim hari ini. Tidak ada batas selama "kirim sampai habis" menyala.`
+          : `${angka(quota.effectiveRemaining)} sisa dari ${angka(quota.effectiveLimit)} pesan hari ini.`}
       </p>
+
+      {quota.full && (
+        <p className="mt-1.5 text-xs text-warning">
+          Batas pengaman dimatikan lewat Pengaturan. Nomor WhatsApp jadi lebih mudah diblokir.
+        </p>
+      )}
 
       {/* Angka paket saja menyesatkan: satu nomor punya batas amannya sendiri,
           dan "1.000 sisa" untuk orang yang cuma punya satu nomor berbatas 100
           bukan optimistis — itu salah, dan pengirimannya akan berhenti di pesan
           ke-101 dengan alasan yang tidak nyambung dengan layar. */}
-      {quota.bottleneck === "numbers" && (
+      {!quota.full && quota.bottleneck === "numbers" && (
         <p className="mt-1.5 text-xs text-warning">
           {quota.connectedNumbers === 0
             ? `Paket ${quota.planName} mengizinkan ${angka(quota.limit)} pesan/hari, tapi belum ada nomor WhatsApp tersambung.`
