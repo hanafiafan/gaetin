@@ -31,9 +31,13 @@ export async function deliverWhatsApp(input: DeliveryInput) {
     if (!contact || !account) throw new DeliveryBlockedError("Kontak atau akun pengirim tidak tersedia");
     if (await tx.doNotContact.findUnique({ where: { workspaceId_phone: { workspaceId: input.workspaceId, phone: contact.phone } } })) throw new DeliveryBlockedError("Opt-out (Do-Not-Contact)");
     if (account.status !== "CONNECTED") throw new DeliveryBlockedError("Akun WhatsApp belum terhubung");
+    // Mode kirim penuh melewati batas harian, tapi TIDAK melewati kredit,
+    // opt-out, atau nomor yang belum tersambung: yang dilewati hanya rem
+    // pengaman nomor, bukan hak orang lain untuk tidak dihubungi.
+    const penuh = (await tx.workspace.findUnique({ where: { id: input.workspaceId }, select: { blastFull: true } }))?.blastFull ?? false;
     const today = dayStart();
     const used = await tx.outboundDelivery.count({ where: { workspaceId: input.workspaceId, channel: "WHATSAPP", status: { not: "FAILED" }, createdAt: { gte: today } } });
-    if (used >= plan.limits.campaignDailyLimit) throw new DailyMessagingQuotaError(plan.limits.campaignDailyLimit);
+    if (!penuh && used >= plan.limits.campaignDailyLimit) throw new DailyMessagingQuotaError(plan.limits.campaignDailyLimit);
     // Hari aktif baru menaikkan satu anak tangga pemanasan. Dihitung di sini,
     // saat pesan pertama hari itu benar-benar diterima untuk dikirim, supaya
     // nomor yang menganggur tidak ikut naik tangga tanpa mengirim apa pun.
@@ -41,7 +45,7 @@ export async function deliverWhatsApp(input: DeliveryInput) {
     const warmupDay = hariBaru ? account.warmupDay + 1 : account.warmupDay;
     const batasHariIni = effectiveDailyLimit({ dailyLimit: account.dailyLimit, warmupDay });
     const count = hariBaru ? 0 : account.sentToday;
-    if (count >= batasHariIni) throw new DailyMessagingQuotaError(batasHariIni);
+    if (!penuh && count >= batasHariIni) throw new DailyMessagingQuotaError(batasHariIni);
     await deductCreditsInTransaction(tx, input.workspaceId, CREDIT_COSTS.sendWhatsApp, "SEND_WHATSAPP");
     await tx.messagingAccount.update({ where: { id: account.id }, data: { sentToday: count + 1, sentTodayResetAt: today, warmupDay } });
     return tx.outboundDelivery.create({ data: { id: input.id, workspaceId: input.workspaceId, contactId: input.contactId, accountId: input.accountId, channel: "WHATSAPP", cost: CREDIT_COSTS.sendWhatsApp } });

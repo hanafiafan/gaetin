@@ -10,13 +10,14 @@ export async function GET() {
 
   const ws = await prisma.workspace.findUnique({
     where: { id: session.workspace.id },
-    select: { name: true, slug: true, createdAt: true },
+    select: { name: true, slug: true, createdAt: true, blastFull: true },
   });
   return NextResponse.json({ success: true, data: ws });
 }
 
 const PutSchema = z.object({
   name: z.string().min(1).max(80),
+  blastFull: z.boolean().optional(),
 });
 
 export async function PUT(req: NextRequest) {
@@ -32,6 +33,7 @@ export async function PUT(req: NextRequest) {
   const parsed = PutSchema.safeParse(body);
   if (!parsed.success) return fail("VAL_001", "Validasi gagal", 400, parsed.error.flatten().fieldErrors);
 
-  await prisma.workspace.update({ where: { id: session.workspace.id }, data: { name: parsed.data.name } });
+  const { name, blastFull } = parsed.data;
+  await prisma.workspace.update({ where: { id: session.workspace.id }, data: { name, ...(blastFull === undefined ? {} : { blastFull }) } });
   return NextResponse.json({ success: true });
 }

@@ -4,7 +4,7 @@ import { renderMessage } from "./text";
 import { InsufficientCreditsError } from "@/lib/credits/service";
 import { DailyMessagingQuotaError } from "./quota";
 import { enqueue } from "@/lib/jobs/queue";
-import { alasanBerhenti, dalamJamKirim, jedaPesanMs, jendelaBerikutnya, JENDELA_PERIKSA } from "@/lib/messaging/pacing";
+import { alasanBerhenti, dalamJamKirim, jedaPesanMs, jendelaBerikutnya, JEDA_MIN_MS, JENDELA_PERIKSA } from "@/lib/messaging/pacing";
 import { nomorUntukPesan, totalSisaJatah } from "@/lib/messaging/rotation";
 
 /**
@@ -30,9 +30,14 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
   };
   if (!accountId) { await pause("Nomor pengirim belum dipilih."); return; }
 
+  // Mode kirim penuh: seluruh daftar dijalankan sampai habis. Batas harian
+  // sudah dilewati di pengiriman; di sini yang dilewati jam kirim dan jeda
+  // yang melebar, karena keduanya bisa menunda 500 kontak sampai berhari-hari.
+  const penuh = (await prisma.workspace.findUnique({ where: { id: job.workspaceId }, select: { blastFull: true } }))?.blastFull ?? false;
+
   // Di luar jam kirim: tidur sampai jendela berikutnya, jangan dibatalkan.
   // Pesan jam dua pagi dua kali salah — sinyal robot, dan mengganggu orangnya.
-  if (!dalamJamKirim()) {
+  if (!penuh && !dalamJamKirim()) {
     await prisma.$transaction((tx) => enqueue(tx, kind, id, job.workspaceId, { id }, jendelaBerikutnya()));
     return;
   }
@@ -95,7 +100,9 @@ export async function runBroadcast(kind: "CAMPAIGN" | "BLAST", id: string) {
       // Sisa jatah SELURUH nomor tersambung, bukan satu nomor: jatahnya dibagi
       // oleh rotasi, tapi jam kirimnya tidak bertambah.
       const sisa = await totalSisaJatah(job.workspaceId);
-      const jeda = process.env.NODE_ENV === "test" ? 0 : jedaPesanMs({ jatahHarian: Math.max(1, sisa), sudahTerkirim: 0 });
+      const jeda = process.env.NODE_ENV === "test" ? 0
+        : penuh ? JEDA_MIN_MS
+        : jedaPesanMs({ jatahHarian: Math.max(1, sisa), sudahTerkirim: 0 });
       await enqueue(tx, kind, id, job.workspaceId, { id }, new Date(Date.now() + jeda));
     }
   });

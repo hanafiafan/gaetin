@@ -9,6 +9,7 @@ export default function WorkspaceProfileSettings() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+  const [blastFull, setBlastFull] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -20,6 +21,7 @@ export default function WorkspaceProfileSettings() {
         setName(j.data.name);
         setSlug(j.data.slug);
         setCreatedAt(new Date(j.data.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }));
+        setBlastFull(Boolean(j.data.blastFull));
       }
     })();
   }, []);
@@ -31,7 +33,7 @@ export default function WorkspaceProfileSettings() {
     const r = await fetch("/api/settings/workspace", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim() }),
+      body: JSON.stringify({ name: name.trim(), blastFull }),
     });
     const j = await r.json();
     if (!r.ok) { setError(j?.error?.message ?? "Gagal menyimpan"); setStatus("error"); return; }
@@ -62,6 +64,23 @@ export default function WorkspaceProfileSettings() {
           <p className="text-xs text-muted-foreground">Tidak bisa diubah setelah dibuat.</p>
         </div>
       </div>
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border/50 bg-card px-4 py-3">
+        <input
+          type="checkbox"
+          checked={blastFull}
+          onChange={e => setBlastFull(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+        />
+        <span className="min-w-0">
+          <span className="block text-sm font-semibold text-foreground">Kirim pesan blas sampai habis</span>
+          <span className="mt-0.5 block text-xs text-muted-foreground">
+            Kalau dinyalakan, satu blas berisi 500 kontak dikirim ke semuanya tanpa berhenti di
+            batas kirim harian, dan tetap jalan di luar jam 08.00–20.00. Jeda antar pesan jadi 15 detik.
+            Nomor WhatsApp jadi jauh lebih mudah diblokir — nyalakan hanya kalau kamu siap dengan risikonya.
+          </span>
+        </span>
+      </label>
 
       <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 text-xs text-muted-foreground">
         Workspace dibuat pada <span className="font-medium text-muted-foreground">{createdAt || "—"}</span>

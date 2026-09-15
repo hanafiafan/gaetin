@@ -86,6 +86,10 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   credits          Int     @default(0) // saldo kredit
+  /// Kirim blas sampai habis: batas harian dan jam kirim diabaikan.
+  /// Nomor lebih mudah diblokir WhatsApp, jadi dimatikan sampai pemilik
+  /// workspace sendiri yang menyalakannya.
+  blastFull        Boolean @default(false)
 
   memberships       Membership[]
   messagingAccounts MessagingAccount[]
