@@ -44,6 +44,19 @@ async function main() {
   async function request(path, options = {}) {
     return fetch(base + path, { redirect: "manual", ...options, headers: { "Content-Type": "application/json", ...(cookie ? { Cookie: cookie } : {}), ...options.headers } });
   }
+  for (const page of ["/", "/blog", "/panduan", "/register", "/login", "/lupa-password", "/reset-password", "/blog/riset-prospek-lokal-google-maps", "/blog/pesan-pembuka-yang-relevan", "/blog/pipeline-crm-untuk-tim-kecil", "/blog/memahami-kredit-dan-hasil-scraping"]) {
+    const response = await request(page);
+    assert.equal(response.status, 200, page);
+    if (page !== "/reset-password") assert.match(await response.text(), /<h1[ >]/, page + " has a primary heading");
+  }
+  assert.equal((await request("/blog/article-that-does-not-exist")).status, 404);
+  assert.equal((await request("/page-that-does-not-exist")).status, 404);
+  const sitemap = await request("/sitemap.xml");
+  assert.equal(sitemap.status, 200);
+  assert.match(await sitemap.text(), /blog\/riset-prospek-lokal-google-maps/);
+  assert.equal((await request("/robots.txt")).status, 200);
+  assert.equal((await request("/illustrations/business-crowd.webp")).status, 200);
+  assert.equal((await request("/extension.zip")).status, 200);
   assert.equal((await request("/api/contacts")).status, 401);
   const loginPage = await request("/login", { headers: { Cookie: "hellens_token=invalid" } }); assert.equal(loginPage.status, 200);
   const login = await request("/api/auth/login", { method: "POST", body: JSON.stringify({ email: own.user.email, password: "Smoke1234!" }) }); assert.equal(login.status, 200);
@@ -69,20 +82,31 @@ async function main() {
   assert.equal((await db.workspace.findUniqueOrThrow({ where: { id: own.ws.id } })).credits, beforePayment + 10);
   const scheduled = await db.campaign.create({ data: { workspaceId: own.ws.id, accountId: own.account.id, name: "due", messageTemplate: "Scheduled", status: "SCHEDULED", scheduledAt: new Date(Date.now() - 1000), totalRecipients: 1, messages: { create: { contactId: own.contact.id } } } });
   launch(["--import", "tsx", "scripts/worker.ts"]);
+  const hourWib = new Date(Date.now() + 7 * 3600000).getUTCHours();
+  const withinSendingHours = hourWib >= 8 && hourWib < 20;
   let status;
+  let queued;
   for (let i = 0; i < 150; i++) {
     status = (await db.campaign.findUniqueOrThrow({ where: { id: scheduled.id } })).status;
-    if (status === "COMPLETED") break;
+    queued = await db.backgroundJob.findUnique({ where: { id: `CAMPAIGN:${scheduled.id}` } });
+    if (withinSendingHours ? status === "COMPLETED" : status === "ACTIVE" && queued?.runAt > new Date()) break;
     await new Promise(r => setTimeout(r, 100));
   }
-  assert.equal(status, "COMPLETED", logs); assert.equal(receipts.size, 2);
+  if (withinSendingHours) {
+    assert.equal(status, "COMPLETED", logs); assert.equal(receipts.size, 2);
+  } else {
+    assert.equal(status, "ACTIVE", logs);
+    assert.ok(queued?.runAt > new Date(), "Night-time campaign must wait for the sending window");
+    assert.equal(new Date(queued.runAt.getTime() + 7 * 3600000).getUTCHours(), 8);
+    assert.equal(receipts.size, 1, "No mass message may be sent outside the sending window");
+  }
   assert.equal((await request("/api/settings/password", { method: "PUT", body: JSON.stringify({ currentPassword: "Smoke1234!", newPassword: "Changed1234!" }) })).status, 200);
   assert.equal((await request("/api/auth/me")).status, 401);
   const relogin = await request("/api/auth/login", { method: "POST", body: JSON.stringify({ email: own.user.email, password: "Changed1234!" }) }); assert.equal(relogin.status, 200);
   cookie = relogin.headers.get("set-cookie").split(";")[0];
   await db.subscription.update({ where: { workspaceId: own.ws.id }, data: { currentPeriodEnd: new Date(0) } });
   assert.equal((await request("/api/campaigns")).status, 403);
-  console.log("PASS: production HTTP smoke — auth, 6 dashboard pages, tenant isolation, webhook deduplication, idempotent inbox, billing replay, scheduled worker, password revocation, expired-plan API access");
+  console.log("PASS: production HTTP smoke — 11 public pages, sitemap/assets/404, auth, 6 dashboard pages, tenant isolation, webhook deduplication, idempotent inbox, billing replay, scheduled worker, password revocation, expired-plan API access");
 }
 main().catch(err => { console.error(err); console.error(logs); process.exitCode = 1; }).finally(async () => {
   for (const child of children) {

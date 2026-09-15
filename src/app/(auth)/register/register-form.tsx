@@ -4,15 +4,9 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Search, Send, Zap } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { INPUT_CLASS, LABEL_CLASS, BUTTON_CLASS } from "@/components/brand/field";
 import GoogleSignIn, { pesanErrorGoogle } from "@/components/auth/google-sign-in";
-
-const trialBenefits = [
-  { icon: Zap, text: "100 kredit langsung aktif" },
-  { icon: Search, text: "Scraping lead Google Maps" },
-  { icon: Send, text: "Blast WhatsApp ke kontak" },
-];
 
 export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
   const router = useRouter();
@@ -52,22 +46,10 @@ export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
 
   return (
     <div className="space-y-5">
-      <div className="bg-primary p-5 text-primary-foreground">
-        <p className="cg-display text-2xl">Mulai gratis — 100 kredit aktif</p>
-        <div className="mt-3 flex flex-col gap-2">
-          {trialBenefits.map(({ icon: Icon, text }) => (
-            <div key={text} className="cg-label flex items-center gap-2.5">
-              <Icon className="h-3.5 w-3.5 shrink-0" />
-              {text}
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div>
         <div className="mb-8">
-          <h1 className="cg-display text-4xl">Buat workspace</h1>
-          <p className="mt-3 text-sm text-muted-foreground">Daftar gratis, tidak perlu kartu kredit.</p>
+          <h1 className="cg-display text-4xl">CERITA BARU<br />DIMULAI DI SINI.</h1>
+          <p className="mt-3 text-sm text-muted-foreground">Buat akun gratis dengan 100 kredit awal.</p>
         </div>
 
         {pesanGoogle && (
@@ -86,16 +68,16 @@ export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
           )}
           <div className="space-y-1.5">
             <label htmlFor="name" className={LABEL_CLASS}>Nama lengkap</label>
-            <input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Budi Santoso" className={INPUT_CLASS} required />
+            <input id="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Budi Santoso" className={INPUT_CLASS} required />
           </div>
           <div className="space-y-1.5">
             <label htmlFor="email" className={LABEL_CLASS}>Email</label>
-            <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" className={INPUT_CLASS} required />
+            <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" className={INPUT_CLASS} required />
           </div>
           <div className="space-y-1.5">
             <label htmlFor="password" className={LABEL_CLASS}>Password</label>
             <div className="relative">
-              <input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className={`${INPUT_CLASS} pr-12`} required />
+              <input id="password" autoComplete="new-password" minLength={8} type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className={`${INPUT_CLASS} pr-12`} required />
               <button
                 type="button"
                 aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}

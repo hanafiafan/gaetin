@@ -67,12 +67,12 @@ export default function LoginForm({ googleSiap }: { googleSiap: boolean }) {
         )}
         <div className="space-y-1.5">
           <label htmlFor="email" className={LABEL_CLASS}>Email</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" className={INPUT_CLASS} required />
+          <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" className={INPUT_CLASS} required />
         </div>
         <div className="space-y-1.5">
           <label htmlFor="password" className={LABEL_CLASS}>Password</label>
           <div className="relative">
-            <input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className={`${INPUT_CLASS} pr-12`} required />
+            <input id="password" autoComplete="current-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className={`${INPUT_CLASS} pr-12`} required />
             <button
               type="button"
               aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
