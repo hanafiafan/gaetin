@@ -1747,3 +1747,232 @@ html:has(.public-site) {
     display: none;
   }
 }
+
+/* Product-led art direction */
+.pub-logo-image {
+  object-fit: contain;
+}
+.pub-hero-composition {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 36px;
+  align-items: center;
+  padding: 20px 0 32px;
+}
+.public-site .pub-product-title {
+  font-size: clamp(54px, 6.7vw, 100px);
+  line-height: 1.07;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+.pub-product-title em {
+  color: var(--pub-orange);
+  font-style: normal;
+}
+.pub-hero-description {
+  max-width: 490px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: #bcbdb8;
+  margin: 25px 0;
+}
+.pub-channel-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.pub-channel-list span {
+  border: 1px solid #444;
+  border-radius: 30px;
+  padding: 8px 12px;
+  font-size: 10px;
+  color: #e4e4de;
+}
+.pub-hero-art {
+  position: relative;
+  background: #faf7ee;
+  border-radius: 28px 90px 28px 28px;
+  transform: rotate(2deg);
+  margin: 18px 0;
+  isolation: isolate;
+}
+.pub-hero-art > img {
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+.pub-art-label,
+.pub-art-caption {
+  display: block;
+  color: #191919;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 24px;
+}
+.pub-art-caption {
+  border-top: 1px solid #ddd8cd;
+}
+.pub-floating-chip {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 15px 20px;
+  color: #191919;
+  border: 1px solid #191919;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 #191919;
+  animation: pub-float 5s ease-in-out 2;
+}
+.pub-chip-map {
+  left: -24px;
+  top: 24%;
+  background: #d5b9ff;
+  transform: rotate(-7deg);
+}
+.pub-chip-crm {
+  right: -12px;
+  bottom: 18%;
+  background: #b7df75;
+  animation-delay: 0.5s;
+}
+.pub-outreach-art {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #e8def8;
+  margin: 60px 0 24px;
+  color: #191919;
+}
+.pub-outreach-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pub-outreach-art > div {
+  padding: 40px;
+  align-self: center;
+}
+.public-site .pub-outreach-art h2 {
+  font-size: clamp(32px, 4vw, 60px);
+  margin: 20px 0;
+}
+.pub-outreach-art p {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.pub-arrival {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: #191919;
+  color: #f5f4ef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  pointer-events: none;
+  animation: pub-arrive 0.9s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.pub-arrival span {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: 0.12em;
+}
+.pub-arrival img {
+  animation: pub-logo-enter 0.6s ease both;
+}
+.pub-arrival i {
+  width: 130px;
+  height: 3px;
+  background: #ff8038;
+  transform-origin: left;
+  animation: pub-logo-enter 0.7s ease both;
+}
+@keyframes pub-arrive {
+  0%,
+  45% {
+    clip-path: inset(0);
+  }
+  100% {
+    clip-path: inset(0 0 100%);
+    visibility: hidden;
+  }
+}
+@keyframes pub-logo-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pub-float {
+  50% {
+    translate: 0 -10px;
+  }
+}
+@media (max-width: 800px) {
+  .pub-hero-composition {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .public-site .pub-product-title {
+    font-size: clamp(52px, 10.7vw, 85px);
+  }
+  .pub-hero-art {
+    margin: 12px 10px 20px;
+  }
+  .pub-floating-chip {
+    font-size: 10px;
+    padding: 10px 12px;
+  }
+  .pub-chip-map {
+    left: -14px;
+  }
+  .pub-outreach-art {
+    grid-template-columns: 1fr;
+  }
+  .pub-outreach-art > div {
+    padding: 28px;
+  }
+  .pub-hero-description {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pub-arrival {
+    display: none;
+  }
+  .pub-floating-chip {
+    animation: none;
+  }
+}
+.pub-hero-action {
+  margin-top: 24px;
+}
+.pub-hero-action small {
+  display: block;
+  color: #aaa;
+  margin-top: 12px;
+  font-size: 11px;
+}
+.pub-hero-bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.pub-hero-kicker {
+  margin-bottom: 16px;
+}
+.pub-hero-composition {
+  padding-bottom: 10px;
+}

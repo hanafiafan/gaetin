@@ -1,13 +1,13 @@
+import { publicMetadata } from "@/lib/public/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Download } from "lucide-react";
 import { PublicShell } from "@/components/public/public-shell";
-export const metadata: Metadata = {
-  title: "Panduan mulai — Hellens",
-  description:
-    "Pasang ekstensi, temukan prospek dan mulai menggunakan Hellens langkah demi langkah.",
-  alternates: { canonical: "/panduan" },
-};
+export const metadata: Metadata = publicMetadata(
+  "Panduan mulai — Hellens",
+  "Pasang ekstensi, temukan prospek dan mulai menggunakan Hellens langkah demi langkah.",
+  "/panduan",
+);
 export default function GuidePage() {
   return (
     <PublicShell>

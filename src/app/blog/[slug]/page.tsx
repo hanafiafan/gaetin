@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/public/metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,7 +19,7 @@ const findPost = cache(async (slug: string) => {
           category: "Jurnal",
           readTime: Math.max(
             1,
-            Math.ceil(post.content.split(/\\s+/).length / 180),
+            Math.ceil(post.content.split(/\s+/).length / 180),
           ),
         }
       : null;
@@ -32,11 +33,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = await findPost(slug);
-  return {
-    title: post ? post.title + " — Jurnal Hellens" : "Artikel tidak ditemukan",
-    description: post?.excerpt,
-    alternates: { canonical: "/blog/" + slug },
-  };
+  return publicMetadata(
+    post ? post.title + " — Jurnal Hellens" : "Artikel tidak ditemukan",
+    post?.excerpt ?? "",
+    "/blog/" + slug,
+    true,
+  );
 }
 export default async function BlogDetailPage({
   params,

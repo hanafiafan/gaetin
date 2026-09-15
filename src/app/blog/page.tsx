@@ -1,14 +1,14 @@
+import { publicMetadata } from "@/lib/public/metadata";
 import type { Metadata } from "next";
 import JournalGrid from "@/components/public/journal-grid";
 import { PublicShell } from "@/components/public/public-shell";
 import { getPublicPosts } from "@/lib/public/posts";
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Jurnal Hellens — Ide bagus, langkah nyata",
-  description:
-    "Panduan praktis riset prospek, komunikasi dan CRM untuk bisnis yang terus tumbuh.",
-  alternates: { canonical: "/blog" },
-};
+export const metadata: Metadata = publicMetadata(
+  "Jurnal Hellens — Riset Prospek & CRM",
+  "Panduan praktis riset prospek, komunikasi dan CRM untuk bisnis yang terus tumbuh.",
+  "/blog",
+);
 export default async function BlogListPage() {
   const posts = await getPublicPosts();
   return (

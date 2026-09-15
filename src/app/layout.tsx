@@ -16,14 +16,14 @@ const body = Inter({
 });
 
 const DESCRIPTION =
-  "Sistem untuk mengelola kontak, WhatsApp blast, inbox, CRM, follow-up, tagihan, dan laporan operasional.";
+  "Temukan prospek Google Maps, cari email bisnis, kelola WhatsApp, kontak, pipeline CRM dan tindak lanjut tim dalam satu workspace.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://scraper.hellens.dev"),
-  title: "Hellens Scraper",
+  title: "Hellens — Prospek, WhatsApp & CRM",
   description: DESCRIPTION,
   openGraph: {
-    title: "Hellens Scraper",
+    title: "Hellens — Prospek, WhatsApp & CRM",
     description: DESCRIPTION,
     url: "https://scraper.hellens.dev",
     siteName: "Hellens",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hellens Scraper",
+    title: "Hellens — Prospek, WhatsApp & CRM",
     description: DESCRIPTION,
   },
 };
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#E4FF00",
+  themeColor: "#191919",
 };
 
 export default function RootLayout({

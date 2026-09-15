@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, X, MoveUpRight } from "lucide-react";
 import {
@@ -11,10 +13,29 @@ import {
 } from "motion/react";
 import "./public.css";
 
+function Arrival() {
+  const pathname = usePathname();
+  return (
+    <div key={pathname} className="pub-arrival" aria-hidden="true">
+      <Image
+        src="/brand/hellens-mark-white.png"
+        alt=""
+        width={72}
+        height={72}
+      />
+      <span>HELLENS</span>
+      <i />
+    </div>
+  );
+}
+
 export function PublicMotion({ children }: { children: React.ReactNode }) {
   return (
     <MotionConfig reducedMotion="user">
-      <div className="public-site">{children}</div>
+      <div className="public-site">
+        <Arrival />
+        {children}
+      </div>
     </MotionConfig>
   );
 }
@@ -32,7 +53,7 @@ export function Reveal({
       className={className}
       initial={false}
       whileInView={reduced ? {} : { y: [24, 0], opacity: [0.55, 1] }}
-      viewport={{ once: true, amount: 0.12 }}
+      viewport={{ once: false, amount: 0.12 }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
@@ -43,13 +64,14 @@ export function Reveal({
 export function Brand() {
   return (
     <Link className="pub-brand" href="/" aria-label="Hellens — Beranda">
-      <span className="pub-brand-mark" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-        <i />
-      </span>
-      HELLENS<span className="pub-brand-dot">®</span>
+      <Image
+        className="pub-logo-image"
+        src="/brand/hellens-mark-white.png"
+        width={40}
+        height={40}
+        alt=""
+      />
+      HELLENS
     </Link>
   );
 }

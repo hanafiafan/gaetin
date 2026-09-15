@@ -237,50 +237,71 @@ export default function Landing({
           <div className="pub-wrap">
             <div className="pub-hero-kicker">
               <span>
-                <i className="pub-status-dot" /> RUANG TUMBUH BISNIS ANDA
+                <i className="pub-status-dot" /> PROSPECTING & CUSTOMER
+                WORKSPACE
               </span>
-              <span>LEADS. CONVERSATIONS. GROWTH.</span>
+              <span>HELLENS / BUILT FOR YOUR NEXT CUSTOMER</span>
             </div>
-            <Reveal>
-              <h1 className="pub-hero-title">
-                <span>
-                  TEMUKAN{" "}
-                  <span className="pub-inline-crowd">
-                    <Image
-                      src="/illustrations/business-crowd.webp"
-                      alt=""
-                      fill
-                      priority
-                      sizes="25vw"
-                    />
-                  </span>
+            <div className="pub-hero-composition">
+              <Reveal className="pub-hero-copy">
+                <h1 className="pub-product-title">
+                  CARI PROSPEK.
+                  <br />
+                  <em>MULAI CHAT.</em>
+                  <br />
+                  KELOLA DEAL.
+                </h1>
+                <p className="pub-hero-description">
+                  Dari data bisnis Google Maps ke WhatsApp, email, dan pipeline
+                  CRM. Kelola pencarian prospek sampai tindak lanjut tim dalam
+                  satu workspace.
+                </p>
+                <div className="pub-channel-list">
+                  <span>Google Maps</span>
+                  <span>WhatsApp & email</span>
+                  <span>CRM & follow-up</span>
+                </div>
+                <div className="pub-hero-action">
+                  <Link href="/register" className="pub-button">
+                    Mulai cari prospek <ArrowUpRight size={20} />
+                  </Link>
+                  <small>
+                    {TRIAL_CREDITS} kredit awal · Tanpa kartu kredit
+                  </small>
+                </div>
+              </Reveal>
+              <Reveal className="pub-hero-art">
+                <span className="pub-art-label">
+                  DARI PETA KE PERCAKAPAN ↗
                 </span>
-                <span>PELUANG BARU.</span>
-                <span>
-                  <span className="pub-hero-flower" aria-hidden="true">
-                    ✳
-                  </span>{" "}
-                  TUMBUH <em>BARENG.</em>
-                  <span className="pub-arrow-tile">
-                    <ArrowUpRight />
-                  </span>
+                <Image
+                  src="/illustrations/prospect-city.webp"
+                  alt="Miniatur bisnis lokal yang terhubung dengan kartu kontak, email, dan percakapan."
+                  width={1536}
+                  height={1024}
+                  priority
+                  sizes="(max-width: 800px) 100vw, 55vw"
+                />
+                <span className="pub-floating-chip pub-chip-map">
+                  <MapPin size={18} /> Riset bisnis lokal
                 </span>
-              </h1>
-            </Reveal>
+                <span className="pub-floating-chip pub-chip-crm">
+                  <Workflow size={18} /> Satu alur kerja
+                </span>
+                <span className="pub-art-caption">
+                  TEMUKAN → HUBUNGI → TINDAK LANJUTI
+                </span>
+              </Reveal>
+            </div>
             <div className="pub-hero-bottom">
               <p>
-                Dari bisnis yang belum Anda kenal,
+                Riset lebih terarah.
                 <br />
-                jadi hubungan yang punya potensi.
+                Tindak lanjut lebih tertata.
                 <br />
                 <b>Google Maps, WhatsApp, email & CRM. Satu Hellens.</b>
               </p>
-              <div>
-                <Link href="/register" className="pub-button">
-                  Temukan peluang saya <ArrowUpRight size={20} />
-                </Link>
-                <small>{TRIAL_CREDITS} kredit awal · Tanpa kartu kredit</small>
-              </div>
+
               <a
                 href="#fitur"
                 className="pub-scroll-cue"
@@ -356,6 +377,31 @@ export default function Landing({
           <div className="pub-wrap pub-section">
             <Reveal>
               <Demo />
+            </Reveal>
+            <Reveal className="pub-outreach-art">
+              <Image
+                src="/illustrations/outreach-studio.webp"
+                alt="Ilustrasi email, percakapan, kartu kontak, dan papan CRM yang saling terhubung."
+                width={1536}
+                height={1024}
+                sizes="(max-width: 800px) 100vw, 60vw"
+              />
+              <div>
+                <span className="pub-eyebrow">BUKAN SEKADAR DAFTAR KONTAK</span>
+                <h2>
+                  SETIAP KONTAK.
+                  <br />
+                  ADA LANJUTANNYA.
+                </h2>
+                <p>
+                  Personalisasi pesan, kelola balasan, dan catat tahap
+                  penjualan. Tim Anda selalu punya konteks untuk percakapan
+                  berikutnya.
+                </p>
+                <Link className="pub-text-link" href="/panduan">
+                  Pelajari alurnya <ArrowUpRight size={18} />
+                </Link>
+              </div>
             </Reveal>
             <div className="pub-feature-grid">
               {[

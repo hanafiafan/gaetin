@@ -56,6 +56,13 @@ async function main() {
   assert.match(await sitemap.text(), /blog\/riset-prospek-lokal-google-maps/);
   assert.equal((await request("/robots.txt")).status, 200);
   assert.equal((await request("/illustrations/business-crowd.webp")).status, 200);
+  for (const asset of ["/illustrations/prospect-city.webp", "/illustrations/outreach-studio.webp", "/icon.png", "/apple-icon.png", "/opengraph-image.jpg"]) assert.equal((await request(asset)).status, 200, asset);
+  const seoHome = await (await request("/")).text();
+  assert.match(seoHome, /property="og:title" content="Hellens — Cari Prospek, WhatsApp &amp; CRM"/);
+  assert.match(seoHome, /application\/ld\+json/);
+  const seoArticle = await (await request("/blog/riset-prospek-lokal-google-maps")).text();
+  assert.match(seoArticle, /property="og:type" content="article"/);
+
   assert.equal((await request("/extension.zip")).status, 200);
   assert.equal((await request("/api/contacts")).status, 401);
   const loginPage = await request("/login", { headers: { Cookie: "hellens_token=invalid" } }); assert.equal(loginPage.status, 200);
