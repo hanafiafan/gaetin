@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import MetricStrip from "@/components/dashboard/metric-strip";
 import WorkflowGuide from "@/components/dashboard/workflow-guide";
+import { sectionForPath } from "@/components/dashboard/nav-config";
 
 function formatIDR(n: number): string {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
@@ -89,6 +90,13 @@ export default async function DashboardPage({
   // Alur kerja sebenarnya, bukan daftar pemasangan. Urutannya persis cara
   // aplikasi ini dipakai sehari-hari, dan tiap langkah "selesai" ditentukan
   // dari data nyata — bukan dari centang manual yang bisa bohong.
+  //
+  // Judul langkah 3-5 memakai kata yang PERSIS SAMA dengan nama grup menu di
+  // nav-config.ts. Sebelumnya panduan ini mengajarkan "Kumpulkan prospek /
+  // Mulai pengiriman / Kelola penjualan" sementara menunya menulis "Prospek /
+  // Kampanye / Penjualan" — orang membaca satu perjalanan dalam dua kosakata
+  // dan harus menerjemahkannya sendiri. Dua langkah pertama tetap punya judul
+  // sendiri karena keduanya persiapan sekali pakai di bawah grup "Mulai".
   const workflow = [
     {
       title: "Siapkan alat pencarian",
@@ -105,22 +113,22 @@ export default async function DashboardPage({
       done: accounts > 0,
     },
     {
-      title: "Kumpulkan prospek",
-      desc: "Ketik jenis usaha dan kotanya, lalu simpan hasilnya jadi daftar kontak.",
+      title: "Cari calon pembeli",
+      desc: "Ketik jenis usaha dan kotanya, lalu simpan hasilnya jadi daftar kontak. Ini isi menu 02 Cari Calon Pembeli.",
       href: "/dashboard/scraper",
       cta: "Cari sekarang",
       done: contacts > 0,
     },
     {
-      title: "Mulai pengiriman",
-      desc: "Satu pesan, banyak penerima. Nama tiap orang disisipkan otomatis.",
+      title: "Kirim pesan",
+      desc: "Satu pesan, banyak penerima. Nama tiap orang disisipkan otomatis. Ini isi menu 03 Kirim Pesan.",
       href: "/dashboard/campaigns",
       cta: "Kirim pesan",
       done: blasts + campaigns > 0,
     },
     {
-      title: "Kelola penjualan",
-      desc: "Balasan masuk ke Pesan Masuk. Yang serius, pindahkan ke Peluang Penjualan.",
+      title: "Balas & catat",
+      desc: "Balasan masuk ke Pesan Masuk. Yang serius, pindahkan ke Peluang Penjualan. Ini isi menu 04 Balas & Catat.",
       href: "/dashboard/inbox",
       cta: "Lihat balasan",
       done: revenue > 0,
@@ -165,14 +173,18 @@ export default async function DashboardPage({
           angka. */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
+          {/* Remah jejak ditulis tangan di sini, satu-satunya halaman yang
+              begitu, dan karenanya satu-satunya yang bisa melenceng dari
+              menunya — persis yang terjadi saat grupnya berganti nama.
+              Diambil dari sectionForPath() seperti 17 halaman lainnya. */}
           <span className="inline-flex items-center text-xs font-medium tracking-wide text-muted-foreground">
-            Workspace / Ringkasan
+            Workspace / {sectionForPath("/dashboard").group}
           </span>
           <h1 className="cg-display mt-2.5 text-[clamp(1.75rem,2.8vw,2.35rem)]">
-            Ringkasan workspace
+            Ringkasan
           </h1>
           <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">
-            Pantau prospek, tindak lanjuti percakapan, dan tentukan langkah berikutnya.
+            Pantau calon pembeli, balas percakapan, dan tentukan langkah berikutnya.
           </p>
         </div>
         {subscription && (

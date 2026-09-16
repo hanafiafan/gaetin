@@ -51,25 +51,41 @@ export type NavItem = {
   tabs?: NavTab[];
 };
 
-// Dikelompokkan berurutan cara pakainya (mulai -> cari -> kirim -> balas ->
-// akun) supaya user baru tidak nyasar di menu datar. Tiap grup punya warna
-// sendiri (lihat section-tone.ts) supaya user langsung tahu "sedang di area
-// mana" tanpa baca label — Mulai=kuning (anchor), Akun=netral.
+// Nama grup = LANGKAH KERJA, bukan nama fitur.
+//
+// Sebelum ini grupnya bernama Ringkasan / Prospek / Kampanye / Penjualan:
+// kata benda yang menyebut isi menunya, bukan pekerjaan yang sedang
+// dikerjakan. Dua di antaranya ("Prospek", "Kampanye") juga istilah yang
+// justru sedang dihindari di seluruh aplikasi ini. Akibatnya urutan memakai
+// aplikasi tidak terbaca dari menunya sama sekali, dan panduan di Ringkasan
+// mengajarkan lima kata yang lain lagi — satu perjalanan, tiga kosakata.
+//
+// Sekarang menu, panduan alur di Ringkasan, dan judul halaman memakai kata
+// yang sama persis: Mulai -> Cari Calon Pembeli -> Kirim Pesan -> Balas &
+// Catat -> Akun. Kalau salah satu berubah, ubah ketiganya.
+//
+// `step` membuat urutannya terlihat, bukan cuma tersirat dari posisi. Akun
+// bukan langkah kerja, jadi ia tidak bernomor.
+//
+// Tiap grup punya warna sendiri (lihat section-tone.ts) supaya user langsung
+// tahu "sedang di area mana" tanpa baca label.
 //
 // Menu tingkat atas sengaja ditahan di angka sepuluh. Pekerjaan yang sama
 // dikumpulkan jadi satu menu bertab, bukan dipecah jadi beberapa baris menu:
 // yang perlu diingat orang adalah "saya mau kirim pesan", bukan "kirim pesan
 // WhatsApp ada di menu ketiga, contoh pesannya di menu keenam".
-export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[] = [
+export const navGroups: { label: string; step?: number; tone: SectionTone; items: NavItem[] }[] = [
   {
-    label: "Ringkasan",
+    label: "Mulai",
+    step: 1,
     tone: "primary",
     items: [
       { label: "Ringkasan", desc: "Angka penting dan langkah berikutnya", href: "/dashboard", icon: LayoutDashboard },
     ],
   },
   {
-    label: "Prospek",
+    label: "Cari Calon Pembeli",
+    step: 2,
     tone: "email",
     items: [
       { label: "Cari Bisnis di Maps", desc: "Ambil nama dan nomor bisnis dari Google Maps", href: "/dashboard/scraper", icon: Search, flag: "scraper" },
@@ -88,7 +104,8 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     ],
   },
   {
-    label: "Kampanye",
+    label: "Kirim Pesan",
+    step: 3,
     tone: "whatsapp",
     items: [
       {
@@ -108,7 +125,8 @@ export const navGroups: { label: string; tone: SectionTone; items: NavItem[] }[]
     ],
   },
   {
-    label: "Penjualan",
+    label: "Balas & Catat",
+    step: 4,
     tone: "kelola",
     items: [
       { label: "Pesan Masuk", desc: "Balasan dari calon pembeli masuk ke sini", href: "/dashboard/inbox", icon: Inbox, flag: "inbox", planFeature: "inbox" },
@@ -212,8 +230,8 @@ export function tabsForPath(pathname: string): NavTab[] | null {
  * memang selalu dibuka lewat tombol di halaman Daftar Kontak.
  */
 export const offNavSections: Record<string, { group: string; tone: SectionTone }> = {
-  "/dashboard/setup": { group: "Ringkasan", tone: "primary" },
-  "/dashboard/contacts/import": { group: "Prospek", tone: "email" },
+  "/dashboard/setup": { group: "Mulai", tone: "primary" },
+  "/dashboard/contacts/import": { group: "Cari Calon Pembeli", tone: "email" },
 };
 
 /** Area tempat sebuah halaman berada — dipakai kepala halaman supaya judulnya

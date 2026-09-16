@@ -104,16 +104,23 @@ export default function WorkspaceNav({
   return (
     <>
       <header className="cg-topbar sticky top-0 z-30 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex min-h-[76px] max-w-[1600px] flex-wrap items-center gap-2 px-3 sm:px-5 lg:px-7">
+        <div className="mx-auto flex min-h-[76px] max-w-[1600px] flex-wrap items-center gap-2 px-3 sm:px-5 lg:max-xl:gap-1.5 lg:max-xl:px-4 lg:px-5 2xl:px-7">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
-            <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt="" className="h-7 w-7" />
-            <span className="text-lg font-semibold tracking-tight text-foreground">{appName}</span>
+            <Image width={28} height={28} src="/brand/hellens-mark-white.png" alt={appName} className="h-7 w-7" />
+            {/* Di laptop sempit nama merek mengalah untuk nama langkah kerja:
+                yang satu cuma mengingatkan aplikasi apa ini, yang lain
+                memberi tahu orang sedang di mana. */}
+            {/* Di bawah 1360px nama merek mengalah untuk nama langkah kerja:
+                yang satu cuma mengingatkan aplikasi apa ini, yang lain memberi
+                tahu orang sedang di mana. Lambangnya tetap ada dan tetap
+                menuju Ringkasan. */}
+            <span className="text-lg font-semibold tracking-tight text-foreground lg:max-[1360px]:hidden">{appName}</span>
           </Link>
 
           <nav
             ref={navRef}
             aria-label="Bagian utama"
-            className="cg-primary-nav hidden items-center gap-1 rounded-full bg-white p-1 lg:flex"
+            className="cg-primary-nav hidden items-center gap-0.5 rounded-full bg-white p-0.5 lg:flex 2xl:gap-1 2xl:p-1"
           >
             {visible.map((g) => {
               const active = g.label === activeGroup?.label;
@@ -129,12 +136,17 @@ export default function WorkspaceNav({
                     href={navItemHref(g.items[0], featureFlags)}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex h-9 items-center whitespace-nowrap rounded-full px-3 text-sm font-medium transition",
+                      "flex h-9 items-center whitespace-nowrap rounded-full px-2.5 text-sm font-medium transition 2xl:px-3",
                       active
                         ? "bg-primary text-primary-foreground"
                         : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
                     )}
                   >
+                    {g.step && (
+                      <span className={cn("mr-1.5 text-xs tabular-nums", active ? "opacity-70" : "text-slate-400")}>
+                        {String(g.step).padStart(2, "0")}
+                      </span>
+                    )}
                     {g.label}
                   </Link>
                 );
@@ -149,12 +161,17 @@ export default function WorkspaceNav({
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpenGroup(open ? null : g.label)}
                     className={cn(
-                      "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-sm font-medium transition",
+                      "flex h-9 items-center gap-1 whitespace-nowrap rounded-full px-2.5 text-sm font-medium transition 2xl:gap-1.5 2xl:px-3",
                       active
                         ? "bg-primary text-primary-foreground"
                         : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
                     )}
                   >
+                    {g.step && (
+                      <span className={cn("text-xs tabular-nums", active ? "opacity-70" : "text-slate-400")}>
+                        {String(g.step).padStart(2, "0")}
+                      </span>
+                    )}
                     {g.label}
                     <ChevronDown className={cn("h-4 w-4 opacity-60 transition-transform", open && "rotate-180")} />
                   </button>
@@ -236,10 +253,10 @@ export default function WorkspaceNav({
             <Link
               href="/dashboard/billing"
               title="Sisa kredit — klik untuk beli tambahan"
-              className="hidden h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-semibold text-foreground transition hover:border-foreground/30 sm:flex"
+              className="hidden h-9 items-center gap-1.5 rounded-lg border border-border px-2.5 text-sm font-semibold text-foreground transition hover:border-foreground/30 sm:flex 2xl:px-3"
             >
               <Zap className="h-4 w-4 text-primary" />
-              {credits.toLocaleString("id-ID")}
+              <span className="lg:max-xl:hidden">{credits.toLocaleString("id-ID")}</span>
             </Link>
 
             {isSuperAdmin && (

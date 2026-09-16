@@ -105,7 +105,12 @@ export default function MobileNav({
                 if (!items.length) return null;
                 return (
                   <div key={group.label}>
-                    <p className="mb-1.5 px-2 text-sm font-bold uppercase tracking-wide text-foreground/60">{group.label}</p>
+                    {/* Nomor langkah dibawa juga ke laci: urutan kerjanya harus
+                        terbaca sama di ponsel dan di layar besar. */}
+                    <p className="mb-1.5 flex items-center gap-1.5 px-2 text-sm font-bold uppercase tracking-wide text-foreground/60">
+                      {group.step && <span className="tabular-nums text-foreground/40">{String(group.step).padStart(2, "0")}</span>}
+                      {group.label}
+                    </p>
                     <div className="space-y-0.5">
                       {items.map((item) => {
                         const Icon = item.icon;
