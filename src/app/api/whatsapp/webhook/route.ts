@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
-import { handleIncomingMessage } from "@/lib/inbox/service";
+import { handleIncomingMessage, PermanentIncomingError } from "@/lib/inbox/service";
 import { secureEqual } from "@/lib/secure-compare";
 
 const Schema = z.discriminatedUnion("event", [
@@ -38,6 +38,15 @@ export async function POST(req: NextRequest) {
       : { status: "DISCONNECTED" } });
     return NextResponse.json({ ok: true });
   } catch (err) {
+    // 503 = "coba lagi nanti", dan antrean gateway MENAHAN seluruh peristiwa di
+    // belakangnya sampai yang ini berhasil. Jadi 503 hanya boleh dipakai untuk
+    // kegagalan yang memang sementara (database sedang tidak bisa dihubungi).
+    // Peristiwa yang bentuknya salah harus dijawab 400 supaya dibuang, kalau
+    // tidak satu pesan cacat menyumbat Pesan Masuk selamanya.
+    if (err instanceof PermanentIncomingError) {
+      console.error("WhatsApp webhook rejected a malformed event", body.accountId, err.message);
+      return NextResponse.json({ ok: false, error: "Malformed event; dropped" }, { status: 400 });
+    }
     console.error("WhatsApp webhook persistence failed", err);
     return NextResponse.json({ ok: false, error: "Persistence failed; retry required" }, { status: 503 });
   }

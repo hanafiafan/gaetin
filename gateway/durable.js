@@ -41,6 +41,11 @@ function createReceiptStore(directory) {
 
 function createWebhookOutbox(directory, deliver) {
   let flushing = false;
+  // Kegagalan terakhir disimpan supaya /health bisa menyebutkannya. Tanpa ini
+  // antrean yang mampet cuma terlihat sebagai "Pesan Masuk kosong" — gejala
+  // yang sama persis dengan "memang belum ada yang membalas".
+  let lastError = null;
+  let lastDeliveredAt = null;
   async function flush() {
     if (flushing) return;
     flushing = true;
@@ -50,8 +55,9 @@ function createWebhookOutbox(directory, deliver) {
       for (const file of files) {
         const filename = path.join(directory, file);
         const payload = JSON.parse(await fs.readFile(filename, "utf8"));
-        try { await deliver(payload); await fs.unlink(filename); }
+        try { await deliver(payload); await fs.unlink(filename); lastDeliveredAt = new Date().toISOString(); lastError = null; }
         catch (err) {
+          lastError = { message: err.message, permanent: Boolean(err.permanent), at: new Date().toISOString(), eventId: payload.eventId ?? null };
           // Peristiwa yang DITOLAK app (4xx) tidak akan pernah diterima berapa
           // kali pun diulang. Menahannya di antrean memblokir seluruh antrean
           // di belakangnya — satu pesan cacat membuat semua balasan berikutnya
@@ -66,6 +72,24 @@ function createWebhookOutbox(directory, deliver) {
   }
   return {
     flush,
+    /** Isi antrean sekarang — dipakai /health. Antrean yang menumpuk dan tidak
+     * pernah menyusut berarti balasan pelanggan tidak sampai ke aplikasi. */
+    async stats() {
+      let pending = [];
+      try {
+        pending = (await fs.readdir(directory)).filter((f) => f.endsWith(".json")).sort();
+      } catch (err) {
+        if (err.code !== "ENOENT") throw err;
+      }
+      // Nama berkas diawali Date.now(), jadi yang paling tua ada di urutan pertama.
+      const oldest = pending[0] ? Number(pending[0].split("-")[0]) : null;
+      return {
+        pending: pending.length,
+        oldestAgeSeconds: oldest ? Math.round((Date.now() - oldest) / 1000) : null,
+        lastDeliveredAt,
+        lastError,
+      };
+    },
     async enqueue(payload) {
       await fs.mkdir(directory, { recursive: true });
       const event = { ...payload, eventId: randomUUID(), occurredAt: new Date().toISOString() };

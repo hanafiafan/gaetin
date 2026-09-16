@@ -11,6 +11,9 @@ export interface IncomingMedia {
   mimetype?: string;
 }
 
+/** Peristiwa yang bentuknya salah dan TIDAK akan pernah benar walau diulang. */
+export class PermanentIncomingError extends Error {}
+
 export async function handleIncomingMessage(
   accountId: string,
   rawPhone: string,
@@ -20,7 +23,11 @@ export async function handleIncomingMessage(
   media?: IncomingMedia,
 ) {
   const phone = normalizePhone(rawPhone);
-  if (!phone || !waMessageId) throw new Error("INVALID_INCOMING_MESSAGE");
+  // Nomor kosong atau id pesan hilang tidak akan berubah kalau dikirim ulang.
+  // Dulu ini Error biasa, dan webhook menjawabnya 503 "coba lagi" — antrean
+  // gateway berhenti di situ dan SETIAP balasan berikutnya ikut tertahan
+  // selamanya. Satu pesan cacat mematikan seluruh Pesan Masuk.
+  if (!phone || !waMessageId) throw new PermanentIncomingError("INVALID_INCOMING_MESSAGE");
   await prisma.$transaction(async (tx) => {
     const account = await tx.messagingAccount.findUnique({ where: { id: accountId } });
     if (!account) return; // deleted accounts need no further retries

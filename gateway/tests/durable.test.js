@@ -80,3 +80,24 @@ test("a temporary failure still holds the queue, in order, until it recovers", a
   assert.deepEqual(delivered.map(p => p.msgId), ["m1", "m2"]);
  } finally { await fs.rm(dir, { recursive: true, force: true }); }
 });
+
+test("stats report a stuck queue so a silent inbox can be diagnosed", async () => {
+ const dir = await fs.mkdtemp(path.join(os.tmpdir(), "gaetin-outbox-stats-"));
+ try {
+  const outbox = createWebhookOutbox(dir, async () => { throw new Error("offline"); });
+  await outbox.enqueue({ event: "message", msgId: "m1" });
+  await new Promise(r => setTimeout(r, 30));
+  const macet = await outbox.stats();
+  assert.equal(macet.pending, 1);
+  assert.equal(macet.lastError.message, "offline");
+  assert.equal(macet.lastError.permanent, false);
+  assert.equal(macet.lastDeliveredAt, null);
+
+  const pulih = createWebhookOutbox(dir, async () => {});
+  await pulih.flush();
+  const sehat = await pulih.stats();
+  assert.equal(sehat.pending, 0);
+  assert.equal(sehat.lastError, null);
+  assert.ok(sehat.lastDeliveredAt);
+ } finally { await fs.rm(dir, { recursive: true, force: true }); }
+});

@@ -28,6 +28,14 @@ if (!TOKEN) {
   process.exit(1);
 }
 
+// Tanpa dua nilai ini, pesan masuk tidak pernah sampai ke aplikasi: ia
+// menumpuk di antrean dan Pesan Masuk terlihat kosong selamanya. Pengiriman
+// keluar tetap jalan, jadi ini tidak mematikan proses — tapi harus berteriak,
+// bukan diam.
+if (!WEBHOOK_URL || !WEBHOOK_SECRET) {
+  console.error("⚠️  WEBHOOK_URL / WEBHOOK_SECRET belum diisi — PESAN MASUK TIDAK AKAN SAMPAI ke aplikasi.");
+}
+
 const logger = pino({ level: "warn" }); // suppress noisy Baileys logs
 
 // ==================== In-memory sessions ====================
@@ -276,8 +284,18 @@ app.use((req, res, next) => {
 });
 
 // Health check
-app.get("/health", (_req, res) => {
-  res.json({ ok: true, sessions: sessions.size });
+//
+// Ikut melaporkan antrean webhook. Kalau "pesan masuk tidak muncul", inilah
+// tempat pertama yang harus dilihat: pending yang terus naik berarti balasan
+// pelanggan tertahan di gateway, bukan berarti tidak ada yang membalas.
+app.get("/health", async (_req, res) => {
+  const inbound = await webhookOutbox.stats().catch((err) => ({ error: err.message }));
+  res.json({
+    ok: true,
+    sessions: sessions.size,
+    webhookConfigured: Boolean(WEBHOOK_URL && WEBHOOK_SECRET),
+    inbound,
+  });
 });
 
 // Start connection

@@ -34,5 +34,13 @@ export async function GET() {
     lastMessage: c.messages[0]?.content ?? null,
     lastDirection: c.messages[0]?.direction ?? null,
   }));
-  return NextResponse.json({ success: true, data });
+  // Konteks untuk layar kosong. "Belum ada percakapan" punya dua arti yang
+  // sangat berbeda — belum ada yang membalas, atau balasannya tidak sampai —
+  // dan sebelumnya layarnya selalu menebak arti yang pertama.
+  const [connectedAccounts, sentOutbound] = await Promise.all([
+    prisma.messagingAccount.count({ where: { workspaceId: session.workspace.id, status: "CONNECTED" } }),
+    prisma.outboundDelivery.count({ where: { workspaceId: session.workspace.id, channel: "WHATSAPP", status: "SENT" } }),
+  ]);
+
+  return NextResponse.json({ success: true, data, meta: { connectedAccounts, sentOutbound } });
 }

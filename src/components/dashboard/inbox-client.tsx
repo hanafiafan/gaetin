@@ -55,6 +55,8 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default function InboxClient() {
   const [convos, setConvos] = useState<Convo[]>([]);
+  /** Konteks untuk layar kosong: tersambung atau tidak, sudah pernah kirim atau belum. */
+  const [meta, setMeta] = useState<{ connectedAccounts: number; sentOutbound: number } | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [thread, setThread] = useState<Thread | null>(null);
   const [reply, setReply] = useState("");
@@ -72,7 +74,7 @@ export default function InboxClient() {
   async function loadConvos() {
     const r = await fetch("/api/conversations");
     const j = await r.json();
-    if (j.success) setConvos(j.data);
+    if (j.success) { setConvos(j.data); setMeta(j.meta ?? null); }
   }
   async function loadThread(id: string) {
     const r = await fetch(`/api/conversations/${id}`);
@@ -209,11 +211,34 @@ export default function InboxClient() {
         </div>
         {convos.length === 0 && (
           <div className="p-4">
-            <EmptyState
-              title="Belum ada percakapan masuk"
-              hint="Balasan dari kontak muncul di sini setelah nomor WhatsApp tersambung dan kampanye pertama terkirim."
-              action={{ href: "/dashboard/campaigns", label: "Buat kampanye" }}
-            />
+            {/* Tiga keadaan yang sangat berbeda, dulu ditulis satu kalimat yang
+                sama: layar selalu menebak bahwa penggunanya belum mengirim
+                apa-apa. Bagi orang yang WhatsApp-nya justru ramai balasan,
+                kalimat itu bukan cuma tidak membantu — ia menyalahkan hal yang
+                salah dan menyembunyikan kerusakan yang sebenarnya. */}
+            {meta && meta.connectedAccounts === 0 ? (
+              <EmptyState
+                title="Nomor WhatsApp belum tersambung"
+                hint="Balasan baru bisa masuk setelah ada nomor WhatsApp yang tersambung."
+                action={{ href: "/dashboard/settings", label: "Sambungkan WhatsApp" }}
+              />
+            ) : meta && meta.sentOutbound === 0 ? (
+              <EmptyState
+                title="Belum ada percakapan masuk"
+                hint="Kirim pesan pertamamu dulu. Balasannya akan muncul di sini."
+                action={{ href: "/dashboard/campaigns", label: "Kirim pesan" }}
+              />
+            ) : (
+              <EmptyState
+                title="Belum ada balasan yang masuk"
+                hint={
+                  meta
+                    ? `${meta.sentOutbound} pesan sudah terkirim dari nomormu, tapi belum ada satu pun balasan yang diterima sistem. Kalau di HP-mu balasannya sebenarnya ada, berarti balasan itu tidak sampai ke aplikasi — hubungi admin untuk memeriksa sambungan nomor WhatsApp.`
+                    : "Balasan dari kontak akan muncul di sini."
+                }
+                action={{ href: "/dashboard/support", label: "Laporkan ke admin" }}
+              />
+            )}
           </div>
         )}
         {shown.map((c) => (
