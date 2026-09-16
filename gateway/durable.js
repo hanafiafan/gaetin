@@ -51,7 +51,16 @@ function createWebhookOutbox(directory, deliver) {
         const filename = path.join(directory, file);
         const payload = JSON.parse(await fs.readFile(filename, "utf8"));
         try { await deliver(payload); await fs.unlink(filename); }
-        catch (err) { console.error("Webhook pending retry:", err.message); break; }
+        catch (err) {
+          // Peristiwa yang DITOLAK app (4xx) tidak akan pernah diterima berapa
+          // kali pun diulang. Menahannya di antrean memblokir seluruh antrean
+          // di belakangnya — satu pesan cacat membuat semua balasan berikutnya
+          // tidak pernah sampai ke Pesan Masuk. Yang ditolak permanen dibuang,
+          // yang gagal sementara (5xx, jaringan) tetap ditunggu.
+          if (err.permanent) { console.error("Webhook ditolak permanen, dibuang:", err.message, payload.eventId); await fs.unlink(filename); continue; }
+          console.error("Webhook pending retry:", err.message);
+          break;
+        }
       }
     } finally { flushing = false; }
   }

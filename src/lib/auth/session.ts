@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { verifyToken } from "@/lib/auth/jwt";
-import { AUTH_COOKIE, IMPERSONATE_COOKIE } from "@/lib/auth/constants";
+import { AUTH_COOKIE, IMPERSONATE_COOKIE, WORKSPACE_COOKIE } from "@/lib/auth/constants";
 import type { Role } from "@prisma/client";
 
 export interface Session {
@@ -12,6 +12,8 @@ export interface Session {
   isSuperAdmin: boolean;
   impersonating: boolean;
   workspace: { id: string; name: string; slug: string };
+  /** Semua workspace yang boleh dibuka akun ini, untuk pemilih di navigasi. */
+  workspaces: { id: string; name: string; slug: string; role: Role }[];
 }
 
 export async function getSession(): Promise<Session | null> {
@@ -26,14 +28,18 @@ export async function getSession(): Promise<Session | null> {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    include: { memberships: { include: { workspace: true }, orderBy: { createdAt: "asc" }, take: 1 } },
+    include: { memberships: { include: { workspace: true }, orderBy: { createdAt: "asc" } } },
   });
   if (!user || user.sessionVersion !== (payload.version ?? 0)) return null;
 
   // Lock/ban harus mematikan sesi yang sudah berjalan, bukan hanya menolak login berikutnya.
   if (user.lockedUntil && user.lockedUntil > new Date()) return null;
 
-  const membership = user.memberships[0];
+  // Workspace yang dipilih lewat cookie, kalau akun ini memang anggotanya.
+  // Cookie yang menunjuk workspace asing atau yang keanggotaannya sudah
+  // dicabut jatuh kembali ke workspace pertama, bukan menolak sesi.
+  const pilihan = (await cookies()).get(WORKSPACE_COOKIE)?.value;
+  const membership = user.memberships.find((m) => m.workspaceId === pilihan) ?? user.memberships[0];
   if (!membership) return null;
 
   let workspace = membership.workspace;
@@ -58,6 +64,7 @@ export async function getSession(): Promise<Session | null> {
     isSuperAdmin: user.isSuperAdmin,
     impersonating,
     workspace: { id: workspace.id, name: workspace.name, slug: workspace.slug },
+    workspaces: user.memberships.map((m) => ({ id: m.workspace.id, name: m.workspace.name, slug: m.workspace.slug, role: m.role })),
   };
 }
 

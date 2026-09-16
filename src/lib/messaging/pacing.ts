@@ -65,6 +65,51 @@ export function jedaPesanMs(
   return Math.min(JEDA_MAKS_MS, Math.max(JEDA_MIN_MS, Math.round(berjitter)));
 }
 
+/**
+ * Perkiraan kapan seluruh sisa pesan selesai terkirim.
+ *
+ * Bukan hitungan "sisa dibagi jeda": jeda melebar dan menyempit sepanjang hari,
+ * dan pengiriman berhenti di luar jam kirim. Yang menentukan lamanya justru dua
+ * hal yang tidak terlihat di layar — jatah hari ini dan jam tutup. Kampanye 500
+ * kontak dengan jatah 100/hari butuh lima hari, dan orang berhak tahu itu
+ * sebelum menekan Jalankan.
+ *
+ * `sisaHariIni` adalah jatah yang masih bisa dipakai hari ini, `kapasitasHarian`
+ * jatah penuh satu hari. Mengembalikan null kalau tidak ada jatah sama sekali —
+ * tidak ada perkiraan yang jujur untuk itu.
+ */
+export function perkiraanSelesai(
+  sisaPesan: number,
+  sisaHariIni: number,
+  kapasitasHarian: number,
+  now = new Date(),
+): Date | null {
+  if (sisaPesan <= 0) return now;
+  if (kapasitasHarian <= 0) return null;
+
+  const tutupHariIni = akhirJendelaHariIni(now);
+  const mulai = dalamJamKirim(now) ? now : jendelaBerikutnya(now);
+  // Di luar jam kirim tidak ada sisa jatah hari ini yang bisa dipakai sekarang;
+  // hitungannya dimulai dari jendela berikutnya dengan jatah penuh.
+  const jatahHariPertama = mulai === now ? Math.min(sisaHariIni, sisaPesan) : 0;
+
+  if (jatahHariPertama >= sisaPesan) {
+    // Muat hari ini: selesai sebanding dengan porsi jatah yang dipakai.
+    const sisaWaktu = Math.max(0, tutupHariIni.getTime() - now.getTime());
+    const porsi = sisaHariIni > 0 ? sisaPesan / sisaHariIni : 1;
+    return new Date(now.getTime() + Math.round(sisaWaktu * Math.min(1, porsi)));
+  }
+
+  const tersisa = sisaPesan - jatahHariPertama;
+  const hariTambahan = Math.ceil(tersisa / kapasitasHarian);
+  const hariMulai = mulai === now ? awalHariWib(now) : awalHariWib(mulai);
+  const hariTerakhir = hariMulai + hariTambahan * HARI_MS;
+  // Hari terakhir hanya terpakai sebagian kalau sisanya tidak bulat sehari.
+  const sisaHariTerakhir = tersisa - (hariTambahan - 1) * kapasitasHarian;
+  const panjangJendela = (JAM_SELESAI - JAM_MULAI) * JAM_MS;
+  return new Date(hariTerakhir + JAM_MULAI * JAM_MS + Math.round(panjangJendela * Math.min(1, sisaHariTerakhir / kapasitasHarian)));
+}
+
 /** Berapa pesan terakhir yang diperiksa untuk menentukan nomor sedang bermasalah. */
 export const JENDELA_PERIKSA = 20;
 export const GAGAL_BERUNTUN_MAKS = 5;

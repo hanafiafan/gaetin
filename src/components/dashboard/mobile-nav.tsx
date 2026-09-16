@@ -10,9 +10,12 @@ import { TONE_TEXT } from "@/components/dashboard/section-tone";
 import { cn } from "@/lib/utils";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import CreditsWidget from "@/components/dashboard/credits-widget";
+import WorkspaceSwitcher, { type WorkspaceOption } from "@/components/dashboard/workspace-switcher";
 
 type MobileNavProps = {
   appName?: string;
+  workspaceName?: string | null;
+  workspaces?: WorkspaceOption[];
   featureFlags?: Record<string, boolean> | null;
   isSuperAdmin?: boolean;
   credits?: number;
@@ -23,6 +26,8 @@ type MobileNavProps = {
 
 export default function MobileNav({
   appName = "Hellens",
+  workspaceName,
+  workspaces = [],
   featureFlags,
   isSuperAdmin = false,
   credits = 0,
@@ -84,6 +89,11 @@ export default function MobileNav({
               >
                 <X className="h-5 w-5" />
               </button>
+            </div>
+
+            <div className="border-b border-foreground/15 px-4 py-3">
+              <p className="text-xs font-semibold text-muted-foreground">Workspace</p>
+              <WorkspaceSwitcher current={workspaceName ?? "Workspace"} workspaces={workspaces} className="mt-0.5 text-sm" />
             </div>
 
             <CreditsWidget credits={credits} plan={plan} subscriptionStatus={subscriptionStatus} variant="compact" />

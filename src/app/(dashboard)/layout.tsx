@@ -94,6 +94,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         appName={appName}
         user={session.user}
         workspaceName={session.workspace.name}
+        workspaces={session.workspaces}
         credits={workspaceInfo?.credits ?? 0}
         featureFlags={ownerCms.featureFlags}
         isSuperAdmin={session.isSuperAdmin}
@@ -101,6 +102,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
       />
       <MobileNav
         appName={appName}
+        workspaceName={session.workspace.name}
+        workspaces={session.workspaces}
         featureFlags={ownerCms.featureFlags}
         isSuperAdmin={session.isSuperAdmin}
         credits={workspaceInfo?.credits ?? 0}

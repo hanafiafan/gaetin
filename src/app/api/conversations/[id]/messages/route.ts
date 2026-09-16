@@ -49,7 +49,7 @@ export async function POST(req: NextRequest, { params: paramsPromise }: { params
   const message = await prisma.inboxMessage.upsert({ where: { id }, update: {}, create: { id, conversationId: convo.id, direction: "OUTBOUND", content: parsed.data.text, mediaUrl: media?.path ?? null, authorId: session.user.id, status: "PENDING" } });
   if (message.content !== parsed.data.text || (message.mediaUrl ?? null) !== (media?.path ?? null)) return fail("IDEMPOTENCY_CONFLICT", "ID pesan sudah digunakan", 409);
   try {
-    const result = await deliverWhatsApp({ id, workspaceId: session.workspace.id, accountId: convo.messagingAccountId, contactId: convo.contactId, text: parsed.data.text, media });
+    const result = await deliverWhatsApp({ id, workspaceId: session.workspace.id, accountId: convo.messagingAccountId, contactId: convo.contactId, text: parsed.data.text, media, skipThread: true });
     const saved = await prisma.$transaction(async (tx) => {
       const saved = await tx.inboxMessage.update({ where: { id }, data: { status: result.status === "SENT" ? "SENT" : "FAILED", waMessageId: result.waMessageId } });
       if (result.status === "SENT") await tx.conversation.update({ where: { id: convo.id }, data: { lastMessageAt: new Date() } });

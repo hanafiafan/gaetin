@@ -74,3 +74,27 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<void> 
 
   await sendEmail({ to, subject, html }).catch(() => undefined);
 }
+
+/** Kabar ke orang yang baru ditambahkan ke sebuah workspace. Tanpa ini dia
+ * tidak pernah tahu harus pindah workspace di pojok kanan atas. */
+export async function sendWorkspaceInviteEmail(to: string, workspaceName: string, inviterName: string): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scraper.hellens.dev";
+  const subject = `Kamu ditambahkan ke workspace ${workspaceName}`;
+  const html = `
+    <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:24px">
+      <h1 style="font-size:22px;color:#1e293b">Kamu sekarang anggota ${workspaceName}</h1>
+      <p style="color:#475569;line-height:1.6">
+        ${inviterName} menambahkan kamu ke workspace <strong>${workspaceName}</strong>.
+      </p>
+      <p style="color:#475569;line-height:1.6">
+        Masuk dengan akun ini, lalu klik nama workspace di pojok kanan atas dan pilih
+        <strong>${workspaceName}</strong> untuk membukanya.
+      </p>
+      <a href="${appUrl}/dashboard"
+         style="display:inline-block;margin-top:16px;padding:12px 24px;background:#4f46e5;color:#fff;border-radius:99px;text-decoration:none;font-weight:700">
+        Buka Dashboard
+      </a>
+    </div>`;
+
+  await sendEmail({ to, subject, html }).catch(() => undefined);
+}

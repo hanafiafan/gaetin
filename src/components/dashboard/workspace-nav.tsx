@@ -10,6 +10,7 @@ import { navGroups, navItemMatches, navItemVisible, navItemHref, navItemLocked, 
 import { cn } from "@/lib/utils";
 import UpgradeModal from "@/components/dashboard/upgrade-modal";
 import HeaderSearch from "@/components/dashboard/header-search";
+import WorkspaceSwitcher, { type WorkspaceOption } from "@/components/dashboard/workspace-switcher";
 
 /**
  * Navigasi atas berbentuk pil.
@@ -31,6 +32,7 @@ type Props = {
   appName?: string;
   user?: { name?: string | null; email?: string | null } | null;
   workspaceName?: string | null;
+  workspaces?: WorkspaceOption[];
   credits?: number;
   featureFlags?: Record<string, boolean> | null;
   isSuperAdmin?: boolean;
@@ -56,6 +58,7 @@ export default function WorkspaceNav({
   appName = "Hellens",
   user,
   workspaceName,
+  workspaces = [],
   credits = 0,
   featureFlags,
   isSuperAdmin = false,
@@ -265,9 +268,7 @@ export default function WorkspaceNav({
                 <span className="block max-w-[130px] truncate text-sm font-semibold text-foreground">
                   {user?.name ?? "Owner"}
                 </span>
-                <span className="block truncate text-xs text-muted-foreground">
-                  {workspaceName ?? "Workspace"}
-                </span>
+                <WorkspaceSwitcher current={workspaceName ?? "Workspace"} workspaces={workspaces} />
               </span>
             </div>
           </div>

@@ -49,6 +49,13 @@ export async function POST(req: NextRequest) {
         ? { workspaceId }
         : { workspaceId, waStatus: "UNKNOWN" as const };
 
+  // Satu pengecekan pada satu waktu. Tanpa ini, layar yang lupa prosesnya
+  // sedang berjalan membuat orang menekan "Mulai validasi" berkali-kali dan
+  // nomor yang sama dicek berulang — habis kredit, dan mencurigakan di mata
+  // WhatsApp.
+  const berjalan = await prisma.validationRun.findFirst({ where: { workspaceId, status: "running" }, select: { id: true } });
+  if (berjalan) return fail("ALREADY_RUNNING", "Masih ada pengecekan yang berjalan. Tunggu sampai selesai atau hentikan dulu.", 409);
+
   const contacts = await prisma.contact.findMany({ where, select: { id: true }, take: 10000 });
   if (contacts.length === 0) return fail("EMPTY", "Tidak ada kontak untuk divalidasi", 400);
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Loader2, Pause, Play, RotateCcw, Send, Wand2 } from "lucide-react";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { CalendarClock, ChevronDown, Loader2, Pause, Play, RotateCcw, Send, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
 import QuotaPanel, { type MessagingQuota } from "@/components/dashboard/quota-panel";
 import EmptyState from "@/components/dashboard/empty-state";
+import LabelFilter from "@/components/dashboard/label-filter";
 
 interface Account { id: string; label: string; status: string }
 interface Template { id: string; name: string; body: string }
@@ -18,6 +19,43 @@ interface Campaign {
   sentCount: number;
   failedCount: number;
   scheduledAt: string | null;
+  remaining?: number;
+  /** Perkiraan kapan sisa pesannya habis terkirim, dihitung di server. */
+  estimatedFinishAt?: string | null;
+}
+
+interface Recipient {
+  id: string;
+  name: string | null;
+  phone: string;
+  status: string;
+  sentAt: string | null;
+  errorReason: string | null;
+}
+
+const RECIPIENT_STATUS: Record<string, { label: string; className: string }> = {
+  PENDING: { label: "Menunggu", className: "bg-muted-foreground/15 text-muted-foreground" },
+  SENT: { label: "Terkirim", className: "bg-success/15 text-success" },
+  DELIVERED: { label: "Sampai", className: "bg-success/15 text-success" },
+  READ: { label: "Dibaca", className: "bg-success/15 text-success" },
+  FAILED: { label: "Gagal", className: "bg-destructive/15 text-destructive" },
+};
+
+/**
+ * "Selesai sekitar ..." dalam bahasa sehari-hari.
+ *
+ * Tanggal penuh untuk sesuatu yang selesai satu jam lagi sama tidak
+ * bergunanya dengan "2 jam" untuk sesuatu yang selesai lusa.
+ */
+function perkiraanTeks(iso: string): string {
+  const selisih = new Date(iso).getTime() - Date.now();
+  if (selisih <= 60_000) return "sebentar lagi";
+  const menit = Math.round(selisih / 60_000);
+  if (menit < 60) return `sekitar ${menit} menit lagi`;
+  const jam = Math.round(menit / 60);
+  if (jam < 20) return `sekitar ${jam} jam lagi`;
+  const hari = Math.ceil(selisih / 86_400_000);
+  return `sekitar ${hari} hari lagi (${new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short" })})`;
 }
 
 function campaignPct(c: Campaign) {
@@ -43,6 +81,10 @@ export default function CampaignsClient() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [rincianId, setRincianId] = useState<string | null>(null);
+  const [penerima, setPenerima] = useState<Recipient[]>([]);
+  const [penerimaTotal, setPenerimaTotal] = useState(0);
+  const [penerimaMuat, setPenerimaMuat] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   async function loadAll() {
@@ -107,6 +149,17 @@ export default function CampaignsClient() {
     loadCampaigns();
   }
 
+  async function bukaRincian(id: string) {
+    if (rincianId === id) { setRincianId(null); return; }
+    setRincianId(id);
+    setPenerima([]);
+    setPenerimaMuat(true);
+    const res = await fetch(`/api/campaigns/${id}/recipients?pageSize=50`);
+    const json = await res.json();
+    setPenerimaMuat(false);
+    if (json.success) { setPenerima(json.data.items); setPenerimaTotal(json.data.total); }
+  }
+
   async function act(id: string, action: "execute" | "pause" | "resume") {
     setError(null);
     const res = await fetch(`/api/campaigns/${id}/${action}`, { method: "POST" });
@@ -153,11 +206,11 @@ export default function CampaignsClient() {
               <option value="activeWa">Hanya aktif WA</option>
               <option value="all">Semua kontak</option>
             </select>
-            <input
+            <LabelFilter
+              label="Filter label"
               value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              aria-label="Filter label (opsional)" placeholder="Filter label (opsional)"
-              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+              onChange={setLabel}
+              hint="Kosongkan untuk mengirim ke semua kontak di kelompok yang dipilih."
             />
           </div>
           {templates.length > 0 && (
@@ -245,13 +298,31 @@ export default function CampaignsClient() {
               <tbody>
                 {campaigns.map((campaign) => {
                   const pct = campaignPct(campaign);
+                  const terbuka = rincianId === campaign.id;
                   return (
-                    <tr key={campaign.id} className="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+                    <Fragment key={campaign.id}>
+                    <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
                       <td className="px-5 py-3">
                         <p className="font-semibold text-foreground">{campaign.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {campaign.sentCount} terkirim · {campaign.failedCount} gagal
                         </p>
+                        {/* Perkiraan lama proses. Tanpa ini "7%" tidak memberi
+                            tahu apakah sisanya sepuluh menit atau lima hari. */}
+                        {campaign.estimatedFinishAt && (
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            Sisa {campaign.remaining} pesan · selesai {perkiraanTeks(campaign.estimatedFinishAt)}
+                          </p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => bukaRincian(campaign.id)}
+                          aria-expanded={terbuka}
+                          className="mt-1 inline-flex min-h-9 items-center gap-1 text-xs font-bold text-foreground hover:underline"
+                        >
+                          {terbuka ? "Tutup rincian" : "Lihat nomor yang sudah dikirimi"}
+                          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", terbuka && "rotate-180")} />
+                        </button>
                         {/* Kampanye yang berhenti sendiri harus menyebutkan
                             sebabnya. Tanpa itu orang menjalankannya lagi ke
                             nomor yang justru sedang bermasalah. */}
@@ -301,6 +372,44 @@ export default function CampaignsClient() {
                         </div>
                       </td>
                     </tr>
+                    {terbuka && (
+                      <tr className="border-b border-border bg-muted/30 last:border-0">
+                        <td colSpan={5} className="px-5 py-4">
+                          {penerimaMuat ? (
+                            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Loader2 className="h-4 w-4 animate-spin" /> Memuat daftar penerima...
+                            </p>
+                          ) : penerima.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">Belum ada penerima yang tercatat.</p>
+                          ) : (
+                            <>
+                              <p className="mb-2 text-xs text-muted-foreground">
+                                Menampilkan {penerima.length} dari {penerimaTotal} penerima, yang terbaru di atas.
+                              </p>
+                              <div className="max-h-80 overflow-y-auto rounded-xl border border-border bg-card">
+                                {penerima.map((p) => {
+                                  const st = RECIPIENT_STATUS[p.status] ?? { label: p.status, className: "bg-muted-foreground/15 text-muted-foreground" };
+                                  return (
+                                    <div key={p.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-3 py-2 last:border-0">
+                                      <span className="min-w-0 flex-1 basis-[180px]">
+                                        <span className="block truncate text-sm font-semibold text-foreground">{p.name ?? `+${p.phone}`}</span>
+                                        <span className="block truncate text-xs text-muted-foreground">
+                                          +{p.phone}
+                                          {p.sentAt ? ` · ${new Date(p.sentAt).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` : ""}
+                                        </span>
+                                        {p.errorReason && <span className="block text-xs text-destructive">{p.errorReason}</span>}
+                                      </span>
+                                      <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold", st.className)}>{st.label}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    )}
+                    </Fragment>
                   );
                 })}
               </tbody>

@@ -62,7 +62,13 @@ const webhookOutbox = createWebhookOutbox(path.join(durableDir, "outbox"), async
     headers: { "Content-Type": "application/json", "x-webhook-secret": WEBHOOK_SECRET },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(`Webhook HTTP ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(`Webhook HTTP ${res.status}`);
+    // 4xx = app menolak bentuk peristiwanya. Mengulang tidak akan mengubah
+    // jawabannya; 408/429 adalah pengecualian yang memang boleh diulang.
+    err.permanent = res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429;
+    throw err;
+  }
 });
 async function callWebhook(payload) { await webhookOutbox.enqueue(payload); }
 setInterval(() => { void webhookOutbox.flush().catch(console.error); }, 5000).unref();
@@ -173,13 +179,16 @@ async function doStartConnection(accountId, existing) {
         msg.message?.videoMessage?.caption ??
         msg.message?.documentMessage?.caption ??
         "";
+      // Tanpa id pesan, app menolak peristiwanya (id dipakai untuk menyaring
+      // kiriman ganda). Jangan diantrekan sama sekali.
+      if (!msg.key.id) { console.error(`[${accountId}] Pesan masuk tanpa id, dilewati`); continue; }
       const media = await simpanMediaMasuk(msg, sock);
       await callWebhook({
         event: "message",
         accountId,
         phone,
         text,
-        msgId: msg.key.id ?? null,
+        msgId: msg.key.id,
         ...(media ? { media } : {}),
       });
     }

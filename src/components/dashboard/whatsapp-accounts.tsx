@@ -173,9 +173,13 @@ export default function WhatsAppAccounts() {
       <div className="space-y-3">
         {accounts.map((a) => (
           <div key={a.id} className="cg-card cg-sheet rounded-xl p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="font-bold text-foreground">{a.label}</p>
+            {/* Sebelumnya satu baris kaku: blok kiri tidak boleh menyusut
+                (min-width:auto bawaan flex), dan tiga kontrol di kanan tidak
+                boleh turun baris — jadi tombol "Hubungkan" terdorong keluar
+                layar di ponsel dan terpotong oleh kerangka yang meng-clip. */}
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0 flex-1 basis-[180px]">
+                <p className="truncate font-bold text-foreground">{a.label}</p>
                 <p className="text-sm text-muted-foreground">
                   {a.phoneNumber ? `+${a.phoneNumber}` : "Belum terhubung"}
                 </p>
@@ -190,7 +194,7 @@ export default function WhatsAppAccounts() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <StatusBadge status={a.status} />
                 {a.status === "connected" ? (
                   <button

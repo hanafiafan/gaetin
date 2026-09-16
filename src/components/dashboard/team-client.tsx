@@ -35,6 +35,7 @@ export default function TeamClient() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"ADMIN" | "AGENT">("AGENT");
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   async function load() {
     const [rm, ra, ru] = await Promise.all([fetch("/api/team"), fetch("/api/audit"), fetch("/api/auth/me")]);
@@ -50,6 +51,7 @@ export default function TeamClient() {
   async function addMember(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     const r = await fetch("/api/team", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -57,6 +59,14 @@ export default function TeamClient() {
     });
     const j = await r.json();
     if (!r.ok) { setError(j?.error?.message ?? "Gagal menambah anggota"); return; }
+    // Nama yang muncul di tabel tidak berarti orangnya sudah tahu. Dia masuk
+    // ke workspace-nya sendiri saat login, dan harus berpindah dulu lewat
+    // nama workspace di pojok kanan atas.
+    setInfo(
+      j?.data?.emailSent
+        ? `${email} sudah ditambahkan dan dikabari lewat email. Dia perlu masuk, lalu pilih workspace ini lewat nama workspace di pojok kanan atas.`
+        : `${email} sudah ditambahkan. Kabari dia sendiri: setelah masuk, dia perlu memilih workspace ini lewat nama workspace di pojok kanan atas.`,
+    );
     setEmail("");
     load();
   }
@@ -88,14 +98,18 @@ export default function TeamClient() {
           <button type="submit" className="flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90">
             Tambah anggota
           </button>
-          {error && <span className="text-sm text-destructive">{error}</span>}
+          {error && <span className="w-full text-sm text-destructive">{error}</span>}
+          {info && <p className="w-full rounded-xl bg-success/10 px-3 py-2 text-sm text-success">{info}</p>}
         </form>
       )}
 
       {/* cg-card cg-sheet seperti form di atas dan panel aktivitas di bawah — dengan
           garis tipis saja tabel ini terbaca belum jadi di antara keduanya. */}
-      <div className="cg-card cg-sheet overflow-hidden rounded-xl">
-        <table className="w-full text-sm">
+      {/* overflow-x-auto, bukan cuma overflow-hidden: di layar ponsel tabel ini
+          9px lebih lebar dari layar dan kolom "Peran" terpotong tanpa ada cara
+          menggesernya. */}
+      <div className="cg-card cg-sheet overflow-x-auto rounded-xl">
+        <table className="w-full min-w-[420px] text-sm">
           <thead>
             <tr className="border-b border-border bg-muted text-left">
               <th className="p-3 text-xs font-semibold uppercase text-muted-foreground">Nama</th>

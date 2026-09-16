@@ -5,6 +5,7 @@ import { Loader2, Mail, Play, StopCircle, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
 import EmptyState from "@/components/dashboard/empty-state";
+import LabelFilter from "@/components/dashboard/label-filter";
 
 interface EmailBlast {
   id: string;
@@ -95,36 +96,43 @@ export default function EmailBlastClient() {
         </div>
         {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
         <form onSubmit={create} className="space-y-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            aria-label="Beri nama pengiriman ini" placeholder="Beri nama pengiriman ini"
-            className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-          />
-          <input
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            aria-label="Subjek email, mis. Penawaran khusus untuk {{kota}}" placeholder="Subjek email, mis. Penawaran khusus untuk {{kota}}"
-            className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+          {/* Tiga kotak teks berurutan tanpa keterangan apa pun: satu-satunya
+              petunjuk isinya adalah placeholder, yang hilang begitu diketik.
+              Labelnya sekarang tertulis dan tetap terlihat. */}
+          <div>
+            <label htmlFor="blast-name" className="block text-xs font-semibold text-muted-foreground">01 · Nama pengiriman</label>
+            <input id="blast-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Beri nama pengiriman ini"
+              className="mt-1 h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label htmlFor="blast-subject" className="block text-xs font-semibold text-muted-foreground">02 · Subjek email</label>
+            <input id="blast-subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="mis. Penawaran khusus untuk {{kota}}"
+              className="mt-1 h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+            />
+          </div>
+          <LabelFilter
+            label="03 · Penerima — filter label"
+            value={label}
+            onChange={setLabel}
+            hint="Kosongkan untuk mengirim ke semua kontak yang punya email."
           />
           <div>
-            <input
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              aria-label="Filter label / tag (opsional, contoh: vip)" placeholder="Filter label / tag (opsional, contoh: vip)"
-              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
+            <label htmlFor="blast-body" className="block text-xs font-semibold text-muted-foreground">04 · Isi email</label>
+            <textarea id="blast-body"
+              value={bodyText}
+              onChange={(e) => setBodyText(e.target.value)}
+              placeholder="Halo {{nama}}, kami punya penawaran khusus untuk area {{kota}}..."
+              rows={7}
+              className="mt-1 w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
             />
-            <p className="mt-1 text-xs text-muted-foreground">
-              *Biarkan <strong>kosong</strong> untuk mengirim ke semua kontak yang punya email.
-            </p>
           </div>
-          <textarea
-            value={bodyText}
-            onChange={(e) => setBodyText(e.target.value)}
-            aria-label="Halo {{nama}}, kami punya penawaran khusus untuk area {{kota}}..." placeholder="Halo {{nama}}, kami punya penawaran khusus untuk area {{kota}}..."
-            rows={7}
-            className="w-full resize-none rounded-xl border border-border bg-card p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-          />
           <div className="rounded-xl border border-border bg-card p-3 text-xs leading-5 text-muted-foreground">
             <Wand2 className="mr-1 inline h-3.5 w-3.5 text-foreground" />
             Personalisasi: {"{{nama}}"}, {"{{kota}}"}. Spintax: {"{pagi|siang|sore}"}.

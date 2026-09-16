@@ -119,6 +119,9 @@ export default function ScraperClient() {
   const [phoneOnly, setPhoneOnly] = useState(false);
   const [minRating, setMinRating] = useState("0");
   const [busy, setBusy] = useState(false);
+  // Kenapa pencariannya berhenti. Tanpa ini layar tiba-tiba kembali ke
+  // formulir kosong dan tidak ada apa pun yang menjelaskan apa yang terjadi.
+  const [kabar, setKabar] = useState<{ nada: "info" | "peringatan" | "gagal"; teks: string } | null>(null);
   const selectedJobId = currentJob?.id ?? activeJobId;
 
   async function loadSaved() {
@@ -151,29 +154,52 @@ export default function ScraperClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leadQuery, savedFilter, phoneOnly, minRating, selectedJobId]);
 
+  const KABAR_SELESAI: Record<string, { nada: "info" | "peringatan" | "gagal"; teks: (n: number) => string }> = {
+    COMPLETED: { nada: "info", teks: (n) => `Pencarian selesai. ${n} bisnis ditemukan.` },
+    STOPPED: { nada: "peringatan", teks: (n) => `Pencarian dihentikan. ${n} bisnis sempat terkumpul dan sudah tersimpan di bawah.` },
+    FAILED: { nada: "gagal", teks: (n) => `Pencarian berhenti sebelum selesai. ${n} bisnis sempat terkumpul. Biasanya karena tab Google Maps tertutup, ekstensi belum aktif, atau batas pemakaian paket sudah tercapai — cek Tagihan lalu coba lagi.` },
+  };
+
   function subscribe(id: string) {
     if (esRef.current) { esRef.current.close(); esRef.current = null; }
     const es = new EventSource(`/api/scraper/${id}/events`);
     esRef.current = es;
+    es.onopen = () => {
+      // Sambungan pulih: peringatan "terputus" harus hilang sendiri, bukan
+      // menetap sampai halaman dimuat ulang.
+      setKabar((k) => (k?.nada === "peringatan" && k.teks.startsWith("Koneksi") ? null : k));
+    };
     es.onmessage = (e) => {
       const data = JSON.parse(e.data) as { status: string; totalFound: number };
       setJobStatus(data.status);
+      setCurrentJob((j) => (j && j.id === id ? { ...j, status: data.status, totalFound: data.totalFound } : j));
       loadLeads(id);
       if (["COMPLETED", "FAILED", "STOPPED"].includes(data.status)) {
         es.close();
         esRef.current = null;
         setBusy(false);
+        const k = KABAR_SELESAI[data.status];
+        if (k) setKabar({ nada: k.nada, teks: k.teks(data.totalFound) });
         loadSaved();
       }
     };
     es.onerror = () => {
-      // EventSource auto-reconnects on transient errors; we close only on terminal job states
+      // EventSource menyambung ulang sendiri, jadi ini belum tentu akhir dari
+      // segalanya — tapi diam sama sekali adalah bug yang dilaporkan: layar
+      // berubah tanpa satu pun kalimat penjelas.
+      if (es.readyState === EventSource.CLOSED) {
+        setBusy(false);
+        setKabar({ nada: "gagal", teks: "Koneksi ke server terputus dan tidak bisa disambung lagi. Data yang sudah masuk tetap tersimpan. Muat ulang halaman untuk melihat status terbaru." });
+      } else {
+        setKabar({ nada: "peringatan", teks: "Koneksi ke server terputus sesaat, sedang menyambung lagi. Jangan tutup tab Google Maps — pengumpulan datanya tetap berjalan." });
+      }
     };
   }
 
   async function start() {
     if (keywords.length === 0) return;
     const combinedKeyword = keywords.join(", ");
+    setKabar(null);
     setBusy(true);
     setLeads([]);
     setSelected(new Set());
@@ -191,7 +217,7 @@ export default function ScraperClient() {
     const j = await r.json();
     if (!r.ok) {
       setBusy(false);
-      alert(j?.error?.message ?? "Gagal memulai");
+      setKabar({ nada: "gagal", teks: j?.error?.message ?? "Gagal memulai pencarian." });
       return;
     }
     setCurrentJob({ id: j.data.id, name: jobName, color: null, keyword: combinedKeyword, status: "RUNNING", totalFound: 0, createdAt: new Date().toISOString() });
@@ -293,8 +319,30 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.businessName + " " + (l.address ?? ""))}`;
   }
 
+  // Satu-satunya sebab tombol Simpan mati: belum ada baris yang dicentang.
+  const belumAdaPilihan = selected.size === 0;
+  const alasanTidakBisaSimpan = belumAdaPilihan
+    ? leads.length === 0
+      ? "Belum ada bisnis yang bisa disimpan. Jalankan pencarian dulu."
+      : "Centang dulu bisnis yang mau disimpan di tabel di bawah, atau centang kotak di baris judul untuk memilih semuanya."
+    : null;
+
+  const NADA_KABAR = {
+    info: "border-success/30 bg-success/10 text-success",
+    peringatan: "border-warning/30 bg-warning/10 text-warning",
+    gagal: "border-destructive/30 bg-destructive/10 text-destructive",
+  } as const;
+
   return (
     <div className="space-y-5">
+      {kabar && (
+        <div role="status" className={cn("flex items-start justify-between gap-3 rounded-xl border px-4 py-3 text-sm", NADA_KABAR[kabar.nada])}>
+          <span>{kabar.teks}</span>
+          <button type="button" onClick={() => setKabar(null)} aria-label="Tutup pesan" className="shrink-0 font-bold opacity-70 hover:opacity-100">
+            &times;
+          </button>
+        </div>
+      )}
       <div className="grid gap-4 items-start">
         {activeJobId && jobStatus === "RUNNING" ? (
             <div className="cg-card cg-sheet rounded-xl border-primary/30 bg-primary/[0.03]">
@@ -541,16 +589,22 @@ return `https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longit
                   <Download className="h-4 w-4" />
                   Export Excel
                 </a>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(false)} className="flex h-10 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:opacity-40">
+                {/* Tombol mati tanpa keterangan terbaca sebagai rusak. Alasannya
+                    selalu sama — belum ada baris yang dicentang — jadi
+                    kalimatnya ditulis di tombolnya sendiri dan di bawahnya. */}
+                <button disabled={belumAdaPilihan} title={alasanTidakBisaSimpan ?? undefined} onClick={() => saveSelected(false)} className="flex h-10 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40">
                   <Save className="h-4 w-4" />
                   Simpan {selected.size > 0 ? `(${selected.size})` : ""}
                 </button>
-                <button disabled={selected.size === 0} onClick={() => saveSelected(true)} className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-40">
+                <button disabled={belumAdaPilihan} title={alasanTidakBisaSimpan ?? undefined} onClick={() => saveSelected(true)} className="flex h-10 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40">
                   <Columns3 className="h-4 w-4" />
                   Simpan + pipeline
                 </button>
               </div>
             </div>
+            {alasanTidakBisaSimpan && (
+              <p className="text-xs text-muted-foreground">{alasanTidakBisaSimpan}</p>
+            )}
             <div className="grid gap-2 rounded-xl border border-border bg-card p-3 md:grid-cols-[minmax(0,1fr)_150px_120px_140px]">
               <div className="relative">
                 <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

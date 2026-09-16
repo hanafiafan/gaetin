@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { isManager } from "@/lib/auth/roles";
 import { logAudit } from "@/lib/audit";
 import { fail } from "@/lib/api";
+import { sendWorkspaceInviteEmail, isEmailConfigured } from "@/lib/email/service";
 
 export async function GET() {
   const session = await getSession();
@@ -60,5 +61,11 @@ export async function POST(req: NextRequest) {
   });
   await logAudit(session.workspace.id, session.user.id, "MEMBER_ADDED", parsed.data.email);
 
-  return NextResponse.json({ success: true }, { status: 201 });
+  // Orang yang ditambahkan harus diberi tahu — kalau tidak, dari sisi dia
+  // tidak ada apa pun yang berubah. Email boleh gagal; keanggotaannya sudah
+  // dibuat, jadi kegagalan kirim hanya dilaporkan, bukan membatalkan.
+  const emailAktif = await isEmailConfigured().catch(() => false);
+  if (emailAktif) await sendWorkspaceInviteEmail(parsed.data.email, session.workspace.name, session.user.name);
+
+  return NextResponse.json({ success: true, data: { emailSent: emailAktif } }, { status: 201 });
 }

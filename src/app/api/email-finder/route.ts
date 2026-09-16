@@ -44,6 +44,26 @@ export async function POST(req: NextRequest) {
   const parsed = CreateSchema.safeParse(body);
   if (!parsed.success) return fail("VAL_001", "Validasi gagal", 400, parsed.error.flatten().fieldErrors);
 
+  // Pencarian yang sama masih berjalan? Menjalankannya lagi tidak menemukan
+  // apa pun yang baru — target yang sudah punya email otomatis tersaring —
+  // tapi menghabiskan kredit dan memenuhi riwayat dengan proses kembar.
+  const berjalan = await prisma.emailFindJob.findFirst({
+    where: {
+      workspaceId: session.workspace.id,
+      status: "RUNNING",
+      source: parsed.data.source,
+      label: parsed.data.label ?? null,
+    },
+    select: { id: true, processed: true, totalTargets: true },
+  });
+  if (berjalan) {
+    return fail(
+      "ALREADY_RUNNING",
+      `Pencarian ini masih berjalan (${berjalan.processed} dari ${berjalan.totalTargets} diproses). Tunggu sampai selesai atau hentikan dulu di Riwayat pencarian.`,
+      409,
+    );
+  }
+
   const result = await createAndRunEmailFindJob(
     session.workspace.id,
     parsed.data.source,

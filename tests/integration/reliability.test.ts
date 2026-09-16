@@ -27,6 +27,8 @@ afterAll(async () => {
   await prisma.creditLedger.deleteMany({ where: { workspaceId: { in: ids } } });
   await prisma.backgroundJob.deleteMany({ where: { workspaceId: { in: ids } } });
   await prisma.outboundDelivery.deleteMany({ where: { workspaceId: { in: ids } } });
+  await prisma.inboxMessage.deleteMany({ where: { conversation: { workspaceId: { in: ids } } } });
+  await prisma.conversation.deleteMany({ where: { workspaceId: { in: ids } } });
   await prisma.workspace.deleteMany({ where: { id: { in: ids } } });
   await prisma.$disconnect();
 });
@@ -97,6 +99,30 @@ describe("queue and delivery", () => {
     const second = { ...base, id: randomUUID() }; await deliverWhatsApp(second); await deliverWhatsApp(second);
     expect(send).toHaveBeenCalledTimes(2);
     expect(await prisma.creditLedger.count({ where: { workspaceId: ws.id, reason: "REFUND_SEND_WHATSAPP" } })).toBe(1);
+  });
+  it("records an outbound send in the contact's conversation so the inbox is not empty", async () => {
+    // Pesan kampanye dulu tidak pernah muncul di Pesan Masuk: percakapan baru
+    // dibuat saat ada balasan, jadi layarnya kosong walau ratusan pesan sudah
+    // terkirim. Ditulis sekali di pintu pengiriman supaya kampanye, blas, dan
+    // pesan susulan ikut tercatat.
+    const ws = await workspace(); const { contact, account } = await recipient(ws.id);
+    send.mockReset().mockResolvedValue({ ok: true, waMessageId: "wa-1" });
+    const id = randomUUID();
+    await deliverWhatsApp({ id, workspaceId: ws.id, accountId: account.id, contactId: contact.id, text: "halo dari kampanye" });
+
+    const convo = await prisma.conversation.findFirstOrThrow({ where: { workspaceId: ws.id, contactId: contact.id }, include: { messages: true } });
+    expect(convo.messages).toHaveLength(1);
+    expect(convo.messages[0]).toMatchObject({ direction: "OUTBOUND", content: "halo dari kampanye", waMessageId: "wa-1" });
+
+    // Percobaan ulang dengan id yang sama tidak boleh menggandakan barisnya.
+    await deliverWhatsApp({ id, workspaceId: ws.id, accountId: account.id, contactId: contact.id, text: "halo dari kampanye" });
+    expect(await prisma.inboxMessage.count({ where: { conversationId: convo.id } })).toBe(1);
+  });
+  it("leaves the thread to the caller that already wrote it (inbox replies)", async () => {
+    const ws = await workspace(); const { contact, account } = await recipient(ws.id);
+    send.mockReset().mockResolvedValue({ ok: true, waMessageId: "wa-2" });
+    await deliverWhatsApp({ id: randomUUID(), workspaceId: ws.id, accountId: account.id, contactId: contact.id, text: "balasan", skipThread: true });
+    expect(await prisma.conversation.count({ where: { workspaceId: ws.id } })).toBe(0);
   });
   it("reconstructs counters from recipient rows after a resumed campaign", async () => {
     const ws = await workspace(); const { contact, account } = await recipient(ws.id);

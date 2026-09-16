@@ -5,7 +5,8 @@ import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { CreateCampaignSchema } from "@/lib/validators/campaign";
 import { fail } from "@/lib/api";
-import { batasJedaKontak } from "@/lib/messaging/pacing";
+import { batasJedaKontak, perkiraanSelesai } from "@/lib/messaging/pacing";
+import { getDailyMessagingQuota } from "@/lib/messaging/quota";
 
 export async function GET() {
   const session = await getSession();
@@ -27,7 +28,22 @@ export async function GET() {
       pauseReason: true,
     },
   });
-  return NextResponse.json({ success: true, data: items });
+  // Perkiraan lama proses. Kuota diambil sekali untuk seluruh daftar: yang
+  // membatasi adalah jatah workspace, bukan jatah per kampanye.
+  const kuota = await getDailyMessagingQuota(session.workspace.id);
+  const now = new Date();
+  const data = items.map((c) => {
+    const sisa = Math.max(0, c.totalRecipients - c.sentCount - c.failedCount);
+    const jalan = c.status === "ACTIVE" || c.status === "SCHEDULED" || c.status === "DRAFT";
+    return {
+      ...c,
+      remaining: sisa,
+      estimatedFinishAt: jalan && sisa > 0
+        ? perkiraanSelesai(sisa, kuota.effectiveRemaining, kuota.effectiveLimit, now)?.toISOString() ?? null
+        : null,
+    };
+  });
+  return NextResponse.json({ success: true, data });
 }
 
 export async function POST(req: NextRequest) {

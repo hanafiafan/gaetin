@@ -6,6 +6,7 @@ import { Loader2, Mail, Play, Send, StopCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
 import EmptyState from "@/components/dashboard/empty-state";
+import LabelFilter from "@/components/dashboard/label-filter";
 
 type Source = "LEAD" | "CONTACT";
 
@@ -121,15 +122,13 @@ export default function EmailFinderClient() {
               </button>
             ))}
           </div>
-          <div>
-            <input
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder={source === "LEAD" ? "Filter kategori (opsional)" : "Filter label (opsional)"}
-              className="h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none"
-            />
-            <p className="mt-1 text-xs text-muted-foreground">*Biarkan kosong untuk semua data yang punya website tapi belum ada email.</p>
-          </div>
+          <LabelFilter
+            label={source === "LEAD" ? "Filter kategori" : "Filter label"}
+            source={source}
+            value={label}
+            onChange={setLabel}
+            hint="Kosongkan untuk semua data yang punya website tapi belum ada email."
+          />
           <div className="rounded-xl border border-border bg-email/5 p-3 text-center">
             <p className="text-2xl font-semibold text-foreground">{candidateCount ?? "…"}</p>
             <p className="text-xs text-muted-foreground">{SOURCE_LABEL[source]} siap dicari (maks 500/proses)</p>

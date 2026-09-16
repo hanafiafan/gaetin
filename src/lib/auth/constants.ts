@@ -3,6 +3,10 @@
 
 export const AUTH_COOKIE = "hellens_token";
 export const IMPERSONATE_COOKIE = "hellens_impersonate";
+/** Workspace yang sedang dibuka. Satu akun bisa jadi anggota beberapa
+ * workspace; tanpa ini yang terbuka selalu workspace tertua — jadi orang yang
+ * diundang ke workspace rekannya tidak pernah melihat undangan itu. */
+export const WORKSPACE_COOKIE = "hellens_workspace";
 export const MAX_FAILED_ATTEMPTS = 5;
 export const LOCK_MINUTES = 15;
 export const TOKEN_TTL_SECONDS = 60 * 60 * 24; // 24 jam

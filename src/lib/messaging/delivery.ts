@@ -7,7 +7,10 @@ import { getWorkspacePlan } from "@/lib/plans/limits";
 import { effectiveDailyLimit } from "@/lib/messaging/warmup";
 
 export class DeliveryBlockedError extends Error {}
-export interface DeliveryInput { id: string; workspaceId: string; accountId: string; contactId: string; followUp?: boolean; text: string; media?: import("@/lib/messaging/provider").MessageMedia }
+export interface DeliveryInput { id: string; workspaceId: string; accountId: string; contactId: string; followUp?: boolean; text: string; media?: import("@/lib/messaging/provider").MessageMedia;
+  /** Pengirim yang sudah menulis barisnya sendiri di percakapan (balasan dari
+   * Pesan Masuk). Semua jalur lain dicatat di sini. */
+  skipThread?: boolean }
 
 /** Reserve balance and daily capacity once, then use the same gateway receipt on every retry. */
 export async function deliverWhatsApp(input: DeliveryInput) {
@@ -66,6 +69,23 @@ export async function deliverWhatsApp(input: DeliveryInput) {
       await tx.messagingAccount.updateMany({ where: { id: input.accountId, sentTodayResetAt: dayStart(current.createdAt), sentToday: { gt: 0 } }, data: { sentToday: { decrement: 1 } } });
     }
     if (result.ok) await tx.contact.update({ where: { id: contact.id }, data: { lastContacted: new Date(), ...(input.followUp ? {} : { lastOutboundAt: new Date() }) } });
+    // Pesan keluar dicatat sebagai percakapan. Tanpa ini Pesan Masuk kosong
+    // sampai ada yang membalas, dan begitu balasan datang ia muncul tanpa
+    // pesan yang memicunya — riwayatnya bolong di sisi yang justru kita kirim.
+    // Ditulis di sini, bukan di kampanye/blas/susulan masing-masing, karena
+    // semuanya lewat satu pintu ini.
+    if (result.ok && !input.skipThread) {
+      const convo = await tx.conversation.upsert({
+        where: { workspaceId_contactId_messagingAccountId: { workspaceId: input.workspaceId, contactId: contact.id, messagingAccountId: input.accountId } },
+        update: { lastMessageAt: new Date() },
+        create: { workspaceId: input.workspaceId, contactId: contact.id, messagingAccountId: input.accountId, lastMessageAt: new Date() },
+      });
+      await tx.inboxMessage.upsert({
+        where: { id: `OUT:${input.id}` },
+        update: {},
+        create: { id: `OUT:${input.id}`, conversationId: convo.id, direction: "OUTBOUND", content: input.text, mediaUrl: input.media?.path ?? null, waMessageId: result.waMessageId, status: "SENT" },
+      });
+    }
     return tx.outboundDelivery.update({ where: { id: input.id }, data: { status, waMessageId: result.waMessageId, error: result.error } });
   });
 }

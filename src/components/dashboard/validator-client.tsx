@@ -77,10 +77,22 @@ export default function ValidatorClient() {
         const connected = j.data.find((a: Account) => a.status === "connected");
         if (connected) setAccountId(connected.id);
       }
+      // Pengecekan yang sudah jalan diambil lagi dari server setiap kali
+      // halaman ini dibuka. Kemajuannya memang tersimpan di database; yang
+      // hilang cuma catatannya di layar, dan itu yang membuat prosesnya
+      // terlihat batal setiap kali pindah tab.
+      const rj = await fetch("/api/validator");
+      const jj = await rj.json();
+      if (jj.success && jj.data) {
+        setJobId(jj.data.id);
+        setProgress(jj.data);
+        poll(jj.data.id);
+      }
     })();
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadContacts = useCallback(async () => {
@@ -152,7 +164,7 @@ export default function ValidatorClient() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="cg-card cg-sheet cg-tone-top rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-sheet cg-tone-top min-w-0 rounded-xl p-4 space-y-4 sm:p-5">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-foreground" />
           <h2 className="text-lg font-semibold text-foreground">Pengecekan nomor</h2>
@@ -203,7 +215,7 @@ export default function ValidatorClient() {
                     className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                   />
                 </div>
-                <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+                <div className="max-h-72 min-w-0 space-y-2 overflow-y-auto pr-1">
                   {contacts.map((contact) => {
                     const checked = selected.has(contact.id);
                     return (
@@ -227,7 +239,7 @@ export default function ValidatorClient() {
                             +{contact.phone}{contact.label ? ` · ${contact.label}` : ""}
                           </span>
                         </span>
-                        <span className={cn("shrink-0 px-2 py-0.5 text-xs font-bold", WA_COLOR[contact.waStatus])}>
+                        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold whitespace-nowrap", WA_COLOR[contact.waStatus])}>
                           {WA_LABEL[contact.waStatus]}
                         </span>
                       </button>
@@ -239,13 +251,28 @@ export default function ValidatorClient() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-between text-sm">
+                {/* "Pilih semua" sebelumnya tidak ada sama sekali — satu-satunya
+                    cara memilih 50 kontak adalah menekannya satu per satu.
+                    flex-wrap supaya di layar sempit tombolnya turun, bukan
+                    terdorong keluar layar. */}
+                <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
                   <span className="text-muted-foreground">{selected.size} kontak dipilih</span>
-                  {selected.size > 0 && (
-                    <button type="button" onClick={() => setSelected(new Set())} className="text-xs font-bold text-foreground hover:underline">
-                      Kosongkan
-                    </button>
-                  )}
+                  <div className="flex shrink-0 items-center gap-3">
+                    {contacts.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setSelected((prev) => new Set([...prev, ...contacts.map((c) => c.id)]))}
+                        className="min-h-9 text-xs font-bold text-foreground hover:underline"
+                      >
+                        Pilih semua ({contacts.length})
+                      </button>
+                    )}
+                    {selected.size > 0 && (
+                      <button type="button" onClick={() => setSelected(new Set())} className="min-h-9 text-xs font-bold text-foreground hover:underline">
+                        Kosongkan
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -267,7 +294,7 @@ export default function ValidatorClient() {
         )}
       </div>
 
-      <div className="cg-card cg-sheet rounded-xl p-5 space-y-4">
+      <div className="cg-card cg-sheet min-w-0 rounded-xl p-4 space-y-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Kemajuan</h2>
           {/* Sebelumnya menampilkan status mentah apa adanya: "idle", "running",

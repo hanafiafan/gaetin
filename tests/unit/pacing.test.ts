@@ -6,6 +6,7 @@ import {
   jamWib,
   jedaPesanMs,
   jendelaBerikutnya,
+  perkiraanSelesai,
   JEDA_MAKS_MS,
   JEDA_MIN_MS,
 } from "@/lib/messaging/pacing";
@@ -91,5 +92,37 @@ describe("rem otomatis", () => {
   it("tidak menghakimi dari sampel kecil", () => {
     // 1 gagal dari 2 = 50%, tapi dua pesan belum bisa disebut pola.
     expect(alasanBerhenti([{ status: "FAILED" }, { status: "SENT" }])).toBeNull();
+  });
+});
+
+describe("perkiraan selesai", () => {
+  it("tidak memberi perkiraan kalau tidak ada jatah sama sekali", () => {
+    expect(perkiraanSelesai(50, 0, 0, wib("2026-09-14T10:00:00"))).toBeNull();
+  });
+
+  it("yang muat hari ini selesai sebelum jam tutup", () => {
+    const hasil = perkiraanSelesai(20, 100, 100, wib("2026-09-14T10:00:00"));
+    expect(hasil).not.toBeNull();
+    expect(hasil!.getTime()).toBeGreaterThan(wib("2026-09-14T10:00:00").getTime());
+    expect(hasil!.getTime()).toBeLessThanOrEqual(akhirJendelaHariIni(wib("2026-09-14T10:00:00")).getTime());
+  });
+
+  it("yang melebihi jatah harian tumpah ke hari-hari berikutnya", () => {
+    // 500 pesan, jatah 100/hari, hari ini masih 100: hari ini + 4 hari lagi.
+    const hasil = perkiraanSelesai(500, 100, 100, wib("2026-09-14T09:00:00"));
+    expect(hasil).not.toBeNull();
+    expect(hasil!.getTime()).toBeGreaterThan(wib("2026-09-18T08:00:00").getTime());
+    expect(hasil!.getTime()).toBeLessThanOrEqual(wib("2026-09-18T20:00:00").getTime());
+  });
+
+  it("di luar jam kirim hitungannya mulai dari jendela berikutnya", () => {
+    const malam = wib("2026-09-14T22:00:00");
+    const hasil = perkiraanSelesai(50, 100, 100, malam);
+    expect(hasil!.getTime()).toBeGreaterThanOrEqual(jendelaBerikutnya(malam).getTime());
+  });
+
+  it("tidak ada sisa berarti sudah selesai", () => {
+    const now = wib("2026-09-14T10:00:00");
+    expect(perkiraanSelesai(0, 100, 100, now)!.getTime()).toBe(now.getTime());
   });
 });
