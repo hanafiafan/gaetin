@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { createTopupCheckout } from "@/lib/billing/service";
 import { isManager } from "@/lib/auth/roles";
 import { fail } from "@/lib/api";
+import { billingErrorMessage } from "@/lib/billing/errors";
 
 const Schema = z.object({ packId: z.string() });
 
@@ -27,6 +28,6 @@ export async function POST(req: NextRequest) {
     const result = await createTopupCheckout(session.workspace.id, session.user.email, parsed.data.packId);
     return NextResponse.json({ success: true, data: result });
   } catch (e) {
-    return fail("BILLING_ERROR", e instanceof Error ? e.message : "Gagal membuat top-up", 502);
+    return fail("BILLING_ERROR", billingErrorMessage(e, "Gagal membuat top-up Midtrans"), 502);
   }
 }

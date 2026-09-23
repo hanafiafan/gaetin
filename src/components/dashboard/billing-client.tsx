@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
   Check,
@@ -16,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { CREDIT_COSTS } from "@/config/plans";
 import StatusBadge from "@/components/dashboard/status-badge";
 import MetricStrip from "@/components/dashboard/metric-strip";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 const CREDIT_USAGE = [
   { label: "Menyimpan bisnis jadi kontak", detail: "Dihitung per kontak baru", cost: CREDIT_COSTS.saveLead },
@@ -55,51 +57,54 @@ const PLAN_FEATURES: Record<string, string[]> = {
   ],
 };
 
-export default function BillingClient() {
+type BillingView = "overview" | "plans" | "topup" | "transactions";
+
+export default function BillingClient({ view = "overview" }: { view?: BillingView }) {
+  const searchParams = useSearchParams();
   const [me, setMe] = useState<Me | null>(null);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [data, setData] = useState<PlansData | null>(null);
   const [cycle, setCycle] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
-    const [rm, rt, rp] = await Promise.all([
-      fetch("/api/billing/me"),
-      fetch("/api/billing/transactions"),
-      fetch("/api/plans"),
-    ]);
-    const [jm, jt, jp] = await Promise.all([rm.json(), rt.json(), rp.json()]);
-    if (jm.success) setMe(jm.data);
-    if (jt.success) setTxs(jt.data);
-    if (jp.success) setData(jp.data);
+    setError(null);
+    try {
+      const [nextMe, nextTxs, nextData] = await Promise.all([
+        requestJson<Me>("/api/billing/me", undefined, "Gagal memuat status langganan"),
+        requestJson<Tx[]>("/api/billing/transactions", undefined, "Gagal memuat transaksi"),
+        requestJson<PlansData>("/api/plans", undefined, "Gagal memuat paket"),
+      ]);
+      setMe(nextMe); setTxs(nextTxs); setData(nextData);
+    } catch (e) { setError(errorMessage(e, "Gagal memuat informasi pembayaran")); }
   }
   useEffect(() => { load(); }, []);
+  useEffect(() => {
+    if (searchParams.get("cycle") === "YEARLY") setCycle("YEARLY");
+  }, [searchParams]);
 
   async function choose(plan: string) {
     setBusy(true);
-    const r = await fetch("/api/billing/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan, cycle }),
-    });
-    const j = await r.json();
-    setBusy(false);
-    if (!r.ok) return alert(j?.error?.message ?? "Gagal");
-    if (j.data.free) { alert("Paket gratis diaktifkan."); load(); }
-    else if (j.data.invoiceUrl) window.location.href = j.data.invoiceUrl;
+    setError(null);
+    try {
+      const result = await requestJson<{ free?: boolean; invoiceUrl?: string }>("/api/billing/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan, cycle }) }, "Gagal membuat pembayaran Midtrans");
+      if (result.free) { alert("Paket gratis diaktifkan."); load(); }
+      else if (result.invoiceUrl) window.location.href = result.invoiceUrl;
+      else setError("Midtrans tidak mengembalikan tautan pembayaran. Coba lagi.");
+    } catch (e) { setError(errorMessage(e, "Gagal membuat pembayaran Midtrans")); }
+    finally { setBusy(false); }
   }
 
   async function topup(packId: string) {
     setBusy(true);
-    const r = await fetch("/api/billing/topup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ packId }),
-    });
-    const j = await r.json();
-    setBusy(false);
-    if (j.success && j.data.invoiceUrl) window.location.href = j.data.invoiceUrl;
-    else alert(j?.error?.message ?? "Gagal");
+    setError(null);
+    try {
+      const result = await requestJson<{ invoiceUrl: string }>("/api/billing/topup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ packId }) }, "Gagal membuat top-up Midtrans");
+      if (result.invoiceUrl) window.location.href = result.invoiceUrl;
+      else setError("Midtrans tidak mengembalikan tautan pembayaran. Coba lagi.");
+    } catch (e) { setError(errorMessage(e, "Gagal membuat top-up Midtrans")); }
+    finally { setBusy(false); }
   }
 
   const price = (p: Plan) =>
@@ -114,8 +119,9 @@ export default function BillingClient() {
 
   return (
     <div className="space-y-7">
+      {error && <div className="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>}
       {/* Trial banner */}
-      {isTrial && (
+      {view === "overview" && isTrial && (
         <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning/10 px-5 py-4">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
           <div>
@@ -132,7 +138,7 @@ export default function BillingClient() {
 
       {/* Satu strip metrik, bukan empat kartu — lihat MetricStrip. Saldo
           kredit tetap membawa bar progresnya sendiri lewat panel aside. */}
-      <MetricStrip
+      {view === "overview" && <MetricStrip
         items={[
           { label: "Paket aktif", value: me ? planName(me.plan) : "—", icon: Sparkles },
           {
@@ -164,16 +170,16 @@ export default function BillingClient() {
             )}
           </div>
         }
-      />
+      />}
 
-      {me && (
+      {view === "overview" && me && (
         <div className="-mt-4 flex items-center gap-2 text-sm text-muted-foreground">
           Status langganan: <StatusBadge status={me.status} />
         </div>
       )}
 
       {/* Plan selector */}
-      <div>
+      {(view === "overview" || view === "plans") && <div>
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Pilih paket</h2>
@@ -200,7 +206,8 @@ export default function BillingClient() {
           {(data?.plans ?? []).map((p) => {
             const current = me?.plan === p.id;
             const amount = data ? price(p) : p.monthlyPrice;
-            const featured = p.id === "GROWTH";
+            const requested = searchParams.get("plan") === p.id;
+            const featured = requested || (!searchParams.get("plan") && p.id === "GROWTH");
             // Angka kuota diturunkan dari paket yang dimuat; hanya poin
             // kualitatif yang ditulis tangan, supaya keduanya tidak bisa
             // saling bertentangan seperti sebelumnya.
@@ -272,7 +279,7 @@ export default function BillingClient() {
                   )}
                 >
                   <CreditCard className="h-4 w-4" />
-                  {current ? "Paket aktif" : amount === 0 ? "Aktifkan gratis" : "Pilih paket"}
+                  {current ? "Paket aktif" : amount === 0 ? "Aktifkan gratis" : "Lanjut ke Midtrans"}
                 </button>
               </div>
             );
@@ -283,11 +290,11 @@ export default function BillingClient() {
           <Shield className="h-3.5 w-3.5" />
           Pembayaran diamankan oleh Midtrans. Paket Starter tidak perlu kartu kredit.
         </p>
-      </div>
+      </div>}
 
       {/* Biaya kredit per aksi — dibaca dari CREDIT_COSTS supaya angka di sini
           tidak bisa melenceng dari yang benar-benar dipotong sistem. */}
-      <div>
+      {(view === "overview" || view === "topup") && <div>
         <div className="mb-5">
           <h2 className="text-lg font-semibold text-foreground">Kredit dipakai untuk apa saja</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -307,10 +314,10 @@ export default function BillingClient() {
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       {/* Top-up */}
-      <div>
+      {(view === "overview" || view === "topup") && <div>
         <div className="mb-5">
           <h2 className="text-lg font-semibold text-foreground">Beli kredit tambahan</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">Beli kredit tambahan kapan saja, langsung aktif setelah pembayaran.</p>
@@ -346,10 +353,10 @@ export default function BillingClient() {
             );
           })}
         </div>
-      </div>
+      </div>}
 
       {/* Transaction history */}
-      <div>
+      {(view === "overview" || view === "transactions") && <div>
         <div className="mb-5">
           <h2 className="text-lg font-semibold text-foreground">Riwayat transaksi</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">Semua pembayaran dan pembelian kredit tercatat di sini.</p>
@@ -406,7 +413,7 @@ export default function BillingClient() {
             </table>
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { isManager } from "@/lib/auth/roles";
 import { createSubscriptionCheckout } from "@/lib/billing/service";
 import { fail } from "@/lib/api";
+import { billingErrorMessage } from "@/lib/billing/errors";
 
 const Schema = z.object({
   plan: z.enum(["STARTER", "GROWTH", "PRO"]),
@@ -33,6 +34,6 @@ export async function POST(req: NextRequest) {
     );
     return NextResponse.json({ success: true, data: result });
   } catch (e) {
-    return fail("BILLING_ERROR", e instanceof Error ? e.message : "Gagal membuat checkout", 502);
+    return fail("BILLING_ERROR", billingErrorMessage(e, "Gagal membuat checkout Midtrans"), 502);
   }
 }

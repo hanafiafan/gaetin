@@ -10,6 +10,10 @@ import GoogleSignIn, { pesanErrorGoogle } from "@/components/auth/google-sign-in
 
 export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedPlan = searchParams.get("plan");
+  const selectedCycle = searchParams.get("cycle") === "YEARLY" ? "YEARLY" : "MONTHLY";
+  const hasPaidPlan = selectedPlan === "GROWTH" || selectedPlan === "PRO";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +37,11 @@ export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
         setError(detail ?? json?.error?.message ?? "Gagal mendaftar");
         return;
       }
-      router.push("/dashboard");
+      router.push(
+        hasPaidPlan
+          ? `/dashboard/billing/plans?plan=${selectedPlan}&cycle=${selectedCycle}`
+          : "/dashboard",
+      );
       router.refresh();
     } catch {
       setError("Terjadi kesalahan. Coba lagi.");
@@ -49,7 +57,11 @@ export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
       <div>
         <div className="mb-8">
           <h1 className="cg-display text-4xl">CERITA BARU<br />DIMULAI DI SINI.</h1>
-          <p className="mt-3 text-sm text-muted-foreground">Buat akun gratis dengan 100 kredit awal.</p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            {hasPaidPlan
+              ? "Buat akun, lalu lanjutkan pembayaran paket pilihanmu melalui Midtrans."
+              : "Buat akun gratis dengan 100 kredit awal."}
+          </p>
         </div>
 
         {pesanGoogle && (
@@ -91,7 +103,7 @@ export default function RegisterForm({ googleSiap }: { googleSiap: boolean }) {
             <p className="text-xs text-muted-foreground">Min. 8 karakter, huruf besar, huruf kecil, dan angka.</p>
           </div>
           <button type="submit" className={BUTTON_CLASS} disabled={loading}>
-            {loading ? "Memproses..." : "Daftar & mulai gratis"}
+            {loading ? "Memproses..." : hasPaidPlan ? "Daftar & lanjut pilih pembayaran" : "Daftar & mulai gratis"}
           </button>
         </form>
 

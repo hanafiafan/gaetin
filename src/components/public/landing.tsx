@@ -569,7 +569,7 @@ export default function Landing({
                         "pub-button " +
                         (i === 1 ? "pub-button-dark" : "pub-button-outline")
                       }
-                      href="/register"
+                      href={`/register?plan=${plan.id}&cycle=${yearly ? "YEARLY" : "MONTHLY"}`}
                     >
                       {i === 0 ? "Mulai gratis" : "Mulai dengan " + plan.name}
                       <ArrowUpRight size={18} />

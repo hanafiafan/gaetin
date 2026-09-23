@@ -149,7 +149,19 @@ export const navGroups: { label: string; step?: number; tone: SectionTone; items
     label: "Akun",
     tone: "akun",
     items: [
-      { label: "Tagihan & Kredit", desc: "Paket langganan dan sisa kredit", href: "/dashboard/billing", icon: CreditCard, flag: "billing" },
+      {
+        label: "Tagihan & Kredit",
+        desc: "Paket langganan, pembayaran Midtrans, dan sisa kredit",
+        href: "/dashboard/billing",
+        icon: CreditCard,
+        flag: "billing",
+        tabs: [
+          { label: "Ringkasan", href: "/dashboard/billing", flag: "billing" },
+          { label: "Pilih Paket", href: "/dashboard/billing/plans", flag: "billing" },
+          { label: "Top-up Kredit", href: "/dashboard/billing/topup", flag: "billing" },
+          { label: "Riwayat", href: "/dashboard/billing/transactions", flag: "billing" },
+        ],
+      },
       {
         label: "Pengaturan",
         desc: "Nomor WhatsApp, profil workspace, keamanan, dan anggota tim",
