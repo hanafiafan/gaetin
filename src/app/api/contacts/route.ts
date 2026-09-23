@@ -6,6 +6,7 @@ import { CreateContactSchema } from "@/lib/validators/contact";
 import { assertCanAddContacts, QuotaExceededError } from "@/lib/contacts/quota";
 import { normalizePhone, isValidPhone } from "@/lib/utils";
 import { fail } from "@/lib/api";
+import { parseIntegerParam } from "@/lib/http/query";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -15,8 +16,8 @@ export async function GET(req: NextRequest) {
   const query = sp.get("query")?.trim() ?? "";
   const waStatus = sp.get("waStatus") ?? "";
   const hasEmail = sp.get("hasEmail") === "true";
-  const page = Math.max(1, Number(sp.get("page") ?? "1"));
-  const pageSize = Math.min(100, Math.max(1, Number(sp.get("pageSize") ?? "20")));
+  const page = parseIntegerParam(sp.get("page"), { min: 1, max: 1_000_000, fallback: 1 });
+  const pageSize = parseIntegerParam(sp.get("pageSize"), { min: 1, max: 100, fallback: 20 });
 
   const where: Prisma.ContactWhereInput = { workspaceId: session.workspace.id };
   if (query) {

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import { Prisma, WAStatus } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { isManager } from "@/lib/auth/roles";
+import { parseEnumParam } from "@/lib/http/query";
 
 function guardFormula(value: unknown): unknown {
   if (typeof value !== "string") return value;
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
 
   const sp = req.nextUrl.searchParams;
   const query = sp.get("query")?.trim() ?? "";
-  const waStatus = sp.get("waStatus") as any;
+  const waStatus = parseEnumParam(sp.get("waStatus"), Object.values(WAStatus));
   const hasEmail = sp.get("hasEmail") === "true";
 
   const where: Prisma.ContactWhereInput = { workspaceId: session.workspace.id };
@@ -43,7 +44,22 @@ export async function GET(req: NextRequest) {
   const contacts = await prisma.contact.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    take: 10_000,
+    select: {
+      name: true,
+      phone: true,
+      label: true,
+      waStatus: true,
+      source: true,
+      email: true,
+      website: true,
+      address: true,
+      city: true,
+      category: true,
+      latitude: true,
+      longitude: true,
+      crmStage: true,
+      score: true,
+    },
   });
 
   const format = sp.get("format") || "xlsx";

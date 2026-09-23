@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/auth/session";
 import { fail } from "@/lib/api";
+import { parseIntegerParam } from "@/lib/http/query";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -15,8 +16,8 @@ export async function GET(req: NextRequest) {
   const category = sp.get("category")?.trim() ?? "";
   const hasPhone = sp.get("hasPhone") === "true";
   const minRating = Number(sp.get("minRating") ?? "0");
-  const page = Math.max(1, Number(sp.get("page") ?? "1"));
-  const pageSize = Math.min(200, Math.max(1, Number(sp.get("pageSize") ?? "50")));
+  const page = parseIntegerParam(sp.get("page"), { min: 1, max: 1_000_000, fallback: 1 });
+  const pageSize = parseIntegerParam(sp.get("pageSize"), { min: 1, max: 200, fallback: 50 });
 
   const where: Prisma.LeadWhereInput = { workspaceId: session.workspace.id };
   if (scraperJobId) where.scraperJobId = scraperJobId;

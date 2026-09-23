@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSuperAdminSession } from "@/lib/auth/session";
 import { fail } from "@/lib/api";
+import { parseIntegerParam } from "@/lib/http/query";
 
 export async function GET(req: NextRequest) {
   const session = await getSuperAdminSession();
@@ -11,8 +12,8 @@ export async function GET(req: NextRequest) {
   const workspaceId = sp.get("workspaceId") || undefined;
   const search = sp.get("search")?.trim() || undefined;
   const hasPhone = sp.get("hasPhone") === "true";
-  const limit = Math.min(Number(sp.get("limit") || 200), 500);
-  const offset = Number(sp.get("offset") || 0);
+  const limit = parseIntegerParam(sp.get("limit"), { min: 1, max: 500, fallback: 200 });
+  const offset = parseIntegerParam(sp.get("offset"), { min: 0, max: 1_000_000, fallback: 0 });
 
   const where: Record<string, unknown> = {};
   if (workspaceId) where.workspaceId = workspaceId;
