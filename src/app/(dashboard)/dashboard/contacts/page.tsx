@@ -23,6 +23,8 @@ export default function ContactsPage() {
               <Mail className="h-4 w-4" />
               Temukan email
             </Link>
+            {/* A native anchor preserves the browser's file-download response. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a href="/api/contacts/export?format=xlsx" className="flex h-10 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-bold text-foreground/80 transition hover:border-primary/30 hover:text-foreground">
               <Download className="h-4 w-4" />
               Unduh daftar
