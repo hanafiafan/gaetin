@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Ann {
   id: string;
@@ -16,6 +17,7 @@ export default function AdminAnnouncements() {
   const [items, setItems] = useState<Ann[]>([]);
   const [message, setMessage] = useState("");
   const [type, setType] = useState("INFO");
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     const r = await fetch("/api/admin/announcements");
@@ -27,29 +29,28 @@ export default function AdminAnnouncements() {
   async function create(e: React.FormEvent) {
     e.preventDefault();
     if (!message.trim()) return;
-    await fetch("/api/admin/announcements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, type }),
-    });
-    setMessage("");
-    load();
+    setError(null);
+    try {
+      await requestJson("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message, type }) }, "Gagal membuat pengumuman");
+      setMessage(""); load();
+    } catch (e) { setError(errorMessage(e, "Gagal membuat pengumuman")); }
   }
   async function toggle(a: Ann) {
-    await fetch(`/api/admin/announcements/${a.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ active: !a.active }),
-    });
-    load();
+    setError(null);
+    try {
+      await requestJson(`/api/admin/announcements/${a.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ active: !a.active }) }, "Gagal mengubah pengumuman");
+      load();
+    } catch (e) { setError(errorMessage(e, "Gagal mengubah pengumuman")); }
   }
   async function remove(id: string) {
-    await fetch(`/api/admin/announcements/${id}`, { method: "DELETE" });
-    load();
+    setError(null);
+    try { await requestJson(`/api/admin/announcements/${id}`, { method: "DELETE" }, "Gagal menghapus pengumuman"); load(); }
+    catch (e) { setError(errorMessage(e, "Gagal menghapus pengumuman")); }
   }
 
   return (
     <div className="space-y-5">
+      {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
       <form onSubmit={create} className="cg-card flex flex-wrap items-center gap-2 rounded-2xl p-4">
         <input value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Pesan pengumuman" className={INPUT_CLASS} />
         <select value={type} onChange={(e) => setType(e.target.value)} className={SELECT_CLASS}>

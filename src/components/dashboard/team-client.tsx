@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Member {
   id: string;
@@ -72,13 +73,19 @@ export default function TeamClient() {
   }
 
   async function changeRole(id: string, newRole: string) {
-    await fetch(`/api/team/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role: newRole }) });
-    load();
+    setError(null);
+    try {
+      await requestJson(`/api/team/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role: newRole }) }, "Gagal mengubah peran anggota");
+      load();
+    } catch (e) { setError(errorMessage(e, "Gagal mengubah peran anggota")); }
   }
   async function remove(id: string) {
     if (!confirm("Hapus anggota ini?")) return;
-    await fetch(`/api/team/${id}`, { method: "DELETE" });
-    load();
+    setError(null);
+    try {
+      await requestJson(`/api/team/${id}`, { method: "DELETE" }, "Gagal menghapus anggota");
+      load();
+    } catch (e) { setError(errorMessage(e, "Gagal menghapus anggota")); }
   }
 
   return (

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import StatusBadge from "@/components/dashboard/status-badge";
 import { PROFIL_UMUR, UMUR_NOMOR, type UmurNomor } from "@/lib/messaging/account-age";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Account {
   id: string;
@@ -27,6 +28,7 @@ export default function WhatsAppAccounts() {
   const [sedangDiatur, setSedangDiatur] = useState<string | null>(null);
   const [menyimpan, setMenyimpan] = useState(false);
   const [qr, setQr] = useState<{ id: string; img: string | null; status: string; error?: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const esRef = useRef<EventSource | null>(null);
 
   async function load() {
@@ -57,15 +59,12 @@ export default function WhatsAppAccounts() {
     e.preventDefault();
     if (!label.trim()) return;
     setLoading(true);
-    await fetch("/api/whatsapp/accounts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ label, accountAge: umur }),
-    });
-    setLabel("");
-    setUmur("BARU");
-    setLoading(false);
-    load();
+    setError(null);
+    try {
+      await requestJson("/api/whatsapp/accounts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ label, accountAge: umur }) }, "Gagal menambah nomor WhatsApp");
+      setLabel(""); setUmur("BARU"); load();
+    } catch (e) { setError(errorMessage(e, "Gagal menambah nomor WhatsApp")); }
+    finally { setLoading(false); }
   }
 
   async function simpanSetelan(id: string, data: { label?: string; dailyLimit?: number; accountAge?: UmurNomor }) {
@@ -131,12 +130,14 @@ export default function WhatsAppAccounts() {
   async function disconnect(id: string) {
     stopStream();
     if (qr?.id === id) setQr(null);
-    await fetch(`/api/whatsapp/accounts/${id}/disconnect`, { method: "POST" });
-    load();
+    setError(null);
+    try { await requestJson(`/api/whatsapp/accounts/${id}/disconnect`, { method: "POST" }, "Gagal memutus nomor WhatsApp"); load(); }
+    catch (e) { setError(errorMessage(e, "Gagal memutus nomor WhatsApp")); }
   }
 
   return (
     <div className="space-y-4">
+      {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
       <form onSubmit={add} className="space-y-2">
         <div className="flex flex-wrap gap-2">
           <input

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Eye, Plus, Trash2 } from "lucide-react";
 import { renderMessage } from "@/lib/messaging/text";
 import EmptyState from "@/components/dashboard/empty-state";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Template {
   id: string;
@@ -20,9 +21,8 @@ export default function TemplatesClient() {
   const [error, setError] = useState<string | null>(null);
 
   async function load() {
-    const r = await fetch("/api/templates");
-    const j = await r.json();
-    if (j.success) setItems(j.data);
+    try { setItems(await requestJson<Template[]>("/api/templates", undefined, "Gagal memuat template")); }
+    catch (e) { setError(errorMessage(e, "Gagal memuat template")); }
   }
   useEffect(() => { load(); }, []);
 
@@ -43,8 +43,10 @@ export default function TemplatesClient() {
 
   async function remove(id: string) {
     if (!confirm("Hapus template ini?")) return;
-    await fetch(`/api/templates/${id}`, { method: "DELETE" });
-    load();
+    try {
+      await requestJson(`/api/templates/${id}`, { method: "DELETE" }, "Gagal menghapus template");
+      load();
+    } catch (e) { setError(errorMessage(e, "Gagal menghapus template")); }
   }
 
   return (

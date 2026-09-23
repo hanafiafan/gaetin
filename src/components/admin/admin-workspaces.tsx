@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Ws {
   id: string;
@@ -18,6 +19,7 @@ const SELECT_CLASS = "h-8 rounded-lg border border-border bg-muted px-2 text-xs 
 export default function AdminWorkspaces() {
   const router = useRouter();
   const [rows, setRows] = useState<Ws[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     const r = await fetch("/api/admin/workspaces");
@@ -27,12 +29,11 @@ export default function AdminWorkspaces() {
   useEffect(() => { load(); }, []);
 
   async function act(id: string, body: Record<string, unknown>) {
-    await fetch(`/api/admin/workspaces/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    load();
+    setError(null);
+    try {
+      await requestJson(`/api/admin/workspaces/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }, "Gagal mengubah workspace");
+      load();
+    } catch (e) { setError(errorMessage(e, "Gagal mengubah workspace")); }
   }
 
   function addCredits(id: string) {
@@ -42,12 +43,17 @@ export default function AdminWorkspaces() {
   }
 
   async function impersonate(id: string) {
-    await fetch(`/api/admin/workspaces/${id}/impersonate`, { method: "POST" });
-    window.location.href = "/dashboard";
+    setError(null);
+    try {
+      await requestJson(`/api/admin/workspaces/${id}/impersonate`, { method: "POST" }, "Gagal masuk sebagai workspace");
+      window.location.href = "/dashboard";
+    } catch (e) { setError(errorMessage(e, "Gagal masuk sebagai workspace")); }
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="space-y-3">
+      {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
+      <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border bg-muted text-left">
@@ -100,6 +106,7 @@ export default function AdminWorkspaces() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

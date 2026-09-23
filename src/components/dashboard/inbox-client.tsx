@@ -6,6 +6,7 @@ import { renderMessage } from "@/lib/messaging/text";
 import { cn } from "@/lib/utils";
 import EmptyState from "@/components/dashboard/empty-state";
 import ContactPanel from "@/components/dashboard/contact-panel";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Convo {
   id: string;
@@ -66,6 +67,7 @@ export default function InboxClient() {
   const [uploading, setUploading] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [templateOpen, setTemplateOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [historyFor, setHistoryFor] = useState<string | null>(null);
   const convoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -179,17 +181,17 @@ export default function InboxClient() {
 
   async function setStatus(status: string) {
     if (!selectedId) return;
-    await fetch(`/api/conversations/${selectedId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    loadThread(selectedId);
-    loadConvos();
+    setError(null);
+    try {
+      await requestJson(`/api/conversations/${selectedId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) }, "Gagal mengubah status percakapan");
+      loadThread(selectedId); loadConvos();
+    } catch (e) { setError(errorMessage(e, "Gagal mengubah status percakapan")); }
   }
 
   return (
-    <div className="cg-card cg-sheet cg-tone-top grid h-[calc(100dvh-260px)] min-h-[420px] max-h-[800px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
+    <div className="space-y-3">
+      {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
+      <div className="cg-card cg-sheet cg-tone-top grid h-[calc(100dvh-260px)] min-h-[420px] max-h-[800px] overflow-hidden rounded-xl lg:grid-cols-[340px_1fr]">
       {/* Conversation list */}
       <div className={cn("overflow-y-auto border-r border-border", selectedId && "hidden lg:block")}>
         <div className="sticky top-0 z-10 border-b border-border bg-background p-4">
@@ -473,6 +475,7 @@ export default function InboxClient() {
       </div>
 
       <ContactPanel contactId={historyFor} onClose={() => setHistoryFor(null)} />
+    </div>
     </div>
   );
 }

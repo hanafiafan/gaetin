@@ -6,6 +6,7 @@ import { CheckCircle2, Filter, Loader2, Plus, Search, Tag, Trash2, Users, XCircl
 import { cn } from "@/lib/utils";
 import ContactPanel from "@/components/dashboard/contact-panel";
 import MetricStrip from "@/components/dashboard/metric-strip";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Contact {
   id: string;
@@ -64,11 +65,11 @@ export default function ContactsTable() {
     if (query) params.set("query", query);
     if (waStatus) params.set("waStatus", waStatus);
     if (emailOnly) params.set("hasEmail", "true");
-    const res = await fetch(`/api/contacts?${params.toString()}`);
-    const json = await res.json();
-    if (json.success) { setItems(json.data.items); setTotal(json.data.total); }
-    setSelected(new Set());
-    setLoading(false);
+    try {
+      const data = await requestJson<{ items: Contact[]; total: number }>(`/api/contacts?${params.toString()}`, undefined, "Gagal memuat kontak");
+      setItems(data.items); setTotal(data.total); setSelected(new Set());
+    } catch (e) { setFormError(errorMessage(e, "Gagal memuat kontak")); }
+    finally { setLoading(false); }
   }, [page, query, waStatus, emailOnly]);
 
   useEffect(() => {
@@ -104,23 +105,19 @@ export default function ContactsTable() {
 
   async function bulkDelete() {
     if (!confirm(`Hapus ${selected.size} kontak?`)) return;
-    await fetch("/api/contacts/bulk", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: [...selected], action: "delete" }),
-    });
-    load();
+    try {
+      await requestJson("/api/contacts/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: [...selected], action: "delete" }) }, "Gagal menghapus kontak");
+      load();
+    } catch (e) { setFormError(errorMessage(e, "Gagal menghapus kontak")); }
   }
 
   async function bulkTag() {
     const label = window.prompt("Beri label untuk kontak terpilih:");
     if (label === null) return;
-    await fetch("/api/contacts/bulk", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: [...selected], action: "tag", label }),
-    });
-    load();
+    try {
+      await requestJson("/api/contacts/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: [...selected], action: "tag", label }) }, "Gagal memberi label kontak");
+      load();
+    } catch (e) { setFormError(errorMessage(e, "Gagal memberi label kontak")); }
   }
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));

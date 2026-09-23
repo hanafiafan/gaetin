@@ -1,9 +1,15 @@
 "use client";
 
+import { errorMessage, requestJson } from "@/lib/http/client";
+
 export default function ImpersonationBanner({ workspaceName }: { workspaceName: string }) {
   async function stop() {
-    await fetch("/api/admin/impersonate/stop", { method: "POST" });
-    window.location.href = "/admin";
+    try {
+      await requestJson("/api/admin/impersonate/stop", { method: "POST" }, "Gagal keluar dari mode impersonasi");
+      window.location.href = "/admin";
+    } catch (error) {
+      alert(errorMessage(error, "Gagal keluar dari mode impersonasi"));
+    }
   }
   return (
     <div className="flex items-center justify-between gap-3 bg-warning/15 px-6 py-2 text-sm text-amber-800">

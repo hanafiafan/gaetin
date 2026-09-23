@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface U {
   id: string;
@@ -13,6 +14,7 @@ interface U {
 export default function AdminUsers() {
   const [rows, setRows] = useState<U[]>([]);
   const [query, setQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const r = await fetch(`/api/admin/users${query ? `?query=${encodeURIComponent(query)}` : ""}`);
@@ -25,16 +27,16 @@ export default function AdminUsers() {
   }, [load]);
 
   async function act(id: string, action: string) {
-    await fetch(`/api/admin/users/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action }),
-    });
-    load();
+    setError(null);
+    try {
+      await requestJson(`/api/admin/users/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action }) }, "Gagal mengubah pengguna");
+      load();
+    } catch (e) { setError(errorMessage(e, "Gagal mengubah pengguna")); }
   }
 
   return (
     <div className="space-y-3">
+      {error && <div className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</div>}
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}

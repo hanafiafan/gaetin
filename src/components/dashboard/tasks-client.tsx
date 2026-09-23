@@ -5,6 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TabPills from "@/components/dashboard/tab-pills";
 import EmptyState from "@/components/dashboard/empty-state";
+import { errorMessage, requestJson } from "@/lib/http/client";
 
 interface Task {
   id: string;
@@ -66,16 +67,18 @@ export default function TasksClient() {
   }
 
   async function toggle(t: Task) {
-    await fetch(`/api/tasks/${t.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: t.status !== "COMPLETED" }),
-    });
-    loadTasks();
+    setError(null);
+    try {
+      await requestJson(`/api/tasks/${t.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ completed: t.status !== "COMPLETED" }) }, "Gagal memperbarui tugas");
+      loadTasks();
+    } catch (e) { setError(errorMessage(e, "Gagal memperbarui tugas")); }
   }
   async function remove(id: string) {
-    await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-    loadTasks();
+    setError(null);
+    try {
+      await requestJson(`/api/tasks/${id}`, { method: "DELETE" }, "Gagal menghapus tugas");
+      loadTasks();
+    } catch (e) { setError(errorMessage(e, "Gagal menghapus tugas")); }
   }
 
   const FILTERS = [
